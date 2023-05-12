@@ -16,5 +16,6 @@ namespace BPHN.DataLayer.IRepositories
         bool RegisterForTenant(Account account);
         List<Account> GetPaging(int pageIndex, int pageSize, string txtSearch);
         object GetCountPaging(int pageIndex, int pageSize, string txtSearch);
+        bool SavePassword(Guid id, string password);
     }
 }

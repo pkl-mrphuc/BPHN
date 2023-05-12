@@ -25,6 +25,7 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             _accountRepository = accountRepository;
             _contextService = contextService;
+            _mailService = mailService;
         }
 
         public ServiceResultModel GetById(Guid id)
@@ -107,8 +108,18 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var realAccount = _accountRepository.GetAccountByUserName(account.UserName);
-            if (realAccount != null && account.Password == realAccount.Password)
+            if (realAccount != null)
             {
+                
+                if (!BCrypt.Net.BCrypt.Verify(account.Password, realAccount.Password))
+                {
+                    return new ServiceResultModel()
+                    {
+                        Success = false,
+                        Message = "Password Incorrect"
+                    };
+                }
+
                 string token = _accountRepository.GetToken(realAccount.Id.ToString());
                 return new ServiceResultModel()
                 {
@@ -210,6 +221,37 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 Success = true,
                 Data = resultSendMail
+            };
+        }
+
+        public ServiceResultModel SubmitResetPassword(Account account)
+        {
+            bool isValid = ValidateModelByAttribute(account, new List<string>() { "PhoneNumber", "FullName", "Email" });
+            if(!isValid)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    Message = "Input Empty"
+                };
+            }
+
+            var realAccount = _accountRepository.GetAccountById(account.Id);
+            if (realAccount == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    Message = "User NotExist"
+                };
+            }
+
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword(account.Password);
+            bool resultResetPassword = _accountRepository.SavePassword(account.Id, passwordHash);
+            return new ServiceResultModel() 
+            {
+                Success = true,
+                Data = resultResetPassword
             };
         }
     }

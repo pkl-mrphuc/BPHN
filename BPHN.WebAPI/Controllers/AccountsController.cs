@@ -31,11 +31,20 @@ namespace BPHN.WebAPI.Controllers
             return Ok(_accountService.RegisterForTenant(request));
         }
 
-        [Route("reset-password")]
+        [AllowAnonymous]
+        [Route("send-reset-password")]
         [HttpPost]
         public IActionResult ResetPassword(string userName)
         {
             return Ok(_accountService.ResetPassword(userName));
+        }
+
+        [AllowAnonymous]
+        [Route("submit-reset-password")]
+        [HttpPost]
+        public IActionResult SubmitResetPassword([FromBody] Account request)
+        {
+            return Ok(_accountService.SubmitResetPassword(request));
         }
 
         [ApiAuthorize]

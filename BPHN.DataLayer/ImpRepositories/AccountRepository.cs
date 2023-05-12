@@ -85,5 +85,10 @@ namespace BPHN.DataLayer.ImpRepositories
         {
             return new { TotalPage = 1, TotalRecordCurrentPage = 10, TotalAllRecords = 100 };
         }
+
+        public bool SavePassword(Guid id, string password)
+        {
+            return true;
+        }
     }
 }
