@@ -1,7 +1,9 @@
 ﻿using BPHN.BusinessLayer.IServices;
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
+using BPHN.ModelLayer.ObjectQueues;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -183,7 +185,17 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 var thread = new Thread(() =>
                 {
-                    _mailService.SendMail(MailTypeEnum.SET_PASSWORD);
+                    _mailService.SendMail(new ObjectQueue()
+                    {
+                        QueueJobType = QueueJobTypeEnum.SEND_MAIL,
+                        DataJson = JsonConvert.SerializeObject(new ResetPasswordParameter()
+                        {
+                            ReceiverAddress = account.Email,
+                            AccountId = account.Id,
+                            MailType = MailTypeEnum.SET_PASSWORD,
+                            ParameterType = typeof(ResetPasswordParameter)
+                        })
+                    });
                 });
                 thread.Start();
             }
@@ -206,8 +218,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            bool existUserName = _accountRepository.CheckExistUserName(userName);
-            if(!existUserName) 
+            var realAccount = _accountRepository.GetAccountByUserName(userName);
+            if(realAccount == null) 
             {
                 return new ServiceResultModel()
                 {
@@ -216,7 +228,17 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            bool resultSendMail = _mailService.SendMail(MailTypeEnum.SET_PASSWORD);
+            bool resultSendMail = _mailService.SendMail(new ObjectQueue()
+            {
+                QueueJobType = QueueJobTypeEnum.SEND_MAIL,
+                DataJson = JsonConvert.SerializeObject(new ResetPasswordParameter()
+                {
+                    ReceiverAddress = realAccount.Email,
+                    AccountId = realAccount.Id,
+                    MailType = MailTypeEnum.SET_PASSWORD,
+                    ParameterType = typeof(ResetPasswordParameter)
+                })
+            });
             return new ServiceResultModel()
             {
                 Success = true,

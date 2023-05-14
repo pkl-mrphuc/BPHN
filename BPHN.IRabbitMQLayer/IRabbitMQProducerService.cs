@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BPHN.BusinessLayer.IServices
+namespace BPHN.IRabbitMQLayer
 {
-    public interface IEmailService
+    public interface IRabbitMQProducerService
     {
-        bool SendMail(ObjectQueue objQueue);
+        void Publish(ObjectQueue param);
     }
 }

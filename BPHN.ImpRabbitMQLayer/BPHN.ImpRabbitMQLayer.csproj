@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.5.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BPHN.DataLayer\BPHN.DataLayer.csproj" />
+    <ProjectReference Include="..\BPHN.BusinessLayer\BPHN.BusinessLayer.csproj" />
     <ProjectReference Include="..\BPHN.IRabbitMQLayer\BPHN.IRabbitMQLayer.csproj" />
   </ItemGroup>
 

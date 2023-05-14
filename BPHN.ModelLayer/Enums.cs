@@ -21,6 +21,11 @@ namespace BPHN.ModelLayer
 
     public enum MailTypeEnum
     {
-        SET_PASSWORD = 0,
+        SET_PASSWORD = 0
+    }
+
+    public enum QueueJobTypeEnum
+    {
+        SEND_MAIL = 0
     }
 }

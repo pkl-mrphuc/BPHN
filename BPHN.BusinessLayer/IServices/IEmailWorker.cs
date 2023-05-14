@@ -1,5 +1,4 @@
-﻿using BPHN.ModelLayer;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace BPHN.BusinessLayer.IServices
 {
-    public interface IEmailService
+    public interface IEmailWorker
     {
-        bool SendMail(ObjectQueue objQueue);
+        Task Handle(string parameter);
     }
 }

@@ -1,7 +1,10 @@
 using BPHN.BusinessLayer.ImpServices;
+using BPHN.BusinessLayer.ImpServices.MailBuilders;
 using BPHN.BusinessLayer.IServices;
 using BPHN.DataLayer.ImpRepositories;
 using BPHN.DataLayer.IRepositories;
+using BPHN.ImpRabbitMQLayer;
+using BPHN.IRabbitMQLayer;
 using BPHN.ModelLayer;
 using BPHN.WebAPI;
 using Microsoft.AspNetCore.Authentication;
@@ -18,6 +21,7 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IContextService, ContextService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddSingleton<IRabbitMQProducerService, RabbitMQProducerService>();
 
 builder.Services.AddMvc(options => options.ModelValidatorProviders.Clear());
 builder.Services.AddControllers();

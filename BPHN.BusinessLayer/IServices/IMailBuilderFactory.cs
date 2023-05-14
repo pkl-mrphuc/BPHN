@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace BPHN.BusinessLayer.IServices
 {
-    public interface IEmailService
+    public interface IMailBuilderFactory
     {
-        bool SendMail(ObjectQueue objQueue);
+        IMailBuilder GetInstance(MailTypeEnum mailType);
     }
 }

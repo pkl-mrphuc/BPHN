@@ -1,19 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-BPHN.MailWorker-009e9d44-7928-4556-8fc7-43e00be3f19b</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BPHN.BusinessLayer\BPHN.BusinessLayer.csproj" />
     <ProjectReference Include="..\BPHN.ImpRabbitMQLayer\BPHN.ImpRabbitMQLayer.csproj" />
-    <ProjectReference Include="..\BPHN.ModelLayer\BPHN.ModelLayer.csproj" />
+    <ProjectReference Include="..\BPHN.IRabbitMQLayer\BPHN.IRabbitMQLayer.csproj" />
   </ItemGroup>
-
 </Project>
