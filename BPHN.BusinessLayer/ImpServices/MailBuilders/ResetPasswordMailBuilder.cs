@@ -36,6 +36,14 @@ namespace BPHN.BusinessLayer.ImpServices.MailBuilders
                 using (var client = new HttpClient())
                 {
                     var resetPasswordParam = (ResetPasswordParameter)data;
+                    string key = _keyGenerator.Encryption(JsonConvert.SerializeObject(
+                                new ExpireResetPasswordModel()
+                                {
+                                    ExpireTime = DateTime.Now.AddMinutes(30),
+                                    AccountId = resetPasswordParam.AccountId.ToString()
+                                }
+                            ));
+                    string link = string.Format("{0}?key={1}", _appSettings.ClientHost, key);
                     var vm = new MailVm<MailResetPasswordVm>()
                     {
                         Model = new MailResetPasswordVm()
@@ -43,13 +51,8 @@ namespace BPHN.BusinessLayer.ImpServices.MailBuilders
                             AccountId = resetPasswordParam.AccountId,
                             FullName = resetPasswordParam.FullName,
                             UserName = resetPasswordParam.UserName,
-                            Key = _keyGenerator.Encryption(JsonConvert.SerializeObject(
-                                new ExpireResetPasswordModel() 
-                                {
-                                    ExpireTime = DateTime.Now.AddMinutes(30),
-                                    AccountId = resetPasswordParam.AccountId.ToString()
-                                }
-                            ))
+                            Key = key,
+                            Link = link
                         }
                     };
                     var stringContent = new StringContent(JsonConvert.SerializeObject(vm), UnicodeEncoding.UTF8, "application/json");
