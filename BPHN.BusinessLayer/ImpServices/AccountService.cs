@@ -2,6 +2,7 @@
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.ObjectQueues;
+using BPHN.ModelLayer.Others;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
@@ -20,14 +21,17 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IAccountRepository _accountRepository;
         private readonly IContextService _contextService;
         private readonly IEmailService _mailService;
+        private readonly IKeyGenerator _keyGenerator;
         
         public AccountService(IAccountRepository accountRepository,
             IContextService contextService, 
-            IEmailService mailService)
+            IEmailService mailService,
+            IKeyGenerator keyGenerator)
         {
             _accountRepository = accountRepository;
             _contextService = contextService;
             _mailService = mailService;
+            _keyGenerator = keyGenerator;
         }
 
         public ServiceResultModel GetById(Guid id)
@@ -250,9 +254,26 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel SubmitResetPassword(Account account)
+        public ServiceResultModel SubmitResetPassword(string code)
         {
-            bool isValid = ValidateModelByAttribute(account, new List<string>() { "PhoneNumber", "FullName", "Email" });
+            string param = _keyGenerator.Decryption(code);
+            var expireResetPasswordModel = JsonConvert.DeserializeObject<ExpireResetPasswordModel>(param);
+            if (expireResetPasswordModel.ExpireTime < DateTime.Now)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    Message = "ExpireTime"
+                };
+            }
+
+            var account = new Account()
+            {
+                Id = Guid.Parse(expireResetPasswordModel.AccountId),
+                Password = expireResetPasswordModel.Password,
+            };
+
+            bool isValid = ValidateModelByAttribute(account, new List<string>() { "UserName", "PhoneNumber", "FullName", "Email" });
             if(!isValid)
             {
                 return new ServiceResultModel()

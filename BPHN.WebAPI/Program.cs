@@ -21,6 +21,7 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IContextService, ContextService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IKeyGenerator, KeyGenerator>();
 builder.Services.AddSingleton<IRabbitMQProducerService, RabbitMQProducerService>();
 
 builder.Services.AddMvc(options => options.ModelValidatorProviders.Clear());

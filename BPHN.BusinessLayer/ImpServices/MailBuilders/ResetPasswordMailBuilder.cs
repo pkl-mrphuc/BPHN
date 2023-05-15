@@ -1,6 +1,7 @@
 ﻿using BPHN.BusinessLayer.IServices;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.ObjectQueues;
+using BPHN.ModelLayer.Others;
 using BPHN.ModelLayer.ViewModels;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -16,9 +17,11 @@ namespace BPHN.BusinessLayer.ImpServices.MailBuilders
     public class ResetPasswordMailBuilder : IMailBuilder
     {
         private readonly AppSettings _appSettings;
-        public ResetPasswordMailBuilder(IOptions<AppSettings> appSettings)
+        private readonly IKeyGenerator _keyGenerator;
+        public ResetPasswordMailBuilder(IOptions<AppSettings> appSettings, IKeyGenerator keyGenerator)
         {
             _appSettings = appSettings.Value;
+            _keyGenerator = keyGenerator;
         }
 
         public List<Attachment> BuildAttachments(object? data)
@@ -39,7 +42,14 @@ namespace BPHN.BusinessLayer.ImpServices.MailBuilders
                         {
                             AccountId = resetPasswordParam.AccountId,
                             FullName = resetPasswordParam.FullName,
-                            UserName = resetPasswordParam.UserName
+                            UserName = resetPasswordParam.UserName,
+                            Key = _keyGenerator.Encryption(JsonConvert.SerializeObject(
+                                new ExpireResetPasswordModel() 
+                                {
+                                    ExpireTime = DateTime.Now.AddMinutes(30),
+                                    AccountId = resetPasswordParam.AccountId.ToString()
+                                }
+                            ))
                         }
                     };
                     var stringContent = new StringContent(JsonConvert.SerializeObject(vm), UnicodeEncoding.UTF8, "application/json");

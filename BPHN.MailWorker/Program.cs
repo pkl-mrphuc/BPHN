@@ -13,6 +13,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
         services.AddSingleton<IRabbitMQProducerService, RabbitMQProducerService>();
         services.AddSingleton<IRabbitMQComsumerService, RabbitMQConsumerService>();
+        services.AddSingleton<IKeyGenerator, KeyGenerator>();
         services.AddSingleton<IEmailWorker, EmailWorker>();
         services.AddSingleton<IMailBuilderFactory, MailBuilderFactory>();
         services.AddSingleton<ResetPasswordMailBuilder>();
