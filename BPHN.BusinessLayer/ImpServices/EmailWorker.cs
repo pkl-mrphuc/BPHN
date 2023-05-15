@@ -39,7 +39,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 from: _appSettings.MailConfiguration.Mail,
                 to: sendMail.ReceiverAddress,
                 subject: builder.BuildSubject(data),
-                body: builder.BuildBody(data)
+                body: await builder.BuildBody(data)
             );
             message.BodyEncoding = Encoding.UTF8;
             message.SubjectEncoding = Encoding.UTF8;

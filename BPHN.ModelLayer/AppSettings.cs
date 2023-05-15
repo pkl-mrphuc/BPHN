@@ -8,6 +8,7 @@ namespace BPHN.ModelLayer
 {
     public class AppSettings
     {
+        public string MailTemplateAPI { get; set; }
         public string Secret { get; set; }
         public RabbitMQConfiguration RabbitMQConfiguration { get; set; }
         public MailConfiguration MailConfiguration { get; set; }
