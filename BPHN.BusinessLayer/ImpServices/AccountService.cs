@@ -192,6 +192,8 @@ namespace BPHN.BusinessLayer.ImpServices
                         {
                             ReceiverAddress = account.Email,
                             AccountId = account.Id,
+                            FullName = account.FullName,
+                            UserName = account.UserName,
                             MailType = MailTypeEnum.SET_PASSWORD,
                             ParameterType = typeof(ResetPasswordParameter)
                         })
@@ -235,6 +237,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     ReceiverAddress = realAccount.Email,
                     AccountId = realAccount.Id,
+                    FullName = realAccount.FullName,
+                    UserName = realAccount.UserName,
                     MailType = MailTypeEnum.SET_PASSWORD,
                     ParameterType = typeof(ResetPasswordParameter)
                 })

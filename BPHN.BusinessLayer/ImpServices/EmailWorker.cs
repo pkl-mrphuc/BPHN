@@ -35,11 +35,18 @@ namespace BPHN.BusinessLayer.ImpServices
             var data = JsonConvert.DeserializeObject(dataJson, parameterType);
             IMailBuilder builder = _mailFactory.GetInstance(sendMail.MailType);
 
+            string body = await builder.BuildBody(data);
+
+            if(string.IsNullOrEmpty(body))
+            {
+                throw new Exception("Build Body Fail");
+            }
+
             MailMessage message = new MailMessage(
                 from: _appSettings.MailConfiguration.Mail,
                 to: sendMail.ReceiverAddress,
                 subject: builder.BuildSubject(data),
-                body: await builder.BuildBody(data)
+                body: body
             );
             message.BodyEncoding = Encoding.UTF8;
             message.SubjectEncoding = Encoding.UTF8;

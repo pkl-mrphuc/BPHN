@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BPHN.ModelLayer.ObjectQueues
+namespace BPHN.ModelLayer.ViewModels
 {
-    public class ResetPasswordParameter : SendMailParameter
+    public class MailResetPasswordVm
     {
         public Guid AccountId { get; set; }
+        public string UserName { get; set; }
         public string FullName { get; set; }
-        public string UserName { get; set; }     
     }
 }

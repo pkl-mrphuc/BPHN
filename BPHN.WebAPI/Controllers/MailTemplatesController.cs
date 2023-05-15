@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BPHN.ModelLayer.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -27,14 +28,14 @@ namespace BPHN.WebAPI.Controllers
 
         [Route("reset-password")]
         [HttpPost]
-        public async Task<IActionResult> GetResetPasswordBody()
+        public async Task<IActionResult> GetResetPasswordBody([FromBody] MailVm<MailResetPasswordVm> request)
         {
             string pathView = Path.Combine(_folderDir, "ResetPassword.cshtml");
-            string source = await RenderAsync(pathView);
+            string source = await RenderAsync<MailResetPasswordVm>(pathView, request.Model, request.ViewBag);
             return Ok(source);
         }
 
-        private async Task<string> RenderAsync(string pathView)
+        private async Task<string> RenderAsync<T>(string pathView, T model, dynamic viewBag)
         {
             if (string.IsNullOrEmpty(pathView) || !System.IO.File.Exists(pathView))
             {
@@ -51,8 +52,18 @@ namespace BPHN.WebAPI.Controllers
                     RequestServices = _provider
                 };
                 ActionContext actionContext = new(defaultHttpContext, new RouteData(), new ActionDescriptor());
-
-                ViewDataDictionary viewDataDictionary = new(new EmptyModelMetadataProvider(), new ModelStateDictionary());
+                
+                ViewDataDictionary viewDataDictionary = new(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+                {
+                    Model = model
+                };
+                if (viewBag != null)
+                {
+                    foreach (KeyValuePair<string, object> kv in viewBag as IDictionary<string, object>)
+                    {
+                        viewDataDictionary.Add(kv.Key, kv.Value);
+                    }
+                }
                 TempDataDictionary tempDataDictionary = new(actionContext.HttpContext, _tempDataProvider);
                 ViewContext viewContext = new(
                     actionContext,
