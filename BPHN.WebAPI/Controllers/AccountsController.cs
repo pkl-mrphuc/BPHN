@@ -42,11 +42,11 @@ namespace BPHN.WebAPI.Controllers
         }
 
         [AllowAnonymous]
-        [Route("submit-reset-password")]
+        [Route("submit-reset-password/{password}")]
         [HttpPost]
-        public IActionResult SubmitResetPassword([FromBody] string code)
+        public IActionResult SubmitResetPassword([FromBody] string code, string password)
         {
-            return Ok(_accountService.SubmitResetPassword(code));
+            return Ok(_accountService.SubmitResetPassword(code, password));
         }
 
         [ApiAuthorize]

@@ -254,7 +254,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel SubmitResetPassword(string code)
+        public ServiceResultModel SubmitResetPassword(string code, string password)
         {
             string param = _keyGenerator.Decryption(code);
             var expireResetPasswordModel = JsonConvert.DeserializeObject<ExpireResetPasswordModel>(param);
@@ -270,7 +270,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var account = new Account()
             {
                 Id = Guid.Parse(expireResetPasswordModel.AccountId),
-                Password = expireResetPasswordModel.Password,
+                Password = password,
             };
 
             bool isValid = ValidateModelByAttribute(account, new List<string>() { "UserName", "PhoneNumber", "FullName", "Email" });

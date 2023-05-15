@@ -12,45 +12,38 @@ namespace BPHN.BusinessLayer.ImpServices
     {
         public string Decryption(string input)
         {
-            string ToReturn = "";
-            string publickey = "santhosh";
-            string secretkey = "engineer";
-            var secretkeyByte = Encoding.UTF8.GetBytes(secretkey);
-            var publickeybyte = Encoding.UTF8.GetBytes(publickey);
-            byte[] inputbyteArray = Encoding.UTF8.GetBytes(input);
-            using (var des = new DESCryptoServiceProvider())
+            byte[] IV = { 12, 21, 43, 17, 57, 35, 67, 27 };
+            string encryptKey = "aXb2uy4z"; // MUST be 8 characters
+            var key = Encoding.UTF8.GetBytes(encryptKey);
+            byte[] byteInput = new byte[input.Length];
+            byteInput = Convert.FromBase64String(input);
+            DESCryptoServiceProvider provider = new DESCryptoServiceProvider();
+            using (var memStream = new MemoryStream())
             {
-                using (var ms = new MemoryStream())
-                {
-                    var cs = new CryptoStream(ms, des.CreateEncryptor(publickeybyte, secretkeyByte), CryptoStreamMode.Write);
-                    cs.Write(inputbyteArray, 0, inputbyteArray.Length);
-                    cs.FlushFinalBlock();
-                    ToReturn = Convert.ToBase64String(ms.ToArray());
-                }
-            }
-            return ToReturn;
+                ICryptoTransform transform = provider.CreateDecryptor(key, IV);
+                CryptoStream cryptoStream = new CryptoStream(memStream, transform, CryptoStreamMode.Write);
+                cryptoStream.Write(byteInput, 0, byteInput.Length);
+                cryptoStream.FlushFinalBlock();
+                Encoding encoding1 = Encoding.UTF8;
+                return encoding1.GetString(memStream.ToArray());
+            } 
         }
 
         public string Encryption(string input)
         {
-            string ToReturn = "";
-            string publickey = "santhosh";
-            string privatekey = "engineer";
-            var privatekeyByte = Encoding.UTF8.GetBytes(privatekey);
-            var publickeybyte = Encoding.UTF8.GetBytes(publickey);
-            var inputbyteArray = Convert.FromBase64String(input);
-            using (var des = new DESCryptoServiceProvider())
+            byte[] IV = { 12, 21, 43, 17, 57, 35, 67, 27 };
+            string encryptKey = "aXb2uy4z";
+            var key = Encoding.UTF8.GetBytes(encryptKey);
+            byte[] byteInput = Encoding.UTF8.GetBytes(input);
+            DESCryptoServiceProvider provider = new DESCryptoServiceProvider();
+            using (var memStream = new MemoryStream())
             {
-                using (var ms = new MemoryStream())
-                {
-                    var cs = new CryptoStream(ms, des.CreateDecryptor(publickeybyte, privatekeyByte), CryptoStreamMode.Write);
-                    cs.Write(inputbyteArray, 0, inputbyteArray.Length);
-                    cs.FlushFinalBlock();
-                    Encoding encoding = Encoding.UTF8;
-                    ToReturn = encoding.GetString(ms.ToArray());
-                }     
+                ICryptoTransform transform = provider.CreateEncryptor(key, IV);
+                CryptoStream cryptoStream = new CryptoStream(memStream, transform, CryptoStreamMode.Write);
+                cryptoStream.Write(byteInput, 0, byteInput.Length);
+                cryptoStream.FlushFinalBlock();
+                return Convert.ToBase64String(memStream.ToArray());
             }
-            return ToReturn;
         }
     }
 }

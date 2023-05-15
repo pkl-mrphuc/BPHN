@@ -31,7 +31,7 @@ namespace BPHN.DataLayer.ImpRepositories
             {
                 Id = Guid.Parse("6EDE10DA-CBD6-4F61-92A3-A196AB34C2FD"),
                 UserName = userName,
-                Password = "1",
+                Password = "$2a$11$J0drMq7IOZWCNgHPDIB5beJMRzCTvkuF.1nhkTWYOrfCGChruhn/G",
                 Gender = GenderEnum.MALE,
                 FullName = "LKP",
                 PhoneNumber = "0962521680",
@@ -47,7 +47,7 @@ namespace BPHN.DataLayer.ImpRepositories
             {
                 Id = Guid.Parse("6EDE10DA-CBD6-4F61-92A3-A196AB34C2FD"),
                 UserName = "admin",
-                Password = "1",
+                Password = "$2a$11$J0drMq7IOZWCNgHPDIB5beJMRzCTvkuF.1nhkTWYOrfCGChruhn/G",
                 Gender = GenderEnum.MALE,
                 FullName = "LKP",
                 PhoneNumber = "0962521680",
