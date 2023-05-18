@@ -22,16 +22,19 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IContextService _contextService;
         private readonly IEmailService _mailService;
         private readonly IKeyGenerator _keyGenerator;
+        private readonly IHistoryLogRepository _historyLogRepository;
         
         public AccountService(IAccountRepository accountRepository,
             IContextService contextService, 
             IEmailService mailService,
-            IKeyGenerator keyGenerator)
+            IKeyGenerator keyGenerator,
+            IHistoryLogRepository historyLogRepository)
         {
             _accountRepository = accountRepository;
             _contextService = contextService;
             _mailService = mailService;
             _keyGenerator = keyGenerator;
+            _historyLogRepository = historyLogRepository;
         }
 
         public ServiceResultModel GetById(Guid id)
@@ -127,6 +130,19 @@ namespace BPHN.BusinessLayer.ImpServices
                 }
 
                 string token = _accountRepository.GetToken(realAccount.Id.ToString());
+
+                var thread = new Thread(() =>
+                {
+                    _historyLogRepository.Write(new HistoryLog()
+                    {
+                        Actor = realAccount.UserName,
+                        ActorId = realAccount.Id.ToString(),
+                        Action = "LOGIN",
+                        EntityName = string.Empty
+                    });
+                });
+                thread.Start();
+
                 return new ServiceResultModel()
                 {
                     Success = true,
@@ -202,6 +218,15 @@ namespace BPHN.BusinessLayer.ImpServices
                             ParameterType = typeof(ResetPasswordParameter)
                         })
                     });
+
+                    _historyLogRepository.Write(new HistoryLog()
+                    {
+                        Actor = context.UserName,
+                        ActorId = context.Id.ToString(),
+                        Action = "REGISTER_ACCOUNT",
+                        EntityName = string.Empty,
+                        Description = account.UserName,
+                    });
                 });
                 thread.Start();
             }
@@ -247,6 +272,23 @@ namespace BPHN.BusinessLayer.ImpServices
                     ParameterType = typeof(ResetPasswordParameter)
                 })
             });
+
+            if(resultSendMail)
+            {
+                Thread thread = new Thread(() =>
+                {
+                    _historyLogRepository.Write(new HistoryLog()
+                    {
+                        Actor = realAccount.UserName,
+                        ActorId = realAccount.Id.ToString(),
+                        Action = "SEND_RESET_PASSWORD",
+                        EntityName = string.Empty,
+                        Description = string.Empty,
+                    });
+                });
+                thread.Start();
+            }
+            
             return new ServiceResultModel()
             {
                 Success = true,
@@ -295,6 +337,23 @@ namespace BPHN.BusinessLayer.ImpServices
 
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(account.Password);
             bool resultResetPassword = _accountRepository.SavePassword(account.Id, passwordHash);
+
+            if(resultResetPassword)
+            {
+                Thread thread = new Thread(() =>
+                {
+                    _historyLogRepository.Write(new HistoryLog()
+                    {
+                        Actor = realAccount.UserName,
+                        ActorId = realAccount.Id.ToString(),
+                        Action = "SUBMIT_RESET_PASSWORD",
+                        EntityName = string.Empty,
+                        Description = string.Empty,
+                    });
+                });
+                thread.Start();
+            }
+
             return new ServiceResultModel() 
             {
                 Success = true,

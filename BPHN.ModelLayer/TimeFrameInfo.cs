@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BPHN.ModelLayer
 {
-    public class TimeFrameInfo
+    public class TimeFrameInfo : BaseModel
     {
         public string TimeBegin { get; set; }
         public string TimeEnd { get; set; }

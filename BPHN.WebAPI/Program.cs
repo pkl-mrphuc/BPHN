@@ -19,6 +19,9 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IPitchService, PitchService>();
+builder.Services.AddScoped<IPitchRepository, PitchRepository>();
+builder.Services.AddScoped<IHistoryLogRepository, HistoryLogRepository>();
 builder.Services.AddScoped<IContextService, ContextService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IKeyGenerator, KeyGenerator>();
