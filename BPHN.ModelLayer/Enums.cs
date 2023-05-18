@@ -28,4 +28,12 @@ namespace BPHN.ModelLayer
     {
         SEND_MAIL = 0
     }
+
+    public enum ActionEnum
+    {
+        LOGIN = 0,
+        REGISTER_ACCOUNT = 1,
+        SEND_RESET_PASSWORD = 2,
+        SUBMIT_RESET_PASSWORD = 3,
+    }
 }

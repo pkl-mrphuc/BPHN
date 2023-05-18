@@ -9,24 +9,23 @@ using System.Threading.Tasks;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
-    public class PitchService : IPitchService
+    public class HistoryLogService : IHistoryLogService
     {
-        private readonly IPitchRepository _pitchRepository;
-        public PitchService(IPitchRepository pitchRepository)
+        private readonly IHistoryLogRepository _historyLogRepository;
+        public HistoryLogService(IHistoryLogRepository historyLogRepository)
         {
-            _pitchRepository = pitchRepository;
+            _historyLogRepository = historyLogRepository;
         }
-
         public ServiceResultModel GetCountPaging(int pageIndex, int pageSize, string txtSearch)
         {
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
 
-            var resultCountPaging = _pitchRepository.GetCountPaging(pageIndex, pageSize, txtSearch);
+            var resultCountPaging = _historyLogRepository.GetCountPaging(pageIndex, pageSize, txtSearch);
             return new ServiceResultModel()
             {
-                Success = true,
-                Data = resultCountPaging
+                 Success = true,
+                 Data = resultCountPaging
             };
         }
 
@@ -35,7 +34,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
 
-            var resultPaging = _pitchRepository.GetPaging(pageIndex, pageSize, txtSearch);
+            var resultPaging = _historyLogRepository.GetPaging(pageIndex, pageSize, txtSearch);
             return new ServiceResultModel()
             {
                 Success = true,
@@ -43,14 +42,13 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel Insert(Pitch pitch)
+        public ServiceResultModel Write(HistoryLog history)
         {
-            throw new NotImplementedException();
-        }
-
-        public ServiceResultModel Update(Pitch pitch)
-        {
-            throw new NotImplementedException();
+            return new ServiceResultModel()
+            {
+                Success = true,
+                Data = _historyLogRepository.Write(history)
+            };
         }
     }
 }

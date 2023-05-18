@@ -22,19 +22,19 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IContextService _contextService;
         private readonly IEmailService _mailService;
         private readonly IKeyGenerator _keyGenerator;
-        private readonly IHistoryLogRepository _historyLogRepository;
+        private readonly IHistoryLogService _historyLogService;
         
         public AccountService(IAccountRepository accountRepository,
             IContextService contextService, 
             IEmailService mailService,
             IKeyGenerator keyGenerator,
-            IHistoryLogRepository historyLogRepository)
+            IHistoryLogService historyLogService)
         {
             _accountRepository = accountRepository;
             _contextService = contextService;
             _mailService = mailService;
             _keyGenerator = keyGenerator;
-            _historyLogRepository = historyLogRepository;
+            _historyLogService = historyLogService;
         }
 
         public ServiceResultModel GetById(Guid id)
@@ -54,7 +54,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 return new ServiceResultModel()
                 {
                     Success = false,
-                    Message = "No Role"
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = "Bạn không có quyền thực hiện chức năng này"
                 };
             }
 
@@ -78,7 +79,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 return new ServiceResultModel()
                 {
                     Success = false,
-                    Message = "No Role"
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = "Bạn không có quyền thực hiện chức năng này"
                 };
             }
 
@@ -102,7 +104,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 return new ServiceResultModel()
                 {
                     Success = false,
-                    Message = "Input Empty"
+                    ErrorCode = ErrorCodes.EMPTY_INPUT,
+                    Message = "Dữ liệu đầu vào không hợp lệ"
                 };
             }
 
@@ -112,58 +115,50 @@ namespace BPHN.BusinessLayer.ImpServices
                 return new ServiceResultModel()
                 {
                     Success = false,
-                    Message = "Account Not Found"
+                    ErrorCode = ErrorCodes.NOT_EXISTS,
+                    Message = "Tài khoản hoặc mật khẩu không đúng"
                 };
             }
 
             var realAccount = _accountRepository.GetAccountByUserName(account.UserName);
-            if (realAccount != null)
+            if (!BCrypt.Net.BCrypt.Verify(account.Password, realAccount.Password))
             {
-                
-                if (!BCrypt.Net.BCrypt.Verify(account.Password, realAccount.Password))
-                {
-                    return new ServiceResultModel()
-                    {
-                        Success = false,
-                        Message = "Password Incorrect"
-                    };
-                }
-
-                string token = _accountRepository.GetToken(realAccount.Id.ToString());
-
-                var thread = new Thread(() =>
-                {
-                    _historyLogRepository.Write(new HistoryLog()
-                    {
-                        Actor = realAccount.UserName,
-                        ActorId = realAccount.Id.ToString(),
-                        Action = "LOGIN",
-                        EntityName = string.Empty
-                    });
-                });
-                thread.Start();
-
                 return new ServiceResultModel()
                 {
-                    Success = true,
-                    Data = new Account()
-                    {
-                        Id = realAccount.Id,
-                        FullName = realAccount.FullName,
-                        UserName = realAccount.UserName,
-                        PhoneNumber = realAccount.PhoneNumber,
-                        Email = realAccount.Email,
-                        Gender = realAccount.Gender,
-                        Role = realAccount.Role,
-                        Token = token
-                    }
+                    Success = false,
+                    ErrorCode = ErrorCodes.NOT_EXISTS,
+                    Message = "Tài khoản hoặc mật khẩu không đúng"
                 };
             }
 
+            string token = _accountRepository.GetToken(realAccount.Id.ToString());
+
+            var thread = new Thread(() =>
+            {
+                _historyLogService.Write(new HistoryLog()
+                {
+                    Actor = realAccount.UserName,
+                    ActorId = realAccount.Id.ToString(),
+                    ActionType = ActionEnum.LOGIN,
+                    EntityName = string.Empty
+                });
+            });
+            thread.Start();
+
             return new ServiceResultModel()
             {
-                Success = false,
-                Message = "Login Fail"
+                Success = true,
+                Data = new Account()
+                {
+                    Id = realAccount.Id,
+                    FullName = realAccount.FullName,
+                    UserName = realAccount.UserName,
+                    PhoneNumber = realAccount.PhoneNumber,
+                    Email = realAccount.Email,
+                    Gender = realAccount.Gender,
+                    Role = realAccount.Role,
+                    Token = token
+                }
             };
         }
 
@@ -176,7 +171,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 return new ServiceResultModel()
                 {
                     Success = false,
-                    Message = "No Role"
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = "Bạn không có quyền thực hiện chức năng này"
                 };
             }
 
@@ -186,7 +182,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 return new ServiceResultModel()
                 {
                     Success = false,
-                    Message = "Input Invalid"
+                    ErrorCode = ErrorCodes.EMPTY_INPUT,
+                    Message = "Dữ liệu đầu vào không hợp lệ"
                 };
             }
 
@@ -196,7 +193,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 return new ServiceResultModel()
                 {
                     Success = false,
-                    Message = "UserName Existed"
+                    ErrorCode = ErrorCodes.EXISTED,
+                    Message = "Tên tài khoản đã được đăng ký"
                 };
             }
 
@@ -219,11 +217,11 @@ namespace BPHN.BusinessLayer.ImpServices
                         })
                     });
 
-                    _historyLogRepository.Write(new HistoryLog()
+                    _historyLogService.Write(new HistoryLog()
                     {
                         Actor = context.UserName,
                         ActorId = context.Id.ToString(),
-                        Action = "REGISTER_ACCOUNT",
+                        ActionType = ActionEnum.REGISTER_ACCOUNT,
                         EntityName = string.Empty,
                         Description = account.UserName,
                     });
@@ -245,7 +243,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 return new ServiceResultModel()
                 {
                     Success = false,
-                    Message = "Input Empty"
+                    ErrorCode = ErrorCodes.EMPTY_INPUT,
+                    Message = "Dữ liệu đầu vào không hợp lệ"
                 };
             }
 
@@ -255,7 +254,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 return new ServiceResultModel()
                 {
                     Success = false,
-                    Message = "User NotExist"
+                    ErrorCode = ErrorCodes.NOT_EXISTS,
+                    Message = "Tài khoản không tồn tại"
                 };
             }
 
@@ -277,11 +277,11 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 Thread thread = new Thread(() =>
                 {
-                    _historyLogRepository.Write(new HistoryLog()
+                    _historyLogService.Write(new HistoryLog()
                     {
                         Actor = realAccount.UserName,
                         ActorId = realAccount.Id.ToString(),
-                        Action = "SEND_RESET_PASSWORD",
+                        ActionType = ActionEnum.SEND_RESET_PASSWORD,
                         EntityName = string.Empty,
                         Description = string.Empty,
                     });
@@ -305,7 +305,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 return new ServiceResultModel()
                 {
                     Success = false,
-                    Message = "ExpireTime"
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = "Quá hạn thiết lập mật khẩu"
                 };
             }
 
@@ -321,7 +322,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 return new ServiceResultModel()
                 {
                     Success = false,
-                    Message = "Input Empty"
+                    ErrorCode = ErrorCodes.EMPTY_INPUT,
+                    Message = "Dữ liệu đầu vào không hợp lệ"
                 };
             }
 
@@ -331,7 +333,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 return new ServiceResultModel()
                 {
                     Success = false,
-                    Message = "User NotExist"
+                    ErrorCode = ErrorCodes.NOT_EXISTS,
+                    Message = "Tài khoản không tồn tại"
                 };
             }
 
@@ -342,11 +345,11 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 Thread thread = new Thread(() =>
                 {
-                    _historyLogRepository.Write(new HistoryLog()
+                    _historyLogService.Write(new HistoryLog()
                     {
                         Actor = realAccount.UserName,
                         ActorId = realAccount.Id.ToString(),
-                        Action = "SUBMIT_RESET_PASSWORD",
+                        ActionType = ActionEnum.SUBMIT_RESET_PASSWORD,
                         EntityName = string.Empty,
                         Description = string.Empty,
                     });

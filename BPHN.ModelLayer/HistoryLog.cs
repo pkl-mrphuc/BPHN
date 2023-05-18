@@ -8,7 +8,7 @@ namespace BPHN.ModelLayer
 {
     public class HistoryLog : BaseModel
     {
-        public string Action { get; set; }
+        public ActionEnum ActionType { get; set; }
         public string EntityName { get; set; }
         public string Description { get; set; }
         public string Actor { get; set; }
