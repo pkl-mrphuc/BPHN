@@ -1,4 +1,5 @@
-﻿using BPHN.ModelLayer.ViewModels;
+﻿using BPHN.BusinessLayer.IServices;
+using BPHN.ModelLayer.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace BPHN.WebAPI.Controllers
 {
@@ -16,6 +18,7 @@ namespace BPHN.WebAPI.Controllers
         private readonly IRazorViewEngine _viewEngine;
         private readonly IServiceProvider _provider;
         private readonly ITempDataProvider _tempDataProvider;
+        private readonly ICacheService _cacheService;
         private string _folderDir = string.Empty;
 
         public MailTemplatesController(IServiceProvider provider)
@@ -23,6 +26,7 @@ namespace BPHN.WebAPI.Controllers
             _provider = provider;
             _viewEngine = provider.GetRequiredService<IRazorViewEngine>();
             _tempDataProvider = provider.GetRequiredService<ITempDataProvider>();
+            _cacheService = provider.GetRequiredService<ICacheService>();
             _folderDir = Path.Combine("Views", "MailTemplates");
         }
 

@@ -12,11 +12,17 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+var appSettings = builder.Configuration.GetSection("AppSettings");
 
 // Add services to the container.
-builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+builder.Services.Configure<AppSettings>(appSettings);
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddStackExchangeRedisCache(options => 
+{ 
+    options.Configuration = appSettings.GetValue<string>("RedisCacheUrl"); 
+});
+builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IPitchService, PitchService>();

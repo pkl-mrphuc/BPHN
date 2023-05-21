@@ -13,6 +13,8 @@ namespace BPHN.ModelLayer
         public string ClientHost { get; set; }
         public RabbitMQConfiguration RabbitMQConfiguration { get; set; }
         public MailConfiguration MailConfiguration { get; set; }
+        public string RedisCacheUrl { get; set; }
+        public int RedisExpireHour { get; set; }
     }
 
     public class RabbitMQConfiguration

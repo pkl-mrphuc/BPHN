@@ -8,7 +8,7 @@ namespace BPHN.ModelLayer
 {
     public static class Constansts
     {
-        
+        public const int EXPIRE_HOUR_REDIS_CACHE = 8;
     }
 
     public static class ErrorCodes
