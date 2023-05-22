@@ -77,6 +77,6 @@ app.UseMiddleware<AuthenMiddleware>();
 
 app.MapControllers();
 
-app.MapHub<WsService>("/ws");
+app.MapHub<WsReceiveService>("/ws");
 
 app.Run();

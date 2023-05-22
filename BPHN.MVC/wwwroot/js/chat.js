@@ -8,7 +8,7 @@ var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:7
 //Disable the send button until connection is established.
 document.getElementById("sendButton").disabled = true;
 
-connection.on("SendToUser", function (user, message) {
+connection.on("SERVER_AfterClientLoginSuccess", function (user, message) {
     var li = document.createElement("li");
     document.getElementById("messagesList").appendChild(li);
     // We can assign user-supplied strings to an element's textContent because it
@@ -24,9 +24,8 @@ connection.start().then(function () {
 });
 
 document.getElementById("sendButton").addEventListener("click", function (event) {
-    var user = document.getElementById("userInput").value;
-    var message = document.getElementById("messageInput").value;
-    connection.invoke("SendToUser", user, message).catch(function (err) {
+    var accountId = document.getElementById("userInput").value;
+    connection.invoke("CLIENT_LoginSuccess", accountId).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();

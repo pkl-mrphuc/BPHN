@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace BPHN.BusinessLayer.IServices
 {
-    public interface IWsService
+    public interface IWsSendService
     {
-        Task SendToUser(string user, string message);
+        Task SERVER_AfterClientLoginSuccess(string accountId, string connectionId);
     }
 }
