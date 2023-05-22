@@ -8,6 +8,7 @@ using BPHN.IRabbitMQLayer;
 using BPHN.ModelLayer;
 using BPHN.WebAPI;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
@@ -58,7 +59,8 @@ builder.Services.AddSwaggerGen(option =>
             new List<string>()
         }
     });
-});
+}); 
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -74,5 +76,7 @@ app.UseHttpsRedirection();
 app.UseMiddleware<AuthenMiddleware>();
 
 app.MapControllers();
+
+app.MapHub<WsService>("/ws");
 
 app.Run();
