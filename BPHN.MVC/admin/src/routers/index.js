@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '@/layouts/BPHNLayout.vue'
 import HelloWorld from '@/components/HelloWorld.vue'
 import LoginPage from '@/pages/BPHNLogin.vue'
+import ForgotPage from '@/pages/BPHNForgot.vue'
 
 const routes = [
   {
@@ -43,7 +44,15 @@ const routes = [
     name: 'login',
     component: LoginPage,
     meta: {
-      title: 'Login'
+      title: 'Login form'
+    }
+  },
+  {
+    path: '/forgot',
+    name: 'forgot',
+    component: ForgotPage,
+    meta: {
+      title: 'Forgot password'
     }
   },
 ]
@@ -55,7 +64,7 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
 
-  const publicPages = ['/login'];
+  const publicPages = ['/login', '/forgot'];
 
   const authRequired = !publicPages.includes(to.path);
   if (authRequired) {

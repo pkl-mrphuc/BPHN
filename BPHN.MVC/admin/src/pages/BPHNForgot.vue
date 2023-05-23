@@ -7,19 +7,16 @@
       </div>
 
       <div class="box_right">
-        <h2>Login Form</h2>
+        <h2>Forgot Password</h2>
         <el-form class="box_right__form">
           <el-form-item>
-            <el-input v-model="username" placeholder="Username" />
+            <el-input v-model="email" placeholder="Email" />
           </el-form-item>
           <el-form-item>
-            <el-input v-model="password" show-password placeholder="Password" type="password" />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary">Submit</el-button>
-            <a class="forgot-btn" href="javascript:void(0)" @click="goToForgot()">Forgot password</a>
+            <el-button style="width: 100%" type="primary">Send Request</el-button>
           </el-form-item>
         </el-form>
+        <a class="back-login-btn" @click="goToLogin()" href="javascript:void(0)" >Back To Login</a>
       </div>
     </div>
   </section>
@@ -27,16 +24,15 @@
 
 <script>
 export default {
-  name: "BPHNLogin",
+  name: "BPHNForgot",
   data() {
     return {
-        username: '',
-        password: ''
+        email: ''
     }
   },
   methods: {
-    goToForgot() {
-      window.location = '/forgot'
+    goToLogin() {
+        window.location = '/login'
     }
   }
 };
