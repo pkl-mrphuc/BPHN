@@ -1,26 +1,25 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="common-layout">
+    <el-container>
+      <el-header>
+        <bphn-header></bphn-header>
+      </el-header>
+      <el-container>
+        <el-aside width="200px">
+          <bphn-menu></bphn-menu>
+        </el-aside>
+        <el-main>
+          <router-view />
+        </el-main>
+      </el-container>
+    </el-container>
+  </div>
 </template>
-
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import BphnHeader from '@/components/BPHNHeader.vue'
+import BphnMenu from '@/components/BPHNMenu.vue'
 export default {
   name: 'App',
-  components: {
-    HelloWorld
-  }
+  components: { BphnHeader, BphnMenu }
 }
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
