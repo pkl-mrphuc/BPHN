@@ -2,16 +2,16 @@
     <section class="bphn-menu">
         <div class="menus">
             <div class="menu-item">
-                <router-link class="menu-item_link" title="Booking manager" to="/">BM</router-link>
+                <router-link class="menu-item_link" title="Booking manager" to="/bm">BM</router-link>
             </div>
             <div class="menu-item">
-                <router-link class="menu-item_link" title="Calendar" to="/">Calendar</router-link>
+                <router-link class="menu-item_link" title="Calendar" to="/calendar">Calendar</router-link>
             </div>
             <div class="menu-item">
-                <router-link class="menu-item_link" title="My grounds" to="/">My Grounds</router-link>
+                <router-link class="menu-item_link" title="My grounds" to="/my-grounds">My Grounds</router-link>
             </div>
             <div class="menu-item">
-                <router-link class="menu-item_link" title="Configurations" to="/">Configurations</router-link>
+                <router-link class="menu-item_link" title="Configurations" to="/configuartions">Configurations</router-link>
             </div>
         </div>
     </section>
