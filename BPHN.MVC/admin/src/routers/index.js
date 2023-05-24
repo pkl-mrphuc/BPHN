@@ -3,6 +3,7 @@ import Layout from '@/layouts/BPHNLayout.vue'
 import HelloWorld from '@/components/HelloWorld.vue'
 import LoginPage from '@/pages/BPHNLogin.vue'
 import ForgotPage from '@/pages/BPHNForgot.vue'
+import i18n from '@/i18n/index.js'
 
 const routes = [
   {
@@ -13,28 +14,28 @@ const routes = [
         path: '/calendar',
         component: HelloWorld,
         meta: {
-          title: 'Calendar'
+          title: i18n.global.t('CalendarTitle')
         }
       },
       {
         path: '/bm',
         component: HelloWorld,
         meta: {
-          title: 'Booking manager'
+          title: i18n.global.t('BMTitle')
         }
       },
       {
         path: '/my-grounds',
         component: HelloWorld,
         meta: {
-          title: 'My grounds'
+          title: i18n.global.t('MyGroundsTitle')
         }
       },
       {
         path: '/configuartions',
         component: HelloWorld,
         meta: {
-          title: 'Configuarations'
+          title: i18n.global.t('ConfiguarationsTitle')
         }
       }
     ]
@@ -44,7 +45,7 @@ const routes = [
     name: 'login',
     component: LoginPage,
     meta: {
-      title: 'Login form'
+      title: i18n.global.t('LoginForm')
     }
   },
   {
@@ -52,7 +53,7 @@ const routes = [
     name: 'forgot',
     component: ForgotPage,
     meta: {
-      title: 'Forgot password'
+      title: i18n.global.t('ForgotPasswordTitle')
     }
   },
 ]
@@ -75,7 +76,7 @@ router.beforeEach(async (to) => {
 });
 
 router.afterEach((to) => {
-  document.title = to.meta.title ? `[${to.meta.title}] | BPHN Hà Nội` : 'BPHN Hà Nội'
+  document.title = to.meta.title ? `[${to.meta.title}] | ${i18n.global.t('BPHNHaNoi')}` : `${i18n.global.t('BPHNHaNoi')}`
 })
 
 export default router

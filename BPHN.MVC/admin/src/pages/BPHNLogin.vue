@@ -1,18 +1,20 @@
 <script setup>
 import {ref} from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const store = useStore()
 const username = ref('')
 const password = ref('')
 
 function login() {
   if(!username.value) {
-    alert('Tên đăng nhập không được để trống.')
+    alert(t('UsernameEmptyMesg'))
     return
   }
   if(!password.value) {
-    alert('Mật khẩu không được để trống.')
+    alert(t('PasswordEmptyMesg'))
     return
   }
   store.dispatch('account/login', { 
@@ -30,22 +32,22 @@ function goToForgot() {
   <section class="pbhn-login">
     <div class="box">
       <div class="box_left">
-        <h1 class="box_left__title">Booking Pitch Ha Noi</h1>
+        <h1 class="box_left__title">{{ t('BookingPitchHaNoi') }}</h1>
         <img class="img img-anime" src=".././assets/images/fb-anime.jpg" />
       </div>
 
       <div class="box_right">
-        <h2>Login Form</h2>
+        <h2>{{ t('LoginForm') }}</h2>
         <el-form class="box_right__form">
           <el-form-item>
-            <el-input v-model="username" placeholder="Username" />
+            <el-input v-model="username" :placeholder="t('Username')" />
           </el-form-item>
           <el-form-item>
-            <el-input v-model="password" show-password placeholder="Password" type="password" />
+            <el-input v-model="password" show-password :placeholder="t('Password')" type="password" />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="login">Submit</el-button>
-            <a class="forgot-btn" href="javascript:void(0)" @click="goToForgot()">Forgot Password</a>
+            <el-button type="primary" @click="login">{{ t('Submit') }}</el-button>
+            <a class="forgot-btn" href="javascript:void(0)" @click="goToForgot()">{{ t('ForgotPasswordTitle') }}</a>
           </el-form-item>
         </el-form>
       </div>

@@ -14,7 +14,7 @@ const { t } = useI18n()
                 <router-link class="menu-item_link" :title="t('CalendarTitle')" to="/calendar">{{ t('Calendar') }}</router-link>
             </div>
             <div class="menu-item">
-                <router-link class="menu-item_link" :title="t('My Grounds Title')" to="/my-grounds">{{ t('My Grounds') }}</router-link>
+                <router-link class="menu-item_link" :title="t('MyGroundsTitle')" to="/my-grounds">{{ t('MyGrounds') }}</router-link>
             </div>
             <div class="menu-item">
                 <router-link class="menu-item_link" :title="t('ConfigurationsTitle')" to="/configuartions">{{ t('Configurations') }}</router-link>

@@ -1,7 +1,9 @@
 <script setup>
 import {ref} from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const store = useStore()
 const email = ref('')
 
@@ -11,7 +13,7 @@ function goToLogin() {
 
 function forgot() {
   if(!email.value) {
-    alert('Email không được để trống.')
+    alert(t('EmailEmptyMesg'))
     return
   }
   store.dispatch('account/forgot', email.value)
@@ -22,21 +24,21 @@ function forgot() {
   <section class="pbhn-login">
     <div class="box">
       <div class="box_left">
-        <h1 class="box_left__title">Booking Pitch Ha Noi</h1>
+        <h1 class="box_left__title">{{ t('BookingPitchHaNoi') }}</h1>
         <img class="img img-anime" src=".././assets/images/fb-anime.jpg" />
       </div>
 
       <div class="box_right">
-        <h2>Forgot Password</h2>
+        <h2>{{ t('ForgotPasswordTitle') }}</h2>
         <el-form class="box_right__form">
           <el-form-item>
             <el-input v-model="email" placeholder="Email" />
           </el-form-item>
           <el-form-item>
-            <el-button style="width: 100%" type="primary" @click="forgot()">Send Request</el-button>
+            <el-button style="width: 100%" type="primary" @click="forgot()">{{ t('SendRequest') }}</el-button>
           </el-form-item>
         </el-form>
-        <a class="back-login-btn" @click="goToLogin()" href="javascript:void(0)" >Back To Login</a>
+        <a class="back-login-btn" @click="goToLogin()" href="javascript:void(0)">{{ t('BackToLogin') }}</a>
       </div>
     </div>
   </section>

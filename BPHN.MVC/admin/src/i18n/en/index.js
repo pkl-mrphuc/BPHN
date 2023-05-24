@@ -2,11 +2,25 @@ const en = {
     Hello: 'Hello,',
     BM: 'BM',
     Calendar: 'Calendar',
-    'My Grounds': 'My Grounds',
+    MyGrounds: 'My Grounds',
     Configurations: 'Configurations',
     BMTitle: 'Booking manager',
     CalendarTitle: 'Calendar',
-    'My Grounds Title': 'My grounds',
-    ConfigurationsTitle: 'Configurations'
+    MyGroundsTitle: 'My grounds',
+    ConfigurationsTitle: 'Configurations',
+    EmailEmptyMesg: 'Email không được để trống.',
+    ForgotPasswordTitle: 'Forgot Password',
+    SendRequest: 'Send Request',
+    BackToLogin: 'Back To Login',
+    BookingPitchHaNoi: 'Booking Pitch Ha Noi',
+    Username: 'Username',
+    Password: 'Password',
+    LoginForm: 'Login Form',
+    Submit: 'Submit',
+    UsernameEmptyMesg: 'Tên đăng nhập không được để trống.',
+    PasswordEmptyMesg: 'Mật khẩu không được để trống.',
+    BPHNHaNoi: 'BPHN Ha Noi',
+    ErrorMesg: 'Đã có lỗi xảy ra. Vui lòng liên hệ đến nhà cung cấp',
+    ResetPasswordMesg: 'Vui lòng kiểm tra email để lấy lại mật khẩu'
 }
 export default en

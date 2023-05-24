@@ -1,4 +1,5 @@
 import AccountAPI from '@/apis/AccountAPI'
+import i18n from '@/i18n/index.js'
 
 const state = {
     context: null
@@ -29,20 +30,28 @@ const actions = {
             } 
             else {
                 let msg = res?.data?.message
-                alert(msg??'Đã có lỗi xảy ra. Vui lòng liên hệ đến nhà cung cấp')
+                alert(msg??i18n.global.t('ErrorMesg'))
             }
+        })
+        .catch((error) => {
+            console.log(error)
+            alert(i18n.global.t('ErrorMesg'))
         })
     },
 
     forgot:((commit, email) => {
         AccountAPI.forgot(email).then((res) => {
             if(res?.data?.success) {
-                alert('Vui lòng kiểm tra email để lấy lại mật khẩu')
+                alert(i18n.global.t('ResetPasswordMesg'))
             }
             else {
                 let msg = res?.data?.message
-                alert(msg??'Đã có lỗi xảy ra. Vui lòng liên hệ đến nhà cung cấp')
+                alert(msg??i18n.global.t('ErrorMesg'))
             }
+        })
+        .catch((error) => {
+            console.log(error)
+            alert(i18n.global.t('ErrorMesg'))
         })
     })
 }
