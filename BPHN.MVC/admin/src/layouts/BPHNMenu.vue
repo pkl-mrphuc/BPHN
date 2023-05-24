@@ -1,27 +1,27 @@
+<script setup>
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+</script>
+
 <template>
     <section class="bphn-menu">
         <div class="menus">
             <div class="menu-item">
-                <router-link class="menu-item_link" title="Booking manager" to="/bm">BM</router-link>
+                <router-link class="menu-item_link" :title="t('BMTitle')" to="/bm">{{ t('BM') }}</router-link>
             </div>
             <div class="menu-item">
-                <router-link class="menu-item_link" title="Calendar" to="/calendar">Calendar</router-link>
+                <router-link class="menu-item_link" :title="t('CalendarTitle')" to="/calendar">{{ t('Calendar') }}</router-link>
             </div>
             <div class="menu-item">
-                <router-link class="menu-item_link" title="My grounds" to="/my-grounds">My Grounds</router-link>
+                <router-link class="menu-item_link" :title="t('My Grounds Title')" to="/my-grounds">{{ t('My Grounds') }}</router-link>
             </div>
             <div class="menu-item">
-                <router-link class="menu-item_link" title="Configurations" to="/configuartions">Configurations</router-link>
+                <router-link class="menu-item_link" :title="t('ConfigurationsTitle')" to="/configuartions">{{ t('Configurations') }}</router-link>
             </div>
         </div>
     </section>
 </template>
-
-<script>
-export default {
-    name: 'BPHNMenu'
-}
-</script>
 
 <style scoped>
 @import '@/assets/css/BPHNMenu.css';

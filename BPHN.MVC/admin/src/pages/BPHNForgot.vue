@@ -10,6 +10,10 @@ function goToLogin() {
 }
 
 function forgot() {
+  if(!email.value) {
+    alert('Email không được để trống.')
+    return
+  }
   store.dispatch('account/forgot', email.value)
 }
 </script>

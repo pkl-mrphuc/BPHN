@@ -7,6 +7,14 @@ const username = ref('')
 const password = ref('')
 
 function login() {
+  if(!username.value) {
+    alert('Tên đăng nhập không được để trống.')
+    return
+  }
+  if(!password.value) {
+    alert('Mật khẩu không được để trống.')
+    return
+  }
   store.dispatch('account/login', { 
     username: username.value,
     password: password.value
