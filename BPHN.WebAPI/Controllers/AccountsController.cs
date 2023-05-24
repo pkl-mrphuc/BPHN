@@ -35,7 +35,7 @@ namespace BPHN.WebAPI.Controllers
 
         [AllowAnonymous]
         [Route("send-reset-password")]
-        [HttpPost]
+        [HttpGet]
         public IActionResult ResetPassword(string userName)
         {
             return Ok(_accountService.ResetPassword(userName));

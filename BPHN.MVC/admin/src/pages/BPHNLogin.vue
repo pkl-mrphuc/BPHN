@@ -1,8 +1,17 @@
 <script setup>
 import {ref} from 'vue'
+import { useStore } from 'vuex'
 
+const store = useStore()
 const username = ref('')
 const password = ref('')
+
+function login() {
+  store.dispatch('account/login', { 
+    username: username.value,
+    password: password.value
+  })
+}
 
 function goToForgot() {
   window.location = '/forgot'
@@ -27,7 +36,7 @@ function goToForgot() {
             <el-input v-model="password" show-password placeholder="Password" type="password" />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary">Submit</el-button>
+            <el-button type="primary" @click="login">Submit</el-button>
             <a class="forgot-btn" href="javascript:void(0)" @click="goToForgot()">Forgot Password</a>
           </el-form-item>
         </el-form>

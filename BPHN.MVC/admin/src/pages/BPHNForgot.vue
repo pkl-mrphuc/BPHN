@@ -1,10 +1,16 @@
 <script setup>
 import {ref} from 'vue'
+import { useStore } from 'vuex'
 
+const store = useStore()
 const email = ref('')
 
 function goToLogin() {
   window.location = '/login'
+}
+
+function forgot() {
+  store.dispatch('account/forgot', email.value)
 }
 </script>
 
@@ -23,7 +29,7 @@ function goToLogin() {
             <el-input v-model="email" placeholder="Email" />
           </el-form-item>
           <el-form-item>
-            <el-button style="width: 100%" type="primary">Send Request</el-button>
+            <el-button style="width: 100%" type="primary" @click="forgot()">Send Request</el-button>
           </el-form-item>
         </el-form>
         <a class="back-login-btn" @click="goToLogin()" href="javascript:void(0)" >Back To Login</a>
