@@ -1,3 +1,18 @@
+<script setup>
+
+function getFullName() {
+    return 'Lê Khắc Phúc'
+}
+
+function logout() {
+    alert('Logout')
+}
+
+function goToHome() {
+    window.location = '/'
+}
+</script>
+
 <template>
     <section class="pbhn-header">
         <div class="header_left">
@@ -11,25 +26,6 @@
         </div>
     </section>
 </template>
-
-<script>
-export default {
-    name: 'BphnHeader',
-    methods: {
-        getFullName() {
-            return 'Lê Khắc Phúc'
-        },
-
-        logout() {
-            alert('Logout')
-        },
-
-        goToHome() {
-            window.location = '/'
-        }
-    }
-}
-</script>
 
 <style scoped>
 @import '@/assets/css/BPHNHeader.css';

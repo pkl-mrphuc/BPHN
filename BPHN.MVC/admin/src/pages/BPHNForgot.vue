@@ -1,3 +1,13 @@
+<script setup>
+import {ref} from 'vue'
+
+const email = ref('')
+
+function goToLogin() {
+  window.location = '/login'
+}
+</script>
+
 <template>
   <section class="pbhn-login">
     <div class="box">
@@ -21,22 +31,6 @@
     </div>
   </section>
 </template>
-
-<script>
-export default {
-  name: "BPHNForgot",
-  data() {
-    return {
-        email: ''
-    }
-  },
-  methods: {
-    goToLogin() {
-        window.location = '/login'
-    }
-  }
-};
-</script>
 
 <style scoped>
 @import "@/assets/css/BPHNLogin.css";

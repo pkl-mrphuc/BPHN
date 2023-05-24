@@ -62,16 +62,16 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach(async (to) => {
+// router.beforeEach(async (to) => {
 
-  const publicPages = ['/login', '/forgot'];
+//   const publicPages = ['/login', '/forgot'];
 
-  const authRequired = !publicPages.includes(to.path);
-  if (authRequired) {
-      return '/login';
-  }
+//   const authRequired = !publicPages.includes(to.path);
+//   if (authRequired) {
+//       return '/login';
+//   }
 
-});
+// });
 
 router.afterEach((to) => {
   document.title = to.meta.title ? `[${to.meta.title}] | BPHN Hà Nội` : 'BPHN Hà Nội'

@@ -1,3 +1,14 @@
+<script setup>
+import {ref} from 'vue'
+
+const username = ref('')
+const password = ref('')
+
+function goToForgot() {
+  window.location = '/forgot'
+}
+</script>
+
 <template>
   <section class="pbhn-login">
     <div class="box">
@@ -17,30 +28,13 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary">Submit</el-button>
-            <a class="forgot-btn" href="javascript:void(0)" @click="goToForgot()">Forgot password</a>
+            <a class="forgot-btn" href="javascript:void(0)" @click="goToForgot()">Forgot Password</a>
           </el-form-item>
         </el-form>
       </div>
     </div>
   </section>
 </template>
-
-<script>
-export default {
-  name: "BPHNLogin",
-  data() {
-    return {
-        username: '',
-        password: ''
-    }
-  },
-  methods: {
-    goToForgot() {
-      window.location = '/forgot'
-    }
-  }
-};
-</script>
 
 <style scoped>
 @import "@/assets/css/BPHNLogin.css";
