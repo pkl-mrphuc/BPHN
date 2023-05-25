@@ -25,7 +25,7 @@ const actions = {
                 let user = res.data.data
                 if(user) {
                     commit('setContext', user)
-                    window.location = '/'
+                    window.location = '/bm'
                 }
             } 
             else {

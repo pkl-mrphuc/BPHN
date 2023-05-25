@@ -4,10 +4,13 @@ using BPHN.ModelLayer;
 using BPHN.ModelLayer.ObjectQueues;
 using BPHN.ModelLayer.Others;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Reflection;
 using System.Security.Principal;
@@ -23,18 +26,21 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IEmailService _mailService;
         private readonly IKeyGenerator _keyGenerator;
         private readonly IHistoryLogService _historyLogService;
+        private readonly AppSettings _appSettings;
         
         public AccountService(IAccountRepository accountRepository,
             IContextService contextService, 
             IEmailService mailService,
             IKeyGenerator keyGenerator,
-            IHistoryLogService historyLogService)
+            IHistoryLogService historyLogService,
+            IOptions<AppSettings> appSettings)
         {
             _accountRepository = accountRepository;
             _contextService = contextService;
             _mailService = mailService;
             _keyGenerator = keyGenerator;
             _historyLogService = historyLogService;
+            _appSettings = appSettings.Value;
         }
 
         public ServiceResultModel GetById(Guid id)
@@ -93,6 +99,48 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 Success = true,
                 Data = lstTenants
+            };
+        }
+
+        public ServiceResultModel GetTokenInfo(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.EMPTY_INPUT,
+                    Message = "Dữ liệu đầu vào không được để trống"
+                };
+            }
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero
+            }, out SecurityToken validatedToken);
+
+            var jwtToken = (JwtSecurityToken)validatedToken;
+
+            if (jwtToken.ValidTo < DateTime.Now)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = "Token đã hết hạn"
+                };
+            }
+
+            return new ServiceResultModel()
+            {
+                Success = true,
+                Data = jwtToken
             };
         }
 
@@ -363,5 +411,17 @@ namespace BPHN.BusinessLayer.ImpServices
                 Data = resultResetPassword
             };
         }
+
+        public ServiceResultModel ValidateToken(string token)
+        {
+            ServiceResultModel result = GetTokenInfo(token);
+            return new ServiceResultModel()
+            {
+                Success = true,
+                Data = result.Success
+            };
+        }
+
+        
     }
 }

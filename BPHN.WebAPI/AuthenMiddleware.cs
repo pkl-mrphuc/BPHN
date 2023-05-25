@@ -2,6 +2,7 @@
 using BPHN.ModelLayer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
@@ -32,23 +33,15 @@ namespace BPHN.WebAPI
 
         private void GetContext(HttpContext context, IAccountService accountService, string token)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            var tokenResult = accountService.GetTokenInfo(token);
+            if(tokenResult.Success && tokenResult.Data != null)
             {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ClockSkew = TimeSpan.Zero
-            }, out SecurityToken validatedToken);
+                var jwtToken = (JwtSecurityToken)tokenResult.Data;
+                var userId = Guid.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
 
-            var jwtToken = (JwtSecurityToken)validatedToken;
-            var userId = Guid.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
-
-            var serviceResult = accountService.GetById(userId);
-            context.Items["User"] = serviceResult.Data;
-
+                var serviceResult = accountService.GetById(userId);
+                context.Items["User"] = serviceResult.Data;
+            }
         }
     }
 }

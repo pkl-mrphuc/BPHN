@@ -1,0 +1,28 @@
+.pbhn-config {
+    width: 100%;
+    height: calc(100vh - 60px - 25px - 25px);
+    overflow-y: scroll;
+}
+
+.container {
+    
+}
+
+.head {
+    display: flex;
+    align-items: center;
+}
+
+.head_title {
+    font-weight: 700;
+    font-size: 24px;
+    margin: 0;
+}
+
+.head_toolbar {
+    margin-left: auto;
+}
+
+.body {
+    padding-top: 20px;
+}

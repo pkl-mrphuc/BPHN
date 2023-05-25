@@ -5,6 +5,7 @@
     overflow-y: scroll;
     background-color: #fff;
     margin-top: 1px;
+    border-right: 1px solid #cecece;
 }
 
 .menus {

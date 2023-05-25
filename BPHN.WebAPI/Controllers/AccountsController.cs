@@ -64,5 +64,13 @@ namespace BPHN.WebAPI.Controllers
         {
             return Ok(_accountService.GetCountPaging(pageIndex, pageSize, txtSearch));
         }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("validate-token")]
+        public IActionResult ValidateToken(string token)
+        {
+            return Ok(_accountService.ValidateToken(token));
+        }
     }
 }

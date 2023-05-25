@@ -33,6 +33,8 @@ builder.Services.AddScoped<IHistoryLogRepository, HistoryLogRepository>();
 builder.Services.AddScoped<IContextService, ContextService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IKeyGenerator, KeyGenerator>();
+builder.Services.AddScoped<IConfigService, ConfigService>();
+builder.Services.AddScoped<IConfigRepository, ConfigRepository>();
 builder.Services.AddSingleton<IRabbitMQProducerService, RabbitMQProducerService>();
 
 builder.Services.AddMvc(options => options.ModelValidatorProviders.Clear());

@@ -10,6 +10,10 @@ body {
     margin: 0;
 }
 
+.el-main {
+  padding: 25px;
+}
+
 /* width */
 ::-webkit-scrollbar {
     width: 1px;
@@ -17,16 +21,16 @@ body {
   
   /* Track */
   ::-webkit-scrollbar-track {
-    background: #cecece;
+    background: #fff;
   }
   
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: #cecece;
+    background: #fff;
     border-radius: 5px;
   }
   
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
-    background: #cecece;
+    background: #fff;
   }

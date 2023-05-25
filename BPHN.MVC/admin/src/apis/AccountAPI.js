@@ -16,6 +16,11 @@ class AccountAPI {
         return await axios.get(requestUrl)
         
     }
+
+    async validateToken(token) {
+        let requestUrl = `https://localhost:7166/api/accounts/validate-token?token=${token}`
+        return await axios.get(requestUrl)
+    }
 }
 
 export default new AccountAPI()

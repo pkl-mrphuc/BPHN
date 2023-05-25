@@ -4,7 +4,7 @@ import en from '@/i18n/en/index.js'
 
 const i18n = createI18n({
     legacy: false,
-    locale: 'vn',
+    locale: 'en',
     messages: {
         en: en,
         vn: vn

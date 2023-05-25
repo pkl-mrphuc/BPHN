@@ -4,6 +4,9 @@ import HelloWorld from '@/components/HelloWorld.vue'
 import LoginPage from '@/pages/BPHNLogin.vue'
 import ForgotPage from '@/pages/BPHNForgot.vue'
 import i18n from '@/i18n/index.js'
+import AccountAPI from '@/apis/AccountAPI'
+import ConfigAPI from '@/apis/ConfigAPI'
+import Configurations from '@/components/BPHNConfigurations.vue'
 
 const routes = [
   {
@@ -14,28 +17,28 @@ const routes = [
         path: '/calendar',
         component: HelloWorld,
         meta: {
-          title: i18n.global.t('CalendarTitle')
+          title: 'CalendarTitle'
         }
       },
       {
         path: '/bm',
         component: HelloWorld,
         meta: {
-          title: i18n.global.t('BMTitle')
+          title: 'BMTitle'
         }
       },
       {
         path: '/my-grounds',
         component: HelloWorld,
         meta: {
-          title: i18n.global.t('MyGroundsTitle')
+          title: 'MyGroundsTitle'
         }
       },
       {
         path: '/configuartions',
-        component: HelloWorld,
+        component: Configurations,
         meta: {
-          title: i18n.global.t('ConfiguarationsTitle')
+          title: 'ConfigurationsTitle'
         }
       }
     ]
@@ -45,7 +48,7 @@ const routes = [
     name: 'login',
     component: LoginPage,
     meta: {
-      title: i18n.global.t('LoginForm')
+      title: 'LoginForm'
     }
   },
   {
@@ -53,7 +56,7 @@ const routes = [
     name: 'forgot',
     component: ForgotPage,
     meta: {
-      title: i18n.global.t('ForgotPasswordTitle')
+      title: 'ForgotPasswordTitle'
     }
   },
 ]
@@ -69,14 +72,31 @@ router.beforeEach(async (to) => {
 
   const authRequired = !publicPages.includes(to.path)
   const authKey = JSON.parse(localStorage.getItem('admin-auth-key'))
-  if (authRequired && !authKey?.account?.context) {
-      return '/login'
+  if (authRequired && !authKey?.account?.context?.token) {
+    return '/login'
   }
 
-});
+  let validateResult = await AccountAPI.validateToken(authKey.account.context.token)
+  if (!validateResult?.data?.success) {
+    return '/login'
+  }
 
-router.afterEach((to) => {
-  document.title = to.meta.title ? `[${to.meta.title}] | ${i18n.global.t('BPHNHaNoi')}` : `${i18n.global.t('BPHNHaNoi')}`
+  if (!window['LoadedConfig']) {
+    window['LoadedConfig'] = true
+    let res = await ConfigAPI.getConfigs('')
+    if (res?.data?.success && res?.data?.data) {
+      let lstConfig = res?.data?.data
+      if (Array.isArray(lstConfig)) {
+        for (let i = 0; i < lstConfig.length; i++) {
+          const item = lstConfig[i];
+          window[item.key] = item.value
+        }
+      }
+    }
+  }
+
+  i18n.global.locale.value = window['Language']
+  document.title = to.meta.title ? `[${i18n.global.t(to.meta.title)}] | ${i18n.global.t('BPHNHaNoi')}` : `${i18n.global.t('BPHNHaNoi')}`
 })
 
 export default router
