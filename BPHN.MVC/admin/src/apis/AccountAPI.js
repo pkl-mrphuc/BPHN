@@ -6,20 +6,31 @@ class AccountAPI {
     }
 
     async login(account) {
-        let requestUrl = 'https://localhost:7166/api/accounts/login'
-        let requestParam = account
-        return await axios.post(requestUrl, requestParam)
+        try {
+            let requestUrl = 'https://localhost:7166/api/accounts/login'
+            let requestParam = account
+            return await axios.post(requestUrl, requestParam)
+        } catch (error) {
+            return false   
+        }
     }
 
     async forgot(email) {
-        let requestUrl = `https://localhost:7166/api/accounts/send-reset-password?username=${email}`
-        return await axios.get(requestUrl)
-        
+        try {
+            let requestUrl = `https://localhost:7166/api/accounts/send-reset-password?username=${email}`
+            return await axios.get(requestUrl)
+        } catch (error) {
+            return false   
+        }
     }
 
     async validateToken(token) {
-        let requestUrl = `https://localhost:7166/api/accounts/validate-token?token=${token}`
-        return await axios.get(requestUrl)
+        try {
+            let requestUrl = `https://localhost:7166/api/accounts/validate-token?token=${token}`
+            return await axios.get(requestUrl)
+        } catch (error) {
+            return false
+        }
     }
 }
 

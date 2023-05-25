@@ -3,10 +3,8 @@ import Layout from '@/layouts/BPHNLayout.vue'
 import HelloWorld from '@/components/HelloWorld.vue'
 import LoginPage from '@/pages/BPHNLogin.vue'
 import ForgotPage from '@/pages/BPHNForgot.vue'
-import i18n from '@/i18n/index.js'
-import AccountAPI from '@/apis/AccountAPI'
-import ConfigAPI from '@/apis/ConfigAPI'
 import Configurations from '@/components/BPHNConfigurations.vue'
+import i18n from '@/i18n/index.js'
 
 const routes = [
   {
@@ -76,26 +74,6 @@ router.beforeEach(async (to) => {
     return '/login'
   }
 
-  let validateResult = await AccountAPI.validateToken(authKey.account.context.token)
-  if (!validateResult?.data?.success) {
-    return '/login'
-  }
-
-  if (!window['LoadedConfig']) {
-    window['LoadedConfig'] = true
-    let res = await ConfigAPI.getConfigs('')
-    if (res?.data?.success && res?.data?.data) {
-      let lstConfig = res?.data?.data
-      if (Array.isArray(lstConfig)) {
-        for (let i = 0; i < lstConfig.length; i++) {
-          const item = lstConfig[i];
-          window[item.key] = item.value
-        }
-      }
-    }
-  }
-
-  i18n.global.locale.value = window['Language']
   document.title = to.meta.title ? `[${i18n.global.t(to.meta.title)}] | ${i18n.global.t('BPHNHaNoi')}` : `${i18n.global.t('BPHNHaNoi')}`
 })
 

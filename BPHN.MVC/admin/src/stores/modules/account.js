@@ -9,6 +9,11 @@ const getters = {
     getFullName: (state) => {
         if(!state.context) return ''
         return state.context.fullName
+    },
+
+    getToken: (state) => {
+        if(!state.context) return ''
+        return state.context.token
     }
 }
 
