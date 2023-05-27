@@ -23,7 +23,7 @@ namespace BPHN.BusinessLayer.ImpServices
         public ServiceResultModel GetConfigs(string key = null)
         {
             var context = _contextService.GetContext();
-            if(context == null)
+            if (context == null)
             {
                 return new ServiceResultModel()
                 {
@@ -37,6 +37,46 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 Success = true,
                 Data = _configRepository.GetConfigs(context.Id, key)
+            };
+        }
+
+        public ServiceResultModel Save(List<Config> configs)
+        {
+            var context = _contextService.GetContext();
+            if (context == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = "Token đã hết hạn"
+                };
+            }
+
+            if (configs == null || (configs != null && configs.Count == 0))
+            {
+                return new ServiceResultModel()
+                {
+                    Success = true,
+                    Data = true
+                };
+            }
+
+            configs = configs.Select(item =>
+            {
+                item.ModifiedDate = DateTime.Now;
+                item.ModifiedBy = context.FullName;
+                item.CreatedBy = context.FullName;
+                item.CreatedDate = DateTime.Now;
+                item.AccountId = context.Id.ToString();
+                item.Id = Guid.NewGuid();
+                return item;
+            }).ToList();
+
+            return new ServiceResultModel()
+            {
+                Success = true,
+                Data = _configRepository.Save(configs)
             };
         }
     }

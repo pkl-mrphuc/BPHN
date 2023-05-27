@@ -17,6 +17,11 @@
     font-weight: 700;
     font-size: 24px;
     margin: 0;
+    color: #000;
+}
+
+.common-layout.dark .head_title {
+    color: #e5eaf3;
 }
 
 .head_toolbar {

@@ -21,6 +21,11 @@ const en = {
     PasswordEmptyMesg: 'Mật khẩu không được để trống.',
     BPHNHaNoi: 'BPHN Ha Noi',
     ErrorMesg: 'Đã có lỗi xảy ra. Vui lòng liên hệ đến nhà cung cấp',
-    ResetPasswordMesg: 'Vui lòng kiểm tra email để lấy lại mật khẩu'
+    ResetPasswordMesg: 'Vui lòng kiểm tra email để lấy lại mật khẩu',
+    SaveSuccess: 'Lưu thành công',
+    Save: 'Save',
+    Title: 'Title',
+    Language: 'Language',
+    DarkMode: 'Dark mode'
 }
 export default en

@@ -6,8 +6,22 @@ class ConfigAPI {
     }
 
     async getConfigs(keys) {
-        let requestUrl = `https://localhost:7166/api/configs?key=${keys}`
-        return await axios.get(requestUrl)
+        try {
+            let requestUrl = `https://localhost:7166/api/configs?key=${keys}`
+            return await axios.get(requestUrl)
+        } catch (error) {
+           return false 
+        }
+    }
+
+    async save(configs) {
+        try {
+            let requestUrl = `https://localhost:7166/api/configs/save`
+            let requestParam =  configs
+            return await axios.post(requestUrl, requestParam)            
+        } catch (error) {
+            return false
+        }
     }
 }
 

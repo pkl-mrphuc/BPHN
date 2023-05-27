@@ -8,6 +8,7 @@ body {
 .el-header {
     padding: 0;
     margin: 0;
+    border-bottom: 1px solid #cecece;
 }
 
 .el-main {
@@ -34,3 +35,46 @@ body {
   ::-webkit-scrollbar-thumb:hover {
     background: #fff;
   }
+
+  
+
+  .main-layout {
+    background-color: #fff;
+  }
+
+  .common-layout.dark .main-layout {
+    background-color: #141414;
+  }
+
+  .common-layout.dark .menu-layout {
+    border-right: 1px solid #cecece;
+  }
+
+  .common-layout.dark .el-table{
+    --el-table-header-bg-color: #262727;
+    --el-table-tr-bg-color: #262727;
+    --el-table-row-hover-bg-color: #262727;
+    --el-table-header-text-color: #e5eaf3;
+    color: #e5eaf3;
+  }
+
+  /* width */
+  .common-layout.dark ::-webkit-scrollbar {
+  width: 0;
+}
+
+/* Track */
+.common-layout.dark ::-webkit-scrollbar-track {
+  background: #262727;
+}
+
+/* Handle */
+.common-layout.dark ::-webkit-scrollbar-thumb {
+  background: #262727;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+.common-layout.dark ::-webkit-scrollbar-thumb:hover {
+  background: #262727;
+}

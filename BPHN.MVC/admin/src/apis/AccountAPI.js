@@ -11,6 +11,7 @@ class AccountAPI {
             let requestParam = account
             return await axios.post(requestUrl, requestParam)
         } catch (error) {
+            console.log(error)
             return false   
         }
     }
@@ -20,6 +21,7 @@ class AccountAPI {
             let requestUrl = `https://localhost:7166/api/accounts/send-reset-password?username=${email}`
             return await axios.get(requestUrl)
         } catch (error) {
+            console.log(error)
             return false   
         }
     }
@@ -29,6 +31,7 @@ class AccountAPI {
             let requestUrl = `https://localhost:7166/api/accounts/validate-token?token=${token}`
             return await axios.get(requestUrl)
         } catch (error) {
+            console.log(error)
             return false
         }
     }

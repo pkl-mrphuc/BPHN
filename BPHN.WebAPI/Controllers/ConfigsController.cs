@@ -1,4 +1,5 @@
 ﻿using BPHN.BusinessLayer.IServices;
+using BPHN.ModelLayer;
 using BPHN.ModelLayer.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +19,13 @@ namespace BPHN.WebAPI.Controllers
         public IActionResult GetConfigs(string key)
         {
             return Ok(_configService.GetConfigs(key));
+        }
+
+        [HttpPost]
+        [Route("save")]
+        public IActionResult SaveConfigs([FromBody] List<Config> configs)
+        {
+            return Ok(_configService.Save(configs));
         }
     }
 }

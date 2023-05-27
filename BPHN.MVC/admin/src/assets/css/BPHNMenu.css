@@ -4,8 +4,12 @@
     box-sizing: border-box;
     overflow-y: scroll;
     background-color: #fff;
-    margin-top: 1px;
     border-right: 1px solid #cecece;
+}
+
+.common-layout.dark .bphn-menu {
+    background-color: #141414;
+    border-right: 1px solid #141414;
 }
 
 .menus {
