@@ -11,6 +11,6 @@ namespace BPHN.BusinessLayer.IServices
     {
         ServiceResultModel GetPaging(int pageIndex, int pageSize, string txtSearch);
         ServiceResultModel GetCountPaging(int pageIndex, int pageSize, string txtSearch);
-        ServiceResultModel Write(HistoryLog history);
+        ServiceResultModel Write(HistoryLog history, Account? context);
     }
 }

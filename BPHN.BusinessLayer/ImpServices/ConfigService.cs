@@ -13,11 +13,14 @@ namespace BPHN.BusinessLayer.ImpServices
     {
         private readonly IConfigRepository _configRepository;
         private readonly IContextService _contextService;
+        private readonly IHistoryLogService _historyLogService;
         public ConfigService(IConfigRepository configRepository,
-            IContextService contextService)
+            IContextService contextService,
+            IHistoryLogService historyLogService)
         {
             _configRepository = configRepository;
             _contextService = contextService;
+            _historyLogService = historyLogService;
         }
 
         public ServiceResultModel GetConfigs(string key = null)
@@ -73,10 +76,26 @@ namespace BPHN.BusinessLayer.ImpServices
                 return item;
             }).ToList();
 
+            bool saveResult = _configRepository.Save(configs);
+            if(saveResult)
+            {
+                Thread thread = new Thread(delegate ()
+                {
+                    _historyLogService.Write(new HistoryLog()
+                    {
+                        Actor = context.UserName,
+                        ActorId = context.Id,
+                        ActionType = ActionEnum.SAVE_CONFIG,
+                        ActionName = string.Empty
+                    }, context);
+                });
+                thread.Start();
+            }
+
             return new ServiceResultModel()
             {
                 Success = true,
-                Data = _configRepository.Save(configs)
+                Data = saveResult
             };
         }
     }

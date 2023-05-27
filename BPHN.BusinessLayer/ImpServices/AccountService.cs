@@ -68,7 +68,38 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
 
-            var resultCountPaging = _accountRepository.GetCountPaging(pageIndex, pageSize, txtSearch);
+            var where = new List<WhereCondition>();
+
+            where.Add(new WhereCondition()
+            {
+                Column = "Role",
+                Operator = "=",
+                Value = "TENANT"
+            });
+
+            if (!string.IsNullOrEmpty(txtSearch))
+            {
+                where.Add(new WhereCondition()
+                {
+                    Column = "UserName",
+                    Operator = "like",
+                    Value = $"%{txtSearch}%"
+                });
+                where.Add(new WhereCondition()
+                {
+                    Column = "Email",
+                    Operator = "like",
+                    Value = $"%{txtSearch}%"
+                });
+                where.Add(new WhereCondition()
+                {
+                    Column = "FullName",
+                    Operator = "like",
+                    Value = $"%{txtSearch}%"
+                });
+            }
+
+            var resultCountPaging = _accountRepository.GetCountPaging(pageIndex, pageSize, where);
 
             return new ServiceResultModel()
             {
@@ -93,7 +124,38 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
 
-            var lstTenants = _accountRepository.GetPaging(pageIndex, pageSize, txtSearch);
+            var where = new List<WhereCondition>();
+
+            where.Add(new WhereCondition()
+            {
+                Column = "Role",
+                Operator = "=",
+                Value = "TENANT"
+            });
+
+            if (!string.IsNullOrEmpty(txtSearch))
+            {
+                where.Add(new WhereCondition()
+                {
+                    Column = "UserName",
+                    Operator = "like",
+                    Value = $"%{txtSearch}%"
+                });
+                where.Add(new WhereCondition()
+                {
+                    Column = "Email",
+                    Operator = "like",
+                    Value = $"%{txtSearch}%"
+                });
+                where.Add(new WhereCondition()
+                {
+                    Column = "FullName",
+                    Operator = "like",
+                    Value = $"%{txtSearch}%"
+                });
+            }
+
+            var lstTenants = _accountRepository.GetPaging(pageIndex, pageSize, where);
 
             return new ServiceResultModel()
             {
@@ -181,15 +243,20 @@ namespace BPHN.BusinessLayer.ImpServices
 
             string token = _accountRepository.GetToken(realAccount.Id.ToString());
 
-            var thread = new Thread(() =>
+            var fakeContext = new Account()
+            {
+                FullName = realAccount.FullName
+            };
+
+            var thread = new Thread(delegate()
             {
                 _historyLogService.Write(new HistoryLog()
                 {
                     Actor = realAccount.UserName,
-                    ActorId = realAccount.Id.ToString(),
+                    ActorId = realAccount.Id,
                     ActionType = ActionEnum.LOGIN,
-                    EntityName = string.Empty
-                });
+                    ActionName = string.Empty
+                }, fakeContext);
             });
             thread.Start();
 
@@ -246,6 +313,12 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
+            account.Id = Guid.NewGuid();
+            account.CreatedBy = context.FullName;
+            account.CreatedDate = DateTime.Now;
+            account.ModifiedBy = context.FullName;
+            account.ModifiedDate = DateTime.Now;
+
             bool resultRegister = _accountRepository.RegisterForTenant(account);
             if(resultRegister)
             {
@@ -264,17 +337,21 @@ namespace BPHN.BusinessLayer.ImpServices
                             ParameterType = typeof(ResetPasswordParameter)
                         })
                     });
+                });
+                thread.Start();
 
+                var threadLog = new Thread(delegate ()
+                {
                     _historyLogService.Write(new HistoryLog()
                     {
                         Actor = context.UserName,
-                        ActorId = context.Id.ToString(),
+                        ActorId = context.Id,
                         ActionType = ActionEnum.REGISTER_ACCOUNT,
-                        EntityName = string.Empty,
+                        ActionName = string.Empty,
                         Description = account.UserName,
-                    });
+                    }, context);
                 });
-                thread.Start();
+                threadLog.Start();
             }
 
             return new ServiceResultModel()
@@ -323,16 +400,21 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if(resultSendMail)
             {
-                Thread thread = new Thread(() =>
+                var fakeContext = new Account()
+                {
+                    FullName = realAccount.FullName
+                };
+
+                Thread thread = new Thread(delegate()
                 {
                     _historyLogService.Write(new HistoryLog()
                     {
                         Actor = realAccount.UserName,
-                        ActorId = realAccount.Id.ToString(),
+                        ActorId = realAccount.Id,
                         ActionType = ActionEnum.SEND_RESET_PASSWORD,
-                        EntityName = string.Empty,
+                        ActionName = string.Empty,
                         Description = string.Empty,
-                    });
+                    }, fakeContext);
                 });
                 thread.Start();
             }
@@ -391,16 +473,21 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if(resultResetPassword)
             {
-                Thread thread = new Thread(() =>
+                var fakeContext = new Account()
+                {
+                    FullName = realAccount.FullName
+                };
+
+                Thread thread = new Thread(delegate()
                 {
                     _historyLogService.Write(new HistoryLog()
                     {
                         Actor = realAccount.UserName,
-                        ActorId = realAccount.Id.ToString(),
+                        ActorId = realAccount.Id,
                         ActionType = ActionEnum.SUBMIT_RESET_PASSWORD,
-                        EntityName = string.Empty,
+                        ActionName = string.Empty,
                         Description = string.Empty,
-                    });
+                    }, fakeContext);
                 });
                 thread.Start();
             }

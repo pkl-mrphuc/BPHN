@@ -35,5 +35,6 @@ namespace BPHN.ModelLayer
         REGISTER_ACCOUNT = 1,
         SEND_RESET_PASSWORD = 2,
         SUBMIT_RESET_PASSWORD = 3,
+        SAVE_CONFIG = 4,
     }
 }

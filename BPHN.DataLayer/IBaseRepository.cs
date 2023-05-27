@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿using BPHN.ModelLayer.Others;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,5 +14,6 @@ namespace BPHN.DataLayer
     {
         IDbConnection ConnectDB(string connectionString);
         string GetConnectionString();
+        string BuildWhereQuery(List<WhereCondition> where);
     }
 }

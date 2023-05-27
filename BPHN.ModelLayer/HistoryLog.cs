@@ -9,9 +9,9 @@ namespace BPHN.ModelLayer
     public class HistoryLog : BaseModel
     {
         public ActionEnum ActionType { get; set; }
-        public string EntityName { get; set; }
+        public string ActionName { get; set; }
         public string Description { get; set; }
         public string Actor { get; set; }
-        public string ActorId { get; set; }
+        public Guid ActorId { get; set; }
     }
 }
