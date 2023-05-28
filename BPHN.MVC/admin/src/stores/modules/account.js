@@ -48,6 +48,7 @@ const actions = {
         AccountAPI.forgot(email).then((res) => {
             if(res?.data?.success) {
                 alert(i18n.global.t('ResetPasswordMesg'))
+                window.location = '/login'
             }
             else {
                 let msg = res?.data?.message
@@ -62,7 +63,17 @@ const actions = {
 
     resetPassword: ((commit, data) => {
         AccountAPI.resetPassword(data).then((res) => {
-            console.log(res)
+            if(res?.data?.success) {
+                alert(i18n.global.t('SaveSuccess'))
+            }
+            else {
+                let msg = res?.data?.message
+                alert(msg??i18n.global.t('ErrorMesg'))
+            }
+        })
+        .catch((error) => {
+            console.log(error)
+            alert(i18n.global.t('ErrorMesg'))
         })
     })
 }

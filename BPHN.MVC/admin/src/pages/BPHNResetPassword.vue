@@ -33,7 +33,6 @@ function submit() {
     return
   }
 
-    debugger; // eslint-disable-line no-debugger
   let data = {
     userName: userName.value,
     code: getQueryStringByKey('code'),

@@ -199,7 +199,16 @@ namespace BPHN.DataLayer.ImpRepositories
 
         public bool SavePassword(Guid id, string password)
         {
-            return true;
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                string query = @"update accounts set Password = @password where Id = @id";
+                Dictionary<string, object> dic = new Dictionary<string, object>();
+                dic.Add("@id", id);
+                dic.Add("@password", password);
+                int affect = connection.Execute(query, dic);
+                return affect > 0 ? true : false;
+            }
         }
     }
 }
