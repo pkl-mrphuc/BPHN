@@ -35,6 +35,17 @@ class AccountAPI {
             return false
         }
     }
+
+    async resetPassword(data) {
+        try {
+            let requestUrl = `https://localhost:7166/api/accounts/submit-reset-password`
+            let requestParam = data
+            return await axios.post(requestUrl, requestParam)
+        } catch (error) {
+            console.log(error)
+            return false
+        }
+    }
 }
 
 export default new AccountAPI()

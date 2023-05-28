@@ -100,23 +100,45 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public List<Account> GetPaging(int pageIndex, int pageSize, List<WhereCondition> where)
+        public List<Account> GetPaging(int pageIndex, int pageSize, string txtSearch)
         {
-            string whereQuery = BuildWhereQuery(where);
 
+            string query = string.Empty;
+            string countQuery = string.Empty;
             Dictionary<string, object> dic = new Dictionary<string, object>();
-            for (int i = 0; i < where.Count; i++)
+            if (!string.IsNullOrEmpty(txtSearch))
             {
-                var item = string.Format("@where{0}", i);
-                dic.Add(item, where[i].Value);
+                query = @"  select distinct * from  (
+                                                    select * from accounts where Role = @where0 and UserName like @where1
+                                                    union 
+                                                    select * from accounts where Role = @where0 and Email like @where2
+                                                    union 
+                                                    select * from accounts where Role = @where0 and FulLName like @where3) as ac
+                            order by ac.ModifiedDate desc
+                            limit @offSet, @pageSize";
+                countQuery = @" select distinct count(*) from   (
+                                                                select * from accounts where Role = @where0 and UserName like @where1
+                                                                union 
+                                                                select * from accounts where Role = @where0 and Email like @where2
+                                                                union 
+                                                                select * from accounts where Role = @where0 and FulLName like @where3) as ac";
+                dic.Add("@where0", "TENANT");
+                dic.Add("@where1", $"%{txtSearch}%");
+                dic.Add("@where2", $"%{txtSearch}%");
+                dic.Add("@where3", $"%{txtSearch}%");
             }
-            string query = $"select * from accounts where {whereQuery} order by ModifiedDate desc limit @offSet, @pageSize";
+            else 
+            {
+                query = "select * from accounts where Role = @where0 order by ModifiedDate desc limit @offSet, @pageSize";
+                countQuery = "select count(*) from accounts where Role = @where0";
+                dic.Add("@where0", "TENANT");
+            }
 
 
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                int totalRecord = connection.QuerySingle<int>($"select count(*) from accounts where {whereQuery}", dic);
+                int totalRecord = connection.QuerySingle<int>(countQuery, dic);
                 int totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
                 if (pageIndex > totalPage)
                 {
@@ -131,21 +153,33 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public object GetCountPaging(int pageIndex, int pageSize, List<WhereCondition> where)
+        public object GetCountPaging(int pageIndex, int pageSize, string txtSearch)
         {
-            string whereQuery = BuildWhereQuery(where);
-
+            string countQuery = string.Empty;
             Dictionary<string, object> dic = new Dictionary<string, object>();
-            for (int i = 0; i < where.Count; i++)
+            if (!string.IsNullOrEmpty(txtSearch))
             {
-                var item = string.Format("@where{0}", i);
-                dic.Add(item, where[i].Value);
+                countQuery = @" select distinct count(*) from   (
+                                                                select * from accounts where Role = @where0 and UserName like @where1
+                                                                union 
+                                                                select * from accounts where Role = @where0 and Email like @where2
+                                                                union 
+                                                                select * from accounts where Role = @where0 and FulLName like @where3) as ac";
+                dic.Add("@where0", "TENANT");
+                dic.Add("@where1", $"%{txtSearch}%");
+                dic.Add("@where2", $"%{txtSearch}%");
+                dic.Add("@where3", $"%{txtSearch}%");
+            }
+            else
+            {
+                countQuery = "select count(*) from accounts where Role = @where0";
+                dic.Add("@where0", "TENANT");
             }
 
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                int totalRecord = connection.QuerySingle<int>($"select count(*) from accounts where {whereQuery}", dic);
+                int totalRecord = connection.QuerySingle<int>(countQuery, dic);
                 int totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
                 int totalRecordCurrentPage = 0;
                 if (totalRecord > 0)

@@ -26,6 +26,9 @@ const en = {
     Save: 'Save',
     Title: 'Title',
     Language: 'Language',
-    DarkMode: 'Dark mode'
+    DarkMode: 'Dark mode',
+    ResetPasswordTitle: 'Reset Password',
+    PasswordAgain: 'Password Again',
+    NoMatchPasswordMesg: 'Password is incorrect'
 }
 export default en

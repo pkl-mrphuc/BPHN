@@ -58,6 +58,12 @@ const actions = {
             console.log(error)
             alert(i18n.global.t('ErrorMesg'))
         })
+    }),
+
+    resetPassword: ((commit, data) => {
+        AccountAPI.resetPassword(data).then((res) => {
+            console.log(res)
+        })
     })
 }
 

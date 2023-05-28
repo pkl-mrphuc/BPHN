@@ -2,6 +2,7 @@
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Attributes;
 using BPHN.ModelLayer.Others;
+using BPHN.ModelLayer.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -42,11 +43,11 @@ namespace BPHN.WebAPI.Controllers
         }
 
         [AllowAnonymous]
-        [Route("submit-reset-password/{password}")]
+        [Route("submit-reset-password")]
         [HttpPost]
-        public IActionResult SubmitResetPassword([FromBody] string code, string password)
+        public IActionResult SubmitResetPassword([FromBody] ResetPasswordVm request)
         {
-            return Ok(_accountService.SubmitResetPassword(code, password));
+            return Ok(_accountService.SubmitResetPassword(request.Code, request.Password, request.UserName));
         }
 
         [ApiAuthorize]

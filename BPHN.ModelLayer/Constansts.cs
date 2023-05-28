@@ -18,5 +18,6 @@ namespace BPHN.ModelLayer
         public const int NOT_EXISTS = 102;
         public const int EXISTED = 103;
         public const int OUT_TIME = 104;
+        public const int NO_INTEGRITY = 105;
     }
 }

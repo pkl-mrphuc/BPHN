@@ -26,7 +26,10 @@ const vn = {
     Save: 'Lưu',
     Title: 'Tiêu đề',
     Language: 'Ngôn ngữ',
-    DarkMode: 'Nền tối'
+    DarkMode: 'Nền tối',
+    ResetPasswordTitle: 'Đổi mật khẩu',
+    PasswordAgain: 'Nhập lại mật khẩu',
+    NoMatchPasswordMesg: 'Mật khẩu không đúng'
 }
 
 export default vn

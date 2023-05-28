@@ -15,7 +15,7 @@ namespace BPHN.BusinessLayer.IServices
         ServiceResultModel ResetPassword(string userName);
         ServiceResultModel GetPaging(int pageIndex, int pageSize, string txtSearch);
         ServiceResultModel GetCountPaging(int pageIndex, int pageSize, string txtSearch);
-        ServiceResultModel SubmitResetPassword(string code, string password);
+        ServiceResultModel SubmitResetPassword(string code, string password, string userName);
         ServiceResultModel ValidateToken(string token);
         ServiceResultModel GetTokenInfo(string token);
     }

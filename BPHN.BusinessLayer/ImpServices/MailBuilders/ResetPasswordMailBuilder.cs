@@ -43,7 +43,8 @@ namespace BPHN.BusinessLayer.ImpServices.MailBuilders
                                     AccountId = resetPasswordParam.AccountId.ToString()
                                 }
                             ));
-                    string link = string.Format("{0}?key={1}", _appSettings.ClientHost, key);
+
+                    string link = string.Format("{0}/reset-password?code={1}&userName={2}", _appSettings.ClientHost, key, resetPasswordParam.UserName);
                     var vm = new MailVm<MailResetPasswordVm>()
                     {
                         Model = new MailResetPasswordVm()

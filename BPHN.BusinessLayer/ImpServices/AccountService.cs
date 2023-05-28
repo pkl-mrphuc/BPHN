@@ -68,38 +68,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
 
-            var where = new List<WhereCondition>();
-
-            where.Add(new WhereCondition()
-            {
-                Column = "Role",
-                Operator = "=",
-                Value = "TENANT"
-            });
-
-            if (!string.IsNullOrEmpty(txtSearch))
-            {
-                where.Add(new WhereCondition()
-                {
-                    Column = "UserName",
-                    Operator = "like",
-                    Value = $"%{txtSearch}%"
-                });
-                where.Add(new WhereCondition()
-                {
-                    Column = "Email",
-                    Operator = "like",
-                    Value = $"%{txtSearch}%"
-                });
-                where.Add(new WhereCondition()
-                {
-                    Column = "FullName",
-                    Operator = "like",
-                    Value = $"%{txtSearch}%"
-                });
-            }
-
-            var resultCountPaging = _accountRepository.GetCountPaging(pageIndex, pageSize, where);
+            var resultCountPaging = _accountRepository.GetCountPaging(pageIndex, pageSize, txtSearch);
 
             return new ServiceResultModel()
             {
@@ -124,38 +93,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
 
-            var where = new List<WhereCondition>();
-
-            where.Add(new WhereCondition()
-            {
-                Column = "Role",
-                Operator = "=",
-                Value = "TENANT"
-            });
-
-            if (!string.IsNullOrEmpty(txtSearch))
-            {
-                where.Add(new WhereCondition()
-                {
-                    Column = "UserName",
-                    Operator = "like",
-                    Value = $"%{txtSearch}%"
-                });
-                where.Add(new WhereCondition()
-                {
-                    Column = "Email",
-                    Operator = "like",
-                    Value = $"%{txtSearch}%"
-                });
-                where.Add(new WhereCondition()
-                {
-                    Column = "FullName",
-                    Operator = "like",
-                    Value = $"%{txtSearch}%"
-                });
-            }
-
-            var lstTenants = _accountRepository.GetPaging(pageIndex, pageSize, where);
+            var lstTenants = _accountRepository.GetPaging(pageIndex, pageSize, txtSearch);
 
             return new ServiceResultModel()
             {
@@ -426,7 +364,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel SubmitResetPassword(string code, string password)
+        public ServiceResultModel SubmitResetPassword(string code, string password, string userName)
         {
             string param = _keyGenerator.Decryption(code);
             var expireResetPasswordModel = JsonConvert.DeserializeObject<ExpireResetPasswordModel>(param);
@@ -465,6 +403,16 @@ namespace BPHN.BusinessLayer.ImpServices
                     Success = false,
                     ErrorCode = ErrorCodes.NOT_EXISTS,
                     Message = "Tài khoản không tồn tại"
+                };
+            }
+
+            if(realAccount.UserName != userName)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.NO_INTEGRITY,
+                    Message = "Yêu cầu không toàn vẹn"
                 };
             }
 
