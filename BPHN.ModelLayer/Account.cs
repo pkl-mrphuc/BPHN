@@ -10,20 +10,21 @@ namespace BPHN.ModelLayer
     public class Account : BaseModel
     {
         [Required]
-        [MaxLength(20)]
+        [MaxLength(255)]
         public string UserName { get; set; }
         [Required]
-        [MaxLength(100)]
+        [MaxLength(500)]
         public string Password { get; set; }
         public GenderEnum Gender { get; set; }
         [Required]
-        [MaxLength(20)]
+        [MaxLength(255)]
         public string PhoneNumber { get; set; }
         [Required]
-        [MaxLength]
+        [MaxLength(255)]
         public string FullName { get; set; }
         [Required]
         [EmailAddress]
+        [MaxLength(255)]
         public string Email { get; set; }
         public RoleEnum Role { get; set; }
         public string Token { get; set; }

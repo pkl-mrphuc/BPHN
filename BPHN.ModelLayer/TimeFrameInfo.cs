@@ -8,8 +8,8 @@ namespace BPHN.ModelLayer
 {
     public class TimeFrameInfo : BaseModel
     {
-        public string TimeBegin { get; set; }
-        public string TimeEnd { get; set; }
+        public DateTime TimeBegin { get; set; }
+        public DateTime TimeEnd { get; set; }
         public double Price { get; set; }
     }
 }
