@@ -3,7 +3,7 @@ import i18n from '@/i18n/index.js'
 
 const state = {
     language: 'vn',
-    darkMode: false
+    darkMode: true
 }
 
 const getters = {
@@ -43,12 +43,13 @@ const actions = {
 
                 if(map.has('Language')) {
                     commit('setLanguage', map.get('Language'))
-                    i18n.global.locale.value = map.get('Language')
                 }
 
                 if(map.has('DarkMode')) {
-                    commit('setDarkMode', map.get('DarkMode') === "true")
+                    commit('setDarkMode', map.get('DarkMode'))
                 }
+
+                window['loadedConfig'] = true
             }
         })
         .catch((error) => {

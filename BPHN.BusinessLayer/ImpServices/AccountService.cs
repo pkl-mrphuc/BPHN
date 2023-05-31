@@ -452,8 +452,7 @@ namespace BPHN.BusinessLayer.ImpServices
             ServiceResultModel result = GetTokenInfo(token);
             return new ServiceResultModel()
             {
-                Success = true,
-                Data = result.Success
+                Success = result.Success
             };
         }
 

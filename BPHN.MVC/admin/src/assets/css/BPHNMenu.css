@@ -3,50 +3,9 @@
     width: 100%;
     box-sizing: border-box;
     overflow-y: scroll;
-    background-color: #fff;
     border-right: 1px solid #cecece;
 }
 
-.common-layout.dark .bphn-menu {
-    background-color: #141414;
-    border-right: 1px solid #141414;
-}
-
-.menus {
-    padding: 25px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.menu-item {
-    width: 150px;
-    height: 150px;
-    border: 1px solid #cecece;
-    background-color: #fff;
-    margin-bottom: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    -webkit-box-shadow: 0 10px 6px -6px #cecece;
-    -moz-box-shadow: 0 10px 6px -6px #cecece;
-    box-shadow: 0 10px 6px -6px #cecece;
-}
-
-.menu-item:hover {
-    background-color: #000;
-}
-
 .menu-item_link {
-    font-weight: 600;
-    font-size: 18px;
     text-decoration: none;
-    color: #000;
-}
-
-.menu-item:hover .menu-item_link {
-    color: #fff;
 }

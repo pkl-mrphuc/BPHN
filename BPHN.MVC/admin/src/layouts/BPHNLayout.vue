@@ -1,26 +1,9 @@
 <script setup>
-import { ref, watch } from 'vue'
-
-const store = useStore()
-let darkMode = ref(store.getters['config/getDarkMode'])
-
-const getDarkMode = computed(() => {
-  return store.getters['config/getDarkMode']
-})
-
-watch(getDarkMode, (newValue) => {
-  darkMode.value = newValue
-})
-
-const darkClass = computed(() => {
-  return darkMode.value ? 'dark' : ''
-})
-
 </script>
 
 
 <template>
-  <div class="common-layout" :class="darkClass">
+  <div class="common-layout">
     <el-container>
       <el-header>
         <bphn-header></bphn-header>
@@ -43,23 +26,21 @@ import BphnMenu from '@/layouts/BPHNMenu.vue'
 import AccountAPI from '@/apis/AccountAPI'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
-import { computed } from 'vue'
 export default {
   name: "BPHNLayout",
   components: { BphnHeader, BphnMenu },
   async created() {
     const store = useStore()
     const t = useI18n()
+
     let validateResult = await AccountAPI.validateToken(store.getters['account/getToken'])
     if (validateResult?.data?.success) {
       let configs = localStorage.getItem('config-key')
-      if(!configs || (!window['loadedConfig'] && configs)) {
-        store.dispatch('config/loadConfig')
-        window['loadedConfig'] = true
-      }
-      else {
-        t.locale.value = store.getters['config/getLanguage']
-      }
+      if(!configs || (!window['loadedConfig'] && configs)) store.dispatch('config/loadConfig')
+      let lang = store.getters['config/getLanguage']
+      let darkMode = store.getters['config/getDarkMode']
+      t.locale.value = lang
+      if(darkMode) document.documentElement.setAttribute('class', 'dark')
     }
     else {
       window.location = '/login'

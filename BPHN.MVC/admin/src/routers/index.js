@@ -5,7 +5,6 @@ import LoginPage from '@/pages/BPHNLogin.vue'
 import ForgotPage from '@/pages/BPHNForgot.vue'
 import ResetPasswordPage from '@/pages/BPHNResetPassword.vue'
 import Configurations from '@/components/BPHNConfigurations.vue'
-import i18n from '@/i18n/index.js'
 
 const routes = [
   {
@@ -88,7 +87,6 @@ router.beforeEach(async (to) => {
     return '/login'
   }
 
-  document.title = to.meta.title ? `[${i18n.global.t(to.meta.title)}] | ${i18n.global.t('BPHNHaNoi')}` : `${i18n.global.t('BPHNHaNoi')}`
 })
 
 export default router

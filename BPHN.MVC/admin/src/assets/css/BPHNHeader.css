@@ -2,11 +2,6 @@
     height: 100%;
     display: flex;
     align-items: center;
-    background-color: #fff;
-}
-
-.common-layout.dark .pbhn-header {
-    background-color: #141414;
 }
 
 .header_left {
@@ -23,11 +18,6 @@
     font-size: 45px;
     margin: 0;
     text-decoration: underline;
-    color: #000;
-}
-
-.common-layout.dark .header_left__logo {
-    color: #e5eaf3;
 }
 
 .header_right {
@@ -39,11 +29,6 @@
 
 .header_right__fullname {
     cursor: pointer;
-    color: #000;
-}
-
-.common-layout.dark .header_right__fullname {
-    color: #e5eaf3;
 }
 
 .header_right__fullname--underline {

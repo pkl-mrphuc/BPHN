@@ -64,7 +64,7 @@ function save() {
         </div>
       </div>
       <div class="body">
-        <el-table :data="configData" style="width: 100%;" class="body_table">
+        <el-table :data="configData" style="width: 100%;">
           <el-table-column :label="t('Title')" width="200">
             <template #default="scope">
               <span>{{ scope.row.name }}</span>
