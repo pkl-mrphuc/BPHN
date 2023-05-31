@@ -22,5 +22,7 @@ namespace BPHN.ModelLayer
         public List<TimeFrameInfo> TimeFrameInfos { get; set; }
         public string ManagerId { get; set; }
         public Account Manager { get; set; }
+        public ActiveStatusEnum Status { get; set; }
+        public string AvartarUrl { get; set; }
     }
 }

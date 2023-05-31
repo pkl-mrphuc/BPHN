@@ -15,15 +15,15 @@ const userName = computed(() => {
     return getQueryStringByKey('userName')
 })
 
-function getQueryStringByKey(key) {
+const getQueryStringByKey = ((key) => {
     return route.query[key]
-}
+})
 
-function goToLogin() {
+const goToLogin = (() => {
   window.location = '/login'
-}
+})
 
-function submit() {
+const submit = (() => {
   if(!password.value || !passwordAgain.value) {
     alert(t('PasswordEmptyMesg'))
     return
@@ -39,7 +39,7 @@ function submit() {
     password: password.value
   }
   store.dispatch('account/resetPassword', data)
-}
+})
 </script>
 
 <template>

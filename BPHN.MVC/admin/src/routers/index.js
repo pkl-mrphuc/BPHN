@@ -4,6 +4,7 @@ import HelloWorld from '@/components/HelloWorld.vue'
 import LoginPage from '@/pages/BPHNLogin.vue'
 import ForgotPage from '@/pages/BPHNForgot.vue'
 import ResetPasswordPage from '@/pages/BPHNResetPassword.vue'
+import MyFootballFields from '@/components/BPHNMyFootballFields.vue'
 import Configurations from '@/components/BPHNConfigurations.vue'
 
 const routes = [
@@ -26,10 +27,10 @@ const routes = [
         }
       },
       {
-        path: '/my-grounds',
-        component: HelloWorld,
+        path: '/my-football-fields',
+        component: MyFootballFields,
         meta: {
-          title: 'MyGroundsTitle'
+          title: 'FootballFieldTitle'
         }
       },
       {
@@ -72,21 +73,21 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach(async (to) => {
+// router.beforeEach(async (to) => {
 
-  const publicPages = ['/login', '/forgot', '/reset-password']
+//   const publicPages = ['/login', '/forgot', '/reset-password']
 
-  const authRequired = !publicPages.includes(to.path)
+//   const authRequired = !publicPages.includes(to.path)
 
-  if(!authRequired) {
-    localStorage.clear()
-  }
+//   if(!authRequired) {
+//     localStorage.clear()
+//   }
 
-  const authKey = JSON.parse(localStorage.getItem('admin-auth-key'))
-  if (authRequired && !authKey?.account?.context?.token) {
-    return '/login'
-  }
+//   const authKey = JSON.parse(localStorage.getItem('admin-auth-key'))
+//   if (authRequired && !authKey?.account?.context?.token) {
+//     return '/login'
+//   }
 
-})
+// })
 
 export default router

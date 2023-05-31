@@ -27,10 +27,10 @@ const { t } = useI18n()
         </el-menu-item>
       </router-link>
 
-      <router-link class="menu-item_link" to="/my-grounds">
-        <el-menu-item index="3" :title="t('MyGroundsTitle')">
+      <router-link class="menu-item_link" to="/my-football-fields">
+        <el-menu-item index="3" :title="t('FootballFieldTitle')">
           <el-icon><MapLocation /></el-icon>
-          <span>{{ t("MyGrounds") }}</span>
+          <span>{{ t("FootballField") }}</span>
         </el-menu-item>
       </router-link>
 

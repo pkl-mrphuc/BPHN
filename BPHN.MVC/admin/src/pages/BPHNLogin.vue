@@ -8,7 +8,7 @@ const store = useStore()
 const username = ref('')
 const password = ref('')
 
-function login() {
+const login = (() => {
   if(!username.value) {
     alert(t('UsernameEmptyMesg'))
     return
@@ -21,11 +21,11 @@ function login() {
     username: username.value,
     password: password.value
   })
-}
+})
 
-function goToForgot() {
+const goToForgot = (() => {
   window.location = '/forgot'
-}
+})
 </script>
 
 <template>

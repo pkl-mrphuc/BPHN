@@ -37,4 +37,10 @@ namespace BPHN.ModelLayer
         SUBMIT_RESET_PASSWORD = 3,
         SAVE_CONFIG = 4,
     }
+
+    public enum ActiveStatusEnum
+    {
+        ACTIVE = 0,
+        INACTIVE = 1
+    }
 }

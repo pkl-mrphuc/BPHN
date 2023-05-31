@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export function jwtInterceptor() {
+export const jwtInterceptor = (() => {
     axios.interceptors.request.use((request) => {
         
         if(request.url && 
@@ -19,4 +19,4 @@ export function jwtInterceptor() {
             return request
         }
     })
-}
+})

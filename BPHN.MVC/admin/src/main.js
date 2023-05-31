@@ -8,6 +8,7 @@ import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import '@/assets/css/index.css'
 import { jwtInterceptor } from '@/interceptors.js'
+import RegisterComponents from '@/register-components/index.js'
 
 jwtInterceptor()
 
@@ -16,4 +17,5 @@ createApp(App)
 .use(i18n)
 .use(router)
 .use(store)
+.use(RegisterComponents)
 .mount('#app')

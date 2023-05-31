@@ -10,14 +10,14 @@ const fullname = computed(() => {
     return store.getters['account/getFullName']
 })
 
-function logout() {
+const logout = (() => {
     localStorage.clear()
     window.location = '/login'
-}
+})
 
-function goToHome() {
+const goToHome = (() => {
     window.location = '/'
-}
+})
 </script>
 
 <template>

@@ -6,9 +6,9 @@ import { useStore } from 'vuex'
 const store = useStore()
 const { t } = useI18n()
 
-let darkMode = ref(store.getters['config/getDarkMode'])
+const darkMode = ref(store.getters['config/getDarkMode'])
 
-let language = ref(store.getters['config/getLanguage'])
+const language = ref(store.getters['config/getLanguage'])
 
 const getDarkMode = computed(() => {
   return store.getters['config/getDarkMode']
@@ -39,7 +39,7 @@ const configData = [
 
 
 
-function save() {
+const save = (() => {
   let configs = [
     {
       Key: 'DarkMode',
@@ -51,7 +51,7 @@ function save() {
     }
   ]
   store.dispatch('config/save', configs)
-}
+})
 </script>
 
 <template>

@@ -42,9 +42,9 @@ export default {
       t.locale.value = lang
       if(darkMode) document.documentElement.setAttribute('class', 'dark')
     }
-    else {
-      window.location = '/login'
-    }
+    // else {
+    //   window.location = '/login'
+    // }
   }
 }
 </script>

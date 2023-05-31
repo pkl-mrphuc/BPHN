@@ -7,17 +7,17 @@ const { t } = useI18n()
 const store = useStore()
 const email = ref('')
 
-function goToLogin() {
+const goToLogin = (() => {
   window.location = '/login'
-}
+})
 
-function forgot() {
+const forgot = (() => {
   if(!email.value) {
     alert(t('EmailEmptyMesg'))
     return
   }
   store.dispatch('account/forgot', email.value)
-}
+})
 </script>
 
 <template>
