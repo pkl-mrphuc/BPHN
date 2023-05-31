@@ -73,21 +73,21 @@ const router = createRouter({
   routes
 })
 
-// router.beforeEach(async (to) => {
+router.beforeEach(async (to) => {
 
-//   const publicPages = ['/login', '/forgot', '/reset-password']
+  const publicPages = ['/login', '/forgot', '/reset-password']
 
-//   const authRequired = !publicPages.includes(to.path)
+  const authRequired = !publicPages.includes(to.path)
 
-//   if(!authRequired) {
-//     localStorage.clear()
-//   }
+  if(!authRequired) {
+    localStorage.clear()
+  }
 
-//   const authKey = JSON.parse(localStorage.getItem('admin-auth-key'))
-//   if (authRequired && !authKey?.account?.context?.token) {
-//     return '/login'
-//   }
+  const authKey = JSON.parse(localStorage.getItem('admin-auth-key'))
+  if (authRequired && !authKey?.account?.context?.token) {
+    return '/login'
+  }
 
-// })
+})
 
 export default router
