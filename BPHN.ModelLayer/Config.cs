@@ -10,6 +10,6 @@ namespace BPHN.ModelLayer
     {
         public string Key { get; set; }
         public string Value { get; set; }
-        public string AccountId { get; set; }
+        public Guid AccountId { get; set; }
     }
 }

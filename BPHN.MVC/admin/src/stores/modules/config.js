@@ -46,7 +46,7 @@ const actions = {
                 }
 
                 if(map.has('DarkMode')) {
-                    commit('setDarkMode', map.get('DarkMode'))
+                    commit('setDarkMode', map.get('DarkMode') == "true")
                 }
 
                 window['loadedConfig'] = true

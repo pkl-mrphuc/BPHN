@@ -32,7 +32,7 @@ const forgot = (() => {
         <h2>{{ t('ForgotPasswordTitle') }}</h2>
         <el-form class="box_right__form">
           <el-form-item>
-            <el-input v-model="email" placeholder="Email" />
+            <el-input v-model="email" maxlength="255" placeholder="Email" />
           </el-form-item>
           <el-form-item>
             <el-button style="width: 100%" type="primary" @click="forgot()">{{ t('SendRequest') }}</el-button>

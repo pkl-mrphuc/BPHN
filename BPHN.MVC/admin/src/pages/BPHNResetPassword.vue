@@ -57,10 +57,10 @@ const submit = (() => {
         </h3>
         <el-form class="box_right__form">
           <el-form-item>
-            <el-input v-model="password" show-password :placeholder="t('Password')" type="password" />
+            <el-input v-model="password" maxlength="500" show-password :placeholder="t('Password')" type="password" />
           </el-form-item>
           <el-form-item>
-            <el-input v-model="passwordAgain" show-password :placeholder="t('PasswordAgain')" type="password" />
+            <el-input v-model="passwordAgain" maxlength="500" show-password :placeholder="t('PasswordAgain')" type="password" />
           </el-form-item>
           <el-form-item>
             <el-button style="width: 100%" type="primary" @click="submit()">{{ t('Submit') }}</el-button>

@@ -71,7 +71,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 item.ModifiedBy = context.FullName;
                 item.CreatedBy = context.FullName;
                 item.CreatedDate = DateTime.Now;
-                item.AccountId = context.Id.ToString();
+                item.AccountId = context.Id;
                 item.Id = Guid.NewGuid();
                 return item;
             }).ToList();

@@ -40,10 +40,10 @@ const goToForgot = (() => {
         <h2>{{ t('LoginForm') }}</h2>
         <el-form class="box_right__form">
           <el-form-item>
-            <el-input v-model="username" :placeholder="t('Username')" />
+            <el-input v-model="username" maxlength="255" :placeholder="t('Username')" />
           </el-form-item>
           <el-form-item>
-            <el-input v-model="password" show-password :placeholder="t('Password')" type="password" />
+            <el-input v-model="password" maxlength="500" show-password :placeholder="t('Password')" type="password" />
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="login">{{ t('Submit') }}</el-button>

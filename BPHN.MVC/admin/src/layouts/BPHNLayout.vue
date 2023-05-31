@@ -41,10 +41,11 @@ export default {
       let darkMode = store.getters['config/getDarkMode']
       t.locale.value = lang
       if(darkMode) document.documentElement.setAttribute('class', 'dark')
+      else document.documentElement.removeAttribute('class')
     }
-    // else {
-    //   window.location = '/login'
-    // }
+    else {
+      window.location = '/login'
+    }
   }
 }
 </script>
