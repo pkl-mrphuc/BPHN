@@ -32,6 +32,7 @@ const en = {
     NoMatchPasswordMesg: 'Password is incorrect',
     MyFootballFields: 'My football fields',
     AddNew: 'Add new',
-    Edit: 'Edit'
+    Edit: 'Edit',
+    UploadImage: 'Upload image'
 }
 export default en

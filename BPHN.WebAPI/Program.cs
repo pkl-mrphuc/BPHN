@@ -35,6 +35,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IKeyGenerator, KeyGenerator>();
 builder.Services.AddScoped<IConfigService, ConfigService>();
 builder.Services.AddScoped<IConfigRepository, ConfigRepository>();
+builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddSingleton<IRabbitMQProducerService, RabbitMQProducerService>();
 
 builder.Services.AddMvc(options => options.ModelValidatorProviders.Clear());
@@ -76,6 +77,8 @@ if (app.Environment.IsDevelopment())
 app.UseCors(options => options.WithOrigins("*").AllowAnyMethod().AllowAnyHeader());
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles();
 
 app.UseMiddleware<AuthenMiddleware>();
 

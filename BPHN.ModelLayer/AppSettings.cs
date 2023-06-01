@@ -16,6 +16,8 @@ namespace BPHN.ModelLayer
         public string RedisCacheUrl { get; set; }
         public int RedisExpireHour { get; set; }
         public string ConnectionString { get; set; }
+        public string FileFolder { get; set; }
+        public string FileUrl { get; set; }
     }
 
     public class RabbitMQConfiguration

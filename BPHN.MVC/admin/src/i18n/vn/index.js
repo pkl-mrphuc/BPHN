@@ -32,7 +32,8 @@ const vn = {
     NoMatchPasswordMesg: 'Mật khẩu không đúng',
     MyFootballFields: 'Sân bóng của tôi',
     AddNew: 'Thêm mới',
-    Edit: 'Sửa'
+    Edit: 'Sửa',
+    UploadImage: 'Tải ảnh'
 }
 
 export default vn
