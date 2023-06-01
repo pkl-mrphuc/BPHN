@@ -55,7 +55,7 @@ const save = (() => {
 </script>
 
 <template>
-  <section class="pbhn-config">
+  <section class="pbhn-screen pbhn-config">
     <div class="container">
       <div class="head">
         <h3 class="head_title">{{ t('Configurations') }}</h3>

@@ -14,7 +14,7 @@ const addNew = (() => {
 </script>
 
 <template>
-  <section class="pbhn-football-fields">
+  <section class="pbhn-screen pbhn-football-fields">
     <div class="container">
       <div class="head">
         <h3 class="head_title">{{ t("MyFootballFields") }}</h3>
@@ -25,10 +25,10 @@ const addNew = (() => {
       <div class="body">
         <el-row>
           <el-col
-            v-for="(o, index) in 2"
+            v-for="o in 10"
             :key="o"
             :span="5"
-            :offset="index > 0 ? 1 : 0"
+            class="football-field-card"
             >
             <football-field-card
                 :name="'Đầm hồng'"

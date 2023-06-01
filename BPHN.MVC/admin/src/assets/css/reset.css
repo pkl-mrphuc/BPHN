@@ -19,3 +19,7 @@ body {
 ::-webkit-scrollbar {
     width: 0px;
   }
+
+  .main-layout {
+    height: calc(100vh - 60px);
+  }

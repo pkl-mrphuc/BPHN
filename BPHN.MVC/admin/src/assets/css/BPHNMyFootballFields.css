@@ -1,7 +1,4 @@
-.time {
-    font-size: 12px;
-    color: #999;
-  }
+
   
   .bottom {
     margin-top: 13px;
@@ -19,4 +16,9 @@
   .image {
     width: 100%;
     display: block;
+  }
+
+  .football-field-card {
+    margin-bottom: 20px;
+    margin-right: 20px;
   }
