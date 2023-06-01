@@ -55,22 +55,20 @@ const readImageFile = ((file) => {
     <img
       v-if="props.avatarUrl"
       ref="imgAvatar"
-      width="300"
-      height="200"
       :src="props.avatarUrl"
+      height="300"
       class="image"
     />
     <img
       v-else
+      height="300"
       ref="imgAvatar"
-      width="300"
-      height="200"
       src="../assets/images/football-field.png"
       class="image"
     />
 
     <div style="padding: 14px">
-      <span>{{ props.name }}</span>
+      <h3 style="margin: 5px 0px">{{ props.name }}</h3>
       <div class="bottom">
         <status-dot :status="props.status" :message="status"></status-dot>
         <div>

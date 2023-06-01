@@ -1,8 +1,6 @@
 
   
   .bottom {
-    margin-top: 13px;
-    line-height: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -16,9 +14,10 @@
   .image {
     width: 100%;
     display: block;
+    object-fit: cover;
   }
 
   .football-field-card {
-    margin-bottom: 20px;
-    margin-right: 20px;
+    margin-bottom: 40px;
+    margin-right: 40px;
   }

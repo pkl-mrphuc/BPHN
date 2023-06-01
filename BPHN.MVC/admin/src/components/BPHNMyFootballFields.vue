@@ -27,7 +27,7 @@ const addNew = (() => {
           <el-col
             v-for="o in 10"
             :key="o"
-            :span="5"
+            :span="7"
             class="football-field-card"
             >
             <football-field-card
