@@ -8,7 +8,10 @@ import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import '@/assets/css/index.css'
 import { jwtInterceptor } from '@/interceptors.js'
-import RegisterComponents from '@/register-components/index.js'
+
+// dialogs
+import Dialog from '@/components/dialogs/BPHNDialog.vue'
+import FootballFieldDialog from '@/components/dialogs/BPHNFootballFieldDialog.vue'
 
 jwtInterceptor()
 
@@ -17,5 +20,11 @@ createApp(App)
 .use(i18n)
 .use(router)
 .use(store)
-.use(RegisterComponents)
+.provide('loadingOptions', {
+    lock: true,
+    text: 'Loading',
+    background: 'rgba(0, 0, 0, 0.7)',
+})
+.component('Dialog', Dialog)
+.component('FootballFieldDialog', FootballFieldDialog)
 .mount('#app')

@@ -1,15 +1,28 @@
 <script setup>
 import { useI18n } from "vue-i18n"
 import FootballFieldCard from '@/components/FootballFieldCard.vue'
-import useActionModal from '@/register-components/actionDialog'
-import MyFootballFieldDialog from '@/components/dialogs/BPHNFootballFieldDialog.vue'
+import useToggleModal from '@/register-components/actionDialog'
+import { ElLoading } from 'element-plus'
+import { onMounted, inject } from 'vue'
 
 const { t } = useI18n()
-const { openModal } = useActionModal()
+const { openModal, hasRole } = useToggleModal()
+const loadingOptions = inject('loadingOptions')
+
+onMounted(() => {
+  loadData()
+})
 
 const addNew = (() => {
-    debugger; // eslint-disable-line no-debugger
-    openModal(MyFootballFieldDialog)
+    openModal('FootballFieldDialog')
+})
+
+const loadData = (() => {
+  const loading = ElLoading.service(loadingOptions)
+  
+  setTimeout(() => {
+    loading.close()
+  }, 2000)
 })
 </script>
 
@@ -39,6 +52,7 @@ const addNew = (() => {
       </div>
     </div>
   </section>
+  <FootballFieldDialog v-if="hasRole('FootballFieldDialog')"></FootballFieldDialog>
 </template>
 
 <style scoped>
