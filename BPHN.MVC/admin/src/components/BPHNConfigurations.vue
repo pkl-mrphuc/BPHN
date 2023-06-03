@@ -29,11 +29,11 @@ watch(getLanguage, (newValue) => {
 const configData = [
   {
     name: t('DarkMode'),
-    type: 'switch',
+    key: 'DarkMode',
   },
   {
     name: t('Language'),
-    type: 'select',
+    key: 'Language',
   }
 ]
 
@@ -72,8 +72,8 @@ const save = (() => {
           </el-table-column>
           <el-table-column label="">
             <template #default="scope">
-              <el-switch v-if="scope.row.type == 'switch'" v-model="darkMode" />
-              <el-select v-if="scope.row.type == 'select'" v-model="language">
+              <el-switch v-if="scope.row.key == 'DarkMode'" v-model="darkMode" />
+              <el-select v-if="scope.row.key == 'Language'" v-model="language">
                 <el-option value="vn" label="Vietnamese" />
                 <el-option value="en" label="English" />
               </el-select>

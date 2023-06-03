@@ -3,18 +3,28 @@ import { useI18n } from "vue-i18n"
 import FootballFieldCard from '@/components/FootballFieldCard.vue'
 import useToggleModal from '@/register-components/actionDialog'
 import { ElLoading } from 'element-plus'
-import { onMounted, inject } from 'vue'
+import { onMounted, inject, ref } from 'vue'
+import { useStore } from 'vuex'
 
 const { t } = useI18n()
+const store = useStore()
 const { openModal, hasRole } = useToggleModal()
 const loadingOptions = inject('loadingOptions')
+const pitchDataForm = ref(null)
 
 onMounted(() => {
   loadData()
 })
 
 const addNew = (() => {
-    openModal('FootballFieldDialog')
+  const loading = ElLoading.service(loadingOptions)
+  store.dispatch('pitch/getInstance', '').then((res) => {
+    if(res?.data?.data) {
+      openModal('FootballFieldDialog')
+      pitchDataForm.value = res.data.data
+    }
+    loading.close()
+  })  
 })
 
 const loadData = (() => {
@@ -52,7 +62,11 @@ const loadData = (() => {
       </div>
     </div>
   </section>
-  <FootballFieldDialog v-if="hasRole('FootballFieldDialog')"></FootballFieldDialog>
+  <FootballFieldDialog 
+  v-if="hasRole('FootballFieldDialog')"
+  :data="pitchDataForm"
+  >
+  </FootballFieldDialog>
 </template>
 
 <style scoped>

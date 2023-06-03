@@ -33,7 +33,24 @@ const vn = {
     MyFootballFields: 'Sân bóng của tôi',
     AddNew: 'Thêm mới',
     Edit: 'Sửa',
-    UploadImage: 'Tải ảnh'
+    UploadImage: 'Tải ảnh',
+    Price: 'Giá (Nghìn đồng)',
+    TimeBegin: 'Giờ vào',
+    TimeEnd: 'Giờ ra',
+    NameFootballFieldEmptyMesg: 'Tên sân không được để trống',
+    AddressFootballFieldEmptyMesg: 'Địa chỉ không được để trống',
+    TimeSlotInvalidMesg: 'Dữ liệu khung giờ không hợp lệ',
+    AddNewFootballField: 'Thêm mới sân bóng',
+    StatusFootballField: 'Trạng thái hoạt động',
+    Active: 'Đang hoạt động',
+    Inactive: 'Ngừng hoạt động',
+    NameFootballField: 'Tên sân',
+    Address: 'Địa chỉ',
+    Close: 'Đóng',
+    QuantityFootballField: 'Số lượng sân',
+    MinutesPerMatch: 'Số phút / trận',
+    TimeSlotPerDay: 'Khung giờ / ngày',
+    ConfictTimeFrame: 'Có xung đột khung thời gian. Vui lòng kiểm tra lại'
 }
 
 export default vn

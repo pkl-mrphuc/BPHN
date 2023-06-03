@@ -11,6 +11,7 @@ namespace BPHN.BusinessLayer.IServices
     {
         ServiceResultModel Insert(Pitch pitch);
         ServiceResultModel Update(Pitch pitch);
+        ServiceResultModel GetInstance(string id);
         ServiceResultModel GetPaging(int pageIndex, int pageSize, string txtSearch);
         ServiceResultModel GetCountPaging(int pageIndex, int pageSize, string txtSearch);
     }

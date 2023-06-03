@@ -16,12 +16,18 @@ namespace BPHN.ModelLayer
         [MaxLength(500)] 
         public string Address { get; set; }
         [Required]
-        [Range(60, 1440)]
-        public int TimeSlot { get; set; }
+        [Range(30, 1440)]
+        public int MinutesPerMatch { get; set; } = 90;
+        [Required]
+        [Range(1, 100)]
+        public int Quantity { get; set; } = 1;
+        [Required]
+        [Range(1, 48)]
+        public int TimeSlotPerDay { get; set; } = 1;
         public string TimeFrameInfoIds { get; set; }
         public List<TimeFrameInfo> TimeFrameInfos { get; set; }
         public Guid ManagerId { get; set; }
-        public ActiveStatusEnum Status { get; set; }
+        public string Status { get; set; } = ActiveStatusEnum.ACTIVE.ToString();
         public string AvartarUrl { get; set; }
     }
 }

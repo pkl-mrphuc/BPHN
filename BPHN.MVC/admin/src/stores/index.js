@@ -2,11 +2,13 @@ import { createStore } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import account from '@/stores/modules/account'
 import config from '@/stores/modules/config'
+import pitch from '@/stores/modules/pitch'
 
 export default createStore({
     modules: {
       account,
-      config
+      config,
+      pitch
     },
     plugins: [
       createPersistedState({

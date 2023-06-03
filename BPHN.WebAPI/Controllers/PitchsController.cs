@@ -31,6 +31,14 @@ namespace BPHN.WebAPI.Controllers
             return Ok(_pitchService.Update(pitch));
         }
 
+        [ApiAuthorize]
+        [Route("get-instance")]
+        [HttpGet]
+        public IActionResult GetInstance(string id)
+        {
+            return Ok(_pitchService.GetInstance(id));
+        }
+
         [AllowAnonymous]
         [Route("paging")]
         [HttpGet]

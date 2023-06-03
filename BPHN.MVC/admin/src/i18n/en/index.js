@@ -33,6 +33,23 @@ const en = {
     MyFootballFields: 'My football fields',
     AddNew: 'Add new',
     Edit: 'Edit',
-    UploadImage: 'Upload image'
+    UploadImage: 'Upload image',
+    Price: 'Price (thousand dong)',
+    TimeBegin: 'Begin',
+    TimeEnd: 'End',
+    NameFootballFieldEmptyMesg: 'Name is not empty',
+    AddressFootballFieldEmptyMesg: 'Address is not empty',
+    TimeSlotInvalidMesg: 'Time slot is invalid',
+    AddNewFootballField: 'Add new football field',
+    StatusFootballField: 'Status',
+    Active: 'Active',
+    Inactive: 'Inactive',
+    NameFootballField: 'Name',
+    Address: 'Address',
+    Close: 'Close',
+    QuantityFootballField: 'Quantity',
+    MinutesPerMatch: 'Minutes / match',
+    TimeSlotPerDay: 'Time slot / day',
+    ConfictTimeFrame: 'Has conflict time frame. Please check again'
 }
 export default en
