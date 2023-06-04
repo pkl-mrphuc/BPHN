@@ -34,6 +34,11 @@ namespace BPHN.BusinessLayer.ImpServices
             return string.Empty;
         }
 
+        public string GetKeyCache(string key, string model)
+        {
+            return string.Format("{0}_{1}_Cache", key, model);
+        }
+
         public void Remove(string key)
         {
             _cache.Remove(key);

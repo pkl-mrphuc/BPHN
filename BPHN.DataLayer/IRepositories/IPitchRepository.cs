@@ -14,5 +14,6 @@ namespace BPHN.DataLayer.IRepositories
         object GetCountPaging(int pageIndex, int pageSize, List<WhereCondition> where);
         Pitch? GetById(string id);
         bool Insert(Pitch pitch);
+        bool Update(Pitch pitch);
     }
 }

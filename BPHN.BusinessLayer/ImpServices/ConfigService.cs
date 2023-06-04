@@ -1,6 +1,7 @@
 ﻿using BPHN.BusinessLayer.IServices;
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,13 +15,16 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IConfigRepository _configRepository;
         private readonly IContextService _contextService;
         private readonly IHistoryLogService _historyLogService;
+        private readonly ICacheService _cacheService;
         public ConfigService(IConfigRepository configRepository,
             IContextService contextService,
-            IHistoryLogService historyLogService)
+            IHistoryLogService historyLogService,
+            ICacheService cacheService)
         {
             _configRepository = configRepository;
             _contextService = contextService;
             _historyLogService = historyLogService;
+            _cacheService = cacheService;
         }
 
         public ServiceResultModel GetConfigs(string key = null)
@@ -36,11 +40,34 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            return new ServiceResultModel()
+            var data = _cacheService.Get(_cacheService.GetKeyCache(key??"All", "Config"));
+
+            if(data == null)
             {
-                Success = true,
-                Data = _configRepository.GetConfigs(context.Id, key)
-            };
+                var result = _configRepository.GetConfigs(context.Id, key);
+                if(string.IsNullOrEmpty(key))
+                {
+                    _cacheService.Set(_cacheService.GetKeyCache("All", "Config"), JsonConvert.SerializeObject(result));
+                }
+
+                return new ServiceResultModel()
+                {
+                    Success = true,
+                    Data = result
+                };
+            }
+            else
+            {
+                var result = JsonConvert.DeserializeObject<List<Config>>(data);
+
+                return new ServiceResultModel()
+                {
+                    Success = true,
+                    Data = result
+                };
+            }
+
+            
         }
 
         public ServiceResultModel Save(List<Config> configs)
@@ -79,6 +106,7 @@ namespace BPHN.BusinessLayer.ImpServices
             bool saveResult = _configRepository.Save(configs);
             if(saveResult)
             {
+                _cacheService.Remove(_cacheService.GetKeyCache("All", "Config"));
                 Thread thread = new Thread(delegate ()
                 {
                     _historyLogService.Write(new HistoryLog()

@@ -164,5 +164,70 @@ namespace BPHN.DataLayer.ImpRepositories
                 return false;
             }
         }
+
+        public bool Update(Pitch pitch)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var transaction = connection.BeginTransaction();
+                var dic = new Dictionary<string, object>();
+                dic.Add("@id", pitch.Id);
+                dic.Add("@name", pitch.Name);
+                dic.Add("@address", pitch.Address);
+                dic.Add("@minutesPerMatch", pitch.MinutesPerMatch);
+                dic.Add("@quantity", pitch.Quantity);
+                dic.Add("@timeSlotPerDay", pitch.TimeSlotPerDay);
+                dic.Add("@status", pitch.Status);
+                dic.Add("@nameDetails", pitch.NameDetails);
+                dic.Add("@modifiedDate", pitch.ModifiedDate);
+                dic.Add("@modifiedBy", pitch.ModifiedBy);
+                var affect = connection.Execute(@"update pitchs set 
+                                                    Name = @name, 
+                                                    Address = @address, 
+                                                    MinutesPerMatch = @minutesPerMatch, 
+                                                    Quantity = @quantity, 
+                                                    TimeSlotPerDay = @timeSlotPerDay,
+                                                    Status = @status, 
+                                                    NameDetails = @nameDetails,
+                                                    ModifiedBy = @modifiedBy,
+                                                    ModifiedDate = @modifiedDate
+                                                    where Id = @id", dic, transaction);
+                if(affect > 0)
+                {
+                    dic = new Dictionary<string, object>();
+                    dic.Add("@pitchId", pitch.Id);
+                    affect = connection.Execute("delete from time_frame_infos where PitchId = @pitchId", dic, transaction);
+                    for (int i = 0; i < pitch.TimeFrameInfos.Count; i++)
+                    {
+                        var item = pitch.TimeFrameInfos[i];
+                        dic = new Dictionary<string, object>();
+                        dic.Add("@id", item.Id);
+                        dic.Add("@name", item.Name);
+                        dic.Add("@sortOrder", item.SortOrder);
+                        dic.Add("@timeBegin", item.TimeBegin);
+                        dic.Add("@timeEnd", item.TimeEnd);
+                        dic.Add("@price", item.Price);
+                        dic.Add("@pitchId", item.PitchId);
+                        dic.Add("@createdDate", item.CreatedDate);
+                        dic.Add("@createdBy", item.CreatedBy);
+                        dic.Add("@modifiedDate", item.ModifiedDate);
+                        dic.Add("@modifiedBy", item.ModifiedBy);
+
+                        affect = connection.Execute(@"insert into time_frame_infos (Id, Name, SortOrder, TimeBegin, TimeEnd, Price, PitchId, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
+                                value (@id, @name, @sortOrder, @timeBegin, @timeEnd, @price, @pitchId, @createdDate, @createdBy, @modifiedDate, @modifedBy)", dic, transaction);
+                        if (affect <= 0)
+                        {
+                            transaction.Rollback();
+                            return false;
+                        }
+                    }
+                    transaction.Commit();
+                    return true;
+                }
+
+                return false;
+            }
+        }
     }
 }

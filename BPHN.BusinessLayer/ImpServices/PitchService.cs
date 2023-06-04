@@ -40,6 +40,15 @@ namespace BPHN.BusinessLayer.ImpServices
                     Value = accountId
                 });
             }
+            else
+            {
+                lstWhere.Add(new WhereCondition()
+                {
+                    Column = "Status",
+                    Operator = "=",
+                    Value = "ACTIVE"
+                });
+            }
 
             if (!string.IsNullOrEmpty(txtSearch))
             {
@@ -151,6 +160,15 @@ namespace BPHN.BusinessLayer.ImpServices
                     Value = accountId
                 });
             }
+            else
+            {
+                lstWhere.Add(new WhereCondition()
+                {
+                    Column = "Status",
+                    Operator = "=",
+                    Value = "ACTIVE"
+                });
+            }
 
             if(!string.IsNullOrEmpty(txtSearch))
             {
@@ -165,7 +183,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var resultPaging = _pitchRepository.GetPaging(pageIndex, pageSize, lstWhere);
             resultPaging = resultPaging.Select(item =>
             {
-                item.AvartarUrl = (string)_fileService.GetLinkFile(item.Id.ToString()).Data;
+                item.AvatarUrl = (string)(_fileService.GetLinkFile(item.Id.ToString()).Data ?? "");
                 return item;
             }).ToList();
 
@@ -248,7 +266,70 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public ServiceResultModel Update(Pitch pitch)
         {
-            throw new NotImplementedException();
+            var isValid = ValidateModelByAttribute(pitch, new List<string>());
+
+            if (!isValid ||
+                (pitch != null && pitch.TimeFrameInfos.Count == 0) ||
+                (pitch != null && pitch.ListNameDetails.Count == 0))
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.EMPTY_INPUT,
+                    Message = "Dữ liệu đầu vào không được để trống"
+                };
+            }
+
+            var context = _contextService.GetContext();
+            if (context == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = "Token đã hết hạn"
+                };
+            }
+
+            pitch.ModifiedBy = context.FullName;
+            pitch.ModifiedDate = DateTime.Now;
+            pitch.NameDetails = string.Join(";", pitch.ListNameDetails.ToArray());
+
+            pitch.TimeFrameInfos = pitch.TimeFrameInfos.Select(item =>
+            {
+                item.PitchId = pitch.Id;
+                item.Id = item.Id.Equals(Guid.Empty) ? Guid.NewGuid() : item.Id;
+                item.CreatedDate = DateTime.Now;
+                item.ModifiedDate = DateTime.Now;
+                item.CreatedBy = context.FullName;
+                item.ModifiedBy = context.FullName;
+                return item;
+            }).ToList();
+            
+
+            var updateResult = _pitchRepository.Update(pitch);
+
+            if (updateResult)
+            {
+                Thread thread = new Thread(delegate ()
+                {
+                    _historyLogService.Write(new HistoryLog()
+                    {
+                        Actor = context.UserName,
+                        ActorId = context.Id,
+                        ActionType = ActionEnum.UPDATE,
+                        ActionName = string.Empty,
+                        Description = "thông tin sân bóng",
+                    }, context);
+                });
+                thread.Start();
+            }
+
+            return new ServiceResultModel()
+            {
+                Success = true,
+                Data = updateResult
+            };
         }
     }
 }

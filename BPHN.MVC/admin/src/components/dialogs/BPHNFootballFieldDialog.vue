@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, nextTick, defineProps, ref, inject } from "vue";
+import { computed, onMounted, nextTick, defineProps, ref, inject, defineEmits } from "vue";
 // import { Location } from "@element-plus/icons-vue"
 import useToggleModal from "@/register-components/actionDialog";
 import { useI18n } from "vue-i18n";
@@ -9,7 +9,9 @@ import { ElLoading } from "element-plus";
 
 const props = defineProps({
   data: Object,
+  mode: String
 });
+const emit = defineEmits(["callback"]);
 
 const loadingOptions = inject("loadingOptions");
 const { t } = useI18n();
@@ -83,8 +85,12 @@ const save = () => {
   }
 
   const loading = ElLoading.service(loadingOptions);
+
+  let actionPath = "pitch/insert"
+  if(props.mode == "edit") actionPath = "pitch/update"
+
   store
-    .dispatch("pitch/insert", {
+    .dispatch(actionPath, {
       id: props.data?.id,
       name: name.value,
       address: address.value,
@@ -96,8 +102,9 @@ const save = () => {
       listNameDetails: listNameDetails.value
     })
     .then((res) => {
-      console.log(res);
+      emit("callback", res);
       loading.close();
+      toggleModel();
     });
 };
 

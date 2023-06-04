@@ -36,7 +36,8 @@ export default {
     let validateResult = await AccountAPI.validateToken(store.getters['account/getToken'])
     if (validateResult?.data?.success) {
       let configs = localStorage.getItem('config-key')
-      if(!configs || (!window['loadedConfig'] && configs)) store.dispatch('config/loadConfig')
+      let loadedConfig = store.getters['config/getLoadedConfig']
+      if(!configs || (!loadedConfig && configs)) store.dispatch('config/loadConfig')
       let lang = store.getters['config/getLanguage']
       let darkMode = store.getters['config/getDarkMode']
       t.locale.value = lang

@@ -51,7 +51,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
                 var filesPng = dir.GetFiles(id + ".png");
                 var filesJpg = dir.GetFiles(id + ".jpg");
-                var filesJpeg = dir.GetFiles(id + ".jpg");
+                var filesJpeg = dir.GetFiles(id + ".jpeg");
 
                 if(filesJpeg.Length == 0 && 
                     filesPng.Length == 0 &&
@@ -116,7 +116,7 @@ namespace BPHN.BusinessLayer.ImpServices
             string extension = Path.GetExtension(file.FileName);
 
             string[] validExtension = new string[3] { ".png", ".jpg", ".jpeg" };
-            if (!validExtension.Contains(extension))
+            if (!validExtension.Contains(extension.ToLower()))
             {
                 return new ServiceResultModel()
                 {
@@ -137,14 +137,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            Thread thread = new Thread(async () =>
-            {
-                using (var stream = File.Create(path))
-                {
-                    await file.CopyToAsync(stream);
-                }
-            });
-            thread.Start();
+            var fileStream = new FileStream(path, FileMode.Create);
+            file.CopyToAsync(fileStream);
 
             return new ServiceResultModel()
             {

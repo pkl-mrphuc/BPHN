@@ -14,5 +14,6 @@ namespace BPHN.BusinessLayer.IServices
         Task SetAsync(string key, string value, int? expireHour = null);
         void Remove(string key);
         Task RemoveAsync(string key);
+        string GetKeyCache(string key,string model);
     }
 }

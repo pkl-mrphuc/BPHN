@@ -23,6 +23,10 @@ const actions = {
 
     getPaging: ((commit, accountId) => {
         return PitchAPI.getPaging(accountId)
+    }),
+
+    update: ((commit, data) => {
+        return PitchAPI.update(data)
     })
 }
 

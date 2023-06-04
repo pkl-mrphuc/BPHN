@@ -30,6 +30,6 @@ namespace BPHN.ModelLayer
         public List<string> ListNameDetails { get; set; }
         public Guid ManagerId { get; set; }
         public string Status { get; set; } = ActiveStatusEnum.ACTIVE.ToString();
-        public string AvartarUrl { get; set; }
+        public string AvatarUrl { get; set; }
     }
 }

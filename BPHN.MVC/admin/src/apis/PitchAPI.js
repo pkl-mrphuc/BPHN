@@ -26,6 +26,17 @@ class PitchAPI {
         }
     }
 
+    async update(data) {
+        try {
+            let requestUrl = `https://localhost:7166/api/pitchs/update` 
+            let requestParam = data
+            return await axios.post(requestUrl, requestParam)           
+        } catch (error) {
+            console.log(error)
+            return false
+        }
+    }
+
     async getPaging(accountId) {
         try {
             let requestUrl = `https://localhost:7166/api/pitchs/paging?pageIndex=1&pageSize=1&txtSearch=&accountId=${accountId}` 

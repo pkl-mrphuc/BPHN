@@ -1,40 +1,53 @@
 <script setup>
-import { useI18n } from "vue-i18n"
-import FootballFieldCard from '@/components/FootballFieldCard.vue'
-import useToggleModal from '@/register-components/actionDialog'
-import { ElLoading } from 'element-plus'
-import { onMounted, inject, ref } from 'vue'
-import { useStore } from 'vuex'
+import { useI18n } from "vue-i18n";
+import FootballFieldCard from "@/components/FootballFieldCard.vue";
+import useToggleModal from "@/register-components/actionDialog";
+import { ElLoading } from "element-plus";
+import { onMounted, inject, ref } from "vue";
+import { useStore } from "vuex";
 
-const { t } = useI18n()
-const store = useStore()
-const { openModal, hasRole } = useToggleModal()
-const loadingOptions = inject('loadingOptions')
-const pitchDataForm = ref(null)
-const listPitch = ref([])
+const { t } = useI18n();
+const store = useStore();
+const { openModal, hasRole } = useToggleModal();
+const loadingOptions = inject("loadingOptions");
+const pitchDataForm = ref(null);
+const listPitch = ref([]);
+const mode = ref("add");
 
 onMounted(() => {
-  loadData()
-})
+  loadData();
+});
 
-const addNew = (() => {
-  const loading = ElLoading.service(loadingOptions)
-  store.dispatch('pitch/getInstance', '').then((res) => {
-    if(res?.data?.data) {
-      openModal('FootballFieldDialog')
-      pitchDataForm.value = res.data.data
+const addNew = () => {
+  openForm("");
+  mode.value = "add";
+};
+
+const edit = (id) => {
+  openForm(id);
+  mode.value = "edit";
+};
+
+const openForm = (id) => {
+  const loading = ElLoading.service(loadingOptions);
+  store.dispatch("pitch/getInstance", id).then((res) => {
+    if (res?.data?.data) {
+      openModal("FootballFieldDialog");
+      pitchDataForm.value = res.data.data;
     }
-    loading.close()
-  })  
-})
+    loading.close();
+  });
+};
 
-const loadData = (() => {
-  const loading = ElLoading.service(loadingOptions)
-  store.dispatch('pitch/getPaging', store.getters['account/getAccountId']).then((res) => {
-    loading.close()
-    listPitch.value = res?.data?.data??[]
-  })
-})
+const loadData = () => {
+  const loading = ElLoading.service(loadingOptions);
+  store
+    .dispatch("pitch/getPaging", store.getters["account/getAccountId"])
+    .then((res) => {
+      loading.close();
+      listPitch.value = res?.data?.data ?? [];
+    });
+};
 </script>
 
 <template>
@@ -43,29 +56,36 @@ const loadData = (() => {
       <div class="head">
         <h3 class="head_title">{{ t("MyFootballFields") }}</h3>
         <div class="head_toolbar">
-          <el-button type="primary" @click="addNew">{{ t("AddNew") }}</el-button>
+          <el-button type="primary" @click="addNew">{{
+            t("AddNew")
+          }}</el-button>
         </div>
       </div>
       <div class="body">
         <el-row>
           <el-col
             v-for="item in listPitch"
-            :key="item"
+            :key="item.id"
             :span="7"
             class="football-field-card"
-            >
+          >
             <football-field-card
-                :name="item.name"
-                :status="item.status"
+              :name="item.name"
+              :status="item.status"
+              :id="item.id"
+              :avatarUrl="item.avatarUrl"
+              @edit="edit"
             ></football-field-card>
           </el-col>
         </el-row>
       </div>
     </div>
   </section>
-  <FootballFieldDialog 
-  v-if="hasRole('FootballFieldDialog')"
-  :data="pitchDataForm"
+  <FootballFieldDialog
+    v-if="hasRole('FootballFieldDialog')"
+    :data="pitchDataForm"
+    :mode="mode"
+    @callback="loadData"
   >
   </FootballFieldDialog>
 </template>

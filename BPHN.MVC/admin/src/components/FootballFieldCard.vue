@@ -1,14 +1,17 @@
 <script setup>
-import { computed, defineProps, ref } from "vue";
+import { computed, defineProps, ref, defineEmits } from "vue";
 import StatusDot from "@/components/StatusDot.vue";
 import { useI18n } from "vue-i18n";
+import { useStore } from "vuex";
 
 const { t } = useI18n();
-
+const store = useStore();
+const emit = defineEmits(["edit"]);
 const props = defineProps({
   name: String,
-  status: Number,
+  status: String,
   avatarUrl: String,
+  id: String,
 });
 
 const hdfFile = ref(null);
@@ -25,7 +28,7 @@ const status = computed(() => {
 });
 
 const edit = () => {
-  alert("edit");
+  emit("edit", props.id);
 };
 
 const upload = () => {
@@ -33,20 +36,24 @@ const upload = () => {
 };
 
 const changeHdfFile = (event) => {
-  let files = event.target.files
+  let files = event.target.files;
   if (files?.length > 0) {
-    hdfFile.value = files[0]
-    readImageFile(files[0])
+    hdfFile.value = files[0];
+    readImageFile(files[0]);
+    store.dispatch("file/upload", {
+      file: files[0],
+      id: props.id
+    });
   }
-}
+};
 
-const readImageFile = ((file) => {
-  let reader = new FileReader()
+const readImageFile = (file) => {
+  let reader = new FileReader();
   reader.onload = (e) => {
-    imgAvatar.value.src = e.target.result
-  }
-  reader.readAsDataURL(file)
-})
+    imgAvatar.value.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+};
 </script>
 
 

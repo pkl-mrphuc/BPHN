@@ -132,6 +132,12 @@ namespace BPHN.BusinessLayer.ImpServices
                 case ActionEnum.SAVE_CONFIG:
                     history.ActionName = "Lưu cấu hình";
                     break;
+                case ActionEnum.INSERT:
+                    history.ActionName = "Thêm mới";
+                    break;
+                case ActionEnum.UPDATE:
+                    history.ActionName = "Cập nhật";
+                    break;
             }
 
             history.ModifiedDate = DateTime.Now;
