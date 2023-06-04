@@ -1,5 +1,6 @@
 ﻿using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
+using BPHN.ModelLayer.Others;
 using Dapper;
 using Microsoft.Extensions.Options;
 using System;
@@ -39,20 +40,75 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public object GetCountPaging(int pageIndex, int pageSize, string txtSearch)
+        public object GetCountPaging(int pageIndex, int pageSize, List<WhereCondition> where)
         {
-            return new { TotalPage = 1, TotalRecordCurrentPage = 10, TotalAllRecords = 100 };
+            string whereQuery = BuildWhereQuery(where);
+            string countQuery = $@"select count(*) from pitchs where {whereQuery}";
+
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+
+                var dic = new Dictionary<string, object>();
+                for (int i = 0; i < where.Count; i++)
+                {
+                    var item = string.Format("@where{0}", i);
+                    dic.Add(item, where[i].Value);
+                }
+
+                int totalRecord = connection.QuerySingle<int>(countQuery, dic);
+                int totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
+                int totalRecordCurrentPage = 0;
+                if (totalRecord > 0)
+                {
+                    if (pageIndex == totalPage)
+                    {
+                        totalRecordCurrentPage = totalRecord - ((pageIndex - 1) * pageSize);
+                    }
+                    else
+                    {
+                        totalRecordCurrentPage = pageSize;
+                    }
+                }
+                return new { TotalPage = totalPage, TotalRecordCurrentPage = totalRecordCurrentPage, TotalAllRecords = totalRecord };
+            }
         }
 
-        public List<Pitch> GetPaging(int pageIndex, int pageSize, string txtSearch)
+        public List<Pitch> GetPaging(int pageIndex, int pageSize, List<WhereCondition> where)
         {
-            return new List<Pitch>();
+            string whereQuery = BuildWhereQuery(where);
+            string query = $@"select * from pitchs where {whereQuery} order by Name limit @offset, @pageSize";
+            string countQuery = $@"select count(*) from pitchs where {whereQuery}";
+            
+            using(var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var dic = new Dictionary<string, object>();
+
+                for (int i = 0; i < where.Count; i++)
+                {
+                    var item = string.Format("@where{0}", i);
+                    dic.Add(item, where[i].Value);
+                }
+
+                int totalRecord = connection.QuerySingle<int>(countQuery, dic);
+                int totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
+                if (pageIndex > totalPage)
+                {
+                    pageIndex = 1;
+                }
+                int offSet = (pageIndex - 1) * pageSize;
+
+                dic.Add("@offset", offSet);
+                dic.Add("@pageSize", pageSize);
+                return connection.Query<Pitch>(query, dic).ToList();
+            }
         }
 
         public bool Insert(Pitch pitch)
         {
-            string query = @"insert into pitchs(Id, Name, Address, MinutesPerMatch, Quantity, TimeSlotPerDay, ManagerId, Status, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
-                            value (@id, @name, @address, @minutesPerMatch, @quantity, @timeSlotPerDay, @managerId, @status, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
+            string query = @"insert into pitchs(Id, Name, Address, MinutesPerMatch, Quantity, TimeSlotPerDay, ManagerId, Status, NameDetails, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
+                            value (@id, @name, @address, @minutesPerMatch, @quantity, @timeSlotPerDay, @managerId, @status, @nameDetails, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
 
             string queryChild = @"insert into time_frame_infos (Id, Name, SortOrder, TimeBegin, TimeEnd, Price, PitchId, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
                                 value (@id, @name, @sortOrder, @timeBegin, @timeEnd, @price, @pitchId, @createdDate, @createdBy, @modifiedDate, @modifedBy)";
@@ -70,6 +126,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 dic.Add("@timeSlotPerDay", pitch.TimeSlotPerDay);
                 dic.Add("@managerId", pitch.ManagerId);
                 dic.Add("@status", pitch.Status);
+                dic.Add("@nameDetails", pitch.NameDetails);
                 dic.Add("@createdDate", pitch.CreatedDate);
                 dic.Add("@createdBy", pitch.CreatedBy);
                 dic.Add("@modifiedDate", pitch.ModifiedDate);

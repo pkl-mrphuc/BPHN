@@ -1,13 +1,7 @@
 ﻿using BPHN.BusinessLayer.IServices;
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
-using static K4os.Compression.LZ4.Engine.Pubternal;
+using BPHN.ModelLayer.Others;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
@@ -16,21 +10,48 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IPitchRepository _pitchRepository;
         private readonly IContextService _contextService;
         private readonly IHistoryLogService _historyLogService;
+        private readonly IFileService _fileService;
         public PitchService(IPitchRepository pitchRepository, 
             IContextService contextService,
-            IHistoryLogService historyLogService)
+            IHistoryLogService historyLogService,
+            IFileService fileService)
         {
             _pitchRepository = pitchRepository;
             _contextService = contextService;
-            _historyLogService = historyLogService; 
+            _historyLogService = historyLogService;
+            _fileService = fileService;
         }
 
-        public ServiceResultModel GetCountPaging(int pageIndex, int pageSize, string txtSearch)
+        public ServiceResultModel GetCountPaging(int pageIndex, int pageSize, string txtSearch, string accountId)
         {
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
 
-            var resultCountPaging = _pitchRepository.GetCountPaging(pageIndex, pageSize, txtSearch);
+            var lstWhere = new List<WhereCondition>();
+
+            if (!string.IsNullOrEmpty(accountId))
+            {
+                pageSize = int.MaxValue;
+
+                lstWhere.Add(new WhereCondition()
+                {
+                    Column = "ManagerId",
+                    Operator = "=",
+                    Value = accountId
+                });
+            }
+
+            if (!string.IsNullOrEmpty(txtSearch))
+            {
+                lstWhere.Add(new WhereCondition()
+                {
+                    Column = "Name",
+                    Operator = "like",
+                    Value = $"%{txtSearch}%"
+                });
+            }
+
+            var resultCountPaging = _pitchRepository.GetCountPaging(pageIndex, pageSize, lstWhere);
             return new ServiceResultModel()
             {
                 Success = true,
@@ -63,6 +84,14 @@ namespace BPHN.BusinessLayer.ImpServices
                 }
                 data.TimeFrameInfos = timeFrameInfos;
                 data.TimeFrameInfoIds = string.Join(";", timeFrameInfos.Select(item => item.Id).ToArray());
+
+                var lstsNameDetails = new List<string>();
+                for (int i = 0; i < data.Quantity; i++)
+                {
+                    lstsNameDetails.Add(string.Format("Sân {0}", i + 1));
+                }
+                data.ListNameDetails = lstsNameDetails;
+                data.NameDetails = string.Join(";", lstsNameDetails.Select(item => item).ToArray());
             }
             else
             {
@@ -78,7 +107,15 @@ namespace BPHN.BusinessLayer.ImpServices
                     };
                 }
 
-                if(data.TimeSlotPerDay != data.TimeFrameInfos.Count)
+
+                if(!string.IsNullOrEmpty(data.NameDetails))
+                {
+                    var lstNameDetails = data.NameDetails.Split(";").ToList();
+                    data.ListNameDetails = lstNameDetails;
+                }
+
+                if (data.TimeSlotPerDay != data.TimeFrameInfos.Count ||
+                    data.Quantity != data.ListNameDetails.Count)
                 {
                     return new ServiceResultModel()
                     {
@@ -96,12 +133,42 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel GetPaging(int pageIndex, int pageSize, string txtSearch)
+        public ServiceResultModel GetPaging(int pageIndex, int pageSize, string txtSearch, string accountId)
         {
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
 
-            var resultPaging = _pitchRepository.GetPaging(pageIndex, pageSize, txtSearch);
+            var lstWhere = new List<WhereCondition>();
+
+            if(!string.IsNullOrEmpty(accountId))
+            {
+                pageSize = int.MaxValue;
+
+                lstWhere.Add(new WhereCondition()
+                {
+                    Column = "ManagerId",
+                    Operator = "=",
+                    Value = accountId
+                });
+            }
+
+            if(!string.IsNullOrEmpty(txtSearch))
+            {
+                lstWhere.Add(new WhereCondition()
+                {
+                    Column = "Name",
+                    Operator = "like",
+                    Value = $"%{txtSearch}%"
+                });
+            }
+
+            var resultPaging = _pitchRepository.GetPaging(pageIndex, pageSize, lstWhere);
+            resultPaging = resultPaging.Select(item =>
+            {
+                item.AvartarUrl = (string)_fileService.GetLinkFile(item.Id.ToString()).Data;
+                return item;
+            }).ToList();
+
             return new ServiceResultModel()
             {
                 Success = true,
@@ -113,7 +180,9 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             var isValid = ValidateModelByAttribute(pitch, new List<string>());
             
-            if(!isValid || (pitch != null && pitch.TimeFrameInfos.Count == 0))
+            if(!isValid || 
+                (pitch != null && pitch.TimeFrameInfos.Count == 0) ||
+                (pitch != null && pitch.ListNameDetails.Count == 0))
             {
                 return new ServiceResultModel()
                 {
@@ -150,6 +219,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 item.ModifiedBy = context.FullName;
                 return item;
             }).ToList();
+            pitch.NameDetails = string.Join(";", pitch.ListNameDetails.ToArray());
 
             var insertResult = _pitchRepository.Insert(pitch);
 

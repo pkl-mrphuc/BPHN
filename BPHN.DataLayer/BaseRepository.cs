@@ -26,9 +26,9 @@ namespace BPHN.DataLayer
             for(int i = 0; i < where.Count; i ++)
             {
                 var item = where[i];
-                string next = i == where.Count - 1 ? "" : "and";
-                query.Append($"{item.Column} {item.Operator} @where{i} {next} ");
+                query.Append($"{item.Column} {item.Operator} @where{i} and ");
             }
+            query.Append("1 = 1");
             return query.ToString();
         }
 

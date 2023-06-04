@@ -18,8 +18,11 @@ const actions = {
     }),
 
     insert: ((commit, data) => {
-        debugger; // eslint-disable-line no-debugger
         return PitchAPI.insert(data)
+    }),
+
+    getPaging: ((commit, accountId) => {
+        return PitchAPI.getPaging(accountId)
     })
 }
 

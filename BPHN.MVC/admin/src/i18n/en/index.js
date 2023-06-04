@@ -50,6 +50,9 @@ const en = {
     QuantityFootballField: 'Quantity',
     MinutesPerMatch: 'Minutes / match',
     TimeSlotPerDay: 'Time slot / day',
-    ConfictTimeFrame: 'Has conflict time frame. Please check again'
+    ConfictTimeFrame: 'Has conflict time frame. Please check again',
+    FootballFieldInfo: 'Football field information',
+    TimeFrameInfo: 'Time frame information',
+    NameDetailsEmptyMesg: 'Name details is not empty'
 }
 export default en

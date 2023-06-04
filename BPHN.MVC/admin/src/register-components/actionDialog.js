@@ -5,7 +5,7 @@ const modal = reactive({
 });
 
 export default function useToggleModal() {
-  const toggleModel = (role = "") => {
+  const toggleModel = () => {
     modal.role.pop();
   };
 

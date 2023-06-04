@@ -50,7 +50,10 @@ const vn = {
     QuantityFootballField: 'Số lượng sân',
     MinutesPerMatch: 'Số phút / trận',
     TimeSlotPerDay: 'Khung giờ / ngày',
-    ConfictTimeFrame: 'Có xung đột khung thời gian. Vui lòng kiểm tra lại'
+    ConfictTimeFrame: 'Có xung đột khung thời gian. Vui lòng kiểm tra lại',
+    FootballFieldInfo: 'Thông tin sân',
+    TimeFrameInfo: 'Chi tiết khung giờ',
+    NameDetailsEmptyMesg: 'Tên sân bóng không được để trống'
 }
 
 export default vn

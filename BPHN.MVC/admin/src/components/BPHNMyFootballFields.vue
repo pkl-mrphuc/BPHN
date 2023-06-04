@@ -11,6 +11,7 @@ const store = useStore()
 const { openModal, hasRole } = useToggleModal()
 const loadingOptions = inject('loadingOptions')
 const pitchDataForm = ref(null)
+const listPitch = ref([])
 
 onMounted(() => {
   loadData()
@@ -29,10 +30,10 @@ const addNew = (() => {
 
 const loadData = (() => {
   const loading = ElLoading.service(loadingOptions)
-  
-  setTimeout(() => {
+  store.dispatch('pitch/getPaging', store.getters['account/getAccountId']).then((res) => {
     loading.close()
-  }, 2000)
+    listPitch.value = res?.data?.data??[]
+  })
 })
 </script>
 
@@ -48,14 +49,14 @@ const loadData = (() => {
       <div class="body">
         <el-row>
           <el-col
-            v-for="o in 10"
-            :key="o"
+            v-for="item in listPitch"
+            :key="item"
             :span="7"
             class="football-field-card"
             >
             <football-field-card
-                :name="'Đầm hồng'"
-                :status="'INACTIVE'"
+                :name="item.name"
+                :status="item.status"
             ></football-field-card>
           </el-col>
         </el-row>

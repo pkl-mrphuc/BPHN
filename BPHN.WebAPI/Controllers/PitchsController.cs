@@ -42,17 +42,17 @@ namespace BPHN.WebAPI.Controllers
         [AllowAnonymous]
         [Route("paging")]
         [HttpGet]
-        public IActionResult GetPaging(int pageIndex, int pageSize, string txtSearch)
+        public IActionResult GetPaging(int pageIndex, int pageSize, string txtSearch, string accountId)
         {
-            return Ok(_pitchService.GetPaging(pageIndex, pageSize, txtSearch));
+            return Ok(_pitchService.GetPaging(pageIndex, pageSize, txtSearch, accountId));
         }
 
         [AllowAnonymous]
         [Route("count-paging")]
         [HttpGet]
-        public IActionResult GetCountPaging(int pageIndex, int pageSize, string txtSearch)
+        public IActionResult GetCountPaging(int pageIndex, int pageSize, string txtSearch, string accountId)
         {
-            return Ok(_pitchService.GetCountPaging(pageIndex, pageSize, txtSearch));
+            return Ok(_pitchService.GetCountPaging(pageIndex, pageSize, txtSearch, accountId));
         }
     }
 }

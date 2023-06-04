@@ -32,6 +32,7 @@ CREATE TABLE `pitchs` (
   `ManagerId` char(36) NOT NULL,
   `Status` varchar(255) NOT NULL,
   `AvartarUrl` varchar(500) DEFAULT NULL,
+  `NameDetails` varchar(500) NOT NULL,
   `CreatedDate` datetime DEFAULT NULL,
   `CreatedBy` varchar(255) DEFAULT NULL,
   `ModifiedDate` datetime DEFAULT NULL,
@@ -50,4 +51,4 @@ CREATE TABLE `pitchs` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-03 18:47:05
+-- Dump completed on 2023-06-04 10:39:32

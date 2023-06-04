@@ -26,6 +26,8 @@ namespace BPHN.ModelLayer
         public int TimeSlotPerDay { get; set; } = 1;
         public string TimeFrameInfoIds { get; set; }
         public List<TimeFrameInfo> TimeFrameInfos { get; set; }
+        public string NameDetails  { get; set; }
+        public List<string> ListNameDetails { get; set; }
         public Guid ManagerId { get; set; }
         public string Status { get; set; } = ActiveStatusEnum.ACTIVE.ToString();
         public string AvartarUrl { get; set; }

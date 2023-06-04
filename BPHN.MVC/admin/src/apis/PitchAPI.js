@@ -25,6 +25,16 @@ class PitchAPI {
             return false
         }
     }
+
+    async getPaging(accountId) {
+        try {
+            let requestUrl = `https://localhost:7166/api/pitchs/paging?pageIndex=1&pageSize=1&txtSearch=&accountId=${accountId}` 
+            return await axios.get(requestUrl) 
+        } catch (error) {
+            console.log(error)
+            return false
+        }
+    }
 }
 
 export default new PitchAPI()
