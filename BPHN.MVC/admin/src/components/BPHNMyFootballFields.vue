@@ -5,6 +5,9 @@ import useToggleModal from "@/register-components/actionDialog";
 import { ElLoading } from "element-plus";
 import { onMounted, inject, ref } from "vue";
 import { useStore } from "vuex";
+import {
+  Refresh
+} from "@element-plus/icons-vue";
 
 const { t } = useI18n();
 const store = useStore();
@@ -56,6 +59,9 @@ const loadData = () => {
       <div class="head">
         <h3 class="head_title">{{ t("MyFootballFields") }}</h3>
         <div class="head_toolbar">
+          <el-button @click="loadData">
+            <el-icon><Refresh /></el-icon>
+          </el-button>
           <el-button type="primary" @click="addNew">{{
             t("AddNew")
           }}</el-button>
