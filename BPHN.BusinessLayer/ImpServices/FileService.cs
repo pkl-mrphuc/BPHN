@@ -101,7 +101,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel UploadFile(IFormFile file, string id)
+        public async Task<ServiceResultModel> UploadFile(IFormFile file, string id)
         {
             if (string.IsNullOrEmpty(id) || file == null)
             {
@@ -138,7 +138,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var fileStream = new FileStream(path, FileMode.Create);
-            file.CopyToAsync(fileStream);
+            await file.CopyToAsync(fileStream);
 
             return new ServiceResultModel()
             {

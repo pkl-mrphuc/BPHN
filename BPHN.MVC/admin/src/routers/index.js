@@ -6,6 +6,7 @@ import ForgotPage from '@/pages/BPHNForgot.vue'
 import ResetPasswordPage from '@/pages/BPHNResetPassword.vue'
 import MyFootballFields from '@/components/BPHNMyFootballFields.vue'
 import Configurations from '@/components/BPHNConfigurations.vue'
+import BookingManager from '@/components/BPHNBookingManager.vue'
 
 const routes = [
   {
@@ -21,7 +22,7 @@ const routes = [
       },
       {
         path: '/bm',
-        component: HelloWorld,
+        component: BookingManager,
         meta: {
           title: 'BMTitle'
         }
@@ -79,7 +80,7 @@ router.beforeEach(async (to) => {
 
   const authRequired = !publicPages.includes(to.path)
 
-  if(!authRequired) {
+  if (!authRequired) {
     localStorage.clear()
   }
 

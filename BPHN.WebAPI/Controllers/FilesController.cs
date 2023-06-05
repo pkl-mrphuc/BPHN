@@ -13,9 +13,9 @@ namespace BPHN.WebAPI.Controllers
 
         [HttpPost]
         [Route("upload/{id}")]
-        public IActionResult UploadFile([FromForm] IFormFile file, string id)
+        public async Task<IActionResult> UploadFile([FromForm] IFormFile file, string id)
         {
-            return Ok(_fileService.UploadFile(file, id));
+            return Ok(await _fileService.UploadFile(file, id));
         }
 
         [HttpGet]

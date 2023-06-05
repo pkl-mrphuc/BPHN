@@ -53,6 +53,8 @@ const en = {
     ConfictTimeFrame: 'Has conflict time frame. Please check again',
     FootballFieldInfo: 'Football field information',
     TimeFrameInfo: 'Time frame information',
-    NameDetailsEmptyMesg: 'Name details is not empty'
+    NameDetailsEmptyMesg: 'Name details is not empty',
+    NoData: 'No data',
+    BookingManager: 'Booking manager'
 }
 export default en

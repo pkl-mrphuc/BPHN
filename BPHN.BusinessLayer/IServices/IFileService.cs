@@ -10,7 +10,7 @@ namespace BPHN.BusinessLayer.IServices
 {
     public interface IFileService
     {
-        ServiceResultModel UploadFile(IFormFile file, string id);
+        Task<ServiceResultModel> UploadFile(IFormFile file, string id);
         ServiceResultModel GetLinkFile(string id);
     }
 }

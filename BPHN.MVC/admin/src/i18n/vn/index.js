@@ -53,7 +53,9 @@ const vn = {
     ConfictTimeFrame: 'Có xung đột khung thời gian. Vui lòng kiểm tra lại',
     FootballFieldInfo: 'Thông tin sân',
     TimeFrameInfo: 'Chi tiết khung giờ',
-    NameDetailsEmptyMesg: 'Tên sân bóng không được để trống'
+    NameDetailsEmptyMesg: 'Tên sân bóng không được để trống',
+    NoData: 'Dữ liệu trống',
+    BookingManager: 'Danh sách đặt sân'
 }
 
 export default vn
