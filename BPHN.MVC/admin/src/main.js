@@ -12,6 +12,7 @@ import { jwtInterceptor } from '@/interceptors.js'
 // dialogs
 import Dialog from '@/components/dialogs/BPHNDialog.vue'
 import FootballFieldDialog from '@/components/dialogs/BPHNFootballFieldDialog.vue'
+import BookingDialog from '@/components/dialogs/BPHNBookingDialog.vue'
 
 jwtInterceptor()
 
@@ -27,4 +28,5 @@ createApp(App)
 })
 .component('Dialog', Dialog)
 .component('FootballFieldDialog', FootballFieldDialog)
+.component('BookingDialog', BookingDialog)
 .mount('#app')

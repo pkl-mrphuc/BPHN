@@ -1,12 +1,16 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import { Refresh } from "@element-plus/icons-vue";
+import useToggleModal from "@/register-components/actionDialog";
 
 const { t } = useI18n();
+const { openModal, hasRole } = useToggleModal();
 
 const addNew = () => {
-  alert("thêm mới");
+  openModal("BookingDialog");
 };
+
+const bmData = []
 </script>
 
 <template>
@@ -23,9 +27,25 @@ const addNew = () => {
           }}</el-button>
         </div>
       </div>
-      <div class="body"></div>
+      <div class="body">
+        <el-table :data="bmData" style="width: 100%;">
+          <el-table-column label="Trạng thái">
+          </el-table-column>
+          <el-table-column label="Người đặt">
+          </el-table-column>
+          <el-table-column label="Khung giờ">
+          </el-table-column>
+          <el-table-column label="Ngày">
+          </el-table-column>
+          <el-table-column label="Sân">
+          </el-table-column>
+        </el-table>
+      </div>
     </div>
   </section>
-  <el-empty :description="t('NoData')" v-if="true" />
+  <el-empty :description="t('NoData')" v-if="false" />
+  <BookingDialog 
+  v-if="hasRole('BookingDialog')"
+  ></BookingDialog>
 </template>
 

@@ -236,7 +236,7 @@ const isValidNameDetail = () => {
 
 
 <template>
-  <Dialog :title="t('AddNewFootballField')" :width="1200">
+  <Dialog :title="t('FootballFieldForm')" :width="1200">
     <template #body>
       <el-form>
         <el-form-item>

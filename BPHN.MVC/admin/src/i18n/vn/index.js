@@ -40,7 +40,7 @@ const vn = {
     NameFootballFieldEmptyMesg: 'Tên sân không được để trống',
     AddressFootballFieldEmptyMesg: 'Địa chỉ không được để trống',
     TimeSlotInvalidMesg: 'Dữ liệu khung giờ không hợp lệ',
-    AddNewFootballField: 'Thêm mới sân bóng',
+    FootballFieldForm: 'Sân bóng',
     StatusFootballField: 'Trạng thái hoạt động',
     Active: 'Đang hoạt động',
     Inactive: 'Ngừng hoạt động',
@@ -55,7 +55,8 @@ const vn = {
     TimeFrameInfo: 'Chi tiết khung giờ',
     NameDetailsEmptyMesg: 'Tên sân bóng không được để trống',
     NoData: 'Dữ liệu trống',
-    BookingManager: 'Danh sách đặt sân'
+    BookingManager: 'Danh sách đặt sân',
+    BookingForm: 'Đặt sân'
 }
 
 export default vn

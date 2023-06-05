@@ -40,7 +40,7 @@ const en = {
     NameFootballFieldEmptyMesg: 'Name is not empty',
     AddressFootballFieldEmptyMesg: 'Address is not empty',
     TimeSlotInvalidMesg: 'Time slot is invalid',
-    AddNewFootballField: 'Add new football field',
+    FootballFieldForm: 'Football field',
     StatusFootballField: 'Status',
     Active: 'Active',
     Inactive: 'Inactive',
@@ -55,6 +55,7 @@ const en = {
     TimeFrameInfo: 'Time frame information',
     NameDetailsEmptyMesg: 'Name details is not empty',
     NoData: 'No data',
-    BookingManager: 'Booking manager'
+    BookingManager: 'Booking manager',
+    BookingForm: 'Booking form'
 }
 export default en
