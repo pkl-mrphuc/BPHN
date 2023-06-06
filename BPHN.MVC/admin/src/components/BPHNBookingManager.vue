@@ -31,11 +31,13 @@ const bmData = []
         <el-table :data="bmData" style="width: 100%;">
           <el-table-column label="Trạng thái">
           </el-table-column>
+          <el-table-column label="Ngày đặt">
+          </el-table-column>
           <el-table-column label="Người đặt">
           </el-table-column>
           <el-table-column label="Khung giờ">
           </el-table-column>
-          <el-table-column label="Ngày">
+          <el-table-column label="Từ ngày - Đến ngày">
           </el-table-column>
           <el-table-column label="Sân">
           </el-table-column>
