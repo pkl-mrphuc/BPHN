@@ -1,15 +1,17 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { ref } from "vue";
+import { ref, defineProps } from "vue";
 import useToggleModal from "@/register-components/actionDialog";
 
 const { toggleModel } = useToggleModal();
 const { t } = useI18n();
-const isRecurring = ref(false);
-const weekdays = ref("2");
-const date = ref(new Date());
-const fromDate = ref(new Date());
-const toDate = ref(new Date(fromDate.value.getTime() + 100*24*60*60*1000));
+const props = defineProps({
+  data: Object
+})
+const isRecurring = ref(props.data?.isRecurring ?? false);
+const weekdays = ref(null);
+const fromDate = ref(props.data?.fromDate);
+const toDate = ref(props.data?.toDate);
 </script>
 
 <template>

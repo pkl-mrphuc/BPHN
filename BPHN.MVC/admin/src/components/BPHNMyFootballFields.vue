@@ -37,6 +37,9 @@ const openForm = (id) => {
     if (res?.data?.data) {
       openModal("FootballFieldDialog");
       pitchDataForm.value = res.data.data;
+    } else {
+      let msg = res?.data?.message;
+      alert(msg??t("ErrorMesg"));
     }
     loading.close();
   });

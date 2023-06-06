@@ -4,13 +4,15 @@ import account from '@/stores/modules/account'
 import config from '@/stores/modules/config'
 import pitch from '@/stores/modules/pitch'
 import file from '@/stores/modules/file'
+import booking from '@/stores/modules/booking'
 
 export default createStore({
   modules: {
     account,
     config,
     pitch,
-    file
+    file,
+    booking
   },
   plugins: [
     createPersistedState({

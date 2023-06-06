@@ -2,12 +2,29 @@
 import { useI18n } from "vue-i18n";
 import { Refresh } from "@element-plus/icons-vue";
 import useToggleModal from "@/register-components/actionDialog";
+import { useStore } from "vuex";
+import { ElLoading } from "element-plus";
+import { inject, ref } from "vue";
 
 const { t } = useI18n();
 const { openModal, hasRole } = useToggleModal();
+const store = useStore();
+const loadingOptions = inject("loadingOptions");
+const bookingForm = ref(null);
 
 const addNew = () => {
-  openModal("BookingDialog");
+  const loading = ElLoading.service(loadingOptions);
+  store.dispatch("booking/getInstance", "").then((res) => {
+    if (res?.data?.data) {
+      openModal("BookingDialog");
+      bookingForm.value = res.data.data;
+    } else {
+      let msg = res?.data?.message;
+      alert(msg??t("ErrorMesg"));
+    }
+    loading.close();
+  })
+  
 };
 
 const bmData = []
@@ -48,6 +65,7 @@ const bmData = []
   <el-empty :description="t('NoData')" v-if="false" />
   <BookingDialog 
   v-if="hasRole('BookingDialog')"
+  :data="bookingForm"
   ></BookingDialog>
 </template>
 
