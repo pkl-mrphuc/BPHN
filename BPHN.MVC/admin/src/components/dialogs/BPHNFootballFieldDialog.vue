@@ -6,11 +6,13 @@ import { useI18n } from "vue-i18n";
 import { v4 as uuidv4 } from "uuid";
 import { useStore } from "vuex";
 import { ElLoading } from "element-plus";
+import useCommonFn from "@/commonFn";
 
 const props = defineProps({
   data: Object,
   mode: String
 });
+const { newDate } = useCommonFn();
 const emit = defineEmits(["callback"]);
 
 const loadingOptions = inject("loadingOptions");
@@ -185,15 +187,11 @@ const increaseListNameDetailsFn = () => {
 };
 
 const changeTimeBegin = (item) => {
-  item.timeEnd = new Date(
-    item.timeBegin.getTime() + minutesPerMatch.value * 60 * 1000
-  );
+  item.timeEnd = newDate(item.timeBegin, minutesPerMatch.value * 60 * 1000);
 };
 
 const changeTimeEnd = (item) => {
-  item.timeBegin = new Date(
-    item.timeEnd.getTime() - minutesPerMatch.value * 60 * 1000
-  );
+  item.timeBegin = newDate(item.timeEnd, -1 * minutesPerMatch.value * 60 * 1000);
 };
 
 const hasConflictTimeFrame = () => {

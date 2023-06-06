@@ -21,8 +21,8 @@ const actions = {
         return PitchAPI.insert(data)
     }),
 
-    getPaging: ((commit, accountId) => {
-        return PitchAPI.getPaging(accountId)
+    getPaging: ((commit, data) => {
+        return PitchAPI.getPaging(data)
     }),
 
     update: ((commit, data) => {

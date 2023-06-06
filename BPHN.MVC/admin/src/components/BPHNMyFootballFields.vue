@@ -48,7 +48,10 @@ const openForm = (id) => {
 const loadData = () => {
   const loading = ElLoading.service(loadingOptions);
   store
-    .dispatch("pitch/getPaging", store.getters["account/getAccountId"])
+    .dispatch("pitch/getPaging", {
+      accountId: store.getters["account/getAccountId"],
+      hasDetail: false
+    })
     .then((res) => {
       loading.close();
       listPitch.value = res?.data?.data ?? [];

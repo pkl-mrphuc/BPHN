@@ -11,15 +11,18 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IContextService _contextService;
         private readonly IHistoryLogService _historyLogService;
         private readonly IFileService _fileService;
+        private readonly ITimeFrameInfoRepository _timeFrameInfoRepository;
         public PitchService(IPitchRepository pitchRepository, 
             IContextService contextService,
             IHistoryLogService historyLogService,
-            IFileService fileService)
+            IFileService fileService,
+            ITimeFrameInfoRepository timeFrameInfoRepository)
         {
             _pitchRepository = pitchRepository;
             _contextService = contextService;
             _historyLogService = historyLogService;
             _fileService = fileService;
+            _timeFrameInfoRepository = timeFrameInfoRepository;
         }
 
         public ServiceResultModel GetCountPaging(int pageIndex, int pageSize, string txtSearch, string accountId)
@@ -142,7 +145,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel GetPaging(int pageIndex, int pageSize, string txtSearch, string accountId)
+        public ServiceResultModel GetPaging(int pageIndex, int pageSize, string txtSearch, string accountId, bool hasDetail = false)
         {
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
@@ -184,6 +187,7 @@ namespace BPHN.BusinessLayer.ImpServices
             resultPaging = resultPaging.Select(item =>
             {
                 item.AvatarUrl = (string)(_fileService.GetLinkFile(item.Id.ToString()).Data ?? "");
+                item.TimeFrameInfos = hasDetail ? _timeFrameInfoRepository.GetByPitchId(item.Id) : new List<TimeFrameInfo>();
                 return item;
             }).ToList();
 

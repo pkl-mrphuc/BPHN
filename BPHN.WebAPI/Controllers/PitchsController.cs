@@ -42,9 +42,9 @@ namespace BPHN.WebAPI.Controllers
         [AllowAnonymous]
         [Route("paging")]
         [HttpGet]
-        public IActionResult GetPaging(int pageIndex, int pageSize, string txtSearch, string accountId)
+        public IActionResult GetPaging(int pageIndex, int pageSize, string txtSearch, string accountId, bool hasDetail = false)
         {
-            return Ok(_pitchService.GetPaging(pageIndex, pageSize, txtSearch, accountId));
+            return Ok(_pitchService.GetPaging(pageIndex, pageSize, txtSearch, accountId, hasDetail));
         }
 
         [AllowAnonymous]

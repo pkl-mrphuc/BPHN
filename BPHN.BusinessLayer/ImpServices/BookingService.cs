@@ -23,10 +23,12 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if(string.IsNullOrEmpty(id))
             {
+                var now = DateTime.Now;
+                now.Date.Add(new TimeSpan(0, 0, 0));
                 data.Id = Guid.NewGuid();
                 data.BookingDate = DateTime.Now;
-                data.StartDate = DateTime.Now;
-                data.EndDate = DateTime.Now;
+                data.StartDate = now;
+                data.EndDate = now;
                 data.IsRecurring = false;
             }
             else

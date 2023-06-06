@@ -25,9 +25,12 @@ namespace BPHN.ModelLayer
         public int? Weekendays { get; set; }
         [Required]
         public string Status { get; set; }
-        public Guid TimeFrameInfoId { get; set; }
-        public TimeFrameInfo TimeFrameInfo { get; set; }
-        public Guid PitchId { get; set; }
-        public Pitch Pitch { get; set; }
+        public Guid? TimeFrameInfoId { get; set; }
+        public TimeFrameInfo? TimeFrameInfo { get; set; }
+        public Guid? PitchId { get; set; }
+        public Pitch? Pitch { get; set; }
+        [Required]
+        [MaxLength(255)]
+        public string NameDetail { get; set; }
     }
 }

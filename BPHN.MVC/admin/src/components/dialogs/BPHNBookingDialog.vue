@@ -1,17 +1,72 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { ref, defineProps } from "vue";
+import { ref, defineProps, onMounted } from "vue";
 import useToggleModal from "@/register-components/actionDialog";
+import useCommonFn from "@/commonFn";
+import { useStore } from "vuex";
 
 const { toggleModel } = useToggleModal();
+const { dateNow, sameDate, date, yearEndDay } = useCommonFn();
 const { t } = useI18n();
+const store = useStore();
 const props = defineProps({
-  data: Object
-})
+  data: Object,
+});
+
 const isRecurring = ref(props.data?.isRecurring ?? false);
 const weekdays = ref(null);
-const fromDate = ref(props.data?.fromDate);
-const toDate = ref(props.data?.toDate);
+const fromDate = ref(new Date(props.data?.fromDate ?? dateNow()));
+const toDate = ref(new Date(props.data?.toDate ?? dateNow()));
+const listPitch = ref([]);
+const listTimeFrame = ref([]);
+const listDetail = ref([]);
+const pitchId = ref(props.data?.pitchId ?? null);
+const nameDetail = ref(props.data?.nameDetail ?? null);
+
+const showMakeRecurring = () => {
+  if (isRecurring.value) {
+    weekdays.value = "2";
+    fromDate.value = dateNow();
+    toDate.value = yearEndDay(fromDate.value);
+  } else {
+    weekdays.value = null;
+    toDate.value = fromDate.value;
+  }
+};
+
+const changeDate = () => {
+  fromDate.value = date(fromDate.value);
+  toDate.value = date(toDate.value);
+  if (sameDate(fromDate.value, toDate.value)) {
+    weekdays.value = null;
+    toDate.value = fromDate.value;
+    isRecurring.value = false;
+  }
+};
+
+const changePitchId = () => {
+  let pitchSelected = listPitch.value.filter(
+    (item) => item.id == pitchId.value
+  );
+  if (pitchSelected && pitchSelected.length > 0) {
+    let pitch = pitchSelected[0];
+    listDetail.value = pitch.nameDetails.split(";");
+    listTimeFrame.value = pitch.timeFrameInfos;
+  }
+};
+
+onMounted(() => {
+  store
+    .dispatch("pitch/getPaging", {
+      accountId: store.getters["account/getAccountId"],
+      hasDetail: true
+    })
+    .then((res) => {
+      if (res?.data?.data) {
+        listPitch.value = res.data.data;
+      }
+    });
+});
 </script>
 
 <template>
@@ -27,16 +82,43 @@ const toDate = ref(props.data?.toDate);
           </el-col>
         </el-form-item>
         <el-form-item>
-          <el-col :span="11">
-            <el-select style="width: 100%" placeholder="Sân">
-              <el-option label="Đầm hồng" value="ACTIVE" />
-              <el-option label="10 Đức thắng" value="INACTIVE" />
+          <el-col :span="7">
+            <el-select
+              style="width: 100%"
+              placeholder="Cơ sở"
+              v-model="pitchId"
+              @change="changePitchId"
+            >
+              <el-option
+                v-for="item in listPitch"
+                :key="item"
+                :label="item.name"
+                :value="item.id"
+              />
             </el-select>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="7">
             <el-select style="width: 100%" placeholder="Khung giờ">
-              <el-option label="Đầm hồng" value="ACTIVE" />
-              <el-option label="10 Đức thắng" value="INACTIVE" />
+              <el-option
+                v-for="item in listTimeFrame"
+                :key="item"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+          </el-col>
+          <el-col :span="7">
+            <el-select
+              style="width: 100%"
+              placeholder="Sân"
+              v-model="nameDetail"
+            >
+              <el-option
+                v-for="item in listDetail"
+                :key="item"
+                :label="item"
+                :value="item"
+              />
             </el-select>
           </el-col>
         </el-form-item>
@@ -44,6 +126,7 @@ const toDate = ref(props.data?.toDate);
           <el-checkbox
             label="Đặt lịch cố định theo tuần"
             v-model="isRecurring"
+            @change="showMakeRecurring"
           />
         </el-form-item>
         <el-form-item v-if="isRecurring">
@@ -58,7 +141,13 @@ const toDate = ref(props.data?.toDate);
           </el-radio-group>
         </el-form-item>
         <el-form-item v-if="!isRecurring">
-          <el-date-picker type="date" placeholder="Ngày" style="width: 100%" v-model="date" />
+          <el-date-picker
+            type="date"
+            placeholder="Ngày"
+            style="width: 100%"
+            v-model="fromDate"
+            @change="changeDate"
+          />
         </el-form-item>
         <el-form-item v-if="isRecurring">
           <el-col :span="11">
@@ -67,6 +156,7 @@ const toDate = ref(props.data?.toDate);
               placeholder="Từ ngày"
               style="width: 100%"
               v-model="fromDate"
+              @change="changeDate"
             />
           </el-col>
           <el-col :span="11">
@@ -75,6 +165,8 @@ const toDate = ref(props.data?.toDate);
               placeholder="Đến ngày"
               style="width: 100%"
               v-model="toDate"
+              @change="changeDate"
+              disabled
             />
           </el-col>
         </el-form-item>
@@ -96,7 +188,7 @@ const toDate = ref(props.data?.toDate);
 </template>
 
 <style scoped>
-.action-footer{
+.action-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
