@@ -60,8 +60,21 @@ const changePitchId = () => {
   }
 };
 
-const checkFreeTimeFrame = () => {
-  return true;
+const checkFreeTimeFrame = async () => {
+  let result = await store.dispatch("booking/checkTimeFrame", {
+    id: props.data?.id,
+    phoneNumber: phoneNumber.value,
+    email: email.value,
+    isRecurring: isRecurring.value,
+    startDate: fromDate.value,
+    endDate: toDate.value,
+    weekendays: weekdays.value,
+    timeFrameInfoId: timeFrameInfoId.value,
+    pitchId: pitchId.value,
+    nameDetail: nameDetail.value,
+  });
+
+  return result?.data?.success ?? false;
 };
 
 const quickCheck = () => {
@@ -84,11 +97,6 @@ const finder = () => {
 const save = () => {
   if (!phoneNumber.value) {
     alert(t("PhoneNumberEmptyMesg"));
-    return;
-  }
-
-  if (!checkFreeTimeFrame()) {
-    alert(t("Reserved"));
     return;
   }
 

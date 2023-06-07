@@ -30,6 +30,20 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public ServiceResultModel CheckFreeTimeFrame(Booking data)
         {
+            if (data.IsRecurring)
+            {
+                var matchDatesResult = _bookingDetailService.GetMatchDatesByWeekendays(data.StartDate, data.EndDate, data.Weekendays.Value);
+                data.BookingDetails = matchDatesResult == null || matchDatesResult.Data == null ? new List<BookingDetail>() : (List<BookingDetail>)matchDatesResult.Data;
+            }
+            else
+            {
+                data.BookingDetails = new List<BookingDetail>() {
+                    new BookingDetail()
+                    {
+                        MatchDate = data.StartDate
+                    }
+                };
+            }
 
             return new ServiceResultModel()
             {
@@ -102,21 +116,6 @@ namespace BPHN.BusinessLayer.ImpServices
                     Success = false,
                     ErrorCode = ErrorCodes.NO_INTEGRITY,
                     Message = "Dữ liệu đầu vào không hợp lệ"
-                };
-            }
-
-            if(data.IsRecurring) 
-            {
-                var matchDatesResult = _bookingDetailService.GetMatchDatesByWeekendays(data.StartDate, data.EndDate, data.Weekendays.Value);
-                data.BookingDetails = matchDatesResult == null || matchDatesResult.Data == null ? new List<BookingDetail>() : (List<BookingDetail>)matchDatesResult.Data;
-            } 
-            else
-            {
-                data.BookingDetails = new List<BookingDetail>() { 
-                    new BookingDetail() 
-                    {
-                        MatchDate = data.StartDate
-                    } 
                 };
             }
 

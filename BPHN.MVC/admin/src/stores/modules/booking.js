@@ -19,8 +19,11 @@ const actions = {
 
     insert: ((commit, data) => {
         return BookingAPI.insert(data);
-    })
+    }),
 
+    checkTimeFrame: ((commit, data) => {
+        return BookingAPI.checkTimeFrame(data);
+    })
 };
 
 export default {

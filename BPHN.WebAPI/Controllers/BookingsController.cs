@@ -27,5 +27,12 @@ namespace BPHN.WebAPI.Controllers
         {
             return Ok(_bookingService.Insert(request));
         }
+
+        [HttpPost]
+        [Route("check-time-frame")]
+        public IActionResult CheckFreeTimeFrame([FromBody] Booking request)
+        {
+            return Ok(_bookingService.CheckFreeTimeFrame(request));
+        }
     }
 }

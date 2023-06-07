@@ -15,6 +15,12 @@ class BookingAPI {
         let requestParam = data;
         return await axios.post(requestUrl, requestParam);
     }
+
+    async checkTimeFrame(data) {
+        let requestUrl = `https://localhost:7166/api/bookings/check-time-frame`;
+        let requestParam = data;
+        return await axios.post(requestUrl, requestParam);
+    }
 }
 
 export default new BookingAPI();
