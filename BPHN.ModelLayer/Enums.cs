@@ -45,4 +45,11 @@ namespace BPHN.ModelLayer
         ACTIVE = 0,
         INACTIVE = 1
     }
+
+    public enum BookingStatusEnum
+    {
+        SUCCESS = 0,
+        CANCEL = 1,
+        PENDING = 2
+    }
 }

@@ -15,7 +15,12 @@ const mutations = {
 const actions = {
     getInstance: ((commit, id) => {
         return BookingAPI.getInstance(id);
+    }),
+
+    insert: ((commit, data) => {
+        return BookingAPI.insert(data);
     })
+
 };
 
 export default {

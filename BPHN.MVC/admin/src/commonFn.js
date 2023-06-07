@@ -5,6 +5,9 @@ export default function useCommonFn() {
     }
 
     const date = (date) => {
+        if(typeof date == "string") {
+            date = new Date(date);
+        }
         date.setHours(0);
         date.setMinutes(0);
         date.setSeconds(0);
@@ -25,11 +28,19 @@ export default function useCommonFn() {
         return new Date(date.getFullYear(), 11, 31, 0, 0, 0);
     }
 
+    const time = (date) => {
+        if(typeof date == "string") {
+            date = new Date(date);
+        }
+        return `${date.getHours()}:${date.getMinutes()}`;
+    }
+
     return {
         dateNow,
         sameDate,
         newDate,
         date,
-        yearEndDay
+        yearEndDay,
+        time
     }
 }

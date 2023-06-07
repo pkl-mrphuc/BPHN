@@ -10,5 +10,7 @@ namespace BPHN.DataLayer.IRepositories
     public interface IBookingRepository
     {
         Booking? GetById(string id);
+        bool CheckFreeTimeFrame(Booking data);
+        bool Insert(Booking data);
     }
 }

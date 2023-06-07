@@ -6,7 +6,7 @@ import useCommonFn from "@/commonFn";
 import { useStore } from "vuex";
 
 const { toggleModel } = useToggleModal();
-const { dateNow, sameDate, date, yearEndDay } = useCommonFn();
+const { sameDate, yearEndDay, time } = useCommonFn();
 const { t } = useI18n();
 const store = useStore();
 const props = defineProps({
@@ -15,18 +15,21 @@ const props = defineProps({
 
 const isRecurring = ref(props.data?.isRecurring ?? false);
 const weekdays = ref(null);
-const fromDate = ref(new Date(props.data?.fromDate ?? dateNow()));
-const toDate = ref(new Date(props.data?.toDate ?? dateNow()));
+const fromDate = ref(new Date(props.data?.fromDate ?? new Date()));
+const toDate = ref(new Date(props.data?.toDate ?? new Date()));
 const listPitch = ref([]);
 const listTimeFrame = ref([]);
 const listDetail = ref([]);
 const pitchId = ref(props.data?.pitchId ?? null);
 const nameDetail = ref(props.data?.nameDetail ?? null);
+const timeFrameInfoId = ref(props.data?.timeFrameInfoId ?? null);
+const phoneNumber = ref(props.data?.phoneNumber ?? null);
+const email = ref(props.data?.email ?? null);
 
 const showMakeRecurring = () => {
   if (isRecurring.value) {
-    weekdays.value = "2";
-    fromDate.value = dateNow();
+    weekdays.value = "1";
+    fromDate.value = new Date();
     toDate.value = yearEndDay(fromDate.value);
   } else {
     weekdays.value = null;
@@ -35,8 +38,6 @@ const showMakeRecurring = () => {
 };
 
 const changeDate = () => {
-  fromDate.value = date(fromDate.value);
-  toDate.value = date(toDate.value);
   if (sameDate(fromDate.value, toDate.value)) {
     weekdays.value = null;
     toDate.value = fromDate.value;
@@ -51,15 +52,69 @@ const changePitchId = () => {
   if (pitchSelected && pitchSelected.length > 0) {
     let pitch = pitchSelected[0];
     listDetail.value = pitch.nameDetails.split(";");
+    for (let i = 0; i < pitch.timeFrameInfos.length; i++) {
+      const item = pitch.timeFrameInfos[i];
+      item["newName"] = `Khung ${time(item.timeBegin)} - ${time(item.timeEnd)}`;
+    }
     listTimeFrame.value = pitch.timeFrameInfos;
   }
+};
+
+const checkFreeTimeFrame = () => {
+  return true;
+};
+
+const quickCheck = () => {
+  if (!pitchId.value || !nameDetail.value || !timeFrameInfoId.value) {
+    alert(t("InputTimeFrameEmptyMesg"));
+    return;
+  }
+
+  if (!checkFreeTimeFrame()) {
+    alert(t("Reserved"));
+  } else {
+    alert(t("Free"));
+  }
+};
+
+const finder = () => {
+  alert("find free");
+};
+
+const save = () => {
+  if (!phoneNumber.value) {
+    alert(t("PhoneNumberEmptyMesg"));
+    return;
+  }
+
+  if (!checkFreeTimeFrame()) {
+    alert(t("Reserved"));
+    return;
+  }
+
+  store
+    .dispatch("booking/insert", {
+      id: props.data?.id,
+      phoneNumber: phoneNumber.value,
+      email: email.value,
+      isRecurring: isRecurring.value,
+      startDate: fromDate.value,
+      endDate: toDate.value,
+      weekendays: weekdays.value,
+      timeFrameInfoId: timeFrameInfoId.value,
+      pitchId: pitchId.value,
+      nameDetail: nameDetail.value,
+    })
+    .then((res) => {
+      console.log(res);
+    });
 };
 
 onMounted(() => {
   store
     .dispatch("pitch/getPaging", {
       accountId: store.getters["account/getAccountId"],
-      hasDetail: true
+      hasDetail: true,
     })
     .then((res) => {
       if (res?.data?.data) {
@@ -75,17 +130,17 @@ onMounted(() => {
       <el-form>
         <el-form-item>
           <el-col :span="11">
-            <el-input placeholder="SDT" />
+            <el-input :placeholder="t('PhoneNumber')" v-model="phoneNumber" />
           </el-col>
           <el-col :span="11">
-            <el-input placeholder="Email" />
+            <el-input :placeholder="t('Email')" v-model="email" />
           </el-col>
         </el-form-item>
         <el-form-item>
           <el-col :span="7">
             <el-select
               style="width: 100%"
-              placeholder="Cơ sở"
+              :placeholder="t('Infrastructure')"
               v-model="pitchId"
               @change="changePitchId"
             >
@@ -98,11 +153,15 @@ onMounted(() => {
             </el-select>
           </el-col>
           <el-col :span="7">
-            <el-select style="width: 100%" placeholder="Khung giờ">
+            <el-select
+              style="width: 100%"
+              :placeholder="t('TimeFrame')"
+              v-model="timeFrameInfoId"
+            >
               <el-option
                 v-for="item in listTimeFrame"
                 :key="item"
-                :label="item.name"
+                :label="item.newName"
                 :value="item.id"
               />
             </el-select>
@@ -110,7 +169,7 @@ onMounted(() => {
           <el-col :span="7">
             <el-select
               style="width: 100%"
-              placeholder="Sân"
+              :placeholder="t('NameDetail')"
               v-model="nameDetail"
             >
               <el-option
@@ -124,20 +183,20 @@ onMounted(() => {
         </el-form-item>
         <el-form-item>
           <el-checkbox
-            label="Đặt lịch cố định theo tuần"
+            :label="t('MakeRecurring')"
             v-model="isRecurring"
             @change="showMakeRecurring"
           />
         </el-form-item>
         <el-form-item v-if="isRecurring">
           <el-radio-group v-model="weekdays">
-            <el-radio label="2">Thứ 2</el-radio>
-            <el-radio label="3">Thứ 3</el-radio>
-            <el-radio label="4">Thứ 4</el-radio>
-            <el-radio label="5">Thứ 5</el-radio>
-            <el-radio label="6">Thứ 6</el-radio>
-            <el-radio label="7">Thứ 7</el-radio>
-            <el-radio label="8">Chủ nhật</el-radio>
+            <el-radio label="1">{{ t("Monday") }}</el-radio>
+            <el-radio label="2">{{ t("Tuesday") }}</el-radio>
+            <el-radio label="3">{{ t("Wednesday") }}</el-radio>
+            <el-radio label="4">{{ t("Thursday") }}</el-radio>
+            <el-radio label="5">{{ t("Friday") }}</el-radio>
+            <el-radio label="6">{{ t("Saturday") }}</el-radio>
+            <el-radio label="0">{{ t("Sunday") }}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item v-if="!isRecurring">
@@ -153,7 +212,7 @@ onMounted(() => {
           <el-col :span="11">
             <el-date-picker
               type="date"
-              placeholder="Từ ngày"
+              :placeholder="t('FromDate')"
               style="width: 100%"
               v-model="fromDate"
               @change="changeDate"
@@ -162,7 +221,7 @@ onMounted(() => {
           <el-col :span="11">
             <el-date-picker
               type="date"
-              placeholder="Đến ngày"
+              :placeholder="t('ToDate')"
               style="width: 100%"
               v-model="toDate"
               @change="changeDate"
@@ -175,8 +234,8 @@ onMounted(() => {
     <template #foot>
       <div class="action-footer">
         <span class="other-footer">
-          <el-button>Kiểm tra nhanh</el-button>
-          <el-button>Tìm khung giờ trống</el-button>
+          <el-button @click="quickCheck">{{ t("QuickCheck") }}</el-button>
+          <el-button @click="finder">{{ t("Finder") }}</el-button>
         </span>
         <span class="dialog-footer">
           <el-button @click="toggleModel">{{ t("Close") }}</el-button>

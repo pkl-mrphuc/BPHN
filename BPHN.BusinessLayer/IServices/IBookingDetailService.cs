@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace BPHN.BusinessLayer.IServices
 {
-    public interface IBookingService
+    public interface IBookingDetailService
     {
-        ServiceResultModel GetInstance(string id);
-        ServiceResultModel Insert(Booking data);
-        ServiceResultModel CheckFreeTimeFrame(Booking data);
+        ServiceResultModel GetMatchDatesByWeekendays(DateTime startDate, DateTime endDate, int weekendays);
     }
 }
