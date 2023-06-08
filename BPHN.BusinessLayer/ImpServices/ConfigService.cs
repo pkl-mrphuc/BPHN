@@ -42,7 +42,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var data = _cacheService.Get(_cacheService.GetKeyCache(key??"All", "Config"));
 
-            if(data == null)
+            if(string.IsNullOrEmpty(data))
             {
                 var result = _configRepository.GetConfigs(context.Id, key);
                 if(string.IsNullOrEmpty(key))

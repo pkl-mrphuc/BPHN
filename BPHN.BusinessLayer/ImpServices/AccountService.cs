@@ -169,8 +169,22 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var realAccount = _accountRepository.GetAccountByUserName(account.UserName);
-            if (!BCrypt.Net.BCrypt.Verify(account.Password, realAccount.Password))
+
+            try
             {
+                if (!BCrypt.Net.BCrypt.Verify(account.Password, realAccount.Password))
+                {
+                    return new ServiceResultModel()
+                    {
+                        Success = false,
+                        ErrorCode = ErrorCodes.NOT_EXISTS,
+                        Message = "Tài khoản hoặc mật khẩu không đúng"
+                    };
+                }
+            }
+            catch (Exception)
+            {
+
                 return new ServiceResultModel()
                 {
                     Success = false,
@@ -178,6 +192,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     Message = "Tài khoản hoặc mật khẩu không đúng"
                 };
             }
+            
 
             string token = _accountRepository.GetToken(realAccount.Id.ToString());
 

@@ -180,7 +180,7 @@ const loadData = () => {
           layout="total, sizes, prev, pager, next, jumper"
           :page-sizes="[10, 20, 30, 50, 100]"
           :total="totalRecord"
-          v-if="true"
+          v-if="bmData.length > 0"
         />
       </div>
     </div>

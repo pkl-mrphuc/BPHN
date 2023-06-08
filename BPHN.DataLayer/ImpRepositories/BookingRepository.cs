@@ -132,7 +132,7 @@ namespace BPHN.DataLayer.ImpRepositories
                     for (int i = 0; i < lstBooking.Count; i++)
                     {
                         dic.Add($"@where{i}", lstBooking[i].Id);
-                        bookingIds += $"and @where{i}";
+                        bookingIds += $" and @where{i} ";
                     }
 
                     if(lstBooking.Count > 0)
@@ -170,13 +170,14 @@ namespace BPHN.DataLayer.ImpRepositories
                 dic.Add("@timeFrameInfoId", data.TimeFrameInfoId);
                 dic.Add("@pitchId", data.PitchId);
                 dic.Add("@nameDetail", data.NameDetail);
+                dic.Add("@accountId", data.AccountId);
                 dic.Add("@createdDate", data.CreatedDate);
                 dic.Add("@createdBy", data.CreatedBy);
                 dic.Add("@modifiedBy", data.ModifiedBy);
                 dic.Add("@modifiedDate", data.ModifiedDate);
                 var transaction = connection.BeginTransaction();
-                var query = @"insert into bookings(Id, PhoneNumber, Email, IsRecurring, BookingDate, StartDate, EndDate, Weekendays, Status, TimeFrameInfoId, PitchId, NameDetail, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
-                            value (@id, @phoneNumber, @email, @isRecurring, @bookingDate, @startDate, @endDate, @weekendays, @status, @timeFrameInfoId, @pitchId, @nameDetail, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
+                var query = @"insert into bookings(Id, PhoneNumber, Email, IsRecurring, BookingDate, StartDate, EndDate, Weekendays, Status, TimeFrameInfoId, PitchId, NameDetail, accountId, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
+                            value (@id, @phoneNumber, @email, @isRecurring, @bookingDate, @startDate, @endDate, @weekendays, @status, @timeFrameInfoId, @pitchId, @nameDetail, @accountId, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
                 int affect = connection.Execute(query, dic, transaction);
                 if (affect > 0)
                 {

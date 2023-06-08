@@ -22,16 +22,33 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public string Get(string key)
         {
-            var value = _cache.GetStringAsync(key).Result;
-            if (value != null) return value;
-            return string.Empty;
+            try
+            {
+                var value = _cache.GetStringAsync(key).Result;
+                if (value != null) return value;
+                return string.Empty;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+            
         }
 
         public async Task<string> GetAsync(string key)
         {
-            var value = await _cache.GetStringAsync(key);
-            if (value != null) return value;
-            return string.Empty;
+            try
+            {
+                var value = await _cache.GetStringAsync(key);
+                if (value != null) return value;
+                return string.Empty;
+            }
+            catch (Exception)
+            {
+
+                return string.Empty;
+            }
+            
         }
 
         public string GetKeyCache(string key, string model)
@@ -41,12 +58,28 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public void Remove(string key)
         {
-            _cache.Remove(key);
+            try
+            {
+                _cache.Remove(key);
+            }
+            catch (Exception)
+            {
+
+            }
+            
         }
 
         public async Task RemoveAsync(string key)
         {
-            await _cache.RemoveAsync(key);
+            try
+            {
+                await _cache.RemoveAsync(key);
+            }
+            catch (Exception)
+            {
+
+            }
+            
         }
 
         public void Set(string key, string value, int? expireHour = null)
@@ -66,7 +99,16 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(expireSecond),
             };
-            _cache.SetString(key, value, options);
+
+            try
+            {
+                _cache.SetString(key, value, options);
+            }
+            catch (Exception)
+            {
+
+            }
+            
         }
 
         public async Task SetAsync(string key, string value, int? expireHour = null)
@@ -86,7 +128,16 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(expireSecond),
             };
-            await _cache.SetStringAsync(key, value, options);
+
+            try
+            {
+                await _cache.SetStringAsync(key, value, options);
+            }
+            catch (Exception)
+            {
+
+            }
+            
         }
     }
 }

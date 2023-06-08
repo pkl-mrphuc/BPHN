@@ -176,10 +176,12 @@ namespace BPHN.BusinessLayer.ImpServices
             data.Id = data.Id.Equals(Guid.Empty) ? Guid.NewGuid() : data.Id;
             data.BookingDate = DateTime.Now;
             data.Status = BookingStatusEnum.SUCCESS.ToString();
+            data.AccountId = context.Id;
             data.CreatedDate = DateTime.Now;
             data.CreatedBy = context.FullName;
             data.ModifiedBy = context.FullName;
             data.ModifiedDate = DateTime.Now;
+            
             data.BookingDetails = data.BookingDetails.Select(item =>
             {
                 item.Id = item.Id.Equals(Guid.Empty) ? Guid.NewGuid() : item.Id;
