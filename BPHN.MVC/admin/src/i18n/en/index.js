@@ -78,6 +78,13 @@ const en = {
     PhoneNumberEmptyMesg: 'Phone number is not empty',
     Reserved: 'Reserved',
     Free: 'Free',
-    InputTimeFrameEmptyMesg: 'Input time frame is not empty'
+    InputTimeFrameEmptyMesg: 'Input time frame is not empty',
+    SearchBy: 'Search by phone number, email, name',
+    MatchDate: 'Matching date',
+    Deposite: 'Deposite(thousand dong)',
+    Cancel: 'Cancel',
+    Status: 'Status',
+    BookingDate: 'Booking date',
+    BookingUser: 'Booking user'
 }
 export default en

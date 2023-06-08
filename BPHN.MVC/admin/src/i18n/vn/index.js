@@ -79,6 +79,13 @@ const vn = {
     Reserved: 'Đã được đặt',
     Free: 'Trống',
     InputTimeFrameEmptyMesg: 'Vui lòng nhập đầy đủ thông tin sân bóng, khung giờ trước khi kiểm tra',
+    SearchBy: 'Tìm kiếm theo sđt, email, tên sân',
+    MatchDate: 'Ngày diễn ra trận đấu',
+    Deposite: 'Tiền cọc(nghìn đồng)',
+    Cancel: 'Hủy',
+    Status: 'Trạng thái',
+    BookingDate: 'Ngày đặt',
+    BookingUser: 'Người đặt'
 }
 
 export default vn

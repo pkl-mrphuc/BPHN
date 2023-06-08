@@ -76,7 +76,7 @@ const loadData = () => {
           <el-input
             style="margin-right: 12px; width: 300px"
             v-model="txtSearch"
-            placeholder="Tìm kiếm theo sđt, email, tên sân"
+            :placeholder="t('SearchBy')"
             :suffix-icon="Search"
           />
           <el-button @click="loadData">
@@ -111,7 +111,7 @@ const loadData = () => {
                     </template>
                   </el-table-column>
                   <el-table-column
-                    label="Ngày diễn ra trận đấu"
+                    :label="t('MatchDate')"
                     prop="matchDate"
                   >
                     <template #default="scope">
@@ -119,7 +119,7 @@ const loadData = () => {
                     </template>
                   </el-table-column>
                   <el-table-column
-                    label="Tiền cọc(Nghìn đồng)"
+                    :label="t('Deposite')"
                   >
                     <template #default="scope">
                       <span v-if="scope.row.deposit > 0">{{ scope.row.deposit }}</span>
@@ -129,7 +129,7 @@ const loadData = () => {
                   <el-table-column label="" width="200">
                     <template #default="scope">
                       <el-button :class="scope.row.id" type="danger"
-                        >Cancel</el-button
+                        >{{ t('Cancel') }}</el-button
                       >
                     </template>
                   </el-table-column>
@@ -137,17 +137,17 @@ const loadData = () => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="Trạng thái">
+          <el-table-column :label="t('Status')">
             <template #default="scope">
               {{ scope.row.status }}
             </template>
           </el-table-column>
-          <el-table-column label="Ngày đặt">
+          <el-table-column :label="t('BookingDate')">
             <template #default="scope">
               {{ dateToString(scope.row.bookingDate) }}
             </template>
           </el-table-column>
-          <el-table-column label="Người đặt">
+          <el-table-column :label="t('BookingUser')">
             <template #default="scope">
               <span
                 ><el-icon :title="scope.row.email"><User /></el-icon>
@@ -155,17 +155,17 @@ const loadData = () => {
               >
             </template>
           </el-table-column>
-          <el-table-column label="Cở sở">
+          <el-table-column :label="t('Infrastructure')">
             <template #default="scope">
               {{ scope.row.pitchName }}
             </template>
           </el-table-column>
-          <el-table-column label="Khung giờ">
+          <el-table-column :label="t('TimeFrame')">
             <template #default="scope">
               {{ scope.row.timeFrameInfoName }}
             </template>
           </el-table-column>
-          <el-table-column label="Sân">
+          <el-table-column :label="t('NameDetail')">
             <template #default="scope">
               {{ scope.row.nameDetail }}
             </template>
