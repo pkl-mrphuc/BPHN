@@ -34,5 +34,19 @@ namespace BPHN.WebAPI.Controllers
         {
             return Ok(_bookingService.CheckFreeTimeFrame(request));
         }
+
+        [HttpGet]
+        [Route("paging")]
+        public IActionResult GetPaging(int pageIndex, int pageSize, string txtSearch, bool hasBookingDetail = false)
+        {
+            return Ok(_bookingService.GetPaging(pageIndex, pageSize, txtSearch, hasBookingDetail));
+        }
+
+        [HttpGet]
+        [Route("count-paging")]
+        public IActionResult GetCountPaging(int pageIndex, int pageSize, string txtSearch)
+        {
+            return Ok(_bookingService.GetCountPaging(pageIndex, pageSize, txtSearch));
+        }
     }
 }

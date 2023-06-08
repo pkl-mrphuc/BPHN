@@ -32,6 +32,7 @@ CREATE TABLE `bookings` (
   `EndDate` datetime NOT NULL,
   `Weekendays` varchar(255) DEFAULT NULL,
   `Status` varchar(255) NOT NULL,
+  `AccountId` char(36) NOT NULL,
   `TimeFrameInfoId` char(36) NOT NULL,
   `PitchId` char(36) NOT NULL,
   `NameDetail` varchar(255) NOT NULL,
@@ -56,4 +57,4 @@ CREATE TABLE `bookings` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-07 12:57:15
+-- Dump completed on 2023-06-08 14:38:59

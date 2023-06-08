@@ -52,6 +52,30 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
+        public ServiceResultModel GetCountPaging(int pageIndex, int pageSize, string txtSearch)
+        {
+            var context = _contextService.GetContext();
+            if (context == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = "Token đã hết hạn"
+                };
+            }
+
+            if (pageIndex < 0) pageIndex = 1;
+            if (pageSize > 100 || pageSize <= 0) pageSize = 50;
+
+            var result = _bookingRepository.GetCountPaging(pageIndex, pageSize, context.Id, txtSearch);
+            return new ServiceResultModel()
+            {
+                Success = true,
+                Data = result
+            };
+        }
+
         public ServiceResultModel GetInstance(string id)
         {
             var data = new Booking();
@@ -81,6 +105,30 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 Success = true,
                 Data = data
+            };
+        }
+
+        public ServiceResultModel GetPaging(int pageIndex, int pageSize, string txtSearch, bool hasBookingDetail = false)
+        {
+            var context = _contextService.GetContext();
+            if (context == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = "Token đã hết hạn"
+                };
+            }
+
+            if (pageIndex < 0) pageIndex = 1;
+            if (pageSize > 100 || pageSize <= 0) pageSize = 50;
+
+            var lstBooking = _bookingRepository.GetPaging(pageIndex, pageSize, context.Id, txtSearch, hasBookingDetail);
+            return new ServiceResultModel()
+            {
+                Success = true,
+                Data = lstBooking
             };
         }
 

@@ -12,5 +12,7 @@ namespace BPHN.BusinessLayer.IServices
         ServiceResultModel GetInstance(string id);
         ServiceResultModel Insert(Booking data);
         ServiceResultModel CheckFreeTimeFrame(Booking data);
+        ServiceResultModel GetPaging(int pageIndex, int pageSize, string txtSearch, bool hasBookingDetail = false);
+        ServiceResultModel GetCountPaging(int pageIndex, int pageSize, string txtSearch);
     }
 }

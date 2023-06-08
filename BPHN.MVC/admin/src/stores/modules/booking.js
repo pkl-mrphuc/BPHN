@@ -23,6 +23,14 @@ const actions = {
 
     checkTimeFrame: ((commit, data) => {
         return BookingAPI.checkTimeFrame(data);
+    }),
+
+    getPaging: ((commit, data) => {
+        return BookingAPI.getPaging(data);
+    }),
+
+    getCountPaging: ((commit, data) => {
+        return BookingAPI.getCountPaging(data);
     })
 };
 

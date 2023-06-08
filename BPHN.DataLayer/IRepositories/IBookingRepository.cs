@@ -12,5 +12,7 @@ namespace BPHN.DataLayer.IRepositories
         Booking? GetById(string id);
         bool CheckFreeTimeFrame(Booking data);
         bool Insert(Booking data);
+        object GetCountPaging(int pageIndex, int pageSize, Guid accountId, string txtSearch);
+        List<Booking> GetPaging(int pageIndex, int pageSize, Guid accountId, string txtSearch, bool hasBookingDetail = false);
     }
 }

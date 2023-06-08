@@ -32,7 +32,19 @@ export default function useCommonFn() {
         if(typeof date == "string") {
             date = new Date(date);
         }
-        return `${date.getHours()}:${date.getMinutes()}`;
+        let hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
+        let mintues = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+        return `${hours}:${mintues}`;
+    }
+
+    const dateToString = (date) => {
+        if(typeof date == "string") {
+            date = new Date(date);
+        }
+        let fullYear = date.getFullYear();
+        let month = date.getMonth() + 1 < 10 ? `0${(date.getMonth() + 1)}` : (date.getMonth() + 1);
+        let day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+        return `${fullYear}-${month}-${day}`;
     }
 
     return {
@@ -41,6 +53,7 @@ export default function useCommonFn() {
         newDate,
         date,
         yearEndDay,
-        time
+        time,
+        dateToString
     }
 }

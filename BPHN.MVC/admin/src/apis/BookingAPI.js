@@ -21,6 +21,16 @@ class BookingAPI {
         let requestParam = data;
         return await axios.post(requestUrl, requestParam);
     }
+
+    async getPaging(data) {
+        let requestUrl = `https://localhost:7166/api/bookings/paging?pageIndex=${data.pageIndex}&pageSize=${data.pageSize}&txtSearch=${data.txtSearch}&hasBookingDetail=${data.hasBookingDetail}`;
+        return await axios.get(requestUrl);
+    }
+
+    async getCountPaging(data) {
+        let requestUrl = `https://localhost:7166/api/bookings/count-paging?pageIndex=${data.pageIndex}&pageSize=${data.pageSize}&txtSearch=${data.txtSearch}`;
+        return await axios.get(requestUrl);
+    }
 }
 
 export default new BookingAPI();
