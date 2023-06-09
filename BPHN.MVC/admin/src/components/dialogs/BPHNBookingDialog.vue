@@ -1,23 +1,25 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { ref, defineProps, onMounted, defineEmits } from "vue";
+import { ref, defineProps, onMounted, defineEmits, inject } from "vue";
 import useToggleModal from "@/register-components/actionDialog";
 import useCommonFn from "@/commonFn";
 import { useStore } from "vuex";
+import { ElLoading } from "element-plus";
 
 const { toggleModel } = useToggleModal();
-const { sameDate, yearEndDay, time } = useCommonFn();
+const { sameDate, yearEndDay, time, dateToString } = useCommonFn();
 const { t } = useI18n();
 const store = useStore();
 const emits = defineEmits(["callback"]);
+const loadingOptions = inject("loadingOptions");
 const props = defineProps({
   data: Object,
 });
 
 const isRecurring = ref(props.data?.isRecurring ?? false);
 const weekdays = ref(null);
-const fromDate = ref(new Date(props.data?.fromDate ?? new Date()));
-const toDate = ref(new Date(props.data?.toDate ?? new Date()));
+const fromDate = ref(props.data?.fromDate ?? new Date());
+const toDate = ref(props.data?.toDate ?? new Date());
 const listPitch = ref([]);
 const listTimeFrame = ref([]);
 const listDetail = ref([]);
@@ -67,8 +69,8 @@ const checkFreeTimeFrame = async () => {
     phoneNumber: phoneNumber.value,
     email: email.value,
     isRecurring: isRecurring.value,
-    startDate: fromDate.value,
-    endDate: toDate.value,
+    startDate: dateToString(fromDate.value),
+    endDate: dateToString(toDate.value),
     weekendays: weekdays.value,
     timeFrameInfoId: timeFrameInfoId.value,
     pitchId: pitchId.value,
@@ -101,14 +103,16 @@ const save = () => {
     return;
   }
 
+  const loading = ElLoading.service(loadingOptions);
+
   store
     .dispatch("booking/insert", {
       id: props.data?.id,
       phoneNumber: phoneNumber.value,
       email: email.value,
       isRecurring: isRecurring.value,
-      startDate: fromDate.value,
-      endDate: toDate.value,
+      startDate: dateToString(fromDate.value),
+      endDate: dateToString(toDate.value),
       weekendays: weekdays.value,
       timeFrameInfoId: timeFrameInfoId.value,
       pitchId: pitchId.value,
@@ -117,6 +121,8 @@ const save = () => {
     .then((res) => {
       if(res?.data?.success) {
         emits("callback");
+        loading.close();
+        toggleModel();
       }
       else {
         let msg = res?.data?.message;

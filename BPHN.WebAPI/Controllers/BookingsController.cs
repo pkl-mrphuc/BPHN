@@ -16,37 +16,37 @@ namespace BPHN.WebAPI.Controllers
 
         [HttpGet]
         [Route("get-instance")]
-        public IActionResult GetInstance(string id)
+        public async Task<IActionResult> GetInstance(string id)
         {
-            return Ok(_bookingService.GetInstance(id));
+            return Ok(await _bookingService.GetInstance(id));
         }
 
         [HttpPost]
         [Route("insert")]
-        public IActionResult Insert([FromBody] Booking request)
+        public async Task<IActionResult> Insert([FromBody] Booking request)
         {
-            return Ok(_bookingService.Insert(request));
+            return Ok(await _bookingService.Insert(request));
         }
 
         [HttpPost]
         [Route("check-time-frame")]
-        public IActionResult CheckFreeTimeFrame([FromBody] Booking request)
+        public async Task<IActionResult> CheckFreeTimeFrame([FromBody] Booking request)
         {
-            return Ok(_bookingService.CheckFreeTimeFrame(request));
+            return Ok(await _bookingService.CheckFreeTimeFrame(request));
         }
 
         [HttpGet]
         [Route("paging")]
-        public IActionResult GetPaging(int pageIndex, int pageSize, string txtSearch, bool hasBookingDetail = false)
+        public async Task<IActionResult> GetPaging(int pageIndex, int pageSize, string txtSearch, bool hasBookingDetail = false)
         {
-            return Ok(_bookingService.GetPaging(pageIndex, pageSize, txtSearch, hasBookingDetail));
+            return Ok(await _bookingService.GetPaging(pageIndex, pageSize, txtSearch, hasBookingDetail));
         }
 
         [HttpGet]
         [Route("count-paging")]
-        public IActionResult GetCountPaging(int pageIndex, int pageSize, string txtSearch)
+        public async Task<IActionResult> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
         {
-            return Ok(_bookingService.GetCountPaging(pageIndex, pageSize, txtSearch));
+            return Ok(await _bookingService.GetCountPaging(pageIndex, pageSize, txtSearch));
         }
     }
 }

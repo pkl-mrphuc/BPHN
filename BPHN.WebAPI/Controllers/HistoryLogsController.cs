@@ -15,16 +15,16 @@ namespace BPHN.WebAPI.Controllers
 
         [HttpGet]
         [Route("paging")]
-        public IActionResult GetPaging(int pageIndex, int pageSize, string txtSearch) 
+        public async Task<IActionResult> GetPaging(int pageIndex, int pageSize, string txtSearch) 
         {
-            return Ok(_historyLogService.GetPaging(pageIndex, pageSize, txtSearch));
+            return Ok(await _historyLogService.GetPaging(pageIndex, pageSize, txtSearch));
         }
 
         [HttpGet]
         [Route("count-paging")]
-        public IActionResult GetCountPaging(int pageIndex, int pageSize, string txtSearch)
+        public async Task<IActionResult> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
         {
-            return Ok(_historyLogService.GetCountPaging(pageIndex, pageSize, txtSearch));
+            return Ok(await _historyLogService.GetCountPaging(pageIndex, pageSize, txtSearch));
         }
     }
 }

@@ -16,16 +16,16 @@ namespace BPHN.WebAPI.Controllers
 
         [HttpGet]
         [Route("")]
-        public IActionResult GetConfigs(string key)
+        public async Task<IActionResult> GetConfigs(string key)
         {
-            return Ok(_configService.GetConfigs(key));
+            return Ok(await _configService.GetConfigs(key));
         }
 
         [HttpPost]
         [Route("save")]
-        public IActionResult SaveConfigs([FromBody] List<Config> configs)
+        public async Task<IActionResult> SaveConfigs([FromBody] List<Config> configs)
         {
-            return Ok(_configService.Save(configs));
+            return Ok(await _configService.Save(configs));
         }
     }
 }

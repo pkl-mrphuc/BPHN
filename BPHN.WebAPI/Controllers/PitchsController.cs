@@ -17,41 +17,41 @@ namespace BPHN.WebAPI.Controllers
         [ApiAuthorize]
         [Route("insert")]
         [HttpPost]
-        public IActionResult Insert([FromBody] Pitch pitch)
+        public async Task<IActionResult> Insert([FromBody] Pitch pitch)
         {
-            return Ok(_pitchService.Insert(pitch));
+            return Ok(await _pitchService.Insert(pitch));
         }
 
         [ApiAuthorize]
         [Route("update")]
         [HttpPost]
-        public IActionResult Update([FromBody] Pitch pitch)
+        public async Task<IActionResult> Update([FromBody] Pitch pitch)
         {
-            return Ok(_pitchService.Update(pitch));
+            return Ok(await _pitchService.Update(pitch));
         }
 
         [ApiAuthorize]
         [Route("get-instance")]
         [HttpGet]
-        public IActionResult GetInstance(string id)
+        public async Task<IActionResult> GetInstance(string id)
         {
-            return Ok(_pitchService.GetInstance(id));
+            return Ok(await _pitchService.GetInstance(id));
         }
 
         [AllowAnonymous]
         [Route("paging")]
         [HttpGet]
-        public IActionResult GetPaging(int pageIndex, int pageSize, string txtSearch, string accountId, bool hasDetail = false)
+        public async Task<IActionResult> GetPaging(int pageIndex, int pageSize, string txtSearch, string accountId, bool hasDetail = false)
         {
-            return Ok(_pitchService.GetPaging(pageIndex, pageSize, txtSearch, accountId, hasDetail));
+            return Ok(await _pitchService.GetPaging(pageIndex, pageSize, txtSearch, accountId, hasDetail));
         }
 
         [AllowAnonymous]
         [Route("count-paging")]
         [HttpGet]
-        public IActionResult GetCountPaging(int pageIndex, int pageSize, string txtSearch, string accountId)
+        public async Task<IActionResult> GetCountPaging(int pageIndex, int pageSize, string txtSearch, string accountId)
         {
-            return Ok(_pitchService.GetCountPaging(pageIndex, pageSize, txtSearch, accountId));
+            return Ok(await _pitchService.GetCountPaging(pageIndex, pageSize, txtSearch, accountId));
         }
     }
 }

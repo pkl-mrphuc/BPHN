@@ -96,7 +96,7 @@ namespace BPHN.DataLayer.ImpRepositories
                                                             union 
                                                             (select b.* from bookings b inner join pitchs p on b.PitchId = p.Id where b.AccountId = @accountId and p.Name like @txtSearch)
                                                         ) as bs inner join pitchs p on bs.PitchId = p.Id
-                                                                inner join time_frame_infos tfi on p.Id = tfi.PitchId order by bs.BookingDate desc
+                                                                inner join time_frame_infos tfi on p.Id = tfi.PitchId and tfi.Id = bs.TimeFrameInfoId order by bs.BookingDate desc
                         limit @offSize, @pageSize";
                 string countQuery = @"select distinct count(*) from (
 						                                                    select * from bookings where AccountId = @accountId and PhoneNumber like @txtSearch
@@ -123,17 +123,20 @@ namespace BPHN.DataLayer.ImpRepositories
                 var lstBooking = (await connection.QueryAsync<Booking>(query, dic)).ToList();
                 if(hasBookingDetail)
                 {
-                    string bookingIds = string.Empty;
+                    
+                    var lstBookingId = new List<string>();
                     dic = new Dictionary<string, object>();
                     for (int i = 0; i < lstBooking.Count; i++)
                     {
                         dic.Add($"@where{i}", lstBooking[i].Id);
-                        bookingIds += $" and @where{i} ";
+                        lstBookingId.Add($"@where{i}");
                     }
 
-                    if(lstBooking.Count > 0)
+                    string bookingIds = string.Join(",", lstBookingId.ToArray());
+
+                    if (lstBooking.Count > 0)
                     {
-                        string queryDetail = $"select * from booking_details where 1 = 1 {bookingIds}";
+                        string queryDetail = $"select * from booking_details where 1 = 1 and BookingId in ( {bookingIds} ) order by BookingDate";
 
                         var lstBookingDetail = (await connection.QueryAsync<BookingDetail>(queryDetail, dic)).ToList();
                         for (int i = 0; i < lstBooking.Count; i++)
@@ -180,12 +183,14 @@ namespace BPHN.DataLayer.ImpRepositories
                     for (int i = 0; i < data.BookingDetails.Count; i++)
                     {
                         var item = data.BookingDetails[i];
-                        query = @"insert into booking_details(Id, MatchDate, BookingId, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
-                                value (@id, @matchDate, @bookingId, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
+                        query = @"insert into booking_details(Id, MatchDate, BookingId, Status, Deposite, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
+                                value (@id, @matchDate, @bookingId, @status, @deposite, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
                         dic = new Dictionary<string, object>();
                         dic.Add("@id", item.Id);
                         dic.Add("@matchDate", item.MatchDate);
                         dic.Add("@bookingId", item.BookingId);
+                        dic.Add("@status", item.Status);
+                        dic.Add("@deposite", item.Deposite);
                         dic.Add("@createdDate", item.CreatedDate);
                         dic.Add("@createdBy", item.CreatedBy);
                         dic.Add("@modifiedBy", item.ModifiedBy);

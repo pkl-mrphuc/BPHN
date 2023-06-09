@@ -85,7 +85,7 @@ namespace BPHN.DataLayer.ImpRepositories
             dic.Add("@actionName", history.ActionName);
             dic.Add("@actor", history.Actor);
             dic.Add("@actorId", history.ActorId);
-            dic.Add("@discription", history.Description);
+            dic.Add("@description", history.Description);
             dic.Add("@createdDate", history.CreatedDate);
             dic.Add("@createdBy", history.CreatedBy);
             dic.Add("@modifiedDate", history.ModifiedDate);

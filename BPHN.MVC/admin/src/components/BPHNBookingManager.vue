@@ -121,7 +121,7 @@ const loadData = () => {
                     </template>
                   </el-table-column>
                   <el-table-column
-                    width="150"
+                    width="200"
                     :label="t('MatchDate')"
                     prop="matchDate"
                   >
