@@ -9,6 +9,6 @@ namespace BPHN.DataLayer.IRepositories
 {
     public interface ITimeFrameInfoRepository
     {
-        List<TimeFrameInfo> GetByPitchId(Guid pitchId);
+        Task<List<TimeFrameInfo>> GetByPitchId(Guid pitchId);
     }
 }

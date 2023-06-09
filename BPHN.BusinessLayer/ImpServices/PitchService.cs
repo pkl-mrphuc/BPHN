@@ -25,7 +25,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _timeFrameInfoRepository = timeFrameInfoRepository;
         }
 
-        public ServiceResultModel GetCountPaging(int pageIndex, int pageSize, string txtSearch, string accountId)
+        public async Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch, string accountId)
         {
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
@@ -63,7 +63,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 });
             }
 
-            var resultCountPaging = _pitchRepository.GetCountPaging(pageIndex, pageSize, lstWhere);
+            var resultCountPaging = await _pitchRepository.GetCountPaging(pageIndex, pageSize, lstWhere);
             return new ServiceResultModel()
             {
                 Success = true,
@@ -71,7 +71,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel GetInstance(string id)
+        public async Task<ServiceResultModel> GetInstance(string id)
         {
             var data = new Pitch();
             if (string.IsNullOrEmpty(id))
@@ -107,7 +107,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
             else
             {
-                data = _pitchRepository.GetById(id);
+                data = await _pitchRepository.GetById(id);
 
                 if(data == null)
                 {
@@ -145,7 +145,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel GetPaging(int pageIndex, int pageSize, string txtSearch, string accountId, bool hasDetail = false)
+        public async Task<ServiceResultModel> GetPaging(int pageIndex, int pageSize, string txtSearch, string accountId, bool hasDetail = false)
         {
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
@@ -183,11 +183,11 @@ namespace BPHN.BusinessLayer.ImpServices
                 });
             }
 
-            var resultPaging = _pitchRepository.GetPaging(pageIndex, pageSize, lstWhere);
+            var resultPaging = await _pitchRepository.GetPaging(pageIndex, pageSize, lstWhere);
             resultPaging = resultPaging.Select(item =>
             {
                 item.AvatarUrl = (string)(_fileService.GetLinkFile(item.Id.ToString()).Data ?? "");
-                item.TimeFrameInfos = hasDetail ? _timeFrameInfoRepository.GetByPitchId(item.Id) : new List<TimeFrameInfo>();
+                item.TimeFrameInfos = hasDetail ? _timeFrameInfoRepository.GetByPitchId(item.Id).Result : new List<TimeFrameInfo>();
                 return item;
             }).ToList();
 
@@ -198,7 +198,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel Insert(Pitch pitch)
+        public async Task<ServiceResultModel> Insert(Pitch pitch)
         {
             var isValid = ValidateModelByAttribute(pitch, new List<string>());
             
@@ -243,7 +243,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }).ToList();
             pitch.NameDetails = string.Join(";", pitch.ListNameDetails.ToArray());
 
-            var insertResult = _pitchRepository.Insert(pitch);
+            var insertResult = await _pitchRepository.Insert(pitch);
 
             if(insertResult)
             {
@@ -268,7 +268,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel Update(Pitch pitch)
+        public async Task<ServiceResultModel> Update(Pitch pitch)
         {
             var isValid = ValidateModelByAttribute(pitch, new List<string>());
 
@@ -311,7 +311,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }).ToList();
             
 
-            var updateResult = _pitchRepository.Update(pitch);
+            var updateResult = await _pitchRepository.Update(pitch);
 
             if (updateResult)
             {

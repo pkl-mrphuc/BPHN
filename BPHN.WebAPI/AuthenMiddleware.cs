@@ -25,13 +25,13 @@ namespace BPHN.WebAPI
 
             if (token != null)
             {
-                GetContext(context, accountService, token);
+                await GetContext(context, accountService, token);
             }
 
             await _next(context);
         }
 
-        private void GetContext(HttpContext context, IAccountService accountService, string token)
+        private async Task GetContext(HttpContext context, IAccountService accountService, string token)
         {
             var tokenResult = accountService.GetTokenInfo(token);
             if(tokenResult.Success && tokenResult.Data != null)
@@ -39,7 +39,7 @@ namespace BPHN.WebAPI
                 var jwtToken = (JwtSecurityToken)tokenResult.Data;
                 var userId = Guid.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
 
-                var serviceResult = accountService.GetById(userId);
+                var serviceResult = await accountService.GetById(userId);
                 context.Items["User"] = serviceResult.Data;
             }
         }

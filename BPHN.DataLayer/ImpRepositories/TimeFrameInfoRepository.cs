@@ -16,14 +16,15 @@ namespace BPHN.DataLayer.ImpRepositories
         {
         }
 
-        public List<TimeFrameInfo> GetByPitchId(Guid pitchId)
+        public async Task<List<TimeFrameInfo>> GetByPitchId(Guid pitchId)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
                 var dic = new Dictionary<string, object>();
                 dic.Add("@pitchId", pitchId);
-                return connection.Query<TimeFrameInfo>("select * from time_frame_infos where PitchId = @pitchId", dic).ToList();
+                var lstTimeFrameInfo = await connection.QueryAsync<TimeFrameInfo>("select * from time_frame_infos where PitchId = @pitchId", dic);
+                return lstTimeFrameInfo.ToList();
             }
         }
     }

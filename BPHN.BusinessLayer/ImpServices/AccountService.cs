@@ -43,16 +43,16 @@ namespace BPHN.BusinessLayer.ImpServices
             _appSettings = appSettings.Value;
         }
 
-        public ServiceResultModel GetById(Guid id)
+        public async Task<ServiceResultModel> GetById(Guid id)
         {
             return new ServiceResultModel()
             {
                 Success = true,
-                Data = _accountRepository.GetAccountById(id)
+                Data = await _accountRepository.GetAccountById(id)
             };
         }
 
-        public ServiceResultModel GetCountPaging(int pageIndex, int pageSize, string txtSearch)
+        public async Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
         {
             var context = _contextService.GetContext();
             if (context == null || (context != null && context.Role != RoleEnum.ADMIN))
@@ -68,7 +68,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
 
-            var resultCountPaging = _accountRepository.GetCountPaging(pageIndex, pageSize, txtSearch);
+            var resultCountPaging = await _accountRepository.GetCountPaging(pageIndex, pageSize, txtSearch);
 
             return new ServiceResultModel()
             {
@@ -77,7 +77,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel GetPaging(int pageIndex, int pageSize, string txtSearch)
+        public async Task<ServiceResultModel> GetPaging(int pageIndex, int pageSize, string txtSearch)
         {
             var context = _contextService.GetContext();
             if(context == null || (context != null && context.Role != RoleEnum.ADMIN))
@@ -93,7 +93,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
 
-            var lstTenants = _accountRepository.GetPaging(pageIndex, pageSize, txtSearch);
+            var lstTenants = await _accountRepository.GetPaging(pageIndex, pageSize, txtSearch);
 
             return new ServiceResultModel()
             {
@@ -144,7 +144,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel Login(Account account)
+        public async Task<ServiceResultModel> Login(Account account)
         {
             bool isValid = ValidateModelByAttribute(account, new List<string>() { "Id", "PhoneNumber", "FullName", "Email" });
             if(!isValid)
@@ -157,7 +157,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            bool existUserName = _accountRepository.CheckExistUserName(account.UserName);
+            bool existUserName = await _accountRepository.CheckExistUserName(account.UserName);
             if(!existUserName)
             {
                 return new ServiceResultModel()
@@ -168,7 +168,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var realAccount = _accountRepository.GetAccountByUserName(account.UserName);
+            var realAccount = await _accountRepository.GetAccountByUserName(account.UserName);
 
             try
             {
@@ -230,7 +230,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel RegisterForTenant(Account account)
+        public async Task<ServiceResultModel> RegisterForTenant(Account account)
         {
             var context = _contextService.GetContext();
             if (context == null ||
@@ -255,7 +255,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            bool existUserName = _accountRepository.CheckExistUserName(account.UserName);
+            bool existUserName = await _accountRepository.CheckExistUserName(account.UserName);
             if(existUserName)
             {
                 return new ServiceResultModel()
@@ -272,7 +272,7 @@ namespace BPHN.BusinessLayer.ImpServices
             account.ModifiedBy = context.FullName;
             account.ModifiedDate = DateTime.Now;
 
-            bool resultRegister = _accountRepository.RegisterForTenant(account);
+            bool resultRegister = await _accountRepository.RegisterForTenant(account);
             if(resultRegister)
             {
                 var thread = new Thread(() =>
@@ -314,7 +314,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel ResetPassword(string userName)
+        public async Task<ServiceResultModel> ResetPassword(string userName)
         {
             if(string.IsNullOrEmpty(userName))
             {
@@ -326,7 +326,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var realAccount = _accountRepository.GetAccountByUserName(userName);
+            var realAccount = await _accountRepository.GetAccountByUserName(userName);
             if(realAccount == null) 
             {
                 return new ServiceResultModel()
@@ -379,7 +379,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel SubmitResetPassword(string code, string password, string userName)
+        public async Task<ServiceResultModel> SubmitResetPassword(string code, string password, string userName)
         {
             string param = _keyGenerator.Decryption(code);
             var expireResetPasswordModel = JsonConvert.DeserializeObject<ExpireResetPasswordModel>(param);
@@ -410,7 +410,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var realAccount = _accountRepository.GetAccountById(account.Id);
+            var realAccount = await _accountRepository.GetAccountById(account.Id);
             if (realAccount == null)
             {
                 return new ServiceResultModel()
@@ -432,7 +432,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(account.Password);
-            bool resultResetPassword = _accountRepository.SavePassword(account.Id, passwordHash);
+            bool resultResetPassword = await _accountRepository.SavePassword(account.Id, passwordHash);
 
             if(resultResetPassword)
             {

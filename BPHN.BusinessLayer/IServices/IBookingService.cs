@@ -9,10 +9,10 @@ namespace BPHN.BusinessLayer.IServices
 {
     public interface IBookingService
     {
-        ServiceResultModel GetInstance(string id);
-        ServiceResultModel Insert(Booking data);
-        ServiceResultModel CheckFreeTimeFrame(Booking data);
-        ServiceResultModel GetPaging(int pageIndex, int pageSize, string txtSearch, bool hasBookingDetail = false);
-        ServiceResultModel GetCountPaging(int pageIndex, int pageSize, string txtSearch);
+        Task<ServiceResultModel> GetInstance(string id);
+        Task<ServiceResultModel> Insert(Booking data);
+        Task<ServiceResultModel> CheckFreeTimeFrame(Booking data);
+        Task<ServiceResultModel> GetPaging(int pageIndex, int pageSize, string txtSearch, bool hasBookingDetail = false);
+        Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch);
     }
 }

@@ -16,7 +16,7 @@ namespace BPHN.DataLayer.ImpRepositories
         {
         }
 
-        public bool CheckFreeTimeFrame(Booking data)
+        public async Task<bool> CheckFreeTimeFrame(Booking data)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
@@ -33,23 +33,24 @@ namespace BPHN.DataLayer.ImpRepositories
                                 where b.PitchId = @pitchId and b.NameDetail = @nameDetail and b.TimeFrameInfoId = @timeFrameInfoId and bd.MatchDate between @date1 and @date2";
                 
 
-                var lstBooking = connection.QueryFirstOrDefault<BookingDetail>(query, dic);
+                var lstBooking = await connection.QueryFirstOrDefaultAsync<BookingDetail>(query, dic);
                 return lstBooking != null ? false : true;
             }
         }
 
-        public Booking? GetById(string id)
+        public async Task<Booking?> GetById(string id)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
                 var dic = new Dictionary<string, object>();
                 dic.Add("@id", id);
-                return connection.QueryFirstOrDefault<Booking>("select * from bookings where Id = @id", dic);
+                var booking = await connection.QueryFirstOrDefaultAsync<Booking>("select * from bookings where Id = @id", dic);
+                return booking;
             }
         }
 
-        public object GetCountPaging(int pageIndex, int pageSize, Guid accountId, string txtSearch)
+        public async Task<object> GetCountPaging(int pageIndex, int pageSize, Guid accountId, string txtSearch)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
@@ -67,7 +68,7 @@ namespace BPHN.DataLayer.ImpRepositories
 
                 dic.Add("@accountId", accountId);
                 dic.Add("@txtSearch", $"%{txtSearch}%");
-                int totalRecord = connection.QuerySingle<int>(countQuery, dic);
+                int totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
                 int totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
                 int totalRecordCurrentPage = 0;
                 if (totalRecord > 0)
@@ -85,7 +86,7 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public List<Booking> GetPaging(int pageIndex, int pageSize, Guid accountId, string txtSearch, bool hasBookingDetail = false)
+        public async Task<List<Booking>> GetPaging(int pageIndex, int pageSize, Guid accountId, string txtSearch, bool hasBookingDetail = false)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
@@ -114,7 +115,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 
                 dic.Add("@accountId", accountId);
                 dic.Add("@txtSearch", $"%{txtSearch}%");
-                int totalRecord = connection.QuerySingle<int>(countQuery, dic);
+                int totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
                 int totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
                 if (pageIndex > totalPage)
                 {
@@ -124,7 +125,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 dic.Add("@offSize", offSet);
                 dic.Add("@pageSize", pageSize);
 
-                var lstBooking = connection.Query<Booking>(query, dic).ToList();
+                var lstBooking = (await connection.QueryAsync<Booking>(query, dic)).ToList();
                 if(hasBookingDetail)
                 {
                     string bookingIds = string.Empty;
@@ -139,7 +140,7 @@ namespace BPHN.DataLayer.ImpRepositories
                     {
                         string queryDetail = $"select * from booking_details where 1 = 1 {bookingIds}";
 
-                        var lstBookingDetail = connection.Query<BookingDetail>(queryDetail, dic).ToList();
+                        var lstBookingDetail = (await connection.QueryAsync<BookingDetail>(queryDetail, dic)).ToList();
                         for (int i = 0; i < lstBooking.Count; i++)
                         {
                             var booking = lstBooking[i];
@@ -152,7 +153,7 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public bool Insert(Booking data)
+        public async Task<bool> Insert(Booking data)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
@@ -178,7 +179,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 var transaction = connection.BeginTransaction();
                 var query = @"insert into bookings(Id, PhoneNumber, Email, IsRecurring, BookingDate, StartDate, EndDate, Weekendays, Status, TimeFrameInfoId, PitchId, NameDetail, accountId, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
                             value (@id, @phoneNumber, @email, @isRecurring, @bookingDate, @startDate, @endDate, @weekendays, @status, @timeFrameInfoId, @pitchId, @nameDetail, @accountId, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
-                int affect = connection.Execute(query, dic, transaction);
+                int affect = await connection.ExecuteAsync(query, dic, transaction);
                 if (affect > 0)
                 {
                     for (int i = 0; i < data.BookingDetails.Count; i++)
@@ -194,7 +195,7 @@ namespace BPHN.DataLayer.ImpRepositories
                         dic.Add("@createdBy", item.CreatedBy);
                         dic.Add("@modifiedBy", item.ModifiedBy);
                         dic.Add("@modifiedDate", item.ModifiedDate);
-                        affect = connection.Execute(query, dic, transaction);
+                        affect = await connection.ExecuteAsync(query, dic, transaction);
                         if(affect <= 0)
                         {
                             transaction.Rollback();

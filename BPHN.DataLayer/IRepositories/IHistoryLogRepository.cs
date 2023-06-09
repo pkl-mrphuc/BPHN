@@ -10,8 +10,8 @@ namespace BPHN.DataLayer.IRepositories
 {
     public interface IHistoryLogRepository
     {
-        bool Write(HistoryLog history);
-        List<HistoryLog> GetPaging(int pageIndex, int pageSize, List<WhereCondition> wheres);
-        object GetCountPaging(int pageIndex, int pageSize, List<WhereCondition> wheres);
+        Task<bool> Write(HistoryLog history);
+        Task<List<HistoryLog>> GetPaging(int pageIndex, int pageSize, List<WhereCondition> wheres);
+        Task<object> GetCountPaging(int pageIndex, int pageSize, List<WhereCondition> wheres);
     }
 }

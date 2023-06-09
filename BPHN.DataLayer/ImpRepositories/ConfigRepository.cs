@@ -21,7 +21,7 @@ namespace BPHN.DataLayer.ImpRepositories
 
         }
 
-        public List<Config> GetConfigs(Guid accountId, string key = null)
+        public async Task<List<Config>> GetConfigs(Guid accountId, string key = null)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
@@ -34,12 +34,12 @@ namespace BPHN.DataLayer.ImpRepositories
                     dic.Add("@key", key);
                     query = $"select c.* from configs c where c.AccountId = @accountId and c.Key in (@key)";
                 }
-                var configs = connection.Query<Config>(query, dic).ToList();
+                var configs = (await connection.QueryAsync<Config>(query, dic)).ToList();
                 return configs;
             }
         }
 
-        public bool Save(List<Config> configs)
+        public async Task<bool> Save(List<Config> configs)
         {
             using (var connection = ConnectDB(GetConnectionString())) 
             {
@@ -62,7 +62,7 @@ namespace BPHN.DataLayer.ImpRepositories
                                         insert into configs(Id, AccountId, `Key`, Value, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
                                             value(@idConfig, @accountId, @key, @value, @createdDate, @createdBy, @modifiedDate, @modifiedBy)
                                         on duplicate key update Value = @value, ModifiedDate = @modifiedDate, ModifiedBy = @modifiedBy";
-                        int affect = connection.Execute(query, dic, tranction, commandType: System.Data.CommandType.Text);
+                        int affect = await connection.ExecuteAsync(query, dic, tranction, commandType: System.Data.CommandType.Text);
                         if(affect == 0)
                         {
                             tranction.Rollback();

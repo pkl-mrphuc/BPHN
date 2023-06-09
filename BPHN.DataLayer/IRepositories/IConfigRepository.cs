@@ -9,7 +9,7 @@ namespace BPHN.DataLayer.IRepositories
 {
     public interface IConfigRepository
     {
-        List<Config> GetConfigs(Guid accountId, string key = null);
-        bool Save(List<Config> configs);
+        Task<List<Config>> GetConfigs(Guid accountId, string key = null);
+        Task<bool> Save(List<Config> configs);
     }
 }

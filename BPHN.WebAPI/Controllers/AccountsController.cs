@@ -1,11 +1,9 @@
 ﻿using BPHN.BusinessLayer.IServices;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Attributes;
-using BPHN.ModelLayer.Others;
 using BPHN.ModelLayer.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace BPHN.WebAPI.Controllers
 {
@@ -21,49 +19,49 @@ namespace BPHN.WebAPI.Controllers
         [AllowAnonymous]
         [Route("login")]
         [HttpPost]
-        public IActionResult Login([FromBody] Account request)
+        public async Task<IActionResult> Login([FromBody] Account request)
         {
-            return Ok(_accountService.Login(request));
+            return Ok(await _accountService.Login(request));
         }
 
         [ApiAuthorize]
         [Route("register")]
         [HttpPost]
-        public IActionResult RegisterForTenant([FromBody] Account request)
+        public async Task<IActionResult> RegisterForTenant([FromBody] Account request)
         {
-            return Ok(_accountService.RegisterForTenant(request));
+            return Ok(await _accountService.RegisterForTenant(request));
         }
 
         [AllowAnonymous]
         [Route("send-reset-password")]
         [HttpGet]
-        public IActionResult ResetPassword(string userName)
+        public async Task<IActionResult> ResetPassword(string userName)
         {
-            return Ok(_accountService.ResetPassword(userName));
+            return Ok(await _accountService.ResetPassword(userName));
         }
 
         [AllowAnonymous]
         [Route("submit-reset-password")]
         [HttpPost]
-        public IActionResult SubmitResetPassword([FromBody] ResetPasswordVm request)
+        public async Task<IActionResult> SubmitResetPassword([FromBody] ResetPasswordVm request)
         {
-            return Ok(_accountService.SubmitResetPassword(request.Code, request.Password, request.UserName));
+            return Ok(await _accountService.SubmitResetPassword(request.Code, request.Password, request.UserName));
         }
 
         [ApiAuthorize]
         [HttpGet]
         [Route("paging")]
-        public IActionResult GetPaging(int pageIndex, int pageSize, string txtSearch)
+        public async Task<IActionResult> GetPaging(int pageIndex, int pageSize, string txtSearch)
         {
-            return Ok(_accountService.GetPaging(pageIndex, pageSize, txtSearch));
+            return Ok(await _accountService.GetPaging(pageIndex, pageSize, txtSearch));
         }
 
         [ApiAuthorize]
         [HttpGet]
         [Route("count-paging")]
-        public IActionResult GetCountPaging(int pageIndex, int pageSize, string txtSearch)
+        public async Task<IActionResult> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
         {
-            return Ok(_accountService.GetCountPaging(pageIndex, pageSize, txtSearch));
+            return Ok(await _accountService.GetCountPaging(pageIndex, pageSize, txtSearch));
         }
 
         [AllowAnonymous]

@@ -9,7 +9,7 @@ namespace BPHN.BusinessLayer.IServices
 {
     public interface IConfigService
     {
-        ServiceResultModel GetConfigs(string key = null);
-        ServiceResultModel Save(List<Config> configs);
+        Task<ServiceResultModel> GetConfigs(string key = null);
+        Task<ServiceResultModel> Save(List<Config> configs);
     }
 }

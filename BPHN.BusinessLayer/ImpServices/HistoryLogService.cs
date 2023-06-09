@@ -19,7 +19,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _historyLogRepository = historyLogRepository;
             _contextService = contextService;
         }
-        public ServiceResultModel GetCountPaging(int pageIndex, int pageSize, string txtSearch)
+        public async Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
         {
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
@@ -53,7 +53,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 });
             }
 
-            var resultCountPaging = _historyLogRepository.GetCountPaging(pageIndex, pageSize, where);
+            var resultCountPaging = await _historyLogRepository.GetCountPaging(pageIndex, pageSize, where);
             return new ServiceResultModel()
             {
                  Success = true,
@@ -61,7 +61,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel GetPaging(int pageIndex, int pageSize, string txtSearch)
+        public async Task<ServiceResultModel> GetPaging(int pageIndex, int pageSize, string txtSearch)
         {
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
@@ -94,7 +94,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     Value = $"%{txtSearch}%"
                 });
             }
-            var resultPaging = _historyLogRepository.GetPaging(pageIndex, pageSize, where);
+            var resultPaging = await _historyLogRepository.GetPaging(pageIndex, pageSize, where);
             return new ServiceResultModel()
             {
                 Success = true,
@@ -102,7 +102,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel Write(HistoryLog history, Account? context)
+        public async Task<ServiceResultModel> Write(HistoryLog history, Account? context)
         {
 
             if(context == null)
@@ -149,7 +149,7 @@ namespace BPHN.BusinessLayer.ImpServices
             return new ServiceResultModel()
             {
                 Success = true,
-                Data = _historyLogRepository.Write(history)
+                Data = await _historyLogRepository.Write(history)
             };
         }
     }

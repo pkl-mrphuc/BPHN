@@ -10,13 +10,13 @@ namespace BPHN.DataLayer.IRepositories
 {
     public interface IAccountRepository
     {
-        Account? GetAccountByUserName(string userName);
-        bool CheckExistUserName(string userName);
+        Task<Account?> GetAccountByUserName(string userName);
+        Task<bool> CheckExistUserName(string userName);
         string GetToken(string id);
-        Account? GetAccountById(Guid id);
-        bool RegisterForTenant(Account account);
-        List<Account> GetPaging(int pageIndex, int pageSize, string txtSearch);
-        object GetCountPaging(int pageIndex, int pageSize, string txtSearch);
-        bool SavePassword(Guid id, string password);
+        Task<Account?> GetAccountById(Guid id);
+        Task<bool> RegisterForTenant(Account account);
+        Task<List<Account>> GetPaging(int pageIndex, int pageSize, string txtSearch);
+        Task<object> GetCountPaging(int pageIndex, int pageSize, string txtSearch);
+        Task<bool> SavePassword(Guid id, string password);
     }
 }

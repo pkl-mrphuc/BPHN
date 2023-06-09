@@ -28,7 +28,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _historyLogService = historyLogService;
         }
 
-        public ServiceResultModel CheckFreeTimeFrame(Booking data)
+        public async Task<ServiceResultModel> CheckFreeTimeFrame(Booking data)
         {
             if (data.IsRecurring)
             {
@@ -47,12 +47,12 @@ namespace BPHN.BusinessLayer.ImpServices
 
             return new ServiceResultModel()
             {
-                Success = _bookingRepository.CheckFreeTimeFrame(data),
+                Success = await _bookingRepository.CheckFreeTimeFrame(data),
                 Data = null
             };
         }
 
-        public ServiceResultModel GetCountPaging(int pageIndex, int pageSize, string txtSearch)
+        public async Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
         {
             var context = _contextService.GetContext();
             if (context == null)
@@ -68,7 +68,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageIndex < 0) pageIndex = 1;
             if (pageSize > 100 || pageSize <= 0) pageSize = 50;
 
-            var result = _bookingRepository.GetCountPaging(pageIndex, pageSize, context.Id, txtSearch);
+            var result = await _bookingRepository.GetCountPaging(pageIndex, pageSize, context.Id, txtSearch);
             return new ServiceResultModel()
             {
                 Success = true,
@@ -76,7 +76,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel GetInstance(string id)
+        public async Task<ServiceResultModel> GetInstance(string id)
         {
             var data = new Booking();
 
@@ -90,7 +90,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
             else
             {
-                data = _bookingRepository.GetById(id);
+                data = await _bookingRepository.GetById(id);
                 if(data == null)
                 {
                     return new ServiceResultModel()
@@ -108,7 +108,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel GetPaging(int pageIndex, int pageSize, string txtSearch, bool hasBookingDetail = false)
+        public async Task<ServiceResultModel> GetPaging(int pageIndex, int pageSize, string txtSearch, bool hasBookingDetail = false)
         {
             var context = _contextService.GetContext();
             if (context == null)
@@ -124,7 +124,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageIndex < 0) pageIndex = 1;
             if (pageSize > 100 || pageSize <= 0) pageSize = 50;
 
-            var lstBooking = _bookingRepository.GetPaging(pageIndex, pageSize, context.Id, txtSearch, hasBookingDetail);
+            var lstBooking = await _bookingRepository.GetPaging(pageIndex, pageSize, context.Id, txtSearch, hasBookingDetail);
             return new ServiceResultModel()
             {
                 Success = true,
@@ -132,7 +132,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel Insert(Booking data)
+        public async Task<ServiceResultModel> Insert(Booking data)
         {
             var context = _contextService.GetContext();
             if (context == null)
@@ -167,7 +167,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var checkFreeServiceResult = CheckFreeTimeFrame(data);
+            var checkFreeServiceResult = await CheckFreeTimeFrame(data);
             if (!checkFreeServiceResult.Success)
             {
                 return checkFreeServiceResult;
@@ -194,7 +194,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 return item;
             }).ToList();
 
-            bool insertResult = _bookingRepository.Insert(data);
+            bool insertResult = await _bookingRepository.Insert(data);
             if(insertResult)
             {
                 Thread thread = new Thread(delegate ()

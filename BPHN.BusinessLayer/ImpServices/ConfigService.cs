@@ -27,7 +27,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _cacheService = cacheService;
         }
 
-        public ServiceResultModel GetConfigs(string key = null)
+        public async Task<ServiceResultModel> GetConfigs(string key = null)
         {
             var context = _contextService.GetContext();
             if (context == null)
@@ -44,7 +44,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if(string.IsNullOrEmpty(data))
             {
-                var result = _configRepository.GetConfigs(context.Id, key);
+                var result = await _configRepository.GetConfigs(context.Id, key);
                 if(string.IsNullOrEmpty(key))
                 {
                     _cacheService.Set(_cacheService.GetKeyCache("All", "Config"), JsonConvert.SerializeObject(result));
@@ -70,7 +70,7 @@ namespace BPHN.BusinessLayer.ImpServices
             
         }
 
-        public ServiceResultModel Save(List<Config> configs)
+        public async Task<ServiceResultModel> Save(List<Config> configs)
         {
             var context = _contextService.GetContext();
             if (context == null)
@@ -103,7 +103,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 return item;
             }).ToList();
 
-            bool saveResult = _configRepository.Save(configs);
+            bool saveResult = await _configRepository.Save(configs);
             if(saveResult)
             {
                 _cacheService.Remove(_cacheService.GetKeyCache("All", "Config"));
