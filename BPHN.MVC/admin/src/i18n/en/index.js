@@ -85,6 +85,7 @@ const en = {
     Cancel: 'Cancel',
     Status: 'Status',
     BookingDate: 'Booking date',
-    BookingUser: 'Booking user'
+    BookingUser: 'Booking user',
+    
 }
 export default en

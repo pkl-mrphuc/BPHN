@@ -25,15 +25,15 @@ namespace BPHN.DataLayer.ImpRepositories
                 dic.Add("@pitchId", data.PitchId);
                 dic.Add("@nameDetail", data.NameDetail);
                 dic.Add("@timeFrameInfoId", data.TimeFrameInfoId);
-                dic.Add("@date1", data.BookingDetails[0].MatchDate.ToString("yyyy-MM-dd"));
-                dic.Add("@date2", data.BookingDetails[data.BookingDetails.Count - 1].MatchDate.ToString("yyyy-MM-dd"));
+                dic.Add("@date1", $"{data.BookingDetails[0].MatchDate.ToString("yyyy-MM-dd")} 00:00:00");
+                dic.Add("@date2", $"{data.BookingDetails[data.BookingDetails.Count - 1].MatchDate.ToString("yyyy-MM-dd")} 23:59:59");
 
-                var query = $@"select * from bookings b 
-                                inner join booking_details bd on b.Id = bd.BookingId 
+                var query = $@"select bd.* from booking_details bd 
+                                inner join bookings b on b.Id = bd.BookingId 
                                 where b.PitchId = @pitchId and b.NameDetail = @nameDetail and b.TimeFrameInfoId = @timeFrameInfoId and bd.MatchDate between @date1 and @date2";
                 
 
-                var lstBooking = connection.QueryFirstOrDefault<Booking>(query, dic);
+                var lstBooking = connection.QueryFirstOrDefault<BookingDetail>(query, dic);
                 return lstBooking != null ? false : true;
             }
         }
@@ -100,7 +100,7 @@ namespace BPHN.DataLayer.ImpRepositories
                                                             union 
                                                             (select b.* from bookings b inner join pitchs p on b.PitchId = p.Id where b.AccountId = @accountId and p.Name like @txtSearch)
                                                         ) as bs inner join pitchs p on bs.PitchId = p.Id
-                                                                inner join time_frame_infos tfi on p.Id = tfi.PitchId
+                                                                inner join time_frame_infos tfi on p.Id = tfi.PitchId order by bs.BookingDate desc
                         limit @offSize, @pageSize";
                 string countQuery = @"select distinct count(*) from (
 						                                                    select * from bookings where AccountId = @accountId and PhoneNumber like @txtSearch

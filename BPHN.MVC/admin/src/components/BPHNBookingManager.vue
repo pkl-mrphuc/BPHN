@@ -78,6 +78,7 @@ const loadData = () => {
             v-model="txtSearch"
             :placeholder="t('SearchBy')"
             :suffix-icon="Search"
+            @keyup.enter="loadData"
           />
           <el-button @click="loadData">
             <el-icon><Refresh /></el-icon>
@@ -94,7 +95,7 @@ const loadData = () => {
         <el-table :data="bmData" style="width: 100%">
           <el-table-column type="expand">
             <template #default="props">
-              <div m="4">
+              <div m="4" style="margin-left: 60px">
                 <el-table :data="props.row.bookingDetails" :border="false">
                   <el-table-column width="50">
                     <template #header>
@@ -111,6 +112,16 @@ const loadData = () => {
                     </template>
                   </el-table-column>
                   <el-table-column
+                    width="100"
+                    :label="t('Status')"
+                    prop="status"
+                  >
+                    <template #default="scope">
+                      {{ scope.row.status }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    width="150"
                     :label="t('MatchDate')"
                     prop="matchDate"
                   >
@@ -126,7 +137,7 @@ const loadData = () => {
                       <span v-else></span>
                     </template>
                   </el-table-column>
-                  <el-table-column label="" width="200">
+                  <el-table-column label="" width="100">
                     <template #default="scope">
                       <el-button :class="scope.row.id" type="danger"
                         >{{ t('Cancel') }}</el-button
@@ -137,7 +148,7 @@ const loadData = () => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column :label="t('Status')">
+          <el-table-column :label="t('Status')" width="100">
             <template #default="scope">
               {{ scope.row.status }}
             </template>
@@ -189,6 +200,7 @@ const loadData = () => {
   <BookingDialog
     v-if="hasRole('BookingDialog')"
     :data="bookingForm"
+    @callback="loadData"
   ></BookingDialog>
 </template>
 

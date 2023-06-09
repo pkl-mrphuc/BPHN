@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { ref, defineProps, onMounted } from "vue";
+import { ref, defineProps, onMounted, defineEmits } from "vue";
 import useToggleModal from "@/register-components/actionDialog";
 import useCommonFn from "@/commonFn";
 import { useStore } from "vuex";
@@ -9,6 +9,7 @@ const { toggleModel } = useToggleModal();
 const { sameDate, yearEndDay, time } = useCommonFn();
 const { t } = useI18n();
 const store = useStore();
+const emits = defineEmits(["callback"]);
 const props = defineProps({
   data: Object,
 });
@@ -77,13 +78,13 @@ const checkFreeTimeFrame = async () => {
   return result?.data?.success ?? false;
 };
 
-const quickCheck = () => {
+const quickCheck = async () => {
   if (!pitchId.value || !nameDetail.value || !timeFrameInfoId.value) {
     alert(t("InputTimeFrameEmptyMesg"));
     return;
   }
-
-  if (!checkFreeTimeFrame()) {
+  let result = await checkFreeTimeFrame();
+  if (!result) {
     alert(t("Reserved"));
   } else {
     alert(t("Free"));
@@ -114,7 +115,13 @@ const save = () => {
       nameDetail: nameDetail.value,
     })
     .then((res) => {
-      console.log(res);
+      if(res?.data?.success) {
+        emits("callback");
+      }
+      else {
+        let msg = res?.data?.message;
+        alert(msg??t("ErrorMesg"));
+      }
     });
 };
 

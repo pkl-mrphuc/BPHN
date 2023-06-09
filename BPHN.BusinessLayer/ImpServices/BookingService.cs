@@ -190,6 +190,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 item.ModifiedBy = context.FullName;
                 item.ModifiedDate = DateTime.Now;
                 item.BookingId = data.Id;
+                item.Status = BookingStatusEnum.SUCCESS.ToString();
                 return item;
             }).ToList();
 
