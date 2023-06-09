@@ -1,16 +1,7 @@
 ﻿using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
-using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Dapper;
-using Google.Protobuf.WellKnownTypes;
-using Org.BouncyCastle.Utilities.Collections;
-using System.Collections;
+using Microsoft.Extensions.Options;
 
 namespace BPHN.DataLayer.ImpRepositories
 {

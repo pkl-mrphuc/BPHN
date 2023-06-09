@@ -5,12 +5,8 @@ using BPHN.ModelLayer.Others;
 using BPHN.ModelLayer.ViewModels;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Mail;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BPHN.BusinessLayer.ImpServices.MailBuilders
 {

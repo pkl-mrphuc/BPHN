@@ -2,11 +2,6 @@
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BPHN.BusinessLayer.ImpServices
 {

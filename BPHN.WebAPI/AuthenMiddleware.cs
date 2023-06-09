@@ -1,10 +1,7 @@
 ﻿using BPHN.BusinessLayer.IServices;
 using BPHN.ModelLayer;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
-using System.Text;
 
 namespace BPHN.WebAPI
 {
