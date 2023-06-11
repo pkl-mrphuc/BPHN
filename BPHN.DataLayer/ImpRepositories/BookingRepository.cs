@@ -136,13 +136,15 @@ namespace BPHN.DataLayer.ImpRepositories
 
                     if (lstBooking.Count > 0)
                     {
-                        string queryDetail = $"select * from booking_details where 1 = 1 and BookingId in ( {bookingIds} ) order by BookingDate";
+                        string queryDetail = $"select * from booking_details where 1 = 1 and BookingId in ( {bookingIds} )";
 
                         var lstBookingDetail = (await connection.QueryAsync<BookingDetail>(queryDetail, dic)).ToList();
                         for (int i = 0; i < lstBooking.Count; i++)
                         {
                             var booking = lstBooking[i];
-                            booking.BookingDetails = lstBookingDetail.Where(item => item.BookingId == booking.Id).ToList();
+                            booking.BookingDetails = lstBookingDetail.Where(item => item.BookingId == booking.Id)
+                                                                    .OrderBy(item => item.MatchDate)
+                                                                    .ToList();
                         }
                     }
                 }

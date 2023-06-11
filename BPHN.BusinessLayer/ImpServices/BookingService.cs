@@ -40,9 +40,35 @@ namespace BPHN.BusinessLayer.ImpServices
 
             return new ServiceResultModel()
             {
-                Success = await _bookingRepository.CheckFreeTimeFrame(data),
-                Data = null
+                Success = await _bookingRepository.CheckFreeTimeFrame(data)
             };
+        }
+
+        public async Task<ServiceResultModel> Find(Booking data)
+        {
+            var context = _contextService.GetContext();
+            if (context == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = "Token đã hết hạn"
+                };
+            }
+
+            var now = DateTime.Now;
+            data.StartDate = now;
+            data.EndDate = new DateTime(now.Year, 12, 31, 23, 59, 59);
+            if(data.IsRecurring)
+            {
+                var dicWeekendays = new Dictionary<int, List<BookingDetail>>();
+                for (int i = 0; i <= 6; i++)
+                {
+                    var lstMatchDateByWeekendays = _bookingDetailService.GetMatchDatesByWeekendays(data.StartDate, data.EndDate, i);
+                    dicWeekendays.Add(i, lstMatchDateByWeekendays == null || lstMatchDateByWeekendays.Data == null ? new List<BookingDetail>() : (List<BookingDetail>)lstMatchDateByWeekendays.Data);
+                }
+            }
         }
 
         public async Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch)

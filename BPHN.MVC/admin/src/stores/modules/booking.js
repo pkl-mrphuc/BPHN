@@ -31,6 +31,10 @@ const actions = {
 
     getCountPaging: ((commit, data) => {
         return BookingAPI.getCountPaging(data);
+    }),
+
+    find: ((commit, data) => {
+        return BookingAPI.find(data);
     })
 };
 

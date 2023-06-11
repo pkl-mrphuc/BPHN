@@ -94,7 +94,20 @@ const quickCheck = async () => {
 };
 
 const finder = () => {
-  alert("find free");
+  store.dispatch("booking/find", {
+    id: props.data?.id,
+    phoneNumber: phoneNumber.value,
+    email: email.value,
+    isRecurring: isRecurring.value,
+    startDate: dateToString(fromDate.value),
+    endDate: dateToString(toDate.value),
+    weekendays: weekdays.value,
+    timeFrameInfoId: timeFrameInfoId.value,
+    pitchId: pitchId.value,
+    nameDetail: nameDetail.value,
+  }).then((res) => {
+    console.log(res);
+  })
 };
 
 const save = () => {
@@ -121,13 +134,13 @@ const save = () => {
     .then((res) => {
       if(res?.data?.success) {
         emits("callback");
-        loading.close();
         toggleModel();
       }
       else {
         let msg = res?.data?.message;
         alert(msg??t("ErrorMesg"));
       }
+      loading.close();
     });
 };
 

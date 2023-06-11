@@ -48,5 +48,12 @@ namespace BPHN.WebAPI.Controllers
         {
             return Ok(await _bookingService.GetCountPaging(pageIndex, pageSize, txtSearch));
         }
+
+        [HttpPost]
+        [Route("find")]
+        public async Task<IActionResult> Find([FromBody] Booking request)
+        {
+            return Ok(await _bookingService.Find(request));
+        }
     }
 }
