@@ -63,25 +63,78 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var lstBooking = await GetAllTimeFrameInfoCanBookInADay(context.Id.ToString());
+            var lstResult = new List<Booking>();
+            var lstTimeFramesInADay = await GetAllTimeFrameInfoCanBookInADay(context.Id.ToString());
 
-            if (lstBooking.Count > 0)
+            if (lstTimeFramesInADay.Count > 0)
             {
                 var now = DateTime.Now;
                 data.EndDate = new DateTime(now.Year, 12, 31, 23, 59, 59);
-                var dicMatchDate = await GetDictionaryBookedByDate(context.Id, data.StartDate, data.EndDate);
+                var lstBooked = await GetDictionaryBookedByDate(context.Id, data.StartDate, data.EndDate);
 
+                var lstBooking = new List<Booking>();
+                // lay lich recurring tu ngay => den ngay
                 if (data.IsRecurring)
                 {
                     for (int i = 0; i <= 6; i++)
                     {
                         var serviceResult = _bookingDetailService.GetMatchDatesByWeekendays(data.StartDate, data.EndDate, i);
                         var lstDateByWeekendays = serviceResult == null || serviceResult.Data == null ? new List<BookingDetail>() : (List<BookingDetail>)serviceResult.Data;
+                        lstBooking.AddRange(lstTimeFramesInADay.Select(item =>
+                        {
+                            item.StartDate = data.StartDate;
+                            item.EndDate = data.EndDate;
+                            item.BookingDetails = lstDateByWeekendays;
+                            return item;
+                        }));
+                    }
+                }
+                // lay lich theo ngay tu ngay => den ngay
+                else
+                {
+                    var serviceResult = _bookingDetailService.GetMatchDates(data.StartDate, data.EndDate);
+                    var lstDate = serviceResult == null || serviceResult.Data == null ? new List<BookingDetail>() : (List<BookingDetail>)serviceResult.Data;
+                    for (int i = 0; i < lstDate.Count; i++)
+                    {
+                        var bookingCollection = lstTimeFramesInADay.Select(item =>
+                        {
+                            item.StartDate = lstDate[i].MatchDate;
+                            item.EndDate = lstDate[i].MatchDate;
+                            item.BookingDetails = new List<BookingDetail>() { lstDate[i] };
+                            return item;
+                        });
+                        lstBooking.AddRange(bookingCollection);
+                    }
+                }
+
+                var setMatchDate = new HashSet<string>(lstBooked.Select(item => item.Item4.ToString("dd/MM/yyyy")));
+                for (int i = 0; i < lstBooking.Count; i++)
+                {
+                    var a = lstBooking[i];
+                    var lstA = lstBooked.Where(b => 
+                                                        b.Item1 == a.PitchId &&
+                                                        b.Item2 == a.TimeFrameInfoId &&
+                                                        b.Item3 == a.NameDetail
+                                                    ).ToList();
+                    var lstB = a.BookingDetails.Where(item => setMatchDate.Contains(item.MatchDate.ToString("dd/MM/yyyy"))).ToList();
+
+                    if(lstA.Count > 0)
+                    {
+
+                    }
+
+                    if (lstA.Count == 0 || lstB.Count == 0)
+                    {
+                        lstResult.Add(a);
                     }
                 }
             }
 
-            throw new Exception("");
+            return new ServiceResultModel()
+            {
+                Success = true,
+                Data = lstResult
+            };
         }
 
         public async Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
@@ -280,42 +333,23 @@ namespace BPHN.BusinessLayer.ImpServices
             return lstBooking;
         }
 
-        private async Task<Dictionary<string, List<Booking>>> GetDictionaryBookedByDate(Guid accountId, DateTime startDate, DateTime endDate)
+        private async Task<HashSet<Tuple<Guid?, Guid?, string, DateTime>>> GetDictionaryBookedByDate(Guid accountId, DateTime startDate, DateTime endDate)
         {
-            List<BookingDetail> lstBookedDetail = await _bookingDetailRepository.GetInRangeDate(accountId, startDate, endDate);
+            var lstBookedDetail = await _bookingDetailRepository.GetInRangeDate(accountId, startDate, endDate);
             var lstBookingId = string.Join(";", (new HashSet<Guid>(lstBookedDetail.Select(item => item.BookingId))).ToArray());
-            List<Booking> lstBooked = await _bookingRepository.GetById(lstBookingId);
-            var dicBooked = new Dictionary<Guid, Booking>();
+            var lstBooked = await _bookingRepository.GetById(lstBookingId);
+
+            var hashSetResult = new HashSet<Tuple<Guid?, Guid?, string, DateTime>>();
             for (int i = 0; i < lstBooked.Count; i++)
             {
-                dicBooked.Add(lstBooked[i].Id, lstBooked[i]);
+                var booked = lstBooked[i];
+                var bookingDetetails = lstBookedDetail.Where(item => item.BookingId == booked.Id).ToList();
+                for (int j = 0; j < bookingDetetails.Count; j++)
+                {
+                    hashSetResult.Add(new Tuple<Guid?, Guid?, string, DateTime>(booked.PitchId, booked.TimeFrameInfoId, booked.NameDetail, bookingDetetails[j].MatchDate));
+                }
             }
-
-            var dicMatchDate = new Dictionary<string, List<Booking>>();
-            for (int i = 0; i < lstBookedDetail.Count; i++)
-            {
-                var item = lstBookedDetail[i];
-                var key = item.MatchDate.ToString("dd/MM/yyyy");
-
-                var value = new List<Booking>();
-                if (dicMatchDate.ContainsKey(key))
-                {
-                    value = dicMatchDate[key];
-                }
-                else
-                {
-                    dicMatchDate.Add(key, value);
-                }
-
-                if (dicBooked.ContainsKey(item.BookingId))
-                {
-                    value.Add(dicBooked[item.BookingId]);
-                }
-
-                dicMatchDate[key] = value;
-            }
-
-            return dicMatchDate;
+            return hashSetResult;
         }
     }
 }
