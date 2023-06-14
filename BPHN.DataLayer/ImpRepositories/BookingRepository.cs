@@ -33,15 +33,23 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public async Task<Booking?> GetById(string id)
+        public async Task<List<Booking>> GetById(string id)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
                 var dic = new Dictionary<string, object>();
-                dic.Add("@id", id);
-                var booking = await connection.QueryFirstOrDefaultAsync<Booking>("select * from bookings where Id = @id", dic);
-                return booking;
+                var lstId = id.Split(";").ToList();
+                var lstParam = new List<string>();  
+                for(int i = 0; i < lstId.Count; i++)
+                {
+                    var param = $"@id{i}";
+                    dic.Add(param, lstId[i]);
+                    lstParam.Add(param);
+                }
+                string where = string.Join(",", lstParam.ToArray());
+                var lstBooking = (await connection.QueryAsync<Booking>($"select * from bookings where Id in ({where})", dic)).ToList();
+                return lstBooking;
             }
         }
 
