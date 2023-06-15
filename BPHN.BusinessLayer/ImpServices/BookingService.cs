@@ -80,13 +80,20 @@ namespace BPHN.BusinessLayer.ImpServices
                     {
                         var serviceResult = _bookingDetailService.GetMatchDatesByWeekendays(data.StartDate, data.EndDate, i);
                         var lstDateByWeekendays = serviceResult == null || serviceResult.Data == null ? new List<BookingDetail>() : (List<BookingDetail>)serviceResult.Data;
-                        lstBooking.AddRange(lstTimeFramesInADay.Select(item =>
+                        for (int j = 0; j < lstTimeFramesInADay.Count; j++)
                         {
-                            item.StartDate = data.StartDate;
-                            item.EndDate = data.EndDate;
-                            item.BookingDetails = lstDateByWeekendays;
-                            return item;
-                        }));
+                            var clone = (Booking)lstTimeFramesInADay[j].Clone();
+                            clone.Id = Guid.NewGuid();
+                            clone.IsRecurring = true;
+                            clone.BookingDate = DateTime.Now;
+                            clone.StartDate = data.StartDate;
+                            clone.EndDate = data.EndDate;
+                            clone.Pitch = null;
+                            clone.TimeFrameInfo = null;
+                            clone.BookingDetails = lstDateByWeekendays;
+                            clone.Weekendays = i;
+                            lstBooking.Add(clone);
+                        }
                     }
                 }
                 // lay lich theo ngay tu ngay => den ngay
@@ -96,14 +103,19 @@ namespace BPHN.BusinessLayer.ImpServices
                     var lstDate = serviceResult == null || serviceResult.Data == null ? new List<BookingDetail>() : (List<BookingDetail>)serviceResult.Data;
                     for (int i = 0; i < lstDate.Count; i++)
                     {
-                        var bookingCollection = lstTimeFramesInADay.Select(item =>
+                        for (int j = 0; j < lstTimeFramesInADay.Count; j++)
                         {
-                            item.StartDate = lstDate[i].MatchDate;
-                            item.EndDate = lstDate[i].MatchDate;
-                            item.BookingDetails = new List<BookingDetail>() { lstDate[i] };
-                            return item;
-                        });
-                        lstBooking.AddRange(bookingCollection);
+                            var clone = (Booking)lstTimeFramesInADay[j].Clone();
+                            clone.Id = Guid.NewGuid();
+                            clone.IsRecurring = false;
+                            clone.BookingDate = DateTime.Now;
+                            clone.StartDate = lstDate[i].MatchDate;
+                            clone.EndDate = lstDate[i].MatchDate;
+                            clone.Pitch = null;
+                            clone.TimeFrameInfo = null;
+                            clone.BookingDetails = new List<BookingDetail>() { lstDate[i] };
+                            lstBooking.Add(clone);
+                        }
                     }
                 }
 
@@ -111,19 +123,14 @@ namespace BPHN.BusinessLayer.ImpServices
                 for (int i = 0; i < lstBooking.Count; i++)
                 {
                     var a = lstBooking[i];
-                    var lstA = lstBooked.Where(b => 
+                    var isConflict = lstBooked.Where(b => 
                                                         b.Item1 == a.PitchId &&
                                                         b.Item2 == a.TimeFrameInfoId &&
-                                                        b.Item3 == a.NameDetail
-                                                    ).ToList();
-                    var lstB = a.BookingDetails.Where(item => setMatchDate.Contains(item.MatchDate.ToString("dd/MM/yyyy"))).ToList();
-
-                    if(lstA.Count > 0)
-                    {
-
-                    }
-
-                    if (lstA.Count == 0 || lstB.Count == 0)
+                                                        b.Item3 == a.NameDetail &&
+                                                        a.BookingDetails.Where(c => setMatchDate.Contains(c.MatchDate.ToString("dd/MM/yyyy"))).FirstOrDefault() != null
+                                                    ).FirstOrDefault() != null ? true : false;
+                    
+                    if (!isConflict)
                     {
                         lstResult.Add(a);
                     }
@@ -324,7 +331,7 @@ namespace BPHN.BusinessLayer.ImpServices
                                 PitchId = lstPitch[i].Id,
                                 TimeFrameInfo = lstTimeFrameInfo[j],
                                 TimeFrameInfoId = lstTimeFrameInfo[j].Id,
-                                NameDetail = lstNameDetail[k]
+                                NameDetail = lstNameDetail[k]                     
                             });
                         }
                     }

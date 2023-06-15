@@ -2,7 +2,7 @@
 
 namespace BPHN.ModelLayer
 {
-    public class Booking : BaseModel
+    public class Booking : BaseModel, ICloneable
     {
         [Required]
         [MaxLength(255)]
@@ -33,5 +33,36 @@ namespace BPHN.ModelLayer
         public List<BookingDetail> BookingDetails { get; set; }
         public Guid AccountId { get; set; } 
         public Account Account { get; set; }
+
+        public object Clone()
+        {
+            return new Booking()
+            {
+                StartDate = this.StartDate,
+                EndDate = this.EndDate,
+                AccountId = this.AccountId,
+                BookingDetails = this.BookingDetails,
+                PitchId = this.PitchId,
+                Account = this.Account,
+                BookingDate = this.BookingDate,
+                BookingDetailIds = this.BookingDetailIds,
+                Id = this.Id,
+                Email = this.Email,
+                NameDetail = this.NameDetail,
+                PhoneNumber = this.PhoneNumber,
+                IsRecurring = this.IsRecurring,
+                Pitch = this.Pitch,
+                PitchName = this.PitchName,
+                Status = this.Status,
+                TimeFrameInfo = this.TimeFrameInfo,
+                TimeFrameInfoId = this.TimeFrameInfoId,
+                TimeFrameInfoName = this.TimeFrameInfoName,
+                Weekendays = this.Weekendays,
+                CreatedBy = this.CreatedBy,
+                CreatedDate = this.CreatedDate,
+                ModifiedBy = this.ModifiedBy,
+                ModifiedDate = this.ModifiedDate
+            };
+        }
     }
 }
