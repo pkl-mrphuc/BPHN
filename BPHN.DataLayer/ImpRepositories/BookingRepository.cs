@@ -20,12 +20,18 @@ namespace BPHN.DataLayer.ImpRepositories
                 dic.Add("@pitchId", data.PitchId);
                 dic.Add("@nameDetail", data.NameDetail);
                 dic.Add("@timeFrameInfoId", data.TimeFrameInfoId);
-                dic.Add("@date1", $"{data.BookingDetails[0].MatchDate.ToString("yyyy-MM-dd")} 00:00:00");
-                dic.Add("@date2", $"{data.BookingDetails[data.BookingDetails.Count - 1].MatchDate.ToString("yyyy-MM-dd")} 23:59:59");
-
+                
+                var lstParam = new List<string>();
+                for (int i = 0; i < data.BookingDetails.Count; i++)
+                {
+                    var param = $"@date{i}";
+                    dic.Add(param, $"{data.BookingDetails[i].MatchDate.ToString("yyyy-MM-dd")}");
+                    lstParam.Add(param);
+                }
+                string where = string.Join(",", lstParam.ToArray());
                 var query = $@"select bd.* from booking_details bd 
                                 inner join bookings b on b.Id = bd.BookingId 
-                                where b.PitchId = @pitchId and b.NameDetail = @nameDetail and b.TimeFrameInfoId = @timeFrameInfoId and bd.MatchDate between @date1 and @date2";
+                                where b.PitchId = @pitchId and b.NameDetail = @nameDetail and b.TimeFrameInfoId = @timeFrameInfoId and bd.MatchDate in ({where})";
                 
 
                 var lstBooking = await connection.QueryFirstOrDefaultAsync<BookingDetail>(query, dic);
@@ -151,6 +157,11 @@ namespace BPHN.DataLayer.ImpRepositories
                         {
                             var booking = lstBooking[i];
                             booking.BookingDetails = lstBookingDetail.Where(item => item.BookingId == booking.Id)
+                                                                    .Select(item =>
+                                                                    {
+                                                                        item.Weekendays = (int)item.MatchDate.DayOfWeek;
+                                                                        return item;
+                                                                    })
                                                                     .OrderBy(item => item.MatchDate)
                                                                     .ToList();
                         }

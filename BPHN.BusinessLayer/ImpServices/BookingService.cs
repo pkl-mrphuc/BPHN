@@ -180,6 +180,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 data.StartDate = DateTime.Now;
                 data.EndDate = DateTime.Now;
                 data.IsRecurring = false;
+                data.Weekendays = (int)DateTime.Now.DayOfWeek;
             }
             else
             {

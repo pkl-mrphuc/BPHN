@@ -16,7 +16,7 @@ const pageIndex = ref(1);
 const pageSize = ref(50);
 const totalRecord = ref(0);
 const txtSearch = ref("");
-const { dateToString } = useCommonFn();
+const { dateToString, getWeekdays } = useCommonFn();
 
 const addNew = () => {
   const loading = ElLoading.service(loadingOptions);
@@ -118,6 +118,15 @@ const loadData = () => {
                   >
                     <template #default="scope">
                       {{ scope.row.status }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    width="100"
+                    :label="t('Weekdays')"
+                    prop="weekendays"
+                  >
+                    <template #default="scope">
+                      {{ t(getWeekdays(scope.row.weekendays)) }}
                     </template>
                   </el-table-column>
                   <el-table-column

@@ -66,6 +66,10 @@ export default function useCommonFn() {
         }
     }
 
+    const getDay = (value) => {
+        return value.getDay() + "";
+    }
+
     return {
         dateNow,
         sameDate,
@@ -74,6 +78,7 @@ export default function useCommonFn() {
         yearEndDay,
         time,
         dateToString,
-        getWeekdays
+        getWeekdays,
+        getDay
     }
 }

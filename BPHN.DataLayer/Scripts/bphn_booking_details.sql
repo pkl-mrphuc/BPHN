@@ -26,6 +26,8 @@ CREATE TABLE `booking_details` (
   `Id` char(36) NOT NULL,
   `MatchDate` datetime NOT NULL,
   `BookingId` char(36) NOT NULL,
+  `Deposite` double DEFAULT NULL,
+  `Status` varchar(255) DEFAULT NULL,
   `CreatedDate` datetime DEFAULT NULL,
   `CreatedBy` varchar(255) DEFAULT NULL,
   `ModifiedDate` datetime DEFAULT NULL,
@@ -45,4 +47,4 @@ CREATE TABLE `booking_details` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-07 12:57:15
+-- Dump completed on 2023-06-15 17:34:34

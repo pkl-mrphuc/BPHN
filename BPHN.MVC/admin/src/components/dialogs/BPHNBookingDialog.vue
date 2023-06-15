@@ -7,7 +7,7 @@ import { useStore } from "vuex";
 import { ElLoading } from "element-plus";
 
 const { toggleModel, openModal, hasRole } = useToggleModal();
-const { sameDate, yearEndDay, time, dateToString } = useCommonFn();
+const { sameDate, yearEndDay, time, dateToString, getDay } = useCommonFn();
 const { t } = useI18n();
 const store = useStore();
 const emits = defineEmits(["callback"]);
@@ -17,7 +17,7 @@ const props = defineProps({
 });
 
 const isRecurring = ref(props.data?.isRecurring ?? false);
-const weekdays = ref(null);
+const weekdays = ref(props.data?.weekendays + "");
 const fromDate = ref(props.data?.fromDate ?? new Date());
 const toDate = ref(props.data?.toDate ?? new Date());
 const listPitch = ref([]);
@@ -31,21 +31,20 @@ const email = ref(props.data?.email ?? null);
 
 const showMakeRecurring = () => {
   if (isRecurring.value) {
-    weekdays.value = "1";
     fromDate.value = new Date();
     toDate.value = yearEndDay(fromDate.value);
   } else {
-    weekdays.value = null;
     toDate.value = fromDate.value;
   }
+  weekdays.value = getDay(fromDate.value);
 };
 
 const changeDate = () => {
   if (sameDate(fromDate.value, toDate.value)) {
-    weekdays.value = null;
     toDate.value = fromDate.value;
     isRecurring.value = false;
   }
+  weekdays.value = getDay(fromDate.value);
 };
 
 const changePitchId = () => {
@@ -131,6 +130,19 @@ const save = () => {
     });
 };
 
+const bindBlankData = (data) => {
+  if(data) {
+    isRecurring.value = data.isRecurring;
+    pitchId.value = data.pitchId;
+    timeFrameInfoId.value = data.timeFrameInfoId;
+    nameDetail.value = data.nameDetail;
+    fromDate.value = data.startDate;
+    toDate.value = data.endDate;
+    weekdays.value = data.weekendays + "";
+    changePitchId();
+  }
+}
+
 onMounted(() => {
   store
     .dispatch("pitch/getPaging", {
@@ -209,8 +221,8 @@ onMounted(() => {
             @change="showMakeRecurring"
           />
         </el-form-item>
-        <el-form-item v-if="isRecurring">
-          <el-radio-group v-model="weekdays">
+        <el-form-item>
+          <el-radio-group v-model="weekdays" :disabled="!isRecurring">
             <el-radio label="1">{{ t("Monday") }}</el-radio>
             <el-radio label="2">{{ t("Tuesday") }}</el-radio>
             <el-radio label="3">{{ t("Wednesday") }}</el-radio>
@@ -270,6 +282,7 @@ onMounted(() => {
     :isRecurring="isRecurring"
     :startDate="dateToString(fromDate)"
     :endDate="dateToString(toDate)"
+    @callback="bindBlankData"
   ></FindBlankDialog>
 </template>
 
