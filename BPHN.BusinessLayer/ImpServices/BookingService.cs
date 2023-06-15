@@ -50,7 +50,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task<ServiceResultModel> Find(Booking data)
+        public async Task<ServiceResultModel> FindBlank(Booking data)
         {
             var context = _contextService.GetContext();
             if (context == null)
@@ -88,8 +88,8 @@ namespace BPHN.BusinessLayer.ImpServices
                             clone.BookingDate = DateTime.Now;
                             clone.StartDate = data.StartDate;
                             clone.EndDate = data.EndDate;
-                            clone.Pitch = null;
-                            clone.TimeFrameInfo = null;
+                            clone.PitchName = clone.Pitch == null ? string.Empty : clone.Pitch.Name;
+                            clone.TimeFrameInfoName = clone.TimeFrameInfo == null ? string.Empty : clone.TimeFrameInfo.Name;
                             clone.BookingDetails = lstDateByWeekendays;
                             clone.Weekendays = i;
                             lstBooking.Add(clone);
@@ -111,9 +111,10 @@ namespace BPHN.BusinessLayer.ImpServices
                             clone.BookingDate = DateTime.Now;
                             clone.StartDate = lstDate[i].MatchDate;
                             clone.EndDate = lstDate[i].MatchDate;
-                            clone.Pitch = null;
-                            clone.TimeFrameInfo = null;
+                            clone.PitchName = clone.Pitch == null ? string.Empty : clone.Pitch.Name;
+                            clone.TimeFrameInfoName = clone.TimeFrameInfo == null ? string.Empty : clone.TimeFrameInfo.Name;
                             clone.BookingDetails = new List<BookingDetail>() { lstDate[i] };
+                            clone.Weekendays = (int)lstDate[i].MatchDate.DayOfWeek;
                             lstBooking.Add(clone);
                         }
                     }

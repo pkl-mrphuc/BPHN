@@ -74,7 +74,7 @@ const vn = {
     ToDate: 'Đến ngày',
     Date: 'Ngày',
     QuickCheck: 'Kiểm tra nhanh',
-    Finder: 'Tìm kiếm sân trống',
+    Finder: 'Tìm sân trống',
     PhoneNumberEmptyMesg: 'SDT không được để trống',
     Reserved: 'Đã được đặt',
     Free: 'Trống',
@@ -85,7 +85,10 @@ const vn = {
     Cancel: 'Hủy',
     Status: 'Trạng thái',
     BookingDate: 'Ngày đặt',
-    BookingUser: 'Người đặt'
+    BookingUser: 'Người đặt',
+    FindBlankForm: 'Tìm sân trống',
+    Choose: 'Chọn',
+    Weekdays: 'Thứ'
 }
 
 export default vn

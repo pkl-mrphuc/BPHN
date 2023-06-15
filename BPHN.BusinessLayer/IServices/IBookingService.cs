@@ -9,6 +9,6 @@ namespace BPHN.BusinessLayer.IServices
         Task<ServiceResultModel> CheckFreeTimeFrame(Booking data);
         Task<ServiceResultModel> GetPaging(int pageIndex, int pageSize, string txtSearch, bool hasBookingDetail = false);
         Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch);
-        Task<ServiceResultModel> Find(Booking data);
+        Task<ServiceResultModel> FindBlank(Booking data);
     }
 }

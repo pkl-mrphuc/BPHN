@@ -50,10 +50,10 @@ namespace BPHN.WebAPI.Controllers
         }
 
         [HttpPost]
-        [Route("find")]
-        public async Task<IActionResult> Find([FromBody] Booking request)
+        [Route("find-blank")]
+        public async Task<IActionResult> FindBlank([FromBody] Booking request)
         {
-            return Ok(await _bookingService.Find(request));
+            return Ok(await _bookingService.FindBlank(request));
         }
     }
 }

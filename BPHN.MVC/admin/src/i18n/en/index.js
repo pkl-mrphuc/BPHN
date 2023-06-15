@@ -74,7 +74,7 @@ const en = {
     ToDate: 'To date',
     Date: 'Date',
     QuickCheck: 'Quick check',
-    Finder: 'Finder',
+    Finder: 'Find blank',
     PhoneNumberEmptyMesg: 'Phone number is not empty',
     Reserved: 'Reserved',
     Free: 'Free',
@@ -86,6 +86,9 @@ const en = {
     Status: 'Status',
     BookingDate: 'Booking date',
     BookingUser: 'Booking user',
+    FindBlankForm: 'Find blank form',
+    Choose: 'Choose',
+    Weekdays: 'Weekdays'
     
 }
 export default en

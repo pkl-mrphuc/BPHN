@@ -33,8 +33,8 @@ const actions = {
         return BookingAPI.getCountPaging(data);
     }),
 
-    find: ((commit, data) => {
-        return BookingAPI.find(data);
+    findBlank: ((commit, data) => {
+        return BookingAPI.findBlank(data);
     })
 };
 

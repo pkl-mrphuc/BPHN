@@ -6,7 +6,7 @@ import useCommonFn from "@/commonFn";
 import { useStore } from "vuex";
 import { ElLoading } from "element-plus";
 
-const { toggleModel } = useToggleModal();
+const { toggleModel, openModal, hasRole } = useToggleModal();
 const { sameDate, yearEndDay, time, dateToString } = useCommonFn();
 const { t } = useI18n();
 const store = useStore();
@@ -94,20 +94,7 @@ const quickCheck = async () => {
 };
 
 const finder = () => {
-  store.dispatch("booking/find", {
-    id: props.data?.id,
-    phoneNumber: phoneNumber.value,
-    email: email.value,
-    isRecurring: isRecurring.value,
-    startDate: dateToString(fromDate.value),
-    endDate: dateToString(toDate.value),
-    weekendays: weekdays.value,
-    timeFrameInfoId: timeFrameInfoId.value,
-    pitchId: pitchId.value,
-    nameDetail: nameDetail.value,
-  }).then((res) => {
-    console.log(res);
-  })
+  openModal("FindBlankDialog");
 };
 
 const save = () => {
@@ -278,6 +265,12 @@ onMounted(() => {
       </div>
     </template>
   </Dialog>
+  <FindBlankDialog
+    v-if="hasRole('FindBlankDialog')"
+    :isRecurring="isRecurring"
+    :startDate="dateToString(fromDate)"
+    :endDate="dateToString(toDate)"
+  ></FindBlankDialog>
 </template>
 
 <style scoped>

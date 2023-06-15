@@ -32,8 +32,8 @@ class BookingAPI {
         return await axios.get(requestUrl);
     }
 
-    async find(data) {
-        let requestUrl = `https://localhost:7166/api/bookings/find`;
+    async findBlank(data) {
+        let requestUrl = `https://localhost:7166/api/bookings/find-blank`;
         let requestParam = data;
         return axios.post(requestUrl, requestParam);
     }

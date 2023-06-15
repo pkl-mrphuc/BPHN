@@ -47,6 +47,25 @@ export default function useCommonFn() {
         return `${fullYear}-${month}-${day}`;
     }
 
+    const getWeekdays = (value) => {
+        switch(value) {
+            case 0:
+                return "Sunday";
+            case 1: 
+                return "Monday";
+            case 2: 
+                return "Tuesday";
+            case 3:
+                return "Wednesday";
+            case 4:
+                return "Thursday";
+            case 5:
+                return "Friday";
+            case 6:
+                return "Saturday";
+        }
+    }
+
     return {
         dateNow,
         sameDate,
@@ -54,6 +73,7 @@ export default function useCommonFn() {
         date,
         yearEndDay,
         time,
-        dateToString
+        dateToString,
+        getWeekdays
     }
 }
