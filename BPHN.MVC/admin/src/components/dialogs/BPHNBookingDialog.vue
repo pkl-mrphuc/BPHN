@@ -143,11 +143,16 @@ const bindBlankData = (data) => {
   }
 }
 
+const disabledDate = (time) => {
+  return time.getTime() < (Date.now() - (24*60*60*1000));
+}
+
 onMounted(() => {
   store
     .dispatch("pitch/getPaging", {
       accountId: store.getters["account/getAccountId"],
       hasDetail: true,
+      hasInactive: false
     })
     .then((res) => {
       if (res?.data?.data) {
@@ -239,6 +244,7 @@ onMounted(() => {
             style="width: 100%"
             v-model="fromDate"
             @change="changeDate"
+            :disabled-date="disabledDate"
           />
         </el-form-item>
         <el-form-item v-if="isRecurring">
@@ -249,6 +255,7 @@ onMounted(() => {
               style="width: 100%"
               v-model="fromDate"
               @change="changeDate"
+              :disabled-date="disabledDate"
             />
           </el-col>
           <el-col :span="11">

@@ -45,6 +45,7 @@ const loadData = () => {
       pageSize: pageSize.value,
       hasBookingDetail: true,
       txtSearch: txtSearch.value,
+      hasInactive: true
     })
     .then((res) => {
       if (res?.data?.data) {

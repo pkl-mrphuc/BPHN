@@ -23,8 +23,8 @@ namespace BPHN.DataLayer.ImpRepositories
                 connection.Open();
                 var dic = new Dictionary<string, object>();
                 dic.Add("@accountId", accountId);
-                dic.Add("@startDate", startDate);
-                dic.Add("@endDate", endDate);
+                dic.Add("@startDate", startDate.ToString("yyyy-MM-dd"));
+                dic.Add("@endDate", endDate.ToString("yyyy-MM-dd"));
                 var query = @"select bd.* from booking_details bd inner join bookings b on b.Id = bd.BookingId where b.AccountId = @accountId and bd.MatchDate between @startDate and @endDate";
                 var data = await connection.QueryAsync<BookingDetail>(query, dic);
                 return data.ToList();

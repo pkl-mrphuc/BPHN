@@ -25,7 +25,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _timeFrameInfoRepository = timeFrameInfoRepository;
         }
 
-        public async Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch, string accountId)
+        public async Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch, string accountId, bool hasInactive = true)
         {
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
@@ -42,6 +42,16 @@ namespace BPHN.BusinessLayer.ImpServices
                     Operator = "=",
                     Value = accountId
                 });
+
+                if (!hasInactive)
+                {
+                    lstWhere.Add(new WhereCondition()
+                    {
+                        Column = "Status",
+                        Operator = "=",
+                        Value = "ACTIVE"
+                    });
+                }
             }
             else
             {
@@ -145,7 +155,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task<ServiceResultModel> GetPaging(int pageIndex, int pageSize, string txtSearch, string accountId, bool hasDetail = false)
+        public async Task<ServiceResultModel> GetPaging(int pageIndex, int pageSize, string txtSearch, string accountId, bool hasDetail = false, bool hasInactive = true)
         {
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
@@ -162,6 +172,16 @@ namespace BPHN.BusinessLayer.ImpServices
                     Operator = "=",
                     Value = accountId
                 });
+
+                if(!hasInactive)
+                {
+                    lstWhere.Add(new WhereCondition()
+                    {
+                        Column = "Status",
+                        Operator = "=",
+                        Value = "ACTIVE"
+                    });
+                }
             }
             else
             {

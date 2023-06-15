@@ -16,13 +16,50 @@ const props = defineProps({
   startDate: String,
   endDate: String,
 });
+const pitchName = ref(null);
+const timeFrameInfoName = ref(null);
+const detailName = ref(null);
+const weekdays = ref(null);
+const listWeekday = ref([]);
+const listPitch = ref([]);
+const listTimeFrame = ref([]);
+const listDetail = ref([]);
 
 const choose = (id) => {
-  emits("callback", lstBlank.value.filter(item => item.id == id)[0]);
+  emits("callback", lstBlank.value.filter((item) => item.id == id)[0]);
   toggleModel();
 };
 
+const filter = () => {
+  if (!localStorage.getItem("LSTBLANK")) {
+    localStorage.setItem("LSTBLANK", JSON.stringify(lstBlank.value));
+  }
+  lstBlank.value = JSON.parse(localStorage.getItem("LSTBLANK"));
+
+  if (pitchName.value) {
+    lstBlank.value = lstBlank.value.filter(
+      (item) => item.pitchName == pitchName.value
+    );
+  }
+  if (timeFrameInfoName.value) {
+    lstBlank.value = lstBlank.value.filter(
+      (item) => item.timeFrameInfoName == timeFrameInfoName.value
+    );
+  }
+  if (detailName.value) {
+    lstBlank.value = lstBlank.value.filter(
+      (item) => item.nameDetail == detailName.value
+    );
+  }
+  if (weekdays.value) {
+    lstBlank.value = lstBlank.value.filter(
+      (item) => t(getWeekdays(item.weekendays)) == weekdays.value
+    );
+  }
+};
+
 onMounted(() => {
+  localStorage.removeItem("LSTBLANK");
   store
     .dispatch("booking/findBlank", {
       isRecurring: props.isRecurring,
@@ -32,6 +69,18 @@ onMounted(() => {
     .then((res) => {
       if (res?.data?.data) {
         lstBlank.value = res.data.data;
+        listPitch.value = Array.from(
+          new Set(lstBlank.value.map((item) => item.pitchName))
+        );
+        listTimeFrame.value = Array.from(
+          new Set(lstBlank.value.map((item) => item.timeFrameInfoName))
+        );
+        listDetail.value = Array.from(
+          new Set(lstBlank.value.map((item) => item.nameDetail))
+        );
+        listWeekday.value = Array.from(
+          new Set(lstBlank.value.map((item) => t(getWeekdays(item.weekendays))))
+        );
       }
     });
 });
@@ -40,6 +89,70 @@ onMounted(() => {
 <template>
   <Dialog :title="t('FindBlankForm')" :width="900">
     <template #body>
+      <el-form>
+        <el-form-item>
+          <el-col :span="5">
+            <el-select
+              style="width: 100%"
+              :placeholder="t('Infrastructure')"
+              v-model="pitchName"
+              @change="filter"
+            >
+              <el-option
+                v-for="item in listPitch"
+                :key="item"
+                :label="item"
+                :value="item"
+              />
+            </el-select>
+          </el-col>
+          <el-col :span="5">
+            <el-select
+              style="width: 100%"
+              :placeholder="t('TimeFrame')"
+              v-model="timeFrameInfoName"
+              @change="filter"
+            >
+              <el-option
+                v-for="item in listTimeFrame"
+                :key="item"
+                :label="item"
+                :value="item"
+              />
+            </el-select>
+          </el-col>
+          <el-col :span="5">
+            <el-select
+              style="width: 100%"
+              :placeholder="t('NameDetail')"
+              v-model="detailName"
+              @change="filter"
+            >
+              <el-option
+                v-for="item in listDetail"
+                :key="item"
+                :label="item"
+                :value="item"
+              />
+            </el-select>
+          </el-col>
+          <el-col :span="5">
+            <el-select
+              style="width: 100%"
+              :placeholder="t('Weekdays')"
+              v-model="weekdays"
+              @change="filter"
+            >
+              <el-option
+                v-for="item in listWeekday"
+                :key="item"
+                :label="item"
+                :value="item"
+              />
+            </el-select>
+          </el-col>
+        </el-form-item>
+      </el-form>
       <el-table :data="lstBlank" class="w100" height="350">
         <el-table-column :label="t('FromDate')" width="100">
           <template #default="scope">
@@ -71,12 +184,13 @@ onMounted(() => {
             <span>{{ scope.row.nameDetail }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="t('NameDetail')">
+        <el-table-column label="">
           <template #default="scope">
-            <el-button type="primary" @click="choose(scope.row.id)">{{ t("Choose") }}</el-button>
+            <el-button type="primary" @click="choose(scope.row.id)">{{
+              t("Choose")
+            }}</el-button>
           </template>
         </el-table-column>
-        
       </el-table>
     </template>
     <template #foot>

@@ -41,17 +41,17 @@ namespace BPHN.WebAPI.Controllers
         [AllowAnonymous]
         [Route("paging")]
         [HttpGet]
-        public async Task<IActionResult> GetPaging(int pageIndex, int pageSize, string txtSearch, string accountId, bool hasDetail = false)
+        public async Task<IActionResult> GetPaging(int pageIndex, int pageSize, string txtSearch, string accountId, bool hasDetail = false, bool hasInactive = true)
         {
-            return Ok(await _pitchService.GetPaging(pageIndex, pageSize, txtSearch, accountId, hasDetail));
+            return Ok(await _pitchService.GetPaging(pageIndex, pageSize, txtSearch, accountId, hasDetail, hasInactive));
         }
 
         [AllowAnonymous]
         [Route("count-paging")]
         [HttpGet]
-        public async Task<IActionResult> GetCountPaging(int pageIndex, int pageSize, string txtSearch, string accountId)
+        public async Task<IActionResult> GetCountPaging(int pageIndex, int pageSize, string txtSearch, string accountId, bool hasInactive = true)
         {
-            return Ok(await _pitchService.GetCountPaging(pageIndex, pageSize, txtSearch, accountId));
+            return Ok(await _pitchService.GetCountPaging(pageIndex, pageSize, txtSearch, accountId, hasInactive));
         }
     }
 }

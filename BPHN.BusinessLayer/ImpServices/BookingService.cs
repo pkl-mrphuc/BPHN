@@ -69,6 +69,10 @@ namespace BPHN.BusinessLayer.ImpServices
             if (lstTimeFramesInADay.Count > 0)
             {
                 var now = DateTime.Now;
+                if(data.StartDate < now)
+                {
+                    data.StartDate = now;
+                }
                 data.EndDate = new DateTime(now.Year, 12, 31, 23, 59, 59);
                 var lstBooked = await GetDictionaryBookedByDate(context.Id, data.StartDate, data.EndDate);
 
@@ -318,6 +322,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var lstPitch = (await _pitchService.GetPaging(1, int.MaxValue, string.Empty, accountId, true)).Data as List<Pitch>;
             if (lstPitch != null)
             {
+                lstPitch = lstPitch.Where(item => item.Status == ActiveStatusEnum.ACTIVE.ToString()).ToList();
                 for (int i = 0; i < lstPitch.Count; i++)
                 {
                     var lstTimeFrameInfo = lstPitch[i].TimeFrameInfos;

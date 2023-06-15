@@ -50,7 +50,8 @@ const loadData = () => {
   store
     .dispatch("pitch/getPaging", {
       accountId: store.getters["account/getAccountId"],
-      hasDetail: false
+      hasDetail: false,
+      hasInactive: true
     })
     .then((res) => {
       loading.close();

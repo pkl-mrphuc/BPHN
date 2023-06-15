@@ -39,7 +39,7 @@ class PitchAPI {
 
     async getPaging(data) {
         try {
-            let requestUrl = `https://localhost:7166/api/pitchs/paging?pageIndex=1&pageSize=1&txtSearch=&accountId=${data.accountId}&hasDetail=${data.hasDetail}` 
+            let requestUrl = `https://localhost:7166/api/pitchs/paging?pageIndex=1&pageSize=1&txtSearch=&accountId=${data.accountId}&hasDetail=${data.hasDetail}&hasInactive=${data.hasInactive}` 
             return await axios.get(requestUrl) 
         } catch (error) {
             console.log(error)
