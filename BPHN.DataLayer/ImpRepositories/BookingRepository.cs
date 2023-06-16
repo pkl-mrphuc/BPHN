@@ -20,6 +20,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 dic.Add("@pitchId", data.PitchId);
                 dic.Add("@nameDetail", data.NameDetail);
                 dic.Add("@timeFrameInfoId", data.TimeFrameInfoId);
+                dic.Add("@status0", BookingStatusEnum.SUCCESS.ToString());
                 
                 var lstParam = new List<string>();
                 for (int i = 0; i < data.BookingDetails.Count; i++)
@@ -31,7 +32,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 string where = string.Join(",", lstParam.ToArray());
                 var query = $@"select bd.* from booking_details bd 
                                 inner join bookings b on b.Id = bd.BookingId 
-                                where b.PitchId = @pitchId and b.NameDetail = @nameDetail and b.TimeFrameInfoId = @timeFrameInfoId and bd.MatchDate in ({where})";
+                                where bd.Status in (@status0) and b.PitchId = @pitchId and b.NameDetail = @nameDetail and b.TimeFrameInfoId = @timeFrameInfoId and bd.MatchDate in ({where})";
                 
 
                 var lstBooking = await connection.QueryFirstOrDefaultAsync<BookingDetail>(query, dic);

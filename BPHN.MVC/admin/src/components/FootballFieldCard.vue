@@ -42,7 +42,7 @@ const changeHdfFile = (event) => {
     readImageFile(files[0]);
     store.dispatch("file/upload", {
       file: files[0],
-      id: props.id
+      id: props.id,
     });
   }
 };

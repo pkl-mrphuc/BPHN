@@ -40,13 +40,7 @@ export default {
       let configs = localStorage.getItem("config-key");
       let loadedConfig = store.getters["config/getLoadedConfig"];
       if (!configs || (!loadedConfig && configs))
-        store.dispatch("config/loadConfig").then(() => {
-          let lang = store.getters["config/getLanguage"];
-          let darkMode = store.getters["config/getDarkMode"];
-          t.locale.value = lang;
-          if (darkMode) document.documentElement.setAttribute("class", "dark");
-          else document.documentElement.removeAttribute("class");
-        });
+        store.dispatch("config/loadConfig");
       else {
         let lang = store.getters["config/getLanguage"];
         let darkMode = store.getters["config/getDarkMode"];

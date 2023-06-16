@@ -118,20 +118,19 @@ const save = () => {
       nameDetail: nameDetail.value,
     })
     .then((res) => {
-      if(res?.data?.success) {
+      if (res?.data?.success) {
         emits("callback");
         toggleModel();
-      }
-      else {
+      } else {
         let msg = res?.data?.message;
-        alert(msg??t("ErrorMesg"));
+        alert(msg ?? t("ErrorMesg"));
       }
       loading.close();
     });
 };
 
 const bindBlankData = (data) => {
-  if(data) {
+  if (data) {
     isRecurring.value = data.isRecurring;
     pitchId.value = data.pitchId;
     timeFrameInfoId.value = data.timeFrameInfoId;
@@ -141,18 +140,18 @@ const bindBlankData = (data) => {
     weekdays.value = data.weekendays + "";
     changePitchId();
   }
-}
+};
 
 const disabledDate = (time) => {
-  return time.getTime() < (Date.now() - (24*60*60*1000));
-}
+  return time.getTime() < Date.now() - 24 * 60 * 60 * 1000;
+};
 
 onMounted(() => {
   store
     .dispatch("pitch/getPaging", {
       accountId: store.getters["account/getAccountId"],
       hasDetail: true,
-      hasInactive: false
+      hasInactive: false,
     })
     .then((res) => {
       if (res?.data?.data) {

@@ -1,9 +1,9 @@
-import AccountAPI from "@/apis/AccountAPI"
-import i18n from "@/i18n/index.js"
+import AccountAPI from "@/apis/AccountAPI";
+import i18n from "@/i18n/index.js";
 
 const state = {
     context: null
-}
+};
 
 const getters = {
     getFullName: (state) => {
@@ -20,13 +20,13 @@ const getters = {
         if (!state.context) return ""
         return state.context.id
     }
-}
+};
 
 const mutations = {
     setContext: (state, payload) => {
         state.context = payload
     }
-}
+};
 
 const actions = {
     login: ({ commit }, account) => {
@@ -81,7 +81,7 @@ const actions = {
                 alert(i18n.global.t("ErrorMesg"))
             })
     })
-}
+};
 
 export default {
     namespaced: true,
@@ -89,4 +89,4 @@ export default {
     getters,
     actions,
     mutations
-}
+};

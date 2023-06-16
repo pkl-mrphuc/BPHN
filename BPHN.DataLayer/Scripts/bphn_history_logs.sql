@@ -36,16 +36,6 @@ CREATE TABLE `history_logs` (
   KEY `idx_1` (`ActorId`,`ActionName`,`Actor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `history_logs`
---
-
-LOCK TABLES `history_logs` WRITE;
-/*!40000 ALTER TABLE `history_logs` DISABLE KEYS */;
-INSERT INTO `history_logs` VALUES ('dd0262d5-87cb-4d54-a7a7-5267f06572da','Đăng nhập','lephuc0125@gmail.com','b3660f41-ffde-11ed-9f9b-f01faf56e08c',NULL,'2023-05-31 11:17:25','Lee Phuc','2023-05-31 11:17:25','Lee Phuc');
-/*!40000 ALTER TABLE `history_logs` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -56,4 +46,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-31 11:19:46
+-- Dump completed on 2023-06-16 10:29:16

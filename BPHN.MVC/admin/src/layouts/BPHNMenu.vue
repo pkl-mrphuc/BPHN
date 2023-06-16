@@ -7,7 +7,7 @@ import {
   MapLocation,
 } from "@element-plus/icons-vue";
 
-const { t } = useI18n()
+const { t } = useI18n();
 </script>
 
 <template>

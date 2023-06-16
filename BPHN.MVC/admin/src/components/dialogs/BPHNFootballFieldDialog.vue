@@ -1,6 +1,13 @@
 <script setup>
-import { computed, onMounted, nextTick, defineProps, ref, inject, defineEmits } from "vue";
-// import { Location } from "@element-plus/icons-vue"
+import {
+  computed,
+  onMounted,
+  nextTick,
+  defineProps,
+  ref,
+  inject,
+  defineEmits,
+} from "vue";
 import useToggleModal from "@/register-components/actionDialog";
 import { useI18n } from "vue-i18n";
 import { v4 as uuidv4 } from "uuid";
@@ -10,7 +17,7 @@ import useCommonFn from "@/commonFn";
 
 const props = defineProps({
   data: Object,
-  mode: String
+  mode: String,
 });
 const { newDate } = useCommonFn();
 const emit = defineEmits(["callback"]);
@@ -77,8 +84,8 @@ const save = () => {
     alert(t("TimeSlotInvalidMesg"));
     return;
   }
-  if(!isValidNameDetail()) {
-    alert(t('NameDetailsEmptyMesg'));
+  if (!isValidNameDetail()) {
+    alert(t("NameDetailsEmptyMesg"));
     return;
   }
   if (hasConflictTimeFrame()) {
@@ -88,8 +95,8 @@ const save = () => {
 
   const loading = ElLoading.service(loadingOptions);
 
-  let actionPath = "pitch/insert"
-  if(props.mode == "edit") actionPath = "pitch/update"
+  let actionPath = "pitch/insert";
+  if (props.mode == "edit") actionPath = "pitch/update";
 
   store
     .dispatch(actionPath, {
@@ -101,7 +108,7 @@ const save = () => {
       timeSlotPerDay: timeSlotPerDay.value,
       status: status.value,
       timeFrameInfos: timeFrameInfos.value,
-      listNameDetails: listNameDetails.value
+      listNameDetails: listNameDetails.value,
     })
     .then((res) => {
       emit("callback", res);
@@ -114,7 +121,11 @@ onMounted(() => {
   nextTick(() => {
     setReadonlyInputField();
     addEvent("inpTimeSlot", decreaseTimeFrameInfosFn, increaseTimeFrameInfosFn);
-    addEvent("inpQuantity", decreaseListNameDetailsFn, increaseListNameDetailsFn);
+    addEvent(
+      "inpQuantity",
+      decreaseListNameDetailsFn,
+      increaseListNameDetailsFn
+    );
   });
 });
 
@@ -182,7 +193,7 @@ const decreaseListNameDetailsFn = () => {
 
 const increaseListNameDetailsFn = () => {
   if (listNameDetails.value && Array.isArray(listNameDetails.value)) {
-    listNameDetails.value.push('');
+    listNameDetails.value.push("");
   }
 };
 
@@ -191,42 +202,43 @@ const changeTimeBegin = (item) => {
 };
 
 const changeTimeEnd = (item) => {
-  item.timeBegin = newDate(item.timeEnd, -1 * minutesPerMatch.value * 60 * 1000);
+  item.timeBegin = newDate(
+    item.timeEnd,
+    -1 * minutesPerMatch.value * 60 * 1000
+  );
 };
 
 const hasConflictTimeFrame = () => {
   let timeLine = [];
-  let index = 0;
   for (let i = 0; i < timeFrameInfos.value.length; i++) {
     const item = timeFrameInfos.value[i];
     timeLine.push({
-      sortOrder: index,
       data: new Date(item.timeBegin),
+      key: i,
     });
-    index++;
     timeLine.push({
-      sortOrder: index,
       data: new Date(item.timeEnd),
+      key: i,
     });
-    index++;
   }
 
   timeLine.sort((a, b) => {
     return a.data - b.data;
   });
 
+  let counter = 0;
   for (let i = 1; i < timeLine.length; i++) {
     const current = timeLine[i];
     const prev = timeLine[i - 1];
-    if (current.sortOrder - prev.sortOrder != 1) return true;
+    if (current.key != prev.key) counter++;
   }
-  return false;
+  return counter > timeLine.length / 2 - 1;
 };
 
 const isValidNameDetail = () => {
   for (let i = 0; i < listNameDetails.value.length; i++) {
     const item = listNameDetails.value[i];
-    if(!item) return false;
+    if (!item) return false;
   }
   return true;
 };
@@ -252,9 +264,6 @@ const isValidNameDetail = () => {
           <el-col :span="24">
             <el-input v-model="address" :placeholder="t('Address')" />
           </el-col>
-          <!-- <el-col :span="1">
-            <el-icon><Location /></el-icon>
-          </el-col> -->
         </el-form-item>
         <el-form-item>
           <el-col :span="8" class="center">

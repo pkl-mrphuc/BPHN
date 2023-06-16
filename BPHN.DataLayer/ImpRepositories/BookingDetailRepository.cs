@@ -16,6 +16,20 @@ namespace BPHN.DataLayer.ImpRepositories
         {
         }
 
+        public async Task<bool> Cancel(string id)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var dic = new Dictionary<string, object>();
+                dic.Add("@status", BookingStatusEnum.CANCEL.ToString());
+                dic.Add("@id", id);
+                var query = "update booking_details set Status = @status where Id = @id";
+                var affect = await connection.ExecuteAsync(query, dic);
+                return affect > 0 ? true : false;
+            }
+        }
+
         public async Task<List<BookingDetail>> GetInRangeDate(Guid accountId, DateTime startDate, DateTime endDate)
         {
             using (var connection = ConnectDB(GetConnectionString()))
@@ -25,7 +39,8 @@ namespace BPHN.DataLayer.ImpRepositories
                 dic.Add("@accountId", accountId);
                 dic.Add("@startDate", startDate.ToString("yyyy-MM-dd"));
                 dic.Add("@endDate", endDate.ToString("yyyy-MM-dd"));
-                var query = @"select bd.* from booking_details bd inner join bookings b on b.Id = bd.BookingId where b.AccountId = @accountId and bd.MatchDate between @startDate and @endDate";
+                dic.Add("@status0", BookingStatusEnum.SUCCESS.ToString());
+                var query = @"select bd.* from booking_details bd inner join bookings b on b.Id = bd.BookingId where bd.Status in (@status0) and b.AccountId = @accountId and bd.MatchDate between @startDate and @endDate";
                 var data = await connection.QueryAsync<BookingDetail>(query, dic);
                 return data.ToList();
             }

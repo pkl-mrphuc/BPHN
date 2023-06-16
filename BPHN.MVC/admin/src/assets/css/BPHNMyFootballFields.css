@@ -1,23 +1,16 @@
+.bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-  
-  .bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .button {
-    padding: 0;
-    min-height: auto;
-  }
-  
-  .image {
-    width: 100%;
-    display: block;
-    object-fit: cover;
-  }
+.image {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}
 
-  .football-field-card {
-    margin-bottom: 40px;
-    margin-right: 40px;
-  }
+.football-field-card {
+  margin-bottom: 40px;
+  margin-right: 40px;
+}

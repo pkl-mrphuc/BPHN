@@ -1,11 +1,11 @@
-import ConfigAPI from '@/apis/ConfigAPI'
-import i18n from '@/i18n/index.js'
+import ConfigAPI from "@/apis/ConfigAPI";
+import i18n from "@/i18n/index.js";
 
 const state = {
-    language: 'vn',
+    language: "vn",
     darkMode: true,
     loadedConfig: false
-}
+};
 
 const getters = {
     getDarkMode: (state) => {
@@ -19,7 +19,7 @@ const getters = {
     getLoadedConfig: (state) => {
         return state.loadedConfig
     }
-}
+};
 
 const mutations = {
     setLanguage: (state, payload) => {
@@ -33,11 +33,11 @@ const mutations = {
     setLoadedConfig: (state, payload) => {
         state.loadedConfig = payload
     }
-}
+};
 
 const actions = {
     loadConfig: (({ commit }) => {
-        ConfigAPI.getConfigs('').then((res) => {
+        ConfigAPI.getConfigs("").then((res) => {
             if (res?.data?.success && res?.data?.data) {
                 let lstConfig = res?.data?.data
                 let map = new Map()
@@ -50,42 +50,47 @@ const actions = {
                     }
                 }
 
-                if (map.has('Language')) {
-                    commit('setLanguage', map.get('Language'))
+                if (map.has("Language")) {
+                    let lang = map.get("Language");
+                    commit("setLanguage", lang);
+                    i18n.global.locale.value = lang;
                 }
 
-                if (map.has('DarkMode')) {
-                    commit('setDarkMode', map.get('DarkMode') == "true")
+                if (map.has("DarkMode")) {
+                    let darkMode = map.get("DarkMode") == "true";
+                    commit("setDarkMode", darkMode);
+                    if (darkMode) document.documentElement.setAttribute("class", "dark");
+                    else document.documentElement.removeAttribute("class");
                 }
-
-                commit('setLoadedConfig', true)
+                commit("setLoadedConfig", true)
             }
+
         })
             .catch((error) => {
                 console.log(error)
-                alert(i18n.global.t('ErrorMesg'))
+                alert(i18n.global.t("ErrorMesg"))
             })
     }),
 
     save: ((commit, configs) => {
         ConfigAPI.save(configs).then((res) => {
             if (res?.data?.success) {
-                alert(i18n.global.t('SaveSuccess'))
-                localStorage.removeItem('config-key')
+                alert(i18n.global.t("SaveSuccess"))
+                localStorage.removeItem("config-key")
                 window.location.reload()
             }
             else {
                 let msg = res?.data?.message
-                alert(msg ?? i18n.global.t('ErrorMesg'))
+                alert(msg ?? i18n.global.t("ErrorMesg"))
             }
         })
             .catch((error) => {
                 console.log(error)
-                alert(i18n.global.t('ErrorMesg'))
+                alert(i18n.global.t("ErrorMesg"))
             })
     })
 
-}
+};
 
 export default {
     namespaced: true,
@@ -93,4 +98,4 @@ export default {
     getters,
     mutations,
     actions
-}
+};

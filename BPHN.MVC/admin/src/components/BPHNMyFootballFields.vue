@@ -5,9 +5,7 @@ import useToggleModal from "@/register-components/actionDialog";
 import { ElLoading } from "element-plus";
 import { onMounted, inject, ref } from "vue";
 import { useStore } from "vuex";
-import {
-  Refresh
-} from "@element-plus/icons-vue";
+import { Refresh } from "@element-plus/icons-vue";
 
 const { t } = useI18n();
 const store = useStore();
@@ -39,7 +37,7 @@ const openForm = (id) => {
       pitchDataForm.value = res.data.data;
     } else {
       let msg = res?.data?.message;
-      alert(msg??t("ErrorMesg"));
+      alert(msg ?? t("ErrorMesg"));
     }
     loading.close();
   });
@@ -51,7 +49,7 @@ const loadData = () => {
     .dispatch("pitch/getPaging", {
       accountId: store.getters["account/getAccountId"],
       hasDetail: false,
-      hasInactive: true
+      hasInactive: true,
     })
     .then((res) => {
       loading.close();

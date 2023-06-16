@@ -5,7 +5,7 @@ export default function useCommonFn() {
     }
 
     const date = (date) => {
-        if(typeof date == "string") {
+        if (typeof date == "string") {
             date = new Date(date);
         }
         date.setHours(0);
@@ -29,7 +29,7 @@ export default function useCommonFn() {
     }
 
     const time = (date) => {
-        if(typeof date == "string") {
+        if (typeof date == "string") {
             date = new Date(date);
         }
         let hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
@@ -38,7 +38,7 @@ export default function useCommonFn() {
     }
 
     const dateToString = (date) => {
-        if(typeof date == "string") {
+        if (typeof date == "string") {
             date = new Date(date);
         }
         let fullYear = date.getFullYear();
@@ -48,12 +48,12 @@ export default function useCommonFn() {
     }
 
     const getWeekdays = (value) => {
-        switch(value) {
+        switch (value) {
             case 0:
                 return "Sunday";
-            case 1: 
+            case 1:
                 return "Monday";
-            case 2: 
+            case 2:
                 return "Tuesday";
             case 3:
                 return "Wednesday";

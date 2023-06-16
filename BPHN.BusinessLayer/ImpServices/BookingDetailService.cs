@@ -1,10 +1,40 @@
 ﻿using BPHN.BusinessLayer.IServices;
+using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
     public class BookingDetailService : BaseService, IBookingDetailService
     {
+        private readonly IContextService _contextService;
+        private readonly IBookingDetailRepository _bookingDetailRepository;
+        public BookingDetailService(IContextService contextService, 
+            IBookingDetailRepository bookingDetailRepository)
+        {
+            _contextService = contextService;
+            _bookingDetailRepository = bookingDetailRepository;
+        }
+
+        public async Task<ServiceResultModel> Cancel(string id)
+        {
+            var context = _contextService.GetContext();
+            if (context == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = "Token đã hết hạn"
+                };
+            }
+
+            var result = await _bookingDetailRepository.Cancel(id);
+            return new ServiceResultModel()
+            {
+                Success = result
+            };
+        }
+
         public ServiceResultModel GetMatchDates(DateTime startDate, DateTime endDate)
         {
             var lstBookingDetail = new List<BookingDetail>();

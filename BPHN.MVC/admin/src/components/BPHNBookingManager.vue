@@ -34,10 +34,6 @@ const addNew = () => {
 
 const bmData = ref([]);
 
-onMounted(() => {
-  loadData();
-});
-
 const loadData = () => {
   store
     .dispatch("booking/getPaging", {
@@ -45,7 +41,7 @@ const loadData = () => {
       pageSize: pageSize.value,
       hasBookingDetail: true,
       txtSearch: txtSearch.value,
-      hasInactive: true
+      hasInactive: true,
     })
     .then((res) => {
       if (res?.data?.data) {
@@ -66,6 +62,20 @@ const loadData = () => {
       }
     });
 };
+
+const cancel = (id) => {
+  store.dispatch("bookingDetail/cancel", id).then((res) => {
+    if (res?.data?.success) {
+      loadData();
+    } else {
+      alert(t("ErrorMesg"));
+    }
+  });
+};
+
+onMounted(() => {
+  loadData();
+});
 </script>
 
 <template>
@@ -98,20 +108,6 @@ const loadData = () => {
             <template #default="props">
               <div m="4" style="margin-left: 60px">
                 <el-table :data="props.row.bookingDetails" :border="false">
-                  <el-table-column width="50">
-                    <template #header>
-                      <el-checkbox
-                        id="check_all"
-                        v-model="isCheckAll"
-                      />
-                    </template>
-                    <template #default="scope">
-                      <el-checkbox
-                        :checkbox_value="scope.row.id"
-                        id="check_item"
-                      />
-                    </template>
-                  </el-table-column>
                   <el-table-column
                     width="100"
                     :label="t('Status')"
@@ -139,18 +135,22 @@ const loadData = () => {
                       {{ dateToString(scope.row.matchDate) }}
                     </template>
                   </el-table-column>
-                  <el-table-column
-                    :label="t('Deposite')"
-                  >
+                  <el-table-column :label="t('Deposite')">
                     <template #default="scope">
-                      <span v-if="scope.row.deposit > 0">{{ scope.row.deposit }}</span>
+                      <span v-if="scope.row.deposit > 0">{{
+                        scope.row.deposit
+                      }}</span>
                       <span v-else></span>
                     </template>
                   </el-table-column>
                   <el-table-column label="" width="100">
                     <template #default="scope">
-                      <el-button :class="scope.row.id" type="danger"
-                        >{{ t('Cancel') }}</el-button
+                      <el-button
+                        :class="scope.row.id"
+                        @click="cancel(scope.row.id)"
+                        type="danger"
+                        v-if="scope.row.status != 'CANCEL'"
+                        >{{ t("Cancel") }}</el-button
                       >
                     </template>
                   </el-table-column>

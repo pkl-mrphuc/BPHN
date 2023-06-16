@@ -13,8 +13,8 @@ class FileAPI {
             formData.append("file", data.file);
             return await axios.post(requestUrl, formData);
         } catch (error) {
-            console.log(error)
-            return false
+            console.log(error);
+            return false;
         }
 
     }

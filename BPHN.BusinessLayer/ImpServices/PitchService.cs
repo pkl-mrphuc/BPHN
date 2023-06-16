@@ -146,6 +146,14 @@ namespace BPHN.BusinessLayer.ImpServices
                         Message = "Dữ liệu không toàn vẹn. Vui lòng kiểm tra lại"
                     };
                 }
+
+                var now = DateTime.Now;
+                for (int i = 0; i < data.TimeFrameInfos.Count; i++)
+                {
+                    var item = data.TimeFrameInfos[i];
+                    item.TimeBegin = new DateTime(now.Year, now.Month, now.Day, item.TimeBegin.Hour, item.TimeBegin.Minute, 0);
+                    item.TimeEnd = new DateTime(now.Year, now.Month, now.Day, item.TimeEnd.Hour, item.TimeEnd.Minute, 0);
+                }
             }
 
             return new ServiceResultModel()

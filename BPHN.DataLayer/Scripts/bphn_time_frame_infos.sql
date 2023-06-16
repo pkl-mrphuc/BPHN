@@ -35,8 +35,8 @@ CREATE TABLE `time_frame_infos` (
   `ModifiedDate` datetime DEFAULT NULL,
   `ModifiedBy` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`Id`),
-  KEY `idx_1` (`PitchId`),
-  CONSTRAINT `time_frame_infos_ibfk_1` FOREIGN KEY (`PitchId`) REFERENCES `pitchs` (`Id`)
+  KEY `idx_1` (`PitchId`) /*!80000 INVISIBLE */,
+  CONSTRAINT `fk_4` FOREIGN KEY (`PitchId`) REFERENCES `pitchs` (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -49,4 +49,4 @@ CREATE TABLE `time_frame_infos` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-03 18:52:00
+-- Dump completed on 2023-06-16 10:29:16

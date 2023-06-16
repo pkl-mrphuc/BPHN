@@ -1,16 +1,16 @@
-import PitchAPI from '@/apis/PitchAPI'
+import PitchAPI from "@/apis/PitchAPI";
 
 const state = {
 
-}
+};
 
 const getters = {
 
-}
+};
 
 const mutations = {
 
-}
+};
 
 const actions = {
     getInstance: ((commit, id) => {
@@ -28,12 +28,12 @@ const actions = {
     update: ((commit, data) => {
         return PitchAPI.update(data)
     })
-}
+};
 
 export default {
     namespaced: true,
-    state, 
+    state,
     getters,
     mutations,
     actions
-}
+};

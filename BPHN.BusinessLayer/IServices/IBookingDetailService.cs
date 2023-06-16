@@ -6,5 +6,6 @@ namespace BPHN.BusinessLayer.IServices
     {
         ServiceResultModel GetMatchDatesByWeekendays(DateTime startDate, DateTime endDate, int weekendays);
         ServiceResultModel GetMatchDates(DateTime startDate, DateTime endDate);
+        Task<ServiceResultModel> Cancel(string id);
     }
 }
