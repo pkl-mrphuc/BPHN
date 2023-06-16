@@ -99,3 +99,17 @@ const readImageFile = (file) => {
     </div>
   </el-card>
 </template>
+
+<style scoped>
+.bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.image {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}
+</style>

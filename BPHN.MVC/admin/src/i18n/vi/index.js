@@ -1,4 +1,4 @@
-const vn = {
+const vi = {
     Hello: "Xin chào,",
     BM: "Đặt sân",
     Calendar: "Lịch",
@@ -91,4 +91,4 @@ const vn = {
     Weekdays: "Thứ"
 }
 
-export default vn;
+export default vi;

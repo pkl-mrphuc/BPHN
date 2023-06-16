@@ -53,16 +53,16 @@ const save = () => {
 </script>
 
 <template>
-  <section class="pbhn-screen pbhn-config">
-    <div class="container">
+  <section class="pbhn-screen" style="height: 100%">
+    <div class="container" style="height: 100%">
       <div class="head">
         <h3 class="head_title">{{ t("Configurations") }}</h3>
         <div class="head_toolbar">
           <el-button type="primary" @click="save">{{ t("Save") }}</el-button>
         </div>
       </div>
-      <div class="body">
-        <el-table :data="configData" style="width: 100%">
+      <div class="body" style="margin-top: 20px">
+        <el-table :data="configData" style="height: calc(100vh - 220px)">
           <el-table-column :label="t('Title')" width="200">
             <template #default="scope">
               <span>{{ scope.row.name }}</span>
@@ -75,7 +75,7 @@ const save = () => {
                 v-model="darkMode"
               />
               <el-select v-if="scope.row.key == 'Language'" v-model="language">
-                <el-option value="vn" label="Vietnamese" />
+                <el-option value="vi" label="Vietnamese" />
                 <el-option value="en" label="English" />
               </el-select>
             </template>
@@ -87,5 +87,4 @@ const save = () => {
 </template>
 
 <style scoped>
-@import "@/assets/css/BPHNConfig.css";
 </style>

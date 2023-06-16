@@ -2,7 +2,7 @@ import ConfigAPI from "@/apis/ConfigAPI";
 import i18n from "@/i18n/index.js";
 
 const state = {
-    language: "vn",
+    language: "vi",
     darkMode: true,
     loadedConfig: false
 };

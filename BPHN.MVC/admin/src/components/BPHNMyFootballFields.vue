@@ -59,8 +59,8 @@ const loadData = () => {
 </script>
 
 <template>
-  <section class="pbhn-screen pbhn-football-fields">
-    <div class="container">
+  <section class="pbhn-screen" style="height: 100%">
+    <div class="container" style="height: 100%">
       <div class="head">
         <h3 class="head_title">{{ t("MyFootballFields") }}</h3>
         <div class="head_toolbar">
@@ -72,7 +72,7 @@ const loadData = () => {
           }}</el-button>
         </div>
       </div>
-      <div class="body">
+      <div class="body" style="height: calc(100vh - 160px); overflow: scroll; margin-top: 20px">
         <el-row>
           <el-col
             v-for="item in listPitch"
@@ -103,5 +103,8 @@ const loadData = () => {
 </template>
 
 <style scoped>
-@import "@/assets/css/BPHNMyFootballFields.css";
+.football-field-card {
+  margin-bottom: 40px;
+  margin-right: 40px;
+}
 </style>

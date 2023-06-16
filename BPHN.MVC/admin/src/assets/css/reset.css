@@ -25,10 +25,35 @@ body {
 }
 
 :root {
-  --fc-border-color: #dcdfe6;
+  --fc-border-color: #ebeef5;
   --fc-today-bg-color: #ecf5ff;
 }
 
+html.dark {
+  --fc-border-color: #363637;
+  --fc-today-bg-color: #18222c;
+}
+
 .fc .fc-timegrid-slot {
-  height: 2em;
+  height: 2.5em;
+}
+
+.fc-col-header-cell {
+  height: 2.5em;
+  vertical-align: middle !important;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+}
+
+.head_title {
+  font-weight: 700;
+  font-size: 24px;
+  margin: 0;
+}
+
+.head_toolbar {
+  margin-left: auto;
 }

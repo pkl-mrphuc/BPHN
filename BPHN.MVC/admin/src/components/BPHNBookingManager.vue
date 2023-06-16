@@ -73,14 +73,30 @@ const cancel = (id) => {
   });
 };
 
+const prevClick = () => {
+  loadData();
+}
+
+const nextClick = () => {
+  loadData();
+}
+
+const sizePageChange = () => {
+  loadData();
+}
+
+const currentChange = () => {
+  loadData();
+}
+
 onMounted(() => {
   loadData();
 });
 </script>
 
 <template>
-  <section class="pbhn-screen pbhn-bm h-full-screen">
-    <div class="container h-full-screen">
+  <section class="pbhn-screen" style="height: 100%">
+    <div class="container" style="height: 100%">
       <div class="head">
         <h3 class="head_title">{{ t("BookingManager") }}</h3>
         <div class="head_toolbar">
@@ -99,11 +115,12 @@ onMounted(() => {
           }}</el-button>
         </div>
       </div>
-      <div
-        class="body"
-        style="height: calc(100% - 32px - 20px - 32px); overflow: scroll"
-      >
-        <el-table :data="bmData" style="width: 100%">
+      <div class="body" style="margin-top: 20px">
+        <el-table 
+        :data="bmData" 
+        :style="bmData.length > 0 ? 'height: calc(100vh - 220px)' : ''"
+        :empty-text="t('NoData')"
+        >
           <el-table-column type="expand">
             <template #default="props">
               <div m="4" style="margin-left: 60px">
@@ -198,15 +215,17 @@ onMounted(() => {
           background
           v-model:current-page="pageIndex"
           v-model:page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :page-sizes="[10, 20, 30, 50, 100]"
+          layout="sizes, prev, pager, next"
           :total="totalRecord"
           v-if="bmData.length > 0"
+          @prev-click="prevClick"
+          @next-click="nextClick"
+          @size-change="sizePageChange"
+          @current-change="currentChange"
         />
       </div>
     </div>
   </section>
-  <el-empty :description="t('NoData')" v-if="bmData.length == 0" />
   <BookingDialog
     v-if="hasRole('BookingDialog')"
     :data="bookingForm"
@@ -215,14 +234,11 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.h-full-screen {
-  height: 100%;
-}
-
 .footer {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  padding-top: 20px;
 }
 
 .head_toolbar {
