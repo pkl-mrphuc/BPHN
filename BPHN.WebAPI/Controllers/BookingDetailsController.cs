@@ -19,5 +19,12 @@ namespace BPHN.WebAPI.Controllers
         {
             return Ok(await _bookingDetailService.Cancel(id));
         }
+
+        [HttpGet]
+        [Route("{date}")]
+        public async Task<IActionResult> GetByDate(string date)
+        {
+            return Ok(await _bookingDetailService.GetByDate(date));
+        }
     }
 }

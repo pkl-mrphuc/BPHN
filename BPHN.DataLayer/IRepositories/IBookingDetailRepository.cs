@@ -1,4 +1,5 @@
 ﻿using BPHN.ModelLayer;
+using BPHN.ModelLayer.Others;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,6 @@ namespace BPHN.DataLayer.IRepositories
     {
         Task<List<BookingDetail>> GetInRangeDate(Guid accountId, DateTime startDate, DateTime endDate);
         Task<bool> Cancel(string id);
+        Task<List<CalendarEvent>> GetByDate(string date, Guid accountId);
     }
 }

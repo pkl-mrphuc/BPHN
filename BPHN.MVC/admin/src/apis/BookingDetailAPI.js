@@ -14,6 +14,16 @@ class BookingDetailAPI {
             return false;
         }
     }
+
+    async getByDate(date) {
+        try {
+            let requestUrl = `https://localhost:7166/api/bookingdetails/${date}`;
+            return axios.get(requestUrl);
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
 }
 
 export default new BookingDetailAPI();

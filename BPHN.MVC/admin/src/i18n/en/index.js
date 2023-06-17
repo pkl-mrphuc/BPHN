@@ -88,7 +88,7 @@ const en = {
     BookingUser: "Booking user",
     FindBlankForm: "Find blank form",
     Choose: "Choose",
-    Weekdays: "Weekdays"
-    
+    Weekdays: "Weekdays",
+    Today: "Today",
 }
 export default en;

@@ -88,7 +88,8 @@ const vi = {
     BookingUser: "Người đặt",
     FindBlankForm: "Tìm sân trống",
     Choose: "Chọn",
-    Weekdays: "Thứ"
+    Weekdays: "Thứ",
+    Today: "Hôm nay",
 }
 
 export default vi;
