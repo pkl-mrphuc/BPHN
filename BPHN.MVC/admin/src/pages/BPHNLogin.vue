@@ -7,6 +7,7 @@ const { t } = useI18n();
 const store = useStore();
 const username = ref("");
 const password = ref("");
+const isLoading = ref(false);
 
 const login = () => {
   if (!username.value) {
@@ -17,9 +18,13 @@ const login = () => {
     alert(t("PasswordEmptyMesg"));
     return;
   }
+
+  isLoading.value = true;
   store.dispatch("account/login", {
     username: username.value,
     password: password.value,
+  }).then(() => {
+    isLoading.value = false;
   });
 };
 
@@ -56,7 +61,7 @@ const goToForgot = () => {
             />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="login">{{
+            <el-button type="primary" :loading="isLoading" @click="login">{{
               t("Submit")
             }}</el-button>
             <a

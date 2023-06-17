@@ -14,6 +14,7 @@ const loadingOptions = inject("loadingOptions");
 const pitchDataForm = ref(null);
 const listPitch = ref([]);
 const mode = ref("add");
+const running = ref(0);
 
 onMounted(() => {
   loadData();
@@ -44,6 +45,8 @@ const openForm = (id) => {
 };
 
 const loadData = () => {
+  if(running.value > 0) return;
+  ++running.value;
   const loading = ElLoading.service(loadingOptions);
   store
     .dispatch("pitch/getPaging", {
@@ -53,6 +56,9 @@ const loadData = () => {
     })
     .then((res) => {
       loading.close();
+      setTimeout(() => {
+        running.value = 0;
+      }, 1000);
       listPitch.value = res?.data?.data ?? [];
     });
 };

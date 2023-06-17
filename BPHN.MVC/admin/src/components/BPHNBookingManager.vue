@@ -17,6 +17,8 @@ const pageSize = ref(50);
 const totalRecord = ref(0);
 const txtSearch = ref("");
 const { dateToString, getWeekdays } = useCommonFn();
+const bmData = ref([]);
+const running = ref(0);
 
 const addNew = () => {
   const loading = ElLoading.service(loadingOptions);
@@ -32,9 +34,11 @@ const addNew = () => {
   });
 };
 
-const bmData = ref([]);
-
 const loadData = () => {
+  if (running.value > 0) {
+    return;
+  }
+  ++running.value;
   store
     .dispatch("booking/getPaging", {
       pageIndex: pageIndex.value,
@@ -47,6 +51,9 @@ const loadData = () => {
       if (res?.data?.data) {
         bmData.value = res.data.data;
       }
+      setTimeout(() => {
+        running.value = 0;
+      }, 1000);
     });
 
   store
@@ -75,19 +82,19 @@ const cancel = (id) => {
 
 const prevClick = () => {
   loadData();
-}
+};
 
 const nextClick = () => {
   loadData();
-}
+};
 
 const sizePageChange = () => {
   loadData();
-}
+};
 
 const currentChange = () => {
   loadData();
-}
+};
 
 onMounted(() => {
   loadData();
@@ -116,10 +123,10 @@ onMounted(() => {
         </div>
       </div>
       <div class="body" style="margin-top: 20px">
-        <el-table 
-        :data="bmData" 
-        :style="bmData.length > 0 ? 'height: calc(100vh - 220px)' : ''"
-        :empty-text="t('NoData')"
+        <el-table
+          :data="bmData"
+          style="height: calc(100vh - 220px)"
+          :empty-text="t('NoData')"
         >
           <el-table-column type="expand">
             <template #default="props">

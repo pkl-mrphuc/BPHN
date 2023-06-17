@@ -7,7 +7,7 @@ class BookingDetailAPI {
 
     async cancel(id) {
         try {
-            let requestUrl = `https://localhost:7166/api/bookingdetails/cancel/${id}`;
+            let requestUrl = `${process.env.VUE_APP_API_URL}/bookingdetails/cancel/${id}`;
             return axios.post(requestUrl);
         } catch (error) {
             console.log(error);
@@ -17,7 +17,7 @@ class BookingDetailAPI {
 
     async getByDate(date) {
         try {
-            let requestUrl = `https://localhost:7166/api/bookingdetails/${date}`;
+            let requestUrl = `${process.env.VUE_APP_API_URL}/bookingdetails/${date}`;
             return axios.get(requestUrl);
         } catch (error) {
             console.log(error);

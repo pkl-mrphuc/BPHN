@@ -109,6 +109,11 @@ html.dark {
   font-size: var(--el-font-size-base) !important;
 }
 
+.fc .fc-button:focus {
+  box-shadow: unset !important;
+  outline: unset !important;
+}
+
 .fc-button-group {
   position: unset !important;
 

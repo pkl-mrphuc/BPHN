@@ -7,7 +7,7 @@ class AccountAPI {
 
     async login(account) {
         try {
-            let requestUrl = "https://localhost:7166/api/accounts/login";
+            let requestUrl = `${process.env.VUE_APP_API_URL}/accounts/login`;
             let requestParam = account;
             return await axios.post(requestUrl, requestParam);
         } catch (error) {
@@ -18,7 +18,7 @@ class AccountAPI {
 
     async forgot(email) {
         try {
-            let requestUrl = `https://localhost:7166/api/accounts/send-reset-password?username=${email}`;
+            let requestUrl = `${process.env.VUE_APP_API_URL}/accounts/send-reset-password?username=${email}`;
             return await axios.get(requestUrl);
         } catch (error) {
             console.log(error);
@@ -28,7 +28,7 @@ class AccountAPI {
 
     async validateToken(token) {
         try {
-            let requestUrl = `https://localhost:7166/api/accounts/validate-token?token=${token}`;
+            let requestUrl = `${process.env.VUE_APP_API_URL}/accounts/validate-token?token=${token}`;
             return await axios.get(requestUrl);
         } catch (error) {
             console.log(error);
@@ -38,7 +38,7 @@ class AccountAPI {
 
     async resetPassword(data) {
         try {
-            let requestUrl = `https://localhost:7166/api/accounts/submit-reset-password`;
+            let requestUrl = `${process.env.VUE_APP_API_URL}/accounts/submit-reset-password`;
             let requestParam = data;
             return await axios.post(requestUrl, requestParam);
         } catch (error) {

@@ -90,6 +90,8 @@ const vi = {
     Choose: "Chọn",
     Weekdays: "Thứ",
     Today: "Hôm nay",
+    HistoryLogsTitle: 'Nhật ký',
+    HistoryLog: 'Nhật ký'
 }
 
 export default vi;

@@ -90,5 +90,7 @@ const en = {
     Choose: "Choose",
     Weekdays: "Weekdays",
     Today: "Today",
+    HistoryLogsTitle: 'History logs',
+    HistoryLog: 'History logs'
 }
 export default en;

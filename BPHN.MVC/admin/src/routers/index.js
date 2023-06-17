@@ -1,12 +1,13 @@
-import { createRouter, createWebHistory } from "vue-router"
-import Layout from "@/layouts/BPHNLayout.vue"
-import Calendar from "@/components/BPHNCalendar.vue"
-import LoginPage from "@/pages/BPHNLogin.vue"
-import ForgotPage from "@/pages/BPHNForgot.vue"
-import ResetPasswordPage from "@/pages/BPHNResetPassword.vue"
-import MyFootballFields from "@/components/BPHNMyFootballFields.vue"
-import Configurations from "@/components/BPHNConfigurations.vue"
-import BookingManager from "@/components/BPHNBookingManager.vue"
+import { createRouter, createWebHistory } from "vue-router";
+import Layout from "@/layouts/BPHNLayout.vue";
+import Calendar from "@/components/BPHNCalendar.vue";
+import LoginPage from "@/pages/BPHNLogin.vue";
+import ForgotPage from "@/pages/BPHNForgot.vue";
+import ResetPasswordPage from "@/pages/BPHNResetPassword.vue";
+import MyFootballFields from "@/components/BPHNMyFootballFields.vue";
+import Configurations from "@/components/BPHNConfigurations.vue";
+import BookingManager from "@/components/BPHNBookingManager.vue";
+import HistoryLogs from "@/components/BPHNHistoryLogs.vue";
 
 const routes = [
   {
@@ -39,6 +40,13 @@ const routes = [
         component: Configurations,
         meta: {
           title: "ConfigurationsTitle"
+        }
+      },
+      {
+        path: "/history-logs",
+        component: HistoryLogs,
+        meta: {
+          title: "HistoryLogsTitle"
         }
       }
     ]

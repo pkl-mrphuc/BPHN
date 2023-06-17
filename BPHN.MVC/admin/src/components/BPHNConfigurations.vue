@@ -5,10 +5,20 @@ import { useStore } from "vuex";
 
 const store = useStore();
 const { t } = useI18n();
-
 const darkMode = ref(store.getters["config/getDarkMode"]);
-
 const language = ref(store.getters["config/getLanguage"]);
+const running = ref(0);
+const isLoading = ref(false);
+const configData = [
+  {
+    name: t("DarkMode"),
+    key: "DarkMode",
+  },
+  {
+    name: t("Language"),
+    key: "Language",
+  },
+];
 
 const getDarkMode = computed(() => {
   return store.getters["config/getDarkMode"];
@@ -26,18 +36,10 @@ watch(getLanguage, (newValue) => {
   language.value = newValue;
 });
 
-const configData = [
-  {
-    name: t("DarkMode"),
-    key: "DarkMode",
-  },
-  {
-    name: t("Language"),
-    key: "Language",
-  },
-];
-
 const save = () => {
+  if(running.value > 0) return;
+  ++running.value;
+  isLoading.value = true;
   let configs = [
     {
       Key: "DarkMode",
@@ -48,7 +50,12 @@ const save = () => {
       Value: language.value,
     },
   ];
-  store.dispatch("config/save", configs);
+  store.dispatch("config/save", configs).then(() => {
+    setTimeout(() => {
+      running.value = 0;
+      isLoading.value = false;
+    }, 1000);
+  });
 };
 </script>
 
@@ -58,7 +65,7 @@ const save = () => {
       <div class="head">
         <h3 class="head_title">{{ t("Configurations") }}</h3>
         <div class="head_toolbar">
-          <el-button type="primary" @click="save">{{ t("Save") }}</el-button>
+          <el-button type="primary" @click="save" :loading="isLoading">{{ t("Save") }}</el-button>
         </div>
       </div>
       <div class="body" style="margin-top: 20px">

@@ -7,7 +7,7 @@ class PitchAPI {
 
     async getInstance(id) {
         try {
-            let requestUrl = `https://localhost:7166/api/pitchs/get-instance?id=${id}`;
+            let requestUrl = `${process.env.VUE_APP_API_URL}/pitchs/get-instance?id=${id}`;
             return await axios.get(requestUrl);
         } catch (error) {
             console.log(error);
@@ -17,7 +17,7 @@ class PitchAPI {
 
     async insert(data) {
         try {
-            let requestUrl = `https://localhost:7166/api/pitchs/insert`;
+            let requestUrl = `${process.env.VUE_APP_API_URL}/pitchs/insert`;
             let requestParam = data;
             return await axios.post(requestUrl, requestParam);
         } catch (error) {
@@ -28,7 +28,7 @@ class PitchAPI {
 
     async update(data) {
         try {
-            let requestUrl = `https://localhost:7166/api/pitchs/update`;
+            let requestUrl = `${process.env.VUE_APP_API_URL}/pitchs/update`;
             let requestParam = data;
             return await axios.post(requestUrl, requestParam);
         } catch (error) {
@@ -39,7 +39,7 @@ class PitchAPI {
 
     async getPaging(data) {
         try {
-            let requestUrl = `https://localhost:7166/api/pitchs/paging?pageIndex=1&pageSize=1&txtSearch=&accountId=${data.accountId}&hasDetail=${data.hasDetail}&hasInactive=${data.hasInactive}`;
+            let requestUrl = `${process.env.VUE_APP_API_URL}/pitchs/paging?pageIndex=1&pageSize=1&txtSearch=&accountId=${data.accountId}&hasDetail=${data.hasDetail}&hasInactive=${data.hasInactive}`;
             return await axios.get(requestUrl);
         } catch (error) {
             console.log(error);

@@ -8,7 +8,7 @@ class FileAPI {
     async upload(data) {
         try {
             if(!data) return false;
-            let requestUrl = `https://localhost:7166/api/files/upload/${data.id}`;
+            let requestUrl = `${process.env.VUE_APP_API_URL}/files/upload/${data.id}`;
             let formData = new FormData();
             formData.append("file", data.file);
             return await axios.post(requestUrl, formData);

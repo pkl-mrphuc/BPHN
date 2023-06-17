@@ -4,12 +4,10 @@ import { Calendar } from "@fullcalendar/core";
 import resourceTimeGridPlugin from "@fullcalendar/resource-timegrid";
 import allLocales from "@fullcalendar/core/locales-all";
 import { useStore } from "vuex";
-import { useI18n } from "vue-i18n";
 import useCommonFn from "@/commonFn";
 
 const store = useStore();
 const resources = ref([]);
-const { t } = useI18n();
 const { dateToString } = useCommonFn();
 
 onMounted(() => {
@@ -44,7 +42,6 @@ const renderCalendar = async (resources) => {
       locale: store.getters["config/getLanguage"],
       headerToolbar: {
         left: "title",
-        center: "title",
         right: "today prev,next",
       },
       events: async function (data, callback) {
@@ -63,12 +60,8 @@ const renderCalendar = async (resources) => {
 
 const handleAfterRenderCalendar = (calendar) => {
   let licenseElement = calendar.getElementsByClassName("fc-license-message")[0];
-  let titleElement = calendar.getElementsByClassName("fc-toolbar-title")[0];
   if (licenseElement) {
     licenseElement.style.display = "none";
-  }
-  if (titleElement) {
-    titleElement.innerHTML = t("Calendar");
   }
 };
 

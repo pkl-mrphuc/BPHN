@@ -19,7 +19,6 @@ export default function useToggleModal() {
       currentRole.type === "" ? null : currentRole.type === role
     );
     if (findRole === undefined) return false;
-
     return findRole.type === role && findRole.isOpen === true ? true : false;
   };
 

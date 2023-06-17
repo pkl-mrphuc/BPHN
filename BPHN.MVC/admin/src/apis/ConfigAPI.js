@@ -7,7 +7,7 @@ class ConfigAPI {
 
     async getConfigs(keys) {
         try {
-            let requestUrl = `https://localhost:7166/api/configs?key=${keys}`;
+            let requestUrl = `${process.env.VUE_APP_API_URL}/configs?key=${keys}`;
             return await axios.get(requestUrl);
         } catch (error) {
             console.log(error);
@@ -17,7 +17,7 @@ class ConfigAPI {
 
     async save(configs) {
         try {
-            let requestUrl = `https://localhost:7166/api/configs/save`;
+            let requestUrl = `${process.env.VUE_APP_API_URL}/configs/save`;
             let requestParam = configs;
             return await axios.post(requestUrl, requestParam);
         } catch (error) {

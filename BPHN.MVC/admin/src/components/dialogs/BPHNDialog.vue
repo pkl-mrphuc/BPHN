@@ -16,6 +16,7 @@ const props = defineProps({
     :title="props.title"
     :width="props.width ?? 700"
     :before-close="toggleModel"
+    :close-on-click-modal="false"
   >
     <slot name="body"></slot>
     <template #footer>

@@ -5,6 +5,7 @@ import {
   Calendar,
   Setting,
   MapLocation,
+  VideoCameraFilled
 } from "@element-plus/icons-vue";
 
 const { t } = useI18n();
@@ -38,6 +39,13 @@ const { t } = useI18n();
         <el-menu-item index="4" :title="t('ConfigurationsTitle')">
           <el-icon><Setting /></el-icon>
           <span>{{ t("Configurations") }}</span>
+        </el-menu-item>
+      </router-link>
+
+      <router-link class="menu-item_link" to="/history-logs">
+        <el-menu-item index="5" :title="t('HistoryLogsTitle')">
+          <el-icon><VideoCameraFilled /></el-icon>
+          <span>{{ t("HistoryLog") }}</span>
         </el-menu-item>
       </router-link>
     </el-menu>
