@@ -95,10 +95,11 @@ const loadData = () => {
             ></football-field-card>
           </el-col>
         </el-row>
+        <el-empty :description="t('NoData')" v-if="listPitch.length == 0" />
       </div>
     </div>
   </section>
-  <el-empty :description="t('NoData')" v-if="listPitch.length == 0" />
+  
   <FootballFieldDialog
     v-if="hasRole('FootballFieldDialog')"
     :data="pitchDataForm"

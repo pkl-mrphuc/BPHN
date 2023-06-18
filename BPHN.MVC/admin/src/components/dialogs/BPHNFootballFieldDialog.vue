@@ -19,14 +19,13 @@ const props = defineProps({
   data: Object,
   mode: String,
 });
-const { newDate } = useCommonFn();
+const { newDate, dateToString } = useCommonFn();
 const emit = defineEmits(["callback"]);
-
 const loadingOptions = inject("loadingOptions");
 const { t } = useI18n();
 const store = useStore();
 const { toggleModel } = useToggleModal();
-const configTimeFrameData = [
+const configTimeFrameData = ref([
   {
     name: t("Price"),
     key: "Price",
@@ -39,31 +38,21 @@ const configTimeFrameData = [
     name: t("TimeEnd"),
     key: "TimeEnd",
   },
-];
-
-const configFootballFieldInfoData = [
+]);
+const configFootballFieldInfoData = ref([
   {
     name: t("NameFootballField"),
     key: "Name",
   },
-];
-
+]);
 const quantity = ref(props.data?.quantity ?? 1);
-
 const minutesPerMatch = ref(props.data?.minutesPerMatch ?? 90);
-
 const timeSlotPerDay = ref(props.data?.timeSlotPerDay ?? 1);
-
 const name = ref(props.data?.name ?? "");
-
 const address = ref(props.data?.address ?? "");
-
 const status = ref(props.data?.status ?? "ACTIVE");
-
 const timeFrameInfos = ref(props.data?.timeFrameInfos);
-
 const listNameDetails = ref(props.data?.listNameDetails);
-
 const maxTimeSlot = computed(() => {
   return 1440 / minutesPerMatch.value;
 });
@@ -97,7 +86,6 @@ const save = () => {
 
   let actionPath = "pitch/insert";
   if (props.mode == "edit") actionPath = "pitch/update";
-
   store
     .dispatch(actionPath, {
       id: props.data?.id,

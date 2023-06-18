@@ -30,14 +30,14 @@ const goToHome = () => {
 <template>
   <section class="pbhn-header">
     <div class="header_left">
-      <h1 class="header_left__logo" @click="goToHome()">BPHN</h1>
+      <h1 class="header_left__logo" @click="goToHome">BPHN</h1>
     </div>
     <div class="header_right">
       <p class="header_right__fullname">
         {{ t("Hello") }}
         <span class="header_right__fullname--underline" @click="showAccountInfo">{{ fullname }}</span>
       </p>
-      <div class="header_right__logout" @click="logout()">
+      <div class="header_right__logout" @click="logout">
         <el-icon size="24"><SwitchButton /></el-icon>
       </div>
     </div>
