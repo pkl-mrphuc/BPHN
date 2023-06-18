@@ -1,18 +1,4 @@
 export default function useCommonFn() {
-    const dateNow = () => {
-        let now = new Date();
-        return date(now);
-    }
-
-    const date = (date) => {
-        if (typeof date == "string") {
-            date = new Date(date);
-        }
-        date.setHours(0);
-        date.setMinutes(0);
-        date.setSeconds(0);
-        return date;
-    }
 
     const sameDate = (date1, date2) => {
         let date1Str = `${date1.getFullYear()}-${date1.getMonth()}-${date1.getDate()}`;
@@ -37,13 +23,20 @@ export default function useCommonFn() {
         return `${hours}:${mintues}`;
     }
 
-    const dateToString = (date) => {
+    const dateToString = (date, hasTime = false) => {
         if (typeof date == "string") {
             date = new Date(date);
         }
         let fullYear = date.getFullYear();
         let month = date.getMonth() + 1 < 10 ? `0${(date.getMonth() + 1)}` : (date.getMonth() + 1);
         let day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+
+        if(hasTime) {
+            let hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
+            let minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+            let seconds = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds();
+            return `${fullYear}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
         return `${fullYear}-${month}-${day}`;
     }
 
@@ -71,10 +64,8 @@ export default function useCommonFn() {
     }
 
     return {
-        dateNow,
         sameDate,
         newDate,
-        date,
         yearEndDay,
         time,
         dateToString,

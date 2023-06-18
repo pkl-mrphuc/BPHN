@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
-    public class ConfigService : IConfigService
+    public class ConfigService : BaseService, IConfigService
     {
         private readonly IConfigRepository _configRepository;
         private readonly IContextService _contextService;
@@ -109,7 +109,8 @@ namespace BPHN.BusinessLayer.ImpServices
                         Actor = context.UserName,
                         ActorId = context.Id,
                         ActionType = ActionEnum.SAVE_CONFIG,
-                        ActionName = string.Empty
+                        ActionName = string.Empty,
+                        Description = BuildDescriptionForHistoryLog<Config>(null, configs)
                     }, context);
                 });
                 thread.Start();

@@ -303,7 +303,7 @@ namespace BPHN.BusinessLayer.ImpServices
                         Actor = context.UserName,
                         ActorId = context.Id,
                         ActionType = ActionEnum.INSERT,
-                        Description = "thông tin đặt sân"
+                        Description = BuildDescriptionForHistoryLog<Booking>(null, data)
                     }, context);
                 });
                 thread.Start();

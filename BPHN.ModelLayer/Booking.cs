@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BPHN.ModelLayer.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace BPHN.ModelLayer
 {
@@ -19,19 +20,27 @@ namespace BPHN.ModelLayer
         public int? Weekendays { get; set; }
         public string Status { get; set; }
         [Required]
+        [IgnoreLog]
         public Guid? TimeFrameInfoId { get; set; }
+        [IgnoreLog]
         public TimeFrameInfo? TimeFrameInfo { get; set; }
         public string TimeFrameInfoName { get; set; }
         [Required]
+        [IgnoreLog]
         public Guid? PitchId { get; set; }
+        [IgnoreLog]
         public Pitch? Pitch { get; set; }
         public string PitchName { get; set; }
         [Required]
         [MaxLength(255)]
         public string NameDetail { get; set; }
+        [IgnoreLog]
         public string BookingDetailIds { get; set; }
+        [IgnoreLog]
         public List<BookingDetail> BookingDetails { get; set; }
-        public Guid AccountId { get; set; } 
+        [IgnoreLog]
+        public Guid AccountId { get; set; }
+        [IgnoreLog]
         public Account Account { get; set; }
 
         public object Clone()

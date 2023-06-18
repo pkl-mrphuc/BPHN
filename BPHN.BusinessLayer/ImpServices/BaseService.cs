@@ -83,5 +83,15 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             return true;
         }
+
+        public virtual string BuildDescriptionForHistoryLog<T>(List<T>? oldData, List<T> newData)
+        {
+            return string.Empty;
+        }
+
+        public virtual string BuildDescriptionForHistoryLog<T>(T? oldData, T newData)
+        {
+            return string.Empty;
+        }
     }
 }

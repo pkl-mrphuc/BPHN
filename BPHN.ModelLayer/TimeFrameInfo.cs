@@ -1,9 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BPHN.ModelLayer.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace BPHN.ModelLayer
 {
     public class TimeFrameInfo : BaseModel
     {
+        [IgnoreLog]
         public int SortOrder { get; set; }
         [Required]
         [MaxLength(255)]
@@ -14,6 +16,7 @@ namespace BPHN.ModelLayer
         public DateTime TimeEnd { get; set; }
         public double Price { get; set; }
         [Required]
+        [IgnoreLog]
         public Guid PitchId { get; set; }
     }
 }

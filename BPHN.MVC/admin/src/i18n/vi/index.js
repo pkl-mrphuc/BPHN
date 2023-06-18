@@ -91,7 +91,13 @@ const vi = {
     Weekdays: "Thứ",
     Today: "Hôm nay",
     HistoryLogsTitle: 'Nhật ký',
-    HistoryLog: 'Nhật ký'
+    HistoryLog: 'Nhật ký',
+    Search: 'Tìm kiếm ...',
+    Actor: 'Người dùng',
+    ActionName: 'Hành động',
+    Description: 'Mô tả chi tiết',
+    CreatedDate: 'Thời gian',
+    AccountInfoForm: 'Thông tin người dùng'
 }
 
 export default vi;

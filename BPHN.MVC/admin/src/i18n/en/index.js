@@ -91,6 +91,12 @@ const en = {
     Weekdays: "Weekdays",
     Today: "Today",
     HistoryLogsTitle: 'History logs',
-    HistoryLog: 'History logs'
+    HistoryLog: 'History logs',
+    Search: 'Search ...',
+    Actor: 'Actor',
+    ActionName: 'Action name',
+    Description: 'Description',
+    CreatedDate: 'Created date',
+    AccountInfoForm: 'Account info form'
 }
 export default en;

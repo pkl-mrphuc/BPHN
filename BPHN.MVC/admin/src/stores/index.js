@@ -6,6 +6,7 @@ import pitch from "@/stores/modules/pitch";
 import file from "@/stores/modules/file";
 import booking from "@/stores/modules/booking";
 import bookingDetail from "@/stores/modules/bookingDetail";
+import historyLog from "@/stores/modules/historyLog";
 
 export default createStore({
   modules: {
@@ -14,7 +15,8 @@ export default createStore({
     pitch,
     file,
     booking,
-    bookingDetail
+    bookingDetail,
+    historyLog
   },
   plugins: [
     createPersistedState({

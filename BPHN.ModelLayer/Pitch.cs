@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BPHN.ModelLayer.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace BPHN.ModelLayer
 {
@@ -19,10 +20,14 @@ namespace BPHN.ModelLayer
         [Required]
         [Range(1, 48)]
         public int TimeSlotPerDay { get; set; } = 1;
+        [IgnoreLog]
         public string TimeFrameInfoIds { get; set; }
+        [IgnoreLog]
         public List<TimeFrameInfo> TimeFrameInfos { get; set; }
         public string NameDetails  { get; set; }
+        [IgnoreLog]
         public List<string> ListNameDetails { get; set; }
+        [IgnoreLog]
         public Guid ManagerId { get; set; }
         public string Status { get; set; } = ActiveStatusEnum.ACTIVE.ToString();
         public string AvatarUrl { get; set; }
