@@ -133,12 +133,13 @@ onMounted(() => {
               <div m="4" style="margin-left: 60px">
                 <el-table :data="props.row.bookingDetails" :border="false">
                   <el-table-column
-                    width="100"
+                    width="150"
                     :label="t('Status')"
                     prop="status"
                   >
                     <template #default="scope">
-                      {{ scope.row.status }}
+                      <el-tag type="success" v-if="scope.row.status == 'SUCCESS'">{{ scope.row.status }}</el-tag>
+                      <el-tag type="danger" v-else>{{ scope.row.status }}</el-tag>
                     </template>
                   </el-table-column>
                   <el-table-column
@@ -182,9 +183,9 @@ onMounted(() => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column :label="t('Status')" width="100">
+          <el-table-column :label="t('Status')" width="150">
             <template #default="scope">
-              {{ scope.row.status }}
+              <el-tag type="success">{{ scope.row.status }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column :label="t('BookingDate')">

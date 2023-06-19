@@ -7,7 +7,7 @@ import { useStore } from "vuex";
 import { ElLoading } from "element-plus";
 
 const { toggleModel, openModal, hasRole } = useToggleModal();
-const { sameDate, yearEndDay, time, dateToString, getDay } = useCommonFn();
+const { sameDate, yearEndDay, time, dateToString } = useCommonFn();
 const { t } = useI18n();
 const store = useStore();
 const emits = defineEmits(["callback"]);
@@ -36,7 +36,7 @@ const showMakeRecurring = () => {
   } else {
     toDate.value = fromDate.value;
   }
-  weekdays.value = getDay(fromDate.value);
+  weekdays.value = `${fromDate.value.getDay()}`;
 };
 
 const changeDate = () => {
@@ -44,7 +44,7 @@ const changeDate = () => {
     toDate.value = fromDate.value;
     isRecurring.value = false;
   }
-  weekdays.value = getDay(fromDate.value);
+  weekdays.value = `${fromDate.value.getDay()}`;
 };
 
 const changePitchId = () => {

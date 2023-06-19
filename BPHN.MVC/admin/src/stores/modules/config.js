@@ -2,9 +2,10 @@ import ConfigAPI from "@/apis/ConfigAPI";
 import i18n from "@/i18n/index.js";
 
 const state = {
-    language: "vi",
+    language: process.env.VUE_APP_I18N_LOCALE,
     darkMode: true,
-    loadedConfig: false
+    loadedConfig: false,
+    formatDate: process.env.VUE_APP_FORMAT_DATE
 };
 
 const getters = {
@@ -18,6 +19,10 @@ const getters = {
 
     getLoadedConfig: (state) => {
         return state.loadedConfig
+    },
+
+    getFormatDate: (state) => {
+        return state.formatDate;
     }
 };
 
@@ -32,6 +37,10 @@ const mutations = {
 
     setLoadedConfig: (state, payload) => {
         state.loadedConfig = payload
+    },
+
+    setFormatDate: (state, payload) => {
+        state.formatDate = payload;
     }
 };
 
@@ -61,6 +70,10 @@ const actions = {
                     commit("setDarkMode", darkMode);
                     if (darkMode) document.documentElement.setAttribute("class", "dark");
                     else document.documentElement.removeAttribute("class");
+                }
+
+                if(map.has("FormatDate")) {
+                    commit("setFormatDate", map.get("FormatDate"));
                 }
                 commit("setLoadedConfig", true)
             }

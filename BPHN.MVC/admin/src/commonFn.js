@@ -59,8 +59,8 @@ export default function useCommonFn() {
         }
     }
 
-    const getDay = (value) => {
-        return value.getDay() + "";
+    const ticks = (date) => {
+        return (date.getTime() * 10000 + 621355968000000000) - (date.getTimezoneOffset() * 600000000);
     }
 
     return {
@@ -70,6 +70,6 @@ export default function useCommonFn() {
         time,
         dateToString,
         getWeekdays,
-        getDay
+        ticks
     }
 }

@@ -7,6 +7,7 @@ const store = useStore();
 const { t } = useI18n();
 const darkMode = ref(store.getters["config/getDarkMode"]);
 const language = ref(store.getters["config/getLanguage"]);
+const formatDate = ref(store.getters["config/getFormatDate"]);
 const running = ref(0);
 const isLoading = ref(false);
 const configData = [
@@ -18,6 +19,10 @@ const configData = [
     name: t("Language"),
     key: "Language",
   },
+  {
+    name: t("FormatDate"),
+    key: "FormatDate"
+  }
 ];
 
 const getDarkMode = computed(() => {
@@ -28,12 +33,20 @@ const getLanguage = computed(() => {
   return store.getters["config/getLanguage"];
 });
 
+const getFormatDate = computed(() => {
+  return store.getters["config/getFormatDate"];
+});
+
 watch(getDarkMode, (newValue) => {
   darkMode.value = newValue;
 });
 
 watch(getLanguage, (newValue) => {
   language.value = newValue;
+});
+
+watch(getFormatDate, (newValue) => {
+  formatDate.value = newValue;
 });
 
 const save = () => {
@@ -49,6 +62,10 @@ const save = () => {
       Key: "Language",
       Value: language.value,
     },
+    {
+      Key: "FormatDate",
+      Value: formatDate.value
+    }
   ];
   store.dispatch("config/save", configs).then(() => {
     setTimeout(() => {
@@ -84,6 +101,10 @@ const save = () => {
               <el-select v-if="scope.row.key == 'Language'" v-model="language">
                 <el-option value="vi" label="Vietnamese" />
                 <el-option value="en" label="English" />
+              </el-select>
+              <el-select v-if="scope.row.key == 'FormatDate'" v-model="formatDate">
+                <el-option value="yyyy-MM-dd hh:MM:ss" label="yyyy-MM-dd hh:MM:ss" />
+                <el-option value="dd/MM/yyyy hh:MM:ss" label="dd/MM/yyyy hh:MM:ss" />
               </el-select>
             </template>
           </el-table-column>

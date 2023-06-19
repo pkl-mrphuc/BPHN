@@ -97,7 +97,8 @@ const vi = {
     ActionName: 'Hành động',
     Description: 'Mô tả chi tiết',
     CreatedDate: 'Thời gian',
-    AccountInfoForm: 'Thông tin người dùng'
+    AccountInfoForm: 'Thông tin người dùng',
+    FormatDate: 'Định dạng ngày'
 }
 
 export default vi;

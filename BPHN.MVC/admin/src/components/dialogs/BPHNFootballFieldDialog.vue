@@ -19,7 +19,7 @@ const props = defineProps({
   data: Object,
   mode: String,
 });
-const { newDate, dateToString } = useCommonFn();
+const { newDate, ticks } = useCommonFn();
 const emit = defineEmits(["callback"]);
 const loadingOptions = inject("loadingOptions");
 const { t } = useI18n();
@@ -165,6 +165,8 @@ const increaseTimeFrameInfosFn = () => {
       price: 0,
       timeBegin: timeBegin,
       timeEnd: timeEnd,
+      timeBeginTick: ticks(timeBegin),
+      timeEndTick: ticks(timeEnd)
     });
   }
 };
@@ -187,6 +189,8 @@ const increaseListNameDetailsFn = () => {
 
 const changeTimeBegin = (item) => {
   item.timeEnd = newDate(item.timeBegin, minutesPerMatch.value * 60 * 1000);
+  item.timeEndTick = ticks(item.timeEnd);
+  item.timeBeginTick = ticks(item.timeBegin);
 };
 
 const changeTimeEnd = (item) => {
@@ -194,6 +198,8 @@ const changeTimeEnd = (item) => {
     item.timeEnd,
     -1 * minutesPerMatch.value * 60 * 1000
   );
+  item.timeBeginTick = ticks(item.timeBegin);
+  item.timeEndTick = ticks(item.timeEnd);
 };
 
 const hasConflictTimeFrame = () => {

@@ -14,6 +14,8 @@ namespace BPHN.ModelLayer
         public DateTime TimeBegin { get; set; }
         [Required]
         public DateTime TimeEnd { get; set; }
+        public long TimeBeginTick { get; set; }
+        public long TimeEndTick { get; set; }
         public double Price { get; set; }
         [Required]
         [IgnoreLog]

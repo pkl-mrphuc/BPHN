@@ -91,8 +91,10 @@ namespace BPHN.BusinessLayer.ImpServices
                 for (int i = 0; i < data.TimeSlotPerDay; i++)
                 {
                     var timeBegin = DateTime.Now;
+                    var timeEnd = DateTime.Now;
                     var timeBeginSpan = new TimeSpan(timeBegin.Hour, timeBegin.Minute, 0);
                     timeBegin = timeBegin.Date.Add(timeBeginSpan);
+                    timeEnd = timeBegin.AddMinutes(data.MinutesPerMatch);
 
                     timeFrameInfos.Add(new TimeFrameInfo()
                     {
@@ -101,7 +103,9 @@ namespace BPHN.BusinessLayer.ImpServices
                         Name = string.Format("Khung {0}", i + 1),
                         Price = 0,
                         TimeBegin = timeBegin,
-                        TimeEnd = timeBegin.AddMinutes(data.MinutesPerMatch)
+                        TimeEnd = timeEnd,
+                        TimeBeginTick = timeBegin.Ticks,
+                        TimeEndTick = timeEnd.Ticks
                     });
                 }
                 data.TimeFrameInfos = timeFrameInfos;
@@ -153,6 +157,8 @@ namespace BPHN.BusinessLayer.ImpServices
                     var item = data.TimeFrameInfos[i];
                     item.TimeBegin = new DateTime(now.Year, now.Month, now.Day, item.TimeBegin.Hour, item.TimeBegin.Minute, 0);
                     item.TimeEnd = new DateTime(now.Year, now.Month, now.Day, item.TimeEnd.Hour, item.TimeEnd.Minute, 0);
+                    item.TimeBeginTick = item.TimeBegin.Ticks;
+                    item.TimeEndTick = item.TimeEnd.Ticks;
                 }
             }
 
@@ -267,6 +273,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 item.ModifiedDate = DateTime.Now;
                 item.CreatedBy = context.FullName;
                 item.ModifiedBy = context.FullName;
+                item.TimeBegin = new DateTime(item.TimeBeginTick);
+                item.TimeEnd = new DateTime(item.TimeEndTick);
                 return item;
             }).ToList();
             pitch.NameDetails = string.Join(";", pitch.ListNameDetails.ToArray());
@@ -335,6 +343,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 item.ModifiedDate = DateTime.Now;
                 item.CreatedBy = context.FullName;
                 item.ModifiedBy = context.FullName;
+                item.TimeBegin = new DateTime(item.TimeBeginTick);
+                item.TimeEnd = new DateTime(item.TimeEndTick);
                 return item;
             }).ToList();
             

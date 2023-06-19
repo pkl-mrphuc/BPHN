@@ -97,6 +97,7 @@ const en = {
     ActionName: 'Action name',
     Description: 'Description',
     CreatedDate: 'Created date',
-    AccountInfoForm: 'Account info form'
+    AccountInfoForm: 'Account info form',
+    FormatDate: 'Format date'
 }
 export default en;
