@@ -1,7 +1,7 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import { Refresh, Search } from "@element-plus/icons-vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
 import useCommonFn from "@/commonFn";
 
@@ -14,6 +14,10 @@ const totalRecord = ref(0);
 const txtSearch = ref("");
 const running = ref(0);
 const { dateToString } = useCommonFn();
+
+const formatDate = computed(() => {
+  return store.getters["config/getFormatDate"];
+});
 
 const loadData = () => {
   if (running.value > 0) {
@@ -97,7 +101,7 @@ onMounted(() => {
         >
           <el-table-column :label="t('CreatedDate')">
             <template #default="scope">
-              {{ dateToString(scope.row.createdDate, true) }}
+              {{ dateToString(scope.row.createdDate, formatDate, true) }}
             </template>
           </el-table-column>
           <el-table-column :label="t('Actor')">

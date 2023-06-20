@@ -4,7 +4,7 @@ import { Refresh, Search, User } from "@element-plus/icons-vue";
 import useToggleModal from "@/register-components/actionDialog";
 import { useStore } from "vuex";
 import { ElLoading } from "element-plus";
-import { inject, ref, onMounted } from "vue";
+import { inject, ref, onMounted, computed } from "vue";
 import useCommonFn from "@/commonFn";
 
 const { t } = useI18n();
@@ -19,6 +19,10 @@ const txtSearch = ref("");
 const { dateToString, getWeekdays } = useCommonFn();
 const bmData = ref([]);
 const running = ref(0);
+
+const formatDate = computed(() => {
+  return store.getters["config/getFormatDate"];
+});
 
 const addNew = () => {
   const loading = ElLoading.service(loadingOptions);
@@ -157,7 +161,7 @@ onMounted(() => {
                     prop="matchDate"
                   >
                     <template #default="scope">
-                      {{ dateToString(scope.row.matchDate) }}
+                      {{ dateToString(scope.row.matchDate, formatDate) }}
                     </template>
                   </el-table-column>
                   <el-table-column :label="t('Deposite')">
@@ -190,7 +194,7 @@ onMounted(() => {
           </el-table-column>
           <el-table-column :label="t('BookingDate')">
             <template #default="scope">
-              {{ dateToString(scope.row.bookingDate) }}
+              {{ dateToString(scope.row.bookingDate, formatDate) }}
             </template>
           </el-table-column>
           <el-table-column :label="t('BookingUser')">

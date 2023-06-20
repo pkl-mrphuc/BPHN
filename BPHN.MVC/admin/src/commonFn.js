@@ -23,7 +23,7 @@ export default function useCommonFn() {
         return `${hours}:${mintues}`;
     }
 
-    const dateToString = (date, hasTime = false) => {
+    const dateToString = (date, formatDate, hasTime = false) => {
         if (typeof date == "string") {
             date = new Date(date);
         }
@@ -31,13 +31,26 @@ export default function useCommonFn() {
         let month = date.getMonth() + 1 < 10 ? `0${(date.getMonth() + 1)}` : (date.getMonth() + 1);
         let day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
 
+        let result = "";
+        switch(formatDate) {
+            case "yyyy-MM-dd":
+                result = `${fullYear}-${month}-${day}`;
+                break;
+            case "dd-MM-yyyy":
+                result = `${day}-${month}-${fullYear}`;
+                break;
+            default:
+                result = `${day}/${month}/${fullYear}`;
+                break;
+        }
+
         if(hasTime) {
             let hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
             let minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
             let seconds = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds();
-            return `${fullYear}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+            return `${result} ${hours}:${minutes}:${seconds}`;
         }
-        return `${fullYear}-${month}-${day}`;
+        return result;
     }
 
     const getWeekdays = (value) => {

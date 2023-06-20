@@ -103,8 +103,9 @@ const save = () => {
                 <el-option value="en" label="English" />
               </el-select>
               <el-select v-if="scope.row.key == 'FormatDate'" v-model="formatDate">
-                <el-option value="yyyy-MM-dd hh:MM:ss" label="yyyy-MM-dd hh:MM:ss" />
-                <el-option value="dd/MM/yyyy hh:MM:ss" label="dd/MM/yyyy hh:MM:ss" />
+                <el-option value="yyyy-MM-dd" label="yyyy-MM-dd" />
+                <el-option value="dd/MM/yyyy" label="dd/MM/yyyy" />
+                <el-option value="dd-MM-yyyy" label="dd-MM-yyyy" />
               </el-select>
             </template>
           </el-table-column>

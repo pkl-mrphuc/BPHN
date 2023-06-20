@@ -1,7 +1,7 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import useToggleModal from "@/register-components/actionDialog";
-import { defineProps, onMounted, ref, defineEmits } from "vue";
+import { defineProps, onMounted, ref, defineEmits, computed } from "vue";
 import { useStore } from "vuex";
 import useCommonFn from "@/commonFn";
 
@@ -24,6 +24,10 @@ const listWeekday = ref([]);
 const listPitch = ref([]);
 const listTimeFrame = ref([]);
 const listDetail = ref([]);
+
+const formatDate = computed(() => {
+  return store.getters["config/getFormatDate"];
+});
 
 const choose = (id) => {
   emits("callback", lstBlank.value.filter((item) => item.id == id)[0]);
@@ -156,12 +160,12 @@ onMounted(() => {
       <el-table :data="lstBlank" class="w100" height="350">
         <el-table-column :label="t('FromDate')" width="100">
           <template #default="scope">
-            <span>{{ dateToString(scope.row.startDate) }}</span>
+            <span>{{ dateToString(scope.row.startDate, formatDate) }}</span>
           </template>
         </el-table-column>
         <el-table-column :label="t('ToDate')" width="100">
           <template #default="scope">
-            <span>{{ dateToString(scope.row.endDate) }}</span>
+            <span>{{ dateToString(scope.row.endDate, formatDate) }}</span>
           </template>
         </el-table-column>
         <el-table-column :label="t('Weekdays')">

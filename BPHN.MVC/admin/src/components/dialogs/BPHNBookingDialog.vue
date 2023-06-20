@@ -68,8 +68,8 @@ const checkFreeTimeFrame = async () => {
     phoneNumber: phoneNumber.value,
     email: email.value,
     isRecurring: isRecurring.value,
-    startDate: dateToString(fromDate.value),
-    endDate: dateToString(toDate.value),
+    startDate: dateToString(fromDate.value, "yyyy-MM-dd"),
+    endDate: dateToString(toDate.value, "yyyy-MM-dd"),
     weekendays: weekdays.value,
     timeFrameInfoId: timeFrameInfoId.value,
     pitchId: pitchId.value,
@@ -110,8 +110,8 @@ const save = () => {
       phoneNumber: phoneNumber.value,
       email: email.value,
       isRecurring: isRecurring.value,
-      startDate: dateToString(fromDate.value),
-      endDate: dateToString(toDate.value),
+      startDate: dateToString(fromDate.value, "yyyy-MM-dd"),
+      endDate: dateToString(toDate.value, "yyyy-MM-dd"),
       weekendays: weekdays.value,
       timeFrameInfoId: timeFrameInfoId.value,
       pitchId: pitchId.value,
@@ -286,8 +286,8 @@ onMounted(() => {
   <FindBlankDialog
     v-if="hasRole('FindBlankDialog')"
     :isRecurring="isRecurring"
-    :startDate="dateToString(fromDate)"
-    :endDate="dateToString(toDate)"
+    :startDate="dateToString(fromDate, 'yyyy-MM-dd')"
+    :endDate="dateToString(toDate, 'yyyy-MM-dd')"
     @callback="bindBlankData"
   ></FindBlankDialog>
 </template>
