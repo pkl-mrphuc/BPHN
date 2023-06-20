@@ -13,5 +13,6 @@ namespace BPHN.BusinessLayer.IServices
         Task<ServiceResultModel> SubmitResetPassword(string code, string password, string userName);
         ServiceResultModel ValidateToken(string token);
         ServiceResultModel GetTokenInfo(string token);
+        Task<ServiceResultModel> ChangePassword(Account account);
     }
 }

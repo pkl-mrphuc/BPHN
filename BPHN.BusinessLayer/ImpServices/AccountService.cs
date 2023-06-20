@@ -35,6 +35,66 @@ namespace BPHN.BusinessLayer.ImpServices
             _appSettings = appSettings.Value;
         }
 
+        public async Task<ServiceResultModel> ChangePassword(Account account)
+        {
+            var context = _contextService.GetContext();
+            if (context == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = "Token đã hết hạn"
+                };
+            }
+
+            bool isValid = ValidateModelByAttribute(account, new List<string>() { "UserName", "PhoneNumber", "FullName", "Email" });
+            if (!isValid)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.EMPTY_INPUT,
+                    Message = "Dữ liệu đầu vào không hợp lệ"
+                };
+            }
+
+            if (account.Id != context.Id)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.NOT_EXISTS,
+                    Message = "Tài khoản không tồn tại"
+                };
+            }
+
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword(account.Password);
+            bool resultResetPassword = await _accountRepository.SavePassword(account.Id, passwordHash);
+
+            if (resultResetPassword)
+            {
+                Thread thread = new Thread(delegate ()
+                {
+                    _historyLogService.Write(new HistoryLog()
+                    {
+                        Actor = context.UserName,
+                        ActorId = context.Id,
+                        ActionType = ActionEnum.SUBMIT_RESET_PASSWORD,
+                        ActionName = string.Empty,
+                        Description = string.Empty,
+                    }, context);
+                });
+                thread.Start();
+            }
+
+            return new ServiceResultModel()
+            {
+                Success = true,
+                Data = resultResetPassword
+            };
+        }
+
         public async Task<ServiceResultModel> GetById(Guid id)
         {
             return new ServiceResultModel()

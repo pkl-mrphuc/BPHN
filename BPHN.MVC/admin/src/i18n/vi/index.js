@@ -98,7 +98,10 @@ const vi = {
     Description: 'Mô tả chi tiết',
     CreatedDate: 'Thời gian',
     AccountInfoForm: 'Thông tin người dùng',
-    FormatDate: 'Định dạng ngày'
+    FormatDate: 'Định dạng ngày',
+    FullName: 'Tên',
+    Gender: 'Giới tính',
+    
 }
 
 export default vi;

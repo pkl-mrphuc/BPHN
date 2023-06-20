@@ -49,6 +49,14 @@ namespace BPHN.WebAPI.Controllers
         }
 
         [ApiAuthorize]
+        [Route("change-password")]
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword([FromBody] Account request)
+        {
+            return Ok(await _accountService.ChangePassword(request));
+        }
+
+        [ApiAuthorize]
         [HttpGet]
         [Route("paging")]
         public async Task<IActionResult> GetPaging(int pageIndex, int pageSize, string txtSearch)

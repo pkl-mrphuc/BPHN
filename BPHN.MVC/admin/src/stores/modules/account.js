@@ -19,6 +19,21 @@ const getters = {
     getAccountId: (state) => {
         if (!state.context) return ""
         return state.context.id
+    },
+
+    getUserName: (state) => {
+        if (!state.context) return ""
+        return state.context.userName;
+    },
+
+    getPhoneNumber: (state) => {
+        if (!state.context) return ""
+        return state.context.phoneNumber;
+    },
+
+    getEmail: (state) => {
+        if (!state.context) return ""
+        return state.context.email;
     }
 };
 
@@ -80,6 +95,10 @@ const actions = {
                 console.log(error)
                 alert(i18n.global.t("ErrorMesg"))
             })
+    }),
+
+    changePassword: ((commit, data) => {
+        return AccountAPI.changePassword(data);
     })
 };
 

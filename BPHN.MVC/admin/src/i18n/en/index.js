@@ -98,6 +98,8 @@ const en = {
     Description: 'Description',
     CreatedDate: 'Created date',
     AccountInfoForm: 'Account info form',
-    FormatDate: 'Format date'
+    FormatDate: 'Format date',
+    FullName: 'Full name',
+    Gender: 'Gender',
 }
 export default en;

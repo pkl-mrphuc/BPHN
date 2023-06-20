@@ -46,6 +46,17 @@ class AccountAPI {
             return false;
         }
     }
+
+    async changePassword(data) {
+        try {
+            let requestUrl = `${process.env.VUE_APP_API_URL}/accounts/change-password`;
+            let requestParam = data;
+            return await axios.post(requestUrl, requestParam);
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    } 
 }
 
 export default new AccountAPI();
