@@ -291,6 +291,7 @@ namespace BPHN.BusinessLayer.ImpServices
                         ActorId = context.Id,
                         ActionType = ActionEnum.INSERT,
                         ActionName = string.Empty,
+                        Entity = "Sân bóng",
                         Description = BuildDescriptionForHistoryLog<Pitch>(null, pitch),
                     }, context);
                 });
@@ -361,6 +362,7 @@ namespace BPHN.BusinessLayer.ImpServices
                         ActorId = context.Id,
                         ActionType = ActionEnum.UPDATE,
                         ActionName = string.Empty,
+                        Entity = "Sân bóng",
                         Description = BuildDescriptionForHistoryLog<Pitch>(null, pitch),
                     }, context);
                 });

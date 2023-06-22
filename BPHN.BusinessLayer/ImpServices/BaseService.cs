@@ -92,6 +92,7 @@ namespace BPHN.BusinessLayer.ImpServices
         public virtual string BuildDescriptionForHistoryLog<T>(T? oldData, T newData)
         {
             var description = string.Empty;
+            return description;
             if (oldData == null)
             {
                 var properties = newData.GetType().GetProperties().ToList();

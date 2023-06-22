@@ -1,23 +1,23 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import { Refresh, Search } from "@element-plus/icons-vue";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, inject } from "vue";
 import { useStore } from "vuex";
-import useCommonFn from "@/commonFn";
+import useToggleModal from "@/register-components/actionDialog";
+import { ElLoading } from "element-plus";
 
+const loadingOptions = inject("loadingOptions");
+const { openModal, hasRole } = useToggleModal();
 const { t } = useI18n();
 const store = useStore();
-const historyLogData = ref([]);
+const accountData = ref([]);
 const pageIndex = ref(1);
 const pageSize = ref(50);
 const totalRecord = ref(0);
 const txtSearch = ref("");
 const running = ref(0);
-const { dateToString } = useCommonFn();
-
-const formatDate = computed(() => {
-  return store.getters["config/getFormatDate"];
-});
+const tenantDataForm = ref(null);
+const mode = ref("add");
 
 const loadData = () => {
   if (running.value > 0) {
@@ -25,14 +25,14 @@ const loadData = () => {
   }
   ++running.value;
   store
-    .dispatch("historyLog/getPaging", {
+    .dispatch("account/getPaging", {
       pageIndex: pageIndex.value,
       pageSize: pageSize.value,
-      txtSearch: txtSearch.value
+      txtSearch: txtSearch.value,
     })
     .then((res) => {
       if (res?.data?.data) {
-        historyLogData.value = res.data.data;
+        accountData.value = res.data.data;
       }
       setTimeout(() => {
         running.value = 0;
@@ -40,7 +40,7 @@ const loadData = () => {
     });
 
   store
-    .dispatch("historyLog/getCountPaging", {
+    .dispatch("account/getCountPaging", {
       pageIndex: pageIndex.value,
       pageSize: pageSize.value,
       txtSearch: txtSearch.value,
@@ -69,6 +69,29 @@ const currentChange = () => {
   loadData();
 };
 
+const addNew = () => {
+  openForm("");
+};
+
+const edit = (id) => {
+  openForm(id);
+  mode.value = "edit";
+};
+
+const openForm = (id) => {
+  const loading = ElLoading.service(loadingOptions);
+  store.dispatch("account/getInstance", id).then((res) => {
+    if (res?.data?.data) {
+      openModal("TenantDialog");
+      tenantDataForm.value = res.data.data;
+    } else {
+      let msg = res?.data?.message;
+      alert(msg ?? t("ErrorMesg"));
+    }
+    loading.close();
+  });
+};
+
 onMounted(() => {
   loadData();
 });
@@ -79,7 +102,7 @@ onMounted(() => {
   <section class="pbhn-screen" style="height: 100%">
     <div class="container" style="height: 100%">
       <div class="head">
-        <h3 class="head_title">{{ t("HistoryLog") }}</h3>
+        <h3 class="head_title">{{ t("Accounts") }}</h3>
         <div class="head_toolbar">
           <el-input
             style="margin-right: 12px; width: 300px"
@@ -91,37 +114,65 @@ onMounted(() => {
           <el-button @click="loadData">
             <el-icon><Refresh /></el-icon>
           </el-button>
+          <el-button type="primary" @click="addNew">{{
+            t("AddNew")
+          }}</el-button>
         </div>
       </div>
       <div class="body" style="margin-top: 20px">
         <el-table
-          :data="historyLogData"
+          :data="accountData"
           style="height: calc(100vh - 220px)"
           :empty-text="t('NoData')"
         >
-          <el-table-column :label="t('CreatedDate')">
+          <el-table-column :label="t('Status')">
             <template #default="scope">
-              {{ dateToString(scope.row.createdDate, formatDate, true) }}
+              <el-tag type="success" v-if="scope.row.status == 'ACTIVE'">{{
+                t("ACTIVE")
+              }}</el-tag>
+              <el-tag type="danger" v-else>{{ t("INACTIVE") }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column :label="t('Actor')">
+          <el-table-column :label="t('Username')">
             <template #default="scope">
-              {{ scope.row.actor }}
+              {{ scope.row.userName }}
             </template>
           </el-table-column>
-          <el-table-column :label="t('ActionName')">
+          <el-table-column :label="t('FullName')">
             <template #default="scope">
-              {{ scope.row.actionName }}
+              {{ scope.row.fullName }}
             </template>
           </el-table-column>
-          <el-table-column :label="t('Entity')">
+          <el-table-column :label="t('Gender')">
             <template #default="scope">
-              {{ scope.row.entity }}
+              <el-tag type="success" v-if="scope.row.gender == 'MALE'">{{
+                t("Male")
+              }}</el-tag>
+              <el-tag type="danger" v-else-if="scope.row.gender == 'FEMALE'">{{
+                t("Female")
+              }}</el-tag>
+              <el-tag type="info" v-else>{{ t("Other") }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column :label="t('Description')">
+          <el-table-column :label="t('PhoneNumber')">
             <template #default="scope">
-              {{ scope.row.description }}
+              {{ scope.row.phoneNumber }}
+            </template>
+          </el-table-column>
+          <el-table-column label="">
+            <template #default="scope">
+              <el-button
+                :class="scope.row.id"
+                @click="edit(scope.row.id)"
+                type="primary"
+                >{{ t("Edit") }}</el-button
+              >
+              <el-button
+                :class="scope.row.id"
+                @click="resetPassword(scope.row.id)"
+                :title="t('ResetPasswordTitle')"
+                >{{ t("Reset") }}</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
@@ -133,7 +184,7 @@ onMounted(() => {
           v-model:page-size="pageSize"
           layout="sizes, prev, pager, next"
           :total="totalRecord"
-          v-if="historyLogData.length > 0"
+          v-if="accountData.length > 0"
           @prev-click="prevClick"
           @next-click="nextClick"
           @size-change="sizePageChange"
@@ -142,6 +193,13 @@ onMounted(() => {
       </div>
     </div>
   </section>
+  <TenantDialog
+    v-if="hasRole('TenantDialog')"
+    :data="tenantDataForm"
+    :mode="mode"
+    @callback="loadData"
+  >
+  </TenantDialog>
 </template>
 
 <style scoped>

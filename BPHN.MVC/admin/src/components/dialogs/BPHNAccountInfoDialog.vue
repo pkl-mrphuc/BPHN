@@ -67,7 +67,7 @@ const changePassword = () => {
         <div class="w70">
           <el-form-item>
             <el-col :span="7">
-              <b>{{ t("UserName") }}:</b>
+              <b>{{ t("Username") }}:</b>
             </el-col>
             <el-col :span="17"> {{ userName }} </el-col>
           </el-form-item>

@@ -1,4 +1,5 @@
 ﻿using BPHN.BusinessLayer.IServices;
+using BPHN.DataLayer.ImpRepositories;
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.ObjectQueues;
@@ -129,6 +130,51 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
+        public async Task<ServiceResultModel> GetInstance(string id)
+        {
+            var data = new Account();
+            if (string.IsNullOrEmpty(id))
+            {
+                data.Id = Guid.NewGuid();
+                data.Gender = GenderEnum.MALE.ToString();
+                data.Status = ActiveStatusEnum.ACTIVE.ToString();
+            }
+            else
+            {
+                Guid accountId;
+                bool success = Guid.TryParse(id, out accountId);
+                if(success)
+                {
+                    data = await _accountRepository.GetAccountById(accountId);
+                }
+                else
+                {
+                    return new ServiceResultModel()
+                    {
+                        Success = false,
+                        ErrorCode = ErrorCodes.EMPTY_INPUT,
+                        Message = "Dữ liệu đầu vào không hợp lệ"
+                    };
+                }
+
+                if (data == null)
+                {
+                    return new ServiceResultModel()
+                    {
+                        Success = false,
+                        ErrorCode = ErrorCodes.NOT_EXISTS,
+                        Message = "Không lấy được thông tin tài khoản. Vui lòng kiểm tra lại"
+                    };
+                }
+            }
+
+            return new ServiceResultModel()
+            {
+                Success = true,
+                Data = data
+            };
+        }
+
         public async Task<ServiceResultModel> GetPaging(int pageIndex, int pageSize, string txtSearch)
         {
             var context = _contextService.GetContext();
@@ -221,6 +267,16 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var realAccount = await _accountRepository.GetAccountByUserName(account.UserName);
+
+            if(!realAccount.Status.Equals(ActiveStatusEnum.ACTIVE))
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INACTIVE_DATA,
+                    Message = "Tài khoản chưa được kích hoạt"
+                };
+            }
 
             try
             {
@@ -327,23 +383,27 @@ namespace BPHN.BusinessLayer.ImpServices
             bool resultRegister = await _accountRepository.RegisterForTenant(account);
             if(resultRegister)
             {
-                var thread = new Thread(() =>
+                if(account.Status.Equals(ActiveStatusEnum.ACTIVE.ToString()))
                 {
-                    _mailService.SendMail(new ObjectQueue()
+                    var thread = new Thread(() =>
                     {
-                        QueueJobType = QueueJobTypeEnum.SEND_MAIL,
-                        DataJson = JsonConvert.SerializeObject(new ResetPasswordParameter()
+                        _mailService.SendMail(new ObjectQueue()
                         {
-                            ReceiverAddress = account.Email,
-                            AccountId = account.Id,
-                            FullName = account.FullName,
-                            UserName = account.UserName,
-                            MailType = MailTypeEnum.SET_PASSWORD,
-                            ParameterType = typeof(ResetPasswordParameter)
-                        })
+                            QueueJobType = QueueJobTypeEnum.SEND_MAIL,
+                            DataJson = JsonConvert.SerializeObject(new ResetPasswordParameter()
+                            {
+                                ReceiverAddress = account.Email,
+                                AccountId = account.Id,
+                                FullName = account.FullName,
+                                UserName = account.UserName,
+                                MailType = MailTypeEnum.SET_PASSWORD,
+                                ParameterType = typeof(ResetPasswordParameter)
+                            })
+                        });
                     });
-                });
-                thread.Start();
+                    thread.Start();
+                }
+                
 
                 var threadLog = new Thread(delegate ()
                 {
@@ -386,6 +446,16 @@ namespace BPHN.BusinessLayer.ImpServices
                     Success = false,
                     ErrorCode = ErrorCodes.NOT_EXISTS,
                     Message = "Tài khoản không tồn tại"
+                };
+            }
+
+            if (!realAccount.Status.Equals(ActiveStatusEnum.ACTIVE))
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INACTIVE_DATA,
+                    Message = "Tài khoản chưa được kích hoạt"
                 };
             }
 

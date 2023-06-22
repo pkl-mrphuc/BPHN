@@ -15,6 +15,7 @@ import FootballFieldDialog from "@/components/dialogs/BPHNFootballFieldDialog.vu
 import BookingDialog from "@/components/dialogs/BPHNBookingDialog.vue";
 import FindBlankDialog from "@/components/dialogs/BPHNFindBlankDialog.vue";
 import AccountInfoDialog from "@/components/dialogs/BPHNAccountInfoDialog.vue";
+import TenantDialog from "@/components/dialogs/BPHNTenantDialog.vue";
 
 jwtInterceptor();
 
@@ -33,4 +34,5 @@ createApp(App)
     .component("BookingDialog", BookingDialog)
     .component("FindBlankDialog", FindBlankDialog)
     .component("AccountInfoDialog", AccountInfoDialog)
+    .component("TenantDialog", TenantDialog)
     .mount("#app");

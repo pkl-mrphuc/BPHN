@@ -167,10 +167,18 @@ onMounted(() => {
       <el-form>
         <el-form-item>
           <el-col :span="11">
-            <el-input :placeholder="t('PhoneNumber')" v-model="phoneNumber" />
+            <el-input
+              :placeholder="t('PhoneNumber')"
+              v-model="phoneNumber"
+              maxlength="225"
+            />
           </el-col>
           <el-col :span="11">
-            <el-input :placeholder="t('Email')" v-model="email" />
+            <el-input
+              :placeholder="t('Email')"
+              v-model="email"
+              maxlength="225"
+            />
           </el-col>
         </el-form-item>
         <el-form-item>

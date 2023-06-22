@@ -34,6 +34,11 @@ const getters = {
     getEmail: (state) => {
         if (!state.context) return ""
         return state.context.email;
+    },
+
+    getRole: (state) => {
+        if(!state.context) return "";
+        return state.context.role;
     }
 };
 
@@ -99,6 +104,22 @@ const actions = {
 
     changePassword: ((commit, data) => {
         return AccountAPI.changePassword(data);
+    }),
+
+    getPaging: ((commit, data) => {
+        return AccountAPI.getPaging(data);
+    }),
+
+    getCountPaging: ((commit, data) => {
+        return AccountAPI.getCountPaging(data);
+    }),
+
+    register: ((commit, data) => {
+        return AccountAPI.register(data);
+    }),
+
+    getInstance: ((commit, id) => {
+        return AccountAPI.getInstance(id);
     })
 };
 

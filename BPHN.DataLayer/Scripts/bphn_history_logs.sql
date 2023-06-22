@@ -27,6 +27,7 @@ CREATE TABLE `history_logs` (
   `ActionName` varchar(255) NOT NULL,
   `Actor` varchar(255) NOT NULL,
   `ActorId` char(36) NOT NULL,
+  `Entity` varchar(255) DEFAULT NULL,
   `Description` longtext,
   `CreatedDate` datetime DEFAULT NULL,
   `CreatedBy` varchar(255) DEFAULT NULL,

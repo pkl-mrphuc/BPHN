@@ -101,7 +101,14 @@ const vi = {
     FormatDate: 'Định dạng ngày',
     FullName: 'Tên',
     Gender: 'Giới tính',
-    
+    Entity: 'Đối tượng',
+    Accounts: 'Tài khoản',
+    AccountsTitle: 'Tài khoản',
+    TenantForm: 'Tài khoản',
+    Male: 'Nam',
+    Female: 'Nữ',
+    Other: 'Khác',
+    FullNameEmptyMesg: 'Tên người dùng không được để trống'
 }
 
 export default vi;

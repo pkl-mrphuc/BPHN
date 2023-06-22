@@ -10,7 +10,7 @@ namespace BPHN.ModelLayer
         [Required]
         [MaxLength(500)]
         public string Password { get; set; }
-        public GenderEnum Gender { get; set; }
+        public string Gender { get; set; }
         [Required]
         [MaxLength(255)]
         public string PhoneNumber { get; set; }
@@ -23,5 +23,6 @@ namespace BPHN.ModelLayer
         public string Email { get; set; }
         public RoleEnum Role { get; set; }
         public string Token { get; set; }
+        public string Status { get; set; }
     }
 }

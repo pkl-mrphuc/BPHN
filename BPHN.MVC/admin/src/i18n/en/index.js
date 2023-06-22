@@ -101,5 +101,13 @@ const en = {
     FormatDate: 'Format date',
     FullName: 'Full name',
     Gender: 'Gender',
+    Entity: 'Entity name',
+    Accounts: 'Accounts',
+    AccountsTitle: 'Accounts',
+    TenantForm: 'Tenants',
+    Male: 'Male',
+    Female: 'Female',
+    Other: 'Other',
+    FullNameEmptyMesg: 'Full name is not empty'
 }
 export default en;

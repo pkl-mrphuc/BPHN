@@ -29,7 +29,7 @@
         REGISTER_ACCOUNT = 1,
         SEND_RESET_PASSWORD = 2,
         SUBMIT_RESET_PASSWORD = 3,
-        SAVE_CONFIG = 4,
+        SAVE = 4,
         INSERT = 5,
         UPDATE = 6,
     }

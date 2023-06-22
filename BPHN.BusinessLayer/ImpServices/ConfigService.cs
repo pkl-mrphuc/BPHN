@@ -108,7 +108,8 @@ namespace BPHN.BusinessLayer.ImpServices
                     {
                         Actor = context.UserName,
                         ActorId = context.Id,
-                        ActionType = ActionEnum.SAVE_CONFIG,
+                        ActionType = ActionEnum.SAVE,
+                        Entity = "Cấu hình",
                         ActionName = string.Empty,
                         Description = BuildDescriptionForHistoryLog<Config>(null, configs)
                     }, context);

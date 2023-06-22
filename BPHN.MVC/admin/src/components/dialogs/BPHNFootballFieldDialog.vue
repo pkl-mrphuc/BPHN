@@ -166,7 +166,7 @@ const increaseTimeFrameInfosFn = () => {
       timeBegin: timeBegin,
       timeEnd: timeEnd,
       timeBeginTick: ticks(timeBegin),
-      timeEndTick: ticks(timeEnd)
+      timeEndTick: ticks(timeEnd),
     });
   }
 };
@@ -245,7 +245,11 @@ const isValidNameDetail = () => {
       <el-form>
         <el-form-item>
           <el-col :span="19">
-            <el-input v-model="name" :placeholder="t('NameFootballField')" />
+            <el-input
+              v-model="name"
+              :placeholder="t('NameFootballField')"
+              maxlength="500"
+            />
           </el-col>
           <el-col :span="4">
             <el-select v-model="status" :placeholder="t('StatusFootballField')">
@@ -256,7 +260,11 @@ const isValidNameDetail = () => {
         </el-form-item>
         <el-form-item>
           <el-col :span="24">
-            <el-input v-model="address" :placeholder="t('Address')" />
+            <el-input
+              v-model="address"
+              :placeholder="t('Address')"
+              maxlength="500"
+            />
           </el-col>
         </el-form-item>
         <el-form-item>

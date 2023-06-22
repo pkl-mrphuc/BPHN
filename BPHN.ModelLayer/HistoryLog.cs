@@ -12,5 +12,6 @@ namespace BPHN.ModelLayer
         [MaxLength(255)]
         public string Actor { get; set; }
         public Guid ActorId { get; set; }
+        public string Entity { get; set; }
     }
 }

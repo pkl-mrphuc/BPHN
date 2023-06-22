@@ -13,5 +13,6 @@
         public const int EXISTED = 103;
         public const int OUT_TIME = 104;
         public const int NO_INTEGRITY = 105;
+        public const int INACTIVE_DATA = 106;
     }
 }

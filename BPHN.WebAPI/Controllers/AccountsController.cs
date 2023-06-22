@@ -1,4 +1,5 @@
-﻿using BPHN.BusinessLayer.IServices;
+﻿using BPHN.BusinessLayer.ImpServices;
+using BPHN.BusinessLayer.IServices;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Attributes;
 using BPHN.ModelLayer.ViewModels;
@@ -30,6 +31,14 @@ namespace BPHN.WebAPI.Controllers
         public async Task<IActionResult> RegisterForTenant([FromBody] Account request)
         {
             return Ok(await _accountService.RegisterForTenant(request));
+        }
+
+        [ApiAuthorize]
+        [Route("get-instance")]
+        [HttpGet]
+        public async Task<IActionResult> GetInstance(string id)
+        {
+            return Ok(await _accountService.GetInstance(id));
         }
 
         [AllowAnonymous]

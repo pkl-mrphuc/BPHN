@@ -5,10 +5,19 @@ import {
   Calendar,
   Setting,
   MapLocation,
-  VideoCameraFilled
+  VideoCameraFilled,
+  User
 } from "@element-plus/icons-vue";
+import { useStore } from "vuex";
+import { computed } from "vue";
+import { RoleEnum } from "@/const";
 
 const { t } = useI18n();
+const store = useStore();
+
+const role = computed(() => {
+  return store.getters["account/getRole"];
+})
 </script>
 
 <template>
@@ -35,15 +44,22 @@ const { t } = useI18n();
         </el-menu-item>
       </router-link>
 
+      <router-link class="menu-item_link" to="/tenants" v-if="role == RoleEnum.ADMIN">
+        <el-menu-item index="4" :title="t('AccountsTitle')">
+          <el-icon><User /></el-icon>
+          <span>{{ t("Accounts") }}</span>
+        </el-menu-item>
+      </router-link>
+
       <router-link class="menu-item_link" to="/configuartions">
-        <el-menu-item index="4" :title="t('ConfigurationsTitle')">
+        <el-menu-item index="5" :title="t('ConfigurationsTitle')">
           <el-icon><Setting /></el-icon>
           <span>{{ t("Configurations") }}</span>
         </el-menu-item>
       </router-link>
 
       <router-link class="menu-item_link" to="/history-logs">
-        <el-menu-item index="5" :title="t('HistoryLogsTitle')">
+        <el-menu-item index="6" :title="t('HistoryLogsTitle')">
           <el-icon><VideoCameraFilled /></el-icon>
           <span>{{ t("HistoryLog") }}</span>
         </el-menu-item>

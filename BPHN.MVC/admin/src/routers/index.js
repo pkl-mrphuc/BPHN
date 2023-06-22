@@ -8,6 +8,7 @@ import MyFootballFields from "@/components/BPHNMyFootballFields.vue";
 import Configurations from "@/components/BPHNConfigurations.vue";
 import BookingManager from "@/components/BPHNBookingManager.vue";
 import HistoryLogs from "@/components/BPHNHistoryLogs.vue";
+import Tenants from "@/components/BPHNTenants.vue";
 
 const routes = [
   {
@@ -47,6 +48,13 @@ const routes = [
         component: HistoryLogs,
         meta: {
           title: "HistoryLogsTitle"
+        }
+      },
+      {
+        path: "/tenants",
+        component: Tenants,
+        meta: {
+          title: "AccountsTitle"
         }
       }
     ]

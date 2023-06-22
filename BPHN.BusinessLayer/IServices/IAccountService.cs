@@ -14,5 +14,6 @@ namespace BPHN.BusinessLayer.IServices
         ServiceResultModel ValidateToken(string token);
         ServiceResultModel GetTokenInfo(string token);
         Task<ServiceResultModel> ChangePassword(Account account);
+        Task<ServiceResultModel> GetInstance(string id);
     }
 }

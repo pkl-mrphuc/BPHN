@@ -48,7 +48,7 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                string query = "select * from accounts where Id = @id";
+                string query = "select UserName, FullName, Gender, PhoneNumber, Email, Id, Role, Status from accounts where Id = @id";
                 Dictionary<string, object> dic = new Dictionary<string, object>();
                 dic.Add("@id", id);
                 var account = await connection.QueryFirstOrDefaultAsync<Account>(query, dic);
@@ -75,17 +75,18 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                string query = @"insert into accounts(Id, UserName, Password, Gender, PhoneNumber, FullName, Email, Role, CreatedBy, CreatedDate, ModifiedBy, ModifiedDate)
-                                value (@id, @userName, @password, @gender, @phoneNumber, @fullName, @email, @role, @createdBy, @createdDate, @modifiedBy, @modifiedDate)";
+                string query = @"insert into accounts(Id, UserName, Password, Gender, PhoneNumber, FullName, Email, Role, Status, CreatedBy, CreatedDate, ModifiedBy, ModifiedDate)
+                                value (@id, @userName, @password, @gender, @phoneNumber, @fullName, @email, @role, @status, @createdBy, @createdDate, @modifiedBy, @modifiedDate)";
                 Dictionary<string, object> dic = new Dictionary<string, object>();
                 dic.Add("@id", account.Id);
                 dic.Add("@fullName", account.FullName);
                 dic.Add("@userName", account.UserName);
                 dic.Add("@password", account.Password);
-                dic.Add("@gender", account.Gender.ToString());
+                dic.Add("@gender", account.Gender);
                 dic.Add("@email", account.Email);
                 dic.Add("@phoneNumber", account.PhoneNumber);
                 dic.Add("@role", RoleEnum.TENANT.ToString());
+                dic.Add("@status", account.Status);
                 dic.Add("@createdDate", account.CreatedDate);
                 dic.Add("@createdBy", account.CreatedBy);
                 dic.Add("@modifiedDate", account.ModifiedDate);
@@ -103,7 +104,7 @@ namespace BPHN.DataLayer.ImpRepositories
             Dictionary<string, object> dic = new Dictionary<string, object>();
             if (!string.IsNullOrEmpty(txtSearch))
             {
-                query = @"  select distinct * from  (
+                query = @"  select distinct ac.UserName, ac.FullName, ac.Gender, ac.PhoneNumber, ac.Email, ac.Id, ac.Role, ac.Status, ac.ModifiedDate from  (
                                                     select * from accounts where Role = @where0 and UserName like @where1
                                                     union 
                                                     select * from accounts where Role = @where0 and Email like @where2
@@ -124,7 +125,7 @@ namespace BPHN.DataLayer.ImpRepositories
             }
             else 
             {
-                query = "select * from accounts where Role = @where0 order by ModifiedDate desc limit @offSet, @pageSize";
+                query = "select UserName, FullName, Gender, PhoneNumber, Email, Id, Role, Status, ModifiedDate from accounts where Role = @where0 order by ModifiedDate desc limit @offSet, @pageSize";
                 countQuery = "select count(*) from accounts where Role = @where0";
                 dic.Add("@where0", "TENANT");
             }

@@ -124,8 +124,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 case ActionEnum.SUBMIT_RESET_PASSWORD:
                     history.ActionName = "Đổi mật khẩu mới";
                     break;
-                case ActionEnum.SAVE_CONFIG:
-                    history.ActionName = "Lưu cấu hình";
+                case ActionEnum.SAVE:
+                    history.ActionName = "Lưu";
                     break;
                 case ActionEnum.INSERT:
                     history.ActionName = "Thêm mới";
