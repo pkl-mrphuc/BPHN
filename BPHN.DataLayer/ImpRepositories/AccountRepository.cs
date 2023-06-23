@@ -75,8 +75,8 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                string query = @"insert into accounts(Id, UserName, Password, Gender, PhoneNumber, FullName, Email, Role, Status, CreatedBy, CreatedDate, ModifiedBy, ModifiedDate)
-                                value (@id, @userName, @password, @gender, @phoneNumber, @fullName, @email, @role, @status, @createdBy, @createdDate, @modifiedBy, @modifiedDate)";
+                string query = @"insert into accounts(Id, UserName, Password, Gender, PhoneNumber, FullName, Email, Role, Status, ParentId, CreatedBy, CreatedDate, ModifiedBy, ModifiedDate)
+                                value (@id, @userName, @password, @gender, @phoneNumber, @fullName, @email, @role, @status, @parentId, @createdBy, @createdDate, @modifiedBy, @modifiedDate)";
                 Dictionary<string, object> dic = new Dictionary<string, object>();
                 dic.Add("@id", account.Id);
                 dic.Add("@fullName", account.FullName);
@@ -85,8 +85,9 @@ namespace BPHN.DataLayer.ImpRepositories
                 dic.Add("@gender", account.Gender);
                 dic.Add("@email", account.Email);
                 dic.Add("@phoneNumber", account.PhoneNumber);
-                dic.Add("@role", RoleEnum.TENANT.ToString());
+                dic.Add("@role", account.Role.ToString());
                 dic.Add("@status", account.Status);
+                dic.Add("@parentId", account.ParentId);
                 dic.Add("@createdDate", account.CreatedDate);
                 dic.Add("@createdBy", account.CreatedBy);
                 dic.Add("@modifiedDate", account.ModifiedDate);

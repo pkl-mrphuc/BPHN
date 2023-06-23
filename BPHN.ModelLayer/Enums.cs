@@ -10,7 +10,8 @@
     public enum RoleEnum
     {
         ADMIN = 0,
-        TENANT = 1
+        TENANT = 1,
+        USER = 2
     }
 
     public enum MailTypeEnum

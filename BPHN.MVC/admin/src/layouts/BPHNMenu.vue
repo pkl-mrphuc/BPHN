@@ -17,7 +17,11 @@ const store = useStore();
 
 const role = computed(() => {
   return store.getters["account/getRole"];
-})
+});
+
+const multiUser = computed(() => {
+  return store.getters["config/getMultiUser"];
+});
 </script>
 
 <template>
@@ -44,7 +48,7 @@ const role = computed(() => {
         </el-menu-item>
       </router-link>
 
-      <router-link class="menu-item_link" to="/tenants" v-if="role == RoleEnum.ADMIN">
+      <router-link class="menu-item_link" to="/tenants" v-if="role == RoleEnum.ADMIN || multiUser">
         <el-menu-item index="4" :title="t('AccountsTitle')">
           <el-icon><User /></el-icon>
           <span>{{ t("Accounts") }}</span>

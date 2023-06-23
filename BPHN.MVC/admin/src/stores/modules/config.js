@@ -5,7 +5,8 @@ const state = {
     language: process.env.VUE_APP_I18N_LOCALE,
     darkMode: true,
     loadedConfig: false,
-    formatDate: process.env.VUE_APP_FORMAT_DATE
+    formatDate: process.env.VUE_APP_FORMAT_DATE,
+    multiUser: false
 };
 
 const getters = {
@@ -23,6 +24,10 @@ const getters = {
 
     getFormatDate: (state) => {
         return state.formatDate;
+    },
+
+    getMultiUser: (state) => {
+        return state.multiUser;
     }
 };
 
@@ -41,6 +46,10 @@ const mutations = {
 
     setFormatDate: (state, payload) => {
         state.formatDate = payload;
+    },
+
+    setMultiUser: (state, payload) => {
+        state.multiUser = payload;
     }
 };
 
@@ -75,6 +84,12 @@ const actions = {
                 if(map.has("FormatDate")) {
                     commit("setFormatDate", map.get("FormatDate"));
                 }
+
+                if(map.has("MultiUser")) {
+                    let multiUser = map.get("MultiUser") == "true";
+                    commit("setMultiUser", multiUser);
+                }
+
                 commit("setLoadedConfig", true)
             }
 

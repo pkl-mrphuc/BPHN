@@ -108,6 +108,7 @@ const en = {
     Male: 'Male',
     Female: 'Female',
     Other: 'Other',
-    FullNameEmptyMesg: 'Full name is not empty'
+    FullNameEmptyMesg: 'Full name is not empty',
+    MultiUser: 'Multiple user',
 }
 export default en;

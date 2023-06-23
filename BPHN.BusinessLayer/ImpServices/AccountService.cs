@@ -19,6 +19,7 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IEmailService _mailService;
         private readonly IKeyGenerator _keyGenerator;
         private readonly IHistoryLogService _historyLogService;
+        private readonly IConfigService _configService;
         private readonly AppSettings _appSettings;
         
         public AccountService(IAccountRepository accountRepository,
@@ -26,6 +27,7 @@ namespace BPHN.BusinessLayer.ImpServices
             IEmailService mailService,
             IKeyGenerator keyGenerator,
             IHistoryLogService historyLogService,
+            IConfigService configService,
             IOptions<AppSettings> appSettings)
         {
             _accountRepository = accountRepository;
@@ -34,6 +36,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _keyGenerator = keyGenerator;
             _historyLogService = historyLogService;
             _appSettings = appSettings.Value;
+            _configService = configService;
         }
 
         public async Task<ServiceResultModel> ChangePassword(Account account)
@@ -177,8 +180,10 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> GetPaging(int pageIndex, int pageSize, string txtSearch)
         {
+
             var context = _contextService.GetContext();
-            if(context == null || (context != null && context.Role != RoleEnum.ADMIN))
+            if(context == null || 
+                (context != null && context.Role != RoleEnum.ADMIN && !(await AllowMultiUser())))
             {
                 return new ServiceResultModel()
                 {
@@ -268,7 +273,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var realAccount = await _accountRepository.GetAccountByUserName(account.UserName);
 
-            if(!realAccount.Status.Equals(ActiveStatusEnum.ACTIVE))
+            if(!realAccount.Status.Equals(ActiveStatusEnum.ACTIVE.ToString()))
             {
                 return new ServiceResultModel()
                 {
@@ -340,9 +345,13 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> RegisterForTenant(Account account)
         {
+            
+
             var context = _contextService.GetContext();
-            if (context == null ||
-                (context != null && context.Role != RoleEnum.ADMIN))
+            if (    context == null ||
+                    (context != null && context.Role != RoleEnum.ADMIN && !(await AllowMultiUser()))
+                    
+                )
             {
                 return new ServiceResultModel()
                 {
@@ -379,6 +388,12 @@ namespace BPHN.BusinessLayer.ImpServices
             account.CreatedDate = DateTime.Now;
             account.ModifiedBy = context.FullName;
             account.ModifiedDate = DateTime.Now;
+            account.Role = RoleEnum.TENANT;
+            if(context.Role != RoleEnum.ADMIN)
+            {
+                account.ParentId = context.Id;
+                account.Role = RoleEnum.USER;
+            }
 
             bool resultRegister = await _accountRepository.RegisterForTenant(account);
             if(resultRegister)
@@ -449,7 +464,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            if (!realAccount.Status.Equals(ActiveStatusEnum.ACTIVE))
+            if (!realAccount.Status.Equals(ActiveStatusEnum.ACTIVE.ToString()))
             {
                 return new ServiceResultModel()
                 {
@@ -593,6 +608,21 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        
+        private async Task<bool> AllowMultiUser()
+        {
+            var multiUserConfig = await _configService.GetConfigs("MultiUser");
+
+            var allowMultiUser = false;
+            if (multiUserConfig != null && multiUserConfig.Data != null)
+            {
+                var multiUser = multiUserConfig.Data as List<Config>;
+                if (multiUser != null && multiUser.Any(item => item.Value == "true"))
+                {
+                    allowMultiUser = true;
+                }
+            }
+
+            return allowMultiUser;
+        }
     }
 }

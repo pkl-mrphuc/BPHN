@@ -17,19 +17,27 @@ namespace BPHN.ImpRabbitMQLayer
 
         public void Publish(ObjectQueue param)
         {
-            var connection = CreateChannel();
-            using var model = connection.CreateModel();
-            model.QueueDeclare(queue: "BPHN.MailQueue",
-                                durable: false,
-                                exclusive: false,
-                                autoDelete: false,
-                                arguments: null);
+            try
+            {
+                var connection = CreateChannel();
+                using var model = connection.CreateModel();
+                model.QueueDeclare(queue: "BPHN.MailQueue",
+                                    durable: false,
+                                    exclusive: false,
+                                    autoDelete: false,
+                                    arguments: null);
 
-            var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(param));
-            model.BasicPublish(exchange: string.Empty,
-                                 routingKey: "BPHN.MailQueue",
-                                 basicProperties: null,
-                                 body: body);
+                var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(param));
+                model.BasicPublish(exchange: string.Empty,
+                                     routingKey: "BPHN.MailQueue",
+                                     basicProperties: null,
+                                     body: body);
+            }
+            catch (Exception ex)
+            {
+
+            }
+            
         }
 
         private IConnection CreateChannel()

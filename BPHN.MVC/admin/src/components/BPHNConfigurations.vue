@@ -8,6 +8,7 @@ const { t } = useI18n();
 const darkMode = ref(store.getters["config/getDarkMode"]);
 const language = ref(store.getters["config/getLanguage"]);
 const formatDate = ref(store.getters["config/getFormatDate"]);
+const multiUser = ref(store.getters["config/getMultiUser"]);
 const running = ref(0);
 const isLoading = ref(false);
 const configData = [
@@ -22,6 +23,10 @@ const configData = [
   {
     name: t("FormatDate"),
     key: "FormatDate"
+  },
+  {
+    name: t("MultiUser"),
+    key: "MultiUser"
   }
 ];
 
@@ -37,6 +42,10 @@ const getFormatDate = computed(() => {
   return store.getters["config/getFormatDate"];
 });
 
+const getMultiUser = computed(() => {
+  return  store.getters["config/getMultiUser"];
+});
+
 watch(getDarkMode, (newValue) => {
   darkMode.value = newValue;
 });
@@ -47,6 +56,10 @@ watch(getLanguage, (newValue) => {
 
 watch(getFormatDate, (newValue) => {
   formatDate.value = newValue;
+});
+
+watch(getMultiUser, (newValue) => {
+  multiUser.value = newValue;
 });
 
 const save = () => {
@@ -65,6 +78,10 @@ const save = () => {
     {
       Key: "FormatDate",
       Value: formatDate.value
+    },
+    {
+      Key: "MultiUser",
+      Value: `${multiUser.value}`
     }
   ];
   store.dispatch("config/save", configs).then(() => {
@@ -107,6 +124,10 @@ const save = () => {
                 <el-option value="dd/MM/yyyy" label="dd/MM/yyyy" />
                 <el-option value="dd-MM-yyyy" label="dd-MM-yyyy" />
               </el-select>
+              <el-switch
+                v-if="scope.row.key == 'MultiUser'"
+                v-model="multiUser"
+              />
             </template>
           </el-table-column>
         </el-table>

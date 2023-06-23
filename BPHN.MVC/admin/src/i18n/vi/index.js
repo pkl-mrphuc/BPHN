@@ -108,7 +108,8 @@ const vi = {
     Male: 'Nam',
     Female: 'Nữ',
     Other: 'Khác',
-    FullNameEmptyMesg: 'Tên người dùng không được để trống'
+    FullNameEmptyMesg: 'Tên người dùng không được để trống',
+    MultiUser: 'Nhiều người dùng',
 }
 
 export default vi;

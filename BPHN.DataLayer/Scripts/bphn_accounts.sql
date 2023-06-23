@@ -32,6 +32,7 @@ CREATE TABLE `accounts` (
   `Email` varchar(255) NOT NULL,
   `Role` varchar(255) DEFAULT NULL,
   `Status` varchar(255) DEFAULT NULL,
+  `ParentId` char(36) DEFAULT NULL,
   `CreatedDate` datetime DEFAULT NULL,
   `CreatedBy` varchar(255) DEFAULT NULL,
   `ModifiedDate` datetime DEFAULT NULL,

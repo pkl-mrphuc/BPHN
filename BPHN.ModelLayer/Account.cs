@@ -24,5 +24,6 @@ namespace BPHN.ModelLayer
         public RoleEnum Role { get; set; }
         public string Token { get; set; }
         public string Status { get; set; }
+        public Guid? ParentId { get; set; }
     }
 }
