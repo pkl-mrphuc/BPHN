@@ -55,7 +55,7 @@ const multiUser = computed(() => {
         </el-menu-item>
       </router-link>
 
-      <router-link class="menu-item_link" to="/configuartions">
+      <router-link class="menu-item_link" to="/configuartions" v-if="role == RoleEnum.ADMIN || multiUser">
         <el-menu-item index="5" :title="t('ConfigurationsTitle')">
           <el-icon><Setting /></el-icon>
           <span>{{ t("Configurations") }}</span>

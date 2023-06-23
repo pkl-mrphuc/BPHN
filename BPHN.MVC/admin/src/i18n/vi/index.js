@@ -110,6 +110,8 @@ const vi = {
     Other: 'Khác',
     FullNameEmptyMesg: 'Tên người dùng không được để trống',
     MultiUser: 'Nhiều người dùng',
+    FeatureIsDeveloping: 'Tính năng đang được phát triển',
+    ContactSupplier: 'Vui lòng liên hệ nhà cung cấp để sử dụng tính năng này.'
 }
 
 export default vi;

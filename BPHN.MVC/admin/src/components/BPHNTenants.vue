@@ -162,16 +162,9 @@ onMounted(() => {
           <el-table-column label="">
             <template #default="scope">
               <el-button
-                :class="scope.row.id"
                 @click="edit(scope.row.id)"
                 type="primary"
                 >{{ t("Edit") }}</el-button
-              >
-              <el-button
-                :class="scope.row.id"
-                @click="resetPassword(scope.row.id)"
-                :title="t('ResetPasswordTitle')"
-                >{{ t("Reset") }}</el-button
               >
             </template>
           </el-table-column>

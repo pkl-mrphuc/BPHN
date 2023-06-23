@@ -1,5 +1,6 @@
 ﻿using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
+using BPHN.ModelLayer.Others;
 using Dapper;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -97,38 +98,41 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public async Task<List<Account>> GetPaging(int pageIndex, int pageSize, string txtSearch)
+        public async Task<List<Account>> GetPaging(int pageIndex, int pageSize, string txtSearch, List<WhereCondition> where)
         {
 
-            string query = string.Empty;
-            string countQuery = string.Empty;
-            Dictionary<string, object> dic = new Dictionary<string, object>();
+            var query = string.Empty;
+            var countQuery = string.Empty;
+            var dic = new Dictionary<string, object>();
+            var whereQuery = BuildWhereQuery(where);
             if (!string.IsNullOrEmpty(txtSearch))
             {
-                query = @"  select distinct ac.UserName, ac.FullName, ac.Gender, ac.PhoneNumber, ac.Email, ac.Id, ac.Role, ac.Status, ac.ModifiedDate from  (
-                                                    select * from accounts where Role = @where0 and UserName like @where1
+                query = $@"  select distinct ac.UserName, ac.FullName, ac.Gender, ac.PhoneNumber, ac.Email, ac.Id, ac.Role, ac.Status, ac.ModifiedDate from  (
+                                                    select * from accounts where {whereQuery} and UserName like @where
                                                     union 
-                                                    select * from accounts where Role = @where0 and Email like @where2
+                                                    select * from accounts where {whereQuery} and Email like @where
                                                     union 
-                                                    select * from accounts where Role = @where0 and FulLName like @where3) as ac
+                                                    select * from accounts where {whereQuery} and FulLName like @where) as ac
                             order by ac.ModifiedDate desc
                             limit @offSet, @pageSize";
-                countQuery = @" select distinct count(*) from   (
-                                                                select * from accounts where Role = @where0 and UserName like @where1
+                countQuery = $@" select distinct count(*) from   (
+                                                                select * from accounts where Role = {whereQuery} and UserName like @where
                                                                 union 
-                                                                select * from accounts where Role = @where0 and Email like @where2
+                                                                select * from accounts where Role = {whereQuery} and Email like @where
                                                                 union 
-                                                                select * from accounts where Role = @where0 and FulLName like @where3) as ac";
-                dic.Add("@where0", "TENANT");
-                dic.Add("@where1", $"%{txtSearch}%");
-                dic.Add("@where2", $"%{txtSearch}%");
-                dic.Add("@where3", $"%{txtSearch}%");
+                                                                select * from accounts where Role = {whereQuery} and FulLName like @where) as ac";
+                
+                dic.Add("@where", $"%{txtSearch}%");
             }
             else 
             {
-                query = "select UserName, FullName, Gender, PhoneNumber, Email, Id, Role, Status, ModifiedDate from accounts where Role = @where0 order by ModifiedDate desc limit @offSet, @pageSize";
-                countQuery = "select count(*) from accounts where Role = @where0";
-                dic.Add("@where0", "TENANT");
+                query = $"select UserName, FullName, Gender, PhoneNumber, Email, Id, Role, Status, ModifiedDate from accounts where {whereQuery} order by ModifiedDate desc limit @offSet, @pageSize";
+                countQuery = $"select count(*) from accounts where {whereQuery}";
+            }
+
+            for (int i = 0; i < where.Count; i++)
+            {
+                dic.Add($"@where{i}", where[i].Value);
             }
 
 
@@ -150,27 +154,29 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public async Task<object> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
+        public async Task<object> GetCountPaging(int pageIndex, int pageSize, string txtSearch, List<WhereCondition> where)
         {
             string countQuery = string.Empty;
             Dictionary<string, object> dic = new Dictionary<string, object>();
+            var whereQuery = BuildWhereQuery(where);
             if (!string.IsNullOrEmpty(txtSearch))
             {
-                countQuery = @" select distinct count(*) from   (
-                                                                select * from accounts where Role = @where0 and UserName like @where1
+                countQuery = $@" select distinct count(*) from   (
+                                                                select * from accounts where {whereQuery} and UserName like @where
                                                                 union 
-                                                                select * from accounts where Role = @where0 and Email like @where2
+                                                                select * from accounts where {whereQuery} and Email like @where
                                                                 union 
-                                                                select * from accounts where Role = @where0 and FulLName like @where3) as ac";
-                dic.Add("@where0", "TENANT");
-                dic.Add("@where1", $"%{txtSearch}%");
-                dic.Add("@where2", $"%{txtSearch}%");
-                dic.Add("@where3", $"%{txtSearch}%");
+                                                                select * from accounts where {whereQuery} and FulLName like @where) as ac";
+                dic.Add("@where", $"%{txtSearch}%");
             }
             else
             {
-                countQuery = "select count(*) from accounts where Role = @where0";
-                dic.Add("@where0", "TENANT");
+                countQuery = $"select count(*) from accounts where {whereQuery}";
+            }
+
+            for (int i = 0; i < where.Count; i++)
+            {
+                dic.Add($"@where{i}", where[i].Value);
             }
 
             using (var connection = ConnectDB(GetConnectionString()))

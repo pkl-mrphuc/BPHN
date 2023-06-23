@@ -1,7 +1,7 @@
 <script setup>
 import useToggleModal from "@/register-components/actionDialog";
 import { useI18n } from "vue-i18n";
-import { ref, inject, defineEmits, defineProps } from "vue";
+import { ref, inject, defineEmits, defineProps, computed } from "vue";
 import { useStore } from "vuex";
 import { ElLoading } from "element-plus";
 
@@ -20,6 +20,9 @@ const phoneNumber = ref(props.data?.phoneNumber ?? "");
 const gender = ref(props.data?.gender ?? "MALE");
 const status = ref(props.data?.status ?? "ACTIVE");
 const loadingOptions = inject("loadingOptions");
+const isDisabled = computed(() => {
+  return props.mode == "edit" ? true : false;
+});
 
 const save = () => {
   if (!userName.value) {
@@ -39,9 +42,14 @@ const save = () => {
     return;
   }
 
-  const loading = ElLoading.service(loadingOptions);
   let actionPath = "account/register";
-  if(props.mode == "edit") actionPath = "account/update";
+  if(props.mode == "edit") {
+    actionPath = "account/update";
+    alert(t("FeatureIsDeveloping"));
+    return;
+  }
+
+  const loading = ElLoading.service(loadingOptions);
   store
     .dispatch(actionPath, {
       id: props.data?.id,
@@ -92,7 +100,7 @@ const save = () => {
               <b>{{ t("Username") }} <span class="red">(*)</span></b>
             </el-col>
             <el-col :span="17">
-              <el-input v-model="userName" maxlength="255" />
+              <el-input v-model="userName" :disabled="isDisabled" maxlength="255" />
             </el-col>
           </el-form-item>
           <el-form-item>
@@ -128,7 +136,7 @@ const save = () => {
               <b>{{ t("Email") }}<span class="red">(*)</span></b>
             </el-col>
             <el-col :span="17">
-              <el-input v-model="email" maxlength="255" />
+              <el-input v-model="email" :disabled="isDisabled" maxlength="255" />
             </el-col>
           </el-form-item>
         </div>

@@ -111,7 +111,7 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
         {
             var context = _contextService.GetContext();
-            if (context == null || (context != null && context.Role != RoleEnum.ADMIN))
+            if (context == null || (context != null && context.Role != RoleEnum.ADMIN && !(await AllowMultiUser())))
             {
                 return new ServiceResultModel()
                 {
@@ -124,7 +124,34 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
 
-            var resultCountPaging = await _accountRepository.GetCountPaging(pageIndex, pageSize, txtSearch);
+            var where = new List<WhereCondition>();
+            switch (context.Role)
+            {
+                case RoleEnum.ADMIN:
+                    where.Add(new WhereCondition()
+                    {
+                        Column = "Role",
+                        Operator = "in",
+                        Value = new[] { RoleEnum.USER.ToString(), RoleEnum.TENANT.ToString() } 
+                    });
+                    break;
+                case RoleEnum.TENANT:
+                    where.Add(new WhereCondition()
+                    {
+                        Column = "Role",
+                        Operator = "in",
+                        Value = new[] { RoleEnum.USER.ToString() }
+                    });
+                    where.Add(new WhereCondition()
+                    {
+                        Column = "ParentId",
+                        Operator = "=",
+                        Value = context.Id.ToString()
+                    });
+                    break;
+            }
+
+            var resultCountPaging = await _accountRepository.GetCountPaging(pageIndex, pageSize, txtSearch, where);
 
             return new ServiceResultModel()
             {
@@ -196,7 +223,34 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
 
-            var lstTenants = await _accountRepository.GetPaging(pageIndex, pageSize, txtSearch);
+            var where = new List<WhereCondition>();
+            switch(context.Role)
+            {
+                case RoleEnum.ADMIN:
+                    where.Add(new WhereCondition()
+                    {
+                        Column = "Role",
+                        Operator = "in",
+                        Value = new[] { RoleEnum.USER.ToString(), RoleEnum.TENANT.ToString() }
+                    });
+                    break;
+                case RoleEnum.TENANT:
+                    where.Add(new WhereCondition()
+                    {
+                        Column = "Role",
+                        Operator = "in",
+                        Value = new[] { RoleEnum.USER.ToString() }
+                    });
+                    where.Add(new WhereCondition()
+                    {
+                        Column = "ParentId",
+                        Operator = "=",
+                        Value = context.Id.ToString()
+                    });
+                    break;
+            }
+            
+            var lstTenants = await _accountRepository.GetPaging(pageIndex, pageSize, txtSearch, where);
 
             return new ServiceResultModel()
             {

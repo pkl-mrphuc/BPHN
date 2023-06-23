@@ -62,6 +62,13 @@ watch(getMultiUser, (newValue) => {
   multiUser.value = newValue;
 });
 
+const useMultiUser = () => {
+  if(multiUser.value) {
+    alert(t("ContactSupplier"));
+    multiUser.value = false;
+  }
+};
+
 const save = () => {
   if(running.value > 0) return;
   ++running.value;
@@ -127,6 +134,7 @@ const save = () => {
               <el-switch
                 v-if="scope.row.key == 'MultiUser'"
                 v-model="multiUser"
+                @change="useMultiUser"
               />
             </template>
           </el-table-column>

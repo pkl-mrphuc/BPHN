@@ -110,5 +110,7 @@ const en = {
     Other: 'Other',
     FullNameEmptyMesg: 'Full name is not empty',
     MultiUser: 'Multiple user',
+    FeatureIsDeveloping: 'Feature is developing',
+    ContactSupplier: 'Please contact supplier to use this feature.'
 }
 export default en;
