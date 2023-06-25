@@ -52,7 +52,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            bool isValid = ValidateModelByAttribute(account, new List<string>() { "UserName", "PhoneNumber", "FullName", "Email" });
+            var isValid = ValidateModelByAttribute(account, new List<string>() { "UserName", "PhoneNumber", "FullName", "Email" });
             if (!isValid)
             {
                 return new ServiceResultModel()
@@ -73,12 +73,12 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            string passwordHash = BCrypt.Net.BCrypt.HashPassword(account.Password);
-            bool resultResetPassword = await _accountRepository.SavePassword(account.Id, passwordHash);
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(account.Password);
+            var resultResetPassword = await _accountRepository.SavePassword(account.Id, passwordHash);
 
             if (resultResetPassword)
             {
-                Thread thread = new Thread(delegate ()
+                var thread = new Thread(delegate ()
                 {
                     _historyLogService.Write(new HistoryLog()
                     {
@@ -111,7 +111,17 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
         {
             var context = _contextService.GetContext();
-            if (context == null || (context != null && context.Role != RoleEnum.ADMIN && !(await AllowMultiUser())))
+            if (context == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = "Token đã hết hạn"
+                };
+            }
+
+            if (context.Role != RoleEnum.ADMIN && !(await AllowMultiUser()))
             {
                 return new ServiceResultModel()
                 {
@@ -132,7 +142,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     {
                         Column = "Role",
                         Operator = "in",
-                        Value = new[] { RoleEnum.USER.ToString(), RoleEnum.TENANT.ToString() } 
+                        Value = new[] { RoleEnum.USER.ToString(), RoleEnum.TENANT.ToString() }
                     });
                     break;
                 case RoleEnum.TENANT:
@@ -172,7 +182,7 @@ namespace BPHN.BusinessLayer.ImpServices
             else
             {
                 Guid accountId;
-                bool success = Guid.TryParse(id, out accountId);
+                var success = Guid.TryParse(id, out accountId);
                 if(success)
                 {
                     data = await _accountRepository.GetAccountById(accountId);
@@ -207,10 +217,18 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> GetPaging(int pageIndex, int pageSize, string txtSearch)
         {
-
             var context = _contextService.GetContext();
-            if(context == null || 
-                (context != null && context.Role != RoleEnum.ADMIN && !(await AllowMultiUser())))
+            if(context == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = "Token đã hết hạn"
+                };
+            }
+
+            if(context.Role != RoleEnum.ADMIN && !(await AllowMultiUser()))
             {
                 return new ServiceResultModel()
                 {
@@ -303,7 +321,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> Login(Account account)
         {
-            bool isValid = ValidateModelByAttribute(account, new List<string>() { "Id", "PhoneNumber", "FullName", "Email" });
+            var isValid = ValidateModelByAttribute(account, new List<string>() { "Id", "PhoneNumber", "FullName", "Email" });
             if(!isValid)
             {
                 return new ServiceResultModel()
@@ -314,8 +332,9 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            bool existUserName = await _accountRepository.CheckExistUserName(account.UserName);
-            if(!existUserName)
+            var realAccount = await _accountRepository.GetAccountByUserName(account.UserName);
+
+            if (realAccount == null)
             {
                 return new ServiceResultModel()
                 {
@@ -325,9 +344,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var realAccount = await _accountRepository.GetAccountByUserName(account.UserName);
-
-            if(!realAccount.Status.Equals(ActiveStatusEnum.ACTIVE.ToString()))
+            if (!realAccount.Status.Equals(ActiveStatusEnum.ACTIVE.ToString()))
             {
                 return new ServiceResultModel()
                 {
@@ -399,13 +416,18 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> RegisterForTenant(Account account)
         {
-            
-
             var context = _contextService.GetContext();
-            if (    context == null ||
-                    (context != null && context.Role != RoleEnum.ADMIN && !(await AllowMultiUser()))
-                    
-                )
+            if (context == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = "Token đã hết hạn"
+                };
+            }
+
+            if (context.Role != RoleEnum.ADMIN && !(await AllowMultiUser()))
             {
                 return new ServiceResultModel()
                 {
@@ -415,7 +437,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            bool isValid = ValidateModelByAttribute(account, new List<string>() { "Id", "Password" });
+                var isValid = ValidateModelByAttribute(account, new List<string>() { "Id", "Password" });
             if(!isValid)
             {
                 return new ServiceResultModel()
@@ -426,7 +448,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            bool existUserName = await _accountRepository.CheckExistUserName(account.UserName);
+            var existUserName = await _accountRepository.CheckExistUserName(account.UserName);
             if(existUserName)
             {
                 return new ServiceResultModel()
@@ -449,7 +471,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 account.Role = RoleEnum.USER;
             }
 
-            bool resultRegister = await _accountRepository.RegisterForTenant(account);
+            var resultRegister = await _accountRepository.RegisterForTenant(account);
             if(resultRegister)
             {
                 if(account.Status.Equals(ActiveStatusEnum.ACTIVE.ToString()))
@@ -528,7 +550,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            bool resultSendMail = _mailService.SendMail(new ObjectQueue()
+            var resultSendMail = _mailService.SendMail(new ObjectQueue()
             {
                 QueueJobType = QueueJobTypeEnum.SEND_MAIL,
                 DataJson = JsonConvert.SerializeObject(new ResetPasswordParameter()
@@ -549,7 +571,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     FullName = realAccount.FullName
                 };
 
-                Thread thread = new Thread(delegate()
+                var thread = new Thread(delegate()
                 {
                     _historyLogService.Write(new HistoryLog()
                     {
@@ -572,7 +594,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> SubmitResetPassword(string code, string password, string userName)
         {
-            string param = _keyGenerator.Decryption(code);
+            var param = _keyGenerator.Decryption(code);
             var expireResetPasswordModel = JsonConvert.DeserializeObject<ExpireResetPasswordModel>(param);
             if (expireResetPasswordModel.ExpireTime < DateTime.Now)
             {
@@ -590,7 +612,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 Password = password,
             };
 
-            bool isValid = ValidateModelByAttribute(account, new List<string>() { "UserName", "PhoneNumber", "FullName", "Email" });
+            var isValid = ValidateModelByAttribute(account, new List<string>() { "UserName", "PhoneNumber", "FullName", "Email" });
             if(!isValid)
             {
                 return new ServiceResultModel()
@@ -622,8 +644,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            string passwordHash = BCrypt.Net.BCrypt.HashPassword(account.Password);
-            bool resultResetPassword = await _accountRepository.SavePassword(account.Id, passwordHash);
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(account.Password);
+            var resultResetPassword = await _accountRepository.SavePassword(account.Id, passwordHash);
 
             if(resultResetPassword)
             {
@@ -632,7 +654,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     FullName = realAccount.FullName
                 };
 
-                Thread thread = new Thread(delegate()
+                var thread = new Thread(delegate()
                 {
                     _historyLogService.Write(new HistoryLog()
                     {
@@ -655,7 +677,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public ServiceResultModel ValidateToken(string token)
         {
-            ServiceResultModel result = GetTokenInfo(token);
+            var result = GetTokenInfo(token);
             return new ServiceResultModel()
             {
                 Success = result.Success

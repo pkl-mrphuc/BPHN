@@ -1,6 +1,8 @@
 ﻿using BPHN.BusinessLayer.IServices;
 using BPHN.ModelLayer.Attributes;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Serilog;
 
 namespace BPHN.WebAPI.Controllers
 {
@@ -17,6 +19,7 @@ namespace BPHN.WebAPI.Controllers
         [Route("paging")]
         public async Task<IActionResult> GetPaging(int pageIndex, int pageSize, string txtSearch) 
         {
+            Log.Debug($"HistoryLog/GetPaging start: {JsonConvert.SerializeObject(new { PageIndex = pageIndex, PageSize = pageSize, TxtSearch = txtSearch })}");
             return Ok(await _historyLogService.GetPaging(pageIndex, pageSize, txtSearch));
         }
 
@@ -24,6 +27,7 @@ namespace BPHN.WebAPI.Controllers
         [Route("count-paging")]
         public async Task<IActionResult> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
         {
+            Log.Debug($"HistoryLog/GetCountPaging start: {JsonConvert.SerializeObject(new { PageIndex = pageIndex, PageSize = pageSize, TxtSearch = txtSearch })}");
             return Ok(await _historyLogService.GetCountPaging(pageIndex, pageSize, txtSearch));
         }
     }

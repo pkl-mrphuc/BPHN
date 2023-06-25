@@ -29,8 +29,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            string path = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder);
-            DirectoryInfo dir = new DirectoryInfo(path);
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder);
+            var dir = new DirectoryInfo(path);
 
             var fullName = string.Empty;
 
@@ -103,9 +103,9 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            string extension = Path.GetExtension(file.FileName);
+            var extension = Path.GetExtension(file.FileName);
 
-            string[] validExtension = new string[3] { ".png", ".jpg", ".jpeg" };
+            var validExtension = new string[3] { ".png", ".jpg", ".jpeg" };
             if (!validExtension.Contains(extension.ToLower()))
             {
                 return new ServiceResultModel()
@@ -116,7 +116,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            string path = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, string.Format("{0}{1}", id, extension));
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, string.Format("{0}{1}", id, extension));
             if(File.Exists(path))
             {
                 return new ServiceResultModel()

@@ -26,19 +26,19 @@ namespace BPHN.BusinessLayer.ImpServices
                 throw new Exception("Input Empty");
             }
 
-            SendMailParameter sendMail = JsonConvert.DeserializeObject<SendMailParameter>(dataJson);
-            Type parameterType = sendMail.ParameterType;
+            var sendMail = JsonConvert.DeserializeObject<SendMailParameter>(dataJson);
+            var parameterType = sendMail.ParameterType;
             var data = JsonConvert.DeserializeObject(dataJson, parameterType);
-            IMailBuilder builder = _mailFactory.GetInstance(sendMail.MailType);
+            var builder = _mailFactory.GetInstance(sendMail.MailType);
 
-            string body = await builder.BuildBody(data);
+            var body = await builder.BuildBody(data);
 
             if(string.IsNullOrEmpty(body))
             {
                 throw new Exception("Build Body Fail");
             }
 
-            MailMessage message = new MailMessage(
+            var message = new MailMessage(
                 from: _appSettings.MailConfiguration.Mail,
                 to: sendMail.ReceiverAddress,
                 subject: builder.BuildSubject(data),
@@ -57,7 +57,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 }
             }
 
-            using (SmtpClient client = new SmtpClient(_appSettings.MailConfiguration.Host))
+            using (var client = new SmtpClient(_appSettings.MailConfiguration.Host))
             {
                 client.Port = _appSettings.MailConfiguration.Port;
                 client.UseDefaultCredentials = false;

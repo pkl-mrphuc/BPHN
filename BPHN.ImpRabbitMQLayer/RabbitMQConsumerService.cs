@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using Serilog;
 using System.Text;
 
 namespace BPHN.ImpRabbitMQLayer
@@ -39,6 +40,7 @@ namespace BPHN.ImpRabbitMQLayer
                 {
                     var body = ea.Body.ToArray();
                     var text = Encoding.UTF8.GetString(body);
+                    Log.Debug($"RabbitMQConsumer/Subcribe start: {text}");
                     ObjectQueue parameter = JsonConvert.DeserializeObject<ObjectQueue>(text);
                     switch (parameter.QueueJobType)
                     {
@@ -49,7 +51,7 @@ namespace BPHN.ImpRabbitMQLayer
                 }
                 catch (Exception ex)
                 {
-
+                    Log.Error($"RabbitMQConsumer/Subcribe error: {JsonConvert.SerializeObject(ex)}");
                 }
                 
             };

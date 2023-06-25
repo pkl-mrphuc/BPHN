@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Newtonsoft.Json;
+using Serilog;
 
 namespace BPHN.WebAPI.Controllers
 {
@@ -33,8 +35,9 @@ namespace BPHN.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetResetPasswordBody([FromBody] MailVm<MailResetPasswordVm> request)
         {
-            string pathView = Path.Combine(_folderDir, "ResetPassword.cshtml");
-            string source = await RenderAsync<MailResetPasswordVm>(pathView, request.Model, request.ViewBag);
+            Log.Debug($"MailTemplate/GetResetPasswordBody start: {JsonConvert.SerializeObject(request)}");
+            var pathView = Path.Combine(_folderDir, "ResetPassword.cshtml");
+            var source = await RenderAsync<MailResetPasswordVm>(pathView, request.Model, request.ViewBag);
             return Ok(source);
         }
 
@@ -48,7 +51,7 @@ namespace BPHN.WebAPI.Controllers
             var viewResult = _viewEngine.GetView(null, pathView, true);
             if (viewResult.Success)
             {
-                IView view = viewResult.View;
+                var view = viewResult.View;
 
                 DefaultHttpContext defaultHttpContext = new()
                 {

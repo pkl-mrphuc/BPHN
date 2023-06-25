@@ -31,7 +31,7 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             if (data.IsRecurring)
             {
-                var matchDatesResult = _bookingDetailService.GetMatchDatesByWeekendays(data.StartDate, data.EndDate, data.Weekendays.Value);
+                var matchDatesResult = _bookingDetailService.GetMatchDatesByWeekendays(data.StartDate, data.EndDate, data.Weekendays ?? (int)DayOfWeek.Monday);
                 data.BookingDetails = matchDatesResult == null || matchDatesResult.Data == null ? new List<BookingDetail>() : (List<BookingDetail>)matchDatesResult.Data;
             }
             else
@@ -293,7 +293,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 return item;
             }).ToList();
 
-            bool insertResult = await _bookingRepository.Insert(data);
+            var insertResult = await _bookingRepository.Insert(data);
             if (insertResult)
             {
                 Thread thread = new Thread(delegate ()

@@ -2,6 +2,9 @@
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Attributes;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Org.BouncyCastle.Asn1.Ocsp;
+using Serilog;
 
 namespace BPHN.WebAPI.Controllers
 {
@@ -18,14 +21,16 @@ namespace BPHN.WebAPI.Controllers
         [Route("")]
         public async Task<IActionResult> GetConfigs(string key)
         {
+            Log.Debug($"Config/GetConfigs start: {key}");
             return Ok(await _configService.GetConfigs(key));
         }
 
         [HttpPost]
         [Route("save")]
-        public async Task<IActionResult> SaveConfigs([FromBody] List<Config> configs)
+        public async Task<IActionResult> SaveConfigs([FromBody] List<Config> request)
         {
-            return Ok(await _configService.Save(configs));
+            Log.Debug($"Config/SaveConfigs start: {JsonConvert.SerializeObject(request)}");
+            return Ok(await _configService.Save(request));
         }
     }
 }

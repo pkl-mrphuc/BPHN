@@ -3,6 +3,7 @@ using BPHN.ModelLayer;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
+using Serilog;
 using System.Text;
 
 namespace BPHN.ImpRabbitMQLayer
@@ -19,6 +20,7 @@ namespace BPHN.ImpRabbitMQLayer
         {
             try
             {
+                Log.Debug($"RabbitMQProducer/Publish start: {JsonConvert.SerializeObject(param)}");
                 var connection = CreateChannel();
                 using var model = connection.CreateModel();
                 model.QueueDeclare(queue: "BPHN.MailQueue",
@@ -35,7 +37,7 @@ namespace BPHN.ImpRabbitMQLayer
             }
             catch (Exception ex)
             {
-
+                Log.Error($"RabbitMQProducer/Publish error: {JsonConvert.SerializeObject(ex)}");
             }
             
         }

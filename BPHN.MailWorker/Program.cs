@@ -5,6 +5,7 @@ using BPHN.ImpRabbitMQLayer;
 using BPHN.IRabbitMQLayer;
 using BPHN.MailWorker;
 using BPHN.ModelLayer;
+using Serilog;
 
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
@@ -19,6 +20,11 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<ResetPasswordMailBuilder>();
         services.AddSingleton<IMailBuilder, ResetPasswordMailBuilder>(item => item.GetService<ResetPasswordMailBuilder>());
         services.AddHostedService<Worker>();
+
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .WriteTo.File("C://bphn/log-.txt", outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}", rollingInterval: RollingInterval.Day)
+            .CreateLogger();
     })
     .Build();
 

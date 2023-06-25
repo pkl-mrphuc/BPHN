@@ -2,6 +2,8 @@
 using BPHN.ModelLayer;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Serilog;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
@@ -23,8 +25,9 @@ namespace BPHN.BusinessLayer.ImpServices
                 if (value != null) return value;
                 return string.Empty;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.Error($"Cache/Get error: {JsonConvert.SerializeObject(ex)}");
                 return string.Empty;
             }
             
@@ -38,9 +41,9 @@ namespace BPHN.BusinessLayer.ImpServices
                 if (value != null) return value;
                 return string.Empty;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                Log.Error($"Cache/GetAsync error: {JsonConvert.SerializeObject(ex)}");
                 return string.Empty;
             }
             
@@ -57,9 +60,9 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 _cache.Remove(key);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                Log.Error($"Cache/Remove error: {JsonConvert.SerializeObject(ex)}");
             }
             
         }
@@ -70,9 +73,9 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 await _cache.RemoveAsync(key);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                Log.Error($"Cache/RemoveAsync error: {JsonConvert.SerializeObject(ex)}");
             }
             
         }
@@ -89,7 +92,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 expireHour = _appSettings.RedisExpireHour;
             }
 
-            double expireSecond = Convert.ToDouble(expireHour * 60 * 60);
+            var expireSecond = Convert.ToDouble(expireHour * 60 * 60);
             var options = new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(expireSecond),
@@ -99,9 +102,9 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 _cache.SetString(key, value, options);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                Log.Error($"Cache/Set error: {JsonConvert.SerializeObject(ex)}");
             }
             
         }
@@ -118,7 +121,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 expireHour = _appSettings.RedisExpireHour;
             }
 
-            double expireSecond = Convert.ToDouble(expireHour * 60 * 60);
+            var expireSecond = Convert.ToDouble(expireHour * 60 * 60);
             var options = new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(expireSecond),
@@ -128,9 +131,9 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 await _cache.SetStringAsync(key, value, options);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                Log.Error($"Cache/SetAsync error: {JsonConvert.SerializeObject(ex)}");
             }
             
         }

@@ -15,9 +15,9 @@ namespace BPHN.DataLayer.ImpRepositories
 
         public async Task<object> GetCountPaging(int pageIndex, int pageSize, List<WhereCondition> where)
         {
-            string whereQuery = BuildWhereQuery(where);
+            var whereQuery = BuildWhereQuery(where);
 
-            Dictionary<string, object> dic = new Dictionary<string, object>();
+            var dic = new Dictionary<string, object>();
             for (int i = 0; i < where.Count; i++)
             {
                 var item = string.Format("@where{0}", i);
@@ -26,9 +26,9 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                int totalRecord = await connection.QuerySingleAsync<int>($"select count(*) from history_logs where {whereQuery}", dic);
-                int totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
-                int totalRecordCurrentPage = 0;
+                var totalRecord = await connection.QuerySingleAsync<int>($"select count(*) from history_logs where {whereQuery}", dic);
+                var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
+                var totalRecordCurrentPage = 0;
                 if(totalRecord > 0)
                 {
                     if (pageIndex == totalPage)
@@ -47,27 +47,27 @@ namespace BPHN.DataLayer.ImpRepositories
 
         public async Task<List<HistoryLog>> GetPaging(int pageIndex, int pageSize, List<WhereCondition> where)
         {
-            string whereQuery = BuildWhereQuery(where);
+            var whereQuery = BuildWhereQuery(where);
 
-            Dictionary<string, object> dic = new Dictionary<string, object>();
+            var dic = new Dictionary<string, object>();
             for (int i = 0; i < where.Count; i++)
             {
                 var item = string.Format("@where{0}", i);
                 dic.Add(item, where[i].Value);
             }
-            string query = $"select * from history_logs where {whereQuery} order by CreatedDate desc limit @offSet, @pageSize";
+            var query = $"select * from history_logs where {whereQuery} order by CreatedDate desc limit @offSet, @pageSize";
 
 
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                int totalRecord = await connection.QuerySingleAsync<int>($"select count(*) from history_logs where {whereQuery}", dic);
-                int totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
+                var totalRecord = await connection.QuerySingleAsync<int>($"select count(*) from history_logs where {whereQuery}", dic);
+                var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
                 if(pageIndex > totalPage)
                 {
                     pageIndex = 1;
                 }
-                int offSet = (pageIndex - 1) * pageSize;
+                var offSet = (pageIndex - 1) * pageSize;
 
                 dic.Add("@offSet", offSet);
                 dic.Add("@pageSize", pageSize);
@@ -78,9 +78,9 @@ namespace BPHN.DataLayer.ImpRepositories
 
         public async Task<bool> Write(HistoryLog history)
         {
-            string query = @"insert into history_logs(Id, ActionName, Actor, ActorId, Entity, Description, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
+            var query = @"insert into history_logs(Id, ActionName, Actor, ActorId, Entity, Description, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
                                 value (@id, @actionName, @actor, @actorId, @entity, @description, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
-            Dictionary<string, object> dic = new Dictionary<string, object>();
+            var dic = new Dictionary<string, object?>();
             dic.Add("@id", history.Id);
             dic.Add("@actionName", history.ActionName);
             dic.Add("@actor", history.Actor);
@@ -94,7 +94,7 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                int affect = await connection.ExecuteAsync(query, dic);
+                var affect = await connection.ExecuteAsync(query, dic);
                 if(affect == 0)
                 {
                     return false;

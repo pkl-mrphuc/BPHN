@@ -16,7 +16,7 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var dic = new Dictionary<string, object>();
+                var dic = new Dictionary<string, object?>();
                 dic.Add("@pitchId", data.PitchId);
                 dic.Add("@nameDetail", data.NameDetail);
                 dic.Add("@timeFrameInfoId", data.TimeFrameInfoId);
@@ -29,7 +29,7 @@ namespace BPHN.DataLayer.ImpRepositories
                     dic.Add(param, $"{data.BookingDetails[i].MatchDate.ToString("yyyy-MM-dd")}");
                     lstParam.Add(param);
                 }
-                string where = string.Join(",", lstParam.ToArray());
+                var where = string.Join(",", lstParam.ToArray());
                 var query = $@"select bd.* from booking_details bd 
                                 inner join bookings b on b.Id = bd.BookingId 
                                 where bd.Status in (@status0) and b.PitchId = @pitchId and b.NameDetail = @nameDetail and b.TimeFrameInfoId = @timeFrameInfoId and bd.MatchDate in ({where})";
@@ -54,7 +54,7 @@ namespace BPHN.DataLayer.ImpRepositories
                     dic.Add(param, lstId[i]);
                     lstParam.Add(param);
                 }
-                string where = string.Join(",", lstParam.ToArray());
+                var where = string.Join(",", lstParam.ToArray());
                 var lstBooking = (await connection.QueryAsync<Booking>($"select * from bookings where Id in ({where})", dic)).ToList();
                 return lstBooking;
             }
@@ -66,7 +66,7 @@ namespace BPHN.DataLayer.ImpRepositories
             {
                 connection.Open();
                 var dic = new Dictionary<string, object>();
-                string countQuery = @"select distinct count(*) from (
+                var countQuery = @"select distinct count(*) from (
 						                                                    select * from bookings where AccountId = @accountId and PhoneNumber like @txtSearch
                                                                             union 
                                                                             select * from bookings where AccountId = @accountId and Email like @txtSearch 
@@ -78,9 +78,9 @@ namespace BPHN.DataLayer.ImpRepositories
 
                 dic.Add("@accountId", accountId);
                 dic.Add("@txtSearch", $"%{txtSearch}%");
-                int totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
-                int totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
-                int totalRecordCurrentPage = 0;
+                var totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
+                var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
+                var totalRecordCurrentPage = 0;
                 if (totalRecord > 0)
                 {
                     if (pageIndex == totalPage)
@@ -113,7 +113,7 @@ namespace BPHN.DataLayer.ImpRepositories
                                                         ) as bs inner join pitchs p on bs.PitchId = p.Id
                                                                 inner join time_frame_infos tfi on p.Id = tfi.PitchId and tfi.Id = bs.TimeFrameInfoId order by bs.BookingDate desc
                         limit @offSize, @pageSize";
-                string countQuery = @"select distinct count(*) from (
+                var countQuery = @"select distinct count(*) from (
 						                                                    select * from bookings where AccountId = @accountId and PhoneNumber like @txtSearch
                                                                             union 
                                                                             select * from bookings where AccountId = @accountId and Email like @txtSearch 
@@ -125,13 +125,13 @@ namespace BPHN.DataLayer.ImpRepositories
                 
                 dic.Add("@accountId", accountId);
                 dic.Add("@txtSearch", $"%{txtSearch}%");
-                int totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
-                int totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
+                var totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
+                var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
                 if (pageIndex > totalPage)
                 {
                     pageIndex = 1;
                 }
-                int offSet = (pageIndex - 1) * pageSize;
+                var offSet = (pageIndex - 1) * pageSize;
                 dic.Add("@offSize", offSet);
                 dic.Add("@pageSize", pageSize);
 
@@ -147,11 +147,11 @@ namespace BPHN.DataLayer.ImpRepositories
                         lstBookingId.Add($"@where{i}");
                     }
 
-                    string bookingIds = string.Join(",", lstBookingId.ToArray());
+                    var bookingIds = string.Join(",", lstBookingId.ToArray());
 
                     if (lstBooking.Count > 0)
                     {
-                        string queryDetail = $"select * from booking_details where 1 = 1 and BookingId in ( {bookingIds} )";
+                        var queryDetail = $"select * from booking_details where 1 = 1 and BookingId in ( {bookingIds} )";
 
                         var lstBookingDetail = (await connection.QueryAsync<BookingDetail>(queryDetail, dic)).ToList();
                         for (int i = 0; i < lstBooking.Count; i++)
@@ -178,7 +178,7 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var dic = new Dictionary<string, object>();
+                var dic = new Dictionary<string, object?>();
                 dic.Add("@id", data.Id);
                 dic.Add("@phoneNumber", data.PhoneNumber);
                 dic.Add("@email", data.Email);
@@ -207,7 +207,7 @@ namespace BPHN.DataLayer.ImpRepositories
                         var item = data.BookingDetails[i];
                         query = @"insert into booking_details(Id, MatchDate, BookingId, Status, Deposite, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
                                 value (@id, @matchDate, @bookingId, @status, @deposite, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
-                        dic = new Dictionary<string, object>();
+                        dic = new Dictionary<string, object?>();
                         dic.Add("@id", item.Id);
                         dic.Add("@matchDate", item.MatchDate);
                         dic.Add("@bookingId", item.BookingId);

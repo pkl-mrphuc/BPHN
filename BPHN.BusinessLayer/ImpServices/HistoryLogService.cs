@@ -31,7 +31,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
 
-            List<WhereCondition> where = new List<WhereCondition>();
+            var where = new List<WhereCondition>();
             where.Add(new WhereCondition()
             {
                 Column = "ActorId",
@@ -73,7 +73,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
 
-            List<WhereCondition> where = new List<WhereCondition>();
+            var where = new List<WhereCondition>();
             where.Add(new WhereCondition()
             {
                 Column = "ActorId",

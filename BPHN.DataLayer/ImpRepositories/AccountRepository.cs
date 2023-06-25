@@ -23,10 +23,10 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                string query = "select count(*) from accounts where UserName = @userName";
-                Dictionary<string, object> dic = new Dictionary<string, object>();
+                var query = "select count(*) from accounts where UserName = @userName";
+                var dic = new Dictionary<string, object>();
                 dic.Add("@userName", userName);
-                int affect = await connection.QuerySingleAsync<int>(query, dic);
+                var affect = await connection.QuerySingleAsync<int>(query, dic);
                 return affect > 0 ? true : false;
             }
         }
@@ -36,8 +36,8 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                string query = "select * from accounts where UserName = @userName";
-                Dictionary<string, object> dic = new Dictionary<string, object>();
+                var query = "select * from accounts where UserName = @userName";
+                var dic = new Dictionary<string, object>();
                 dic.Add("@userName", userName);
                 var account = await connection.QueryFirstOrDefaultAsync<Account>(query, dic);
                 return account;
@@ -49,7 +49,7 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                string query = "select UserName, FullName, Gender, PhoneNumber, Email, Id, Role, Status from accounts where Id = @id";
+                var query = "select UserName, FullName, Gender, PhoneNumber, Email, Id, Role, Status from accounts where Id = @id";
                 Dictionary<string, object> dic = new Dictionary<string, object>();
                 dic.Add("@id", id);
                 var account = await connection.QueryFirstOrDefaultAsync<Account>(query, dic);
@@ -78,7 +78,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 connection.Open();
                 string query = @"insert into accounts(Id, UserName, Password, Gender, PhoneNumber, FullName, Email, Role, Status, ParentId, CreatedBy, CreatedDate, ModifiedBy, ModifiedDate)
                                 value (@id, @userName, @password, @gender, @phoneNumber, @fullName, @email, @role, @status, @parentId, @createdBy, @createdDate, @modifiedBy, @modifiedDate)";
-                Dictionary<string, object> dic = new Dictionary<string, object>();
+                var dic = new Dictionary<string, object?>();
                 dic.Add("@id", account.Id);
                 dic.Add("@fullName", account.FullName);
                 dic.Add("@userName", account.UserName);
@@ -93,7 +93,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 dic.Add("@createdBy", account.CreatedBy);
                 dic.Add("@modifiedDate", account.ModifiedDate);
                 dic.Add("@modifiedBy", account.ModifiedBy);
-                int affect = await connection.ExecuteAsync(query, dic);
+                var affect = await connection.ExecuteAsync(query, dic);
                 return affect > 0 ? true : false;
             }
         }
@@ -139,13 +139,13 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                int totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
-                int totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
+                var totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
+                var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
                 if (pageIndex > totalPage)
                 {
                     pageIndex = 1;
                 }
-                int offSet = (pageIndex - 1) * pageSize;
+                var offSet = (pageIndex - 1) * pageSize;
 
                 dic.Add("@offSet", offSet);
                 dic.Add("@pageSize", pageSize);
@@ -156,8 +156,8 @@ namespace BPHN.DataLayer.ImpRepositories
 
         public async Task<object> GetCountPaging(int pageIndex, int pageSize, string txtSearch, List<WhereCondition> where)
         {
-            string countQuery = string.Empty;
-            Dictionary<string, object> dic = new Dictionary<string, object>();
+            var countQuery = string.Empty;
+            var dic = new Dictionary<string, object>();
             var whereQuery = BuildWhereQuery(where);
             if (!string.IsNullOrEmpty(txtSearch))
             {
@@ -182,9 +182,9 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                int totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
-                int totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
-                int totalRecordCurrentPage = 0;
+                var totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
+                var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
+                var totalRecordCurrentPage = 0;
                 if (totalRecord > 0)
                 {
                     if(pageIndex == totalPage)
@@ -206,10 +206,10 @@ namespace BPHN.DataLayer.ImpRepositories
             {
                 connection.Open();
                 string query = @"update accounts set Password = @password where Id = @id";
-                Dictionary<string, object> dic = new Dictionary<string, object>();
+                var dic = new Dictionary<string, object>();
                 dic.Add("@id", id);
                 dic.Add("@password", password);
-                int affect = await connection.ExecuteAsync(query, dic);
+                var affect = await connection.ExecuteAsync(query, dic);
                 return affect > 0 ? true : false;
             }
         }

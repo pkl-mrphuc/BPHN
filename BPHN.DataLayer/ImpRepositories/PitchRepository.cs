@@ -37,8 +37,8 @@ namespace BPHN.DataLayer.ImpRepositories
 
         public async Task<object> GetCountPaging(int pageIndex, int pageSize, List<WhereCondition> where)
         {
-            string whereQuery = BuildWhereQuery(where);
-            string countQuery = $@"select count(*) from pitchs where {whereQuery}";
+            var whereQuery = BuildWhereQuery(where);
+            var countQuery = $@"select count(*) from pitchs where {whereQuery}";
 
             using (var connection = ConnectDB(GetConnectionString()))
             {
@@ -51,9 +51,9 @@ namespace BPHN.DataLayer.ImpRepositories
                     dic.Add(item, where[i].Value);
                 }
 
-                int totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
-                int totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
-                int totalRecordCurrentPage = 0;
+                var totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
+                var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
+                var totalRecordCurrentPage = 0;
                 if (totalRecord > 0)
                 {
                     if (pageIndex == totalPage)
@@ -71,9 +71,9 @@ namespace BPHN.DataLayer.ImpRepositories
 
         public async Task<List<Pitch>> GetPaging(int pageIndex, int pageSize, List<WhereCondition> where)
         {
-            string whereQuery = BuildWhereQuery(where);
-            string query = $@"select * from pitchs where {whereQuery} order by Name limit @offset, @pageSize";
-            string countQuery = $@"select count(*) from pitchs where {whereQuery}";
+            var whereQuery = BuildWhereQuery(where);
+            var query = $@"select * from pitchs where {whereQuery} order by Name limit @offset, @pageSize";
+            var countQuery = $@"select count(*) from pitchs where {whereQuery}";
             
             using(var connection = ConnectDB(GetConnectionString()))
             {
@@ -86,13 +86,13 @@ namespace BPHN.DataLayer.ImpRepositories
                     dic.Add(item, where[i].Value);
                 }
 
-                int totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
-                int totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
+                var totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
+                var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
                 if (pageIndex > totalPage)
                 {
                     pageIndex = 1;
                 }
-                int offSet = (pageIndex - 1) * pageSize;
+                var offSet = (pageIndex - 1) * pageSize;
 
                 dic.Add("@offset", offSet);
                 dic.Add("@pageSize", pageSize);
@@ -103,17 +103,17 @@ namespace BPHN.DataLayer.ImpRepositories
 
         public async Task<bool> Insert(Pitch pitch)
         {
-            string query = @"insert into pitchs(Id, Name, Address, MinutesPerMatch, Quantity, TimeSlotPerDay, ManagerId, Status, NameDetails, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
+            var query = @"insert into pitchs(Id, Name, Address, MinutesPerMatch, Quantity, TimeSlotPerDay, ManagerId, Status, NameDetails, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
                             value (@id, @name, @address, @minutesPerMatch, @quantity, @timeSlotPerDay, @managerId, @status, @nameDetails, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
 
-            string queryChild = @"insert into time_frame_infos (Id, Name, SortOrder, TimeBegin, TimeEnd, Price, PitchId, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
+            var queryChild = @"insert into time_frame_infos (Id, Name, SortOrder, TimeBegin, TimeEnd, Price, PitchId, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
                                 value (@id, @name, @sortOrder, @timeBegin, @timeEnd, @price, @pitchId, @createdDate, @createdBy, @modifiedDate, @modifedBy)";
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
                 var transaction = connection.BeginTransaction();
 
-                Dictionary<string, object> dic = new Dictionary<string, object>();
+                var dic = new Dictionary<string, object?>();
                 dic.Add("@id", pitch.Id);
                 dic.Add("@name", pitch.Name);
                 dic.Add("@address", pitch.Address);
@@ -127,13 +127,13 @@ namespace BPHN.DataLayer.ImpRepositories
                 dic.Add("@createdBy", pitch.CreatedBy);
                 dic.Add("@modifiedDate", pitch.ModifiedDate);
                 dic.Add("@modifiedBy", pitch.ModifiedBy);
-                int affect = await connection.ExecuteAsync(query, dic, transaction);
+                var affect = await connection.ExecuteAsync(query, dic, transaction);
                 if(affect > 0)
                 {
                     for (int i = 0; i < pitch.TimeFrameInfos.Count; i++)
                     {
                         var item = pitch.TimeFrameInfos[i];
-                        dic = new Dictionary<string, object>();
+                        dic = new Dictionary<string, object?>();
                         dic.Add("@id", item.Id);
                         dic.Add("@name", item.Name);
                         dic.Add("@sortOrder", item.SortOrder);
@@ -167,7 +167,7 @@ namespace BPHN.DataLayer.ImpRepositories
             {
                 connection.Open();
                 var transaction = connection.BeginTransaction();
-                var dic = new Dictionary<string, object>();
+                var dic = new Dictionary<string, object?>();
                 dic.Add("@id", pitch.Id);
                 dic.Add("@name", pitch.Name);
                 dic.Add("@address", pitch.Address);
@@ -191,13 +191,13 @@ namespace BPHN.DataLayer.ImpRepositories
                                                     where Id = @id", dic, transaction);
                 if(affect > 0)
                 {
-                    dic = new Dictionary<string, object>();
+                    dic = new Dictionary<string, object?>();
                     dic.Add("@pitchId", pitch.Id);
                     affect = await connection.ExecuteAsync("delete from time_frame_infos where PitchId = @pitchId", dic, transaction);
                     for (int i = 0; i < pitch.TimeFrameInfos.Count; i++)
                     {
                         var item = pitch.TimeFrameInfos[i];
-                        dic = new Dictionary<string, object>();
+                        dic = new Dictionary<string, object?>();
                         dic.Add("@id", item.Id);
                         dic.Add("@name", item.Name);
                         dic.Add("@sortOrder", item.SortOrder);

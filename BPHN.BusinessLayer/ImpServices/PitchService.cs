@@ -234,22 +234,8 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> Insert(Pitch pitch)
         {
-            var isValid = ValidateModelByAttribute(pitch, new List<string>());
-            
-            if(!isValid || 
-                (pitch != null && pitch.TimeFrameInfos.Count == 0) ||
-                (pitch != null && pitch.ListNameDetails.Count == 0))
-            {
-                return new ServiceResultModel()
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = "Dữ liệu đầu vào không được để trống"
-                };
-            }
-
             var context = _contextService.GetContext();
-            if(context == null)
+            if (context == null)
             {
                 return new ServiceResultModel()
                 {
@@ -259,11 +245,33 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            pitch.ManagerId = context.Id;
+            if(pitch == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.EMPTY_INPUT,
+                    Message = "Dữ liệu đầu vào không được để trống"
+                };
+            }
+
+            var isValid = ValidateModelByAttribute(pitch, new List<string>());
+            
+            if( !isValid || pitch.TimeFrameInfos.Count == 0 || pitch.ListNameDetails.Count == 0)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.EMPTY_INPUT,
+                    Message = "Dữ liệu đầu vào không được để trống"
+                };
+            }
+
             pitch.CreatedBy = context.FullName;
             pitch.CreatedDate = DateTime.Now;
             pitch.ModifiedBy = context.FullName;
             pitch.ModifiedDate = DateTime.Now;
+            pitch.ManagerId = context.Id;
 
             pitch.TimeFrameInfos = pitch.TimeFrameInfos.Select(item =>
             {
@@ -307,11 +315,18 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> Update(Pitch pitch)
         {
-            var isValid = ValidateModelByAttribute(pitch, new List<string>());
+            var context = _contextService.GetContext();
+            if (context == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = "Token đã hết hạn"
+                };
+            }
 
-            if (!isValid ||
-                (pitch != null && pitch.TimeFrameInfos.Count == 0) ||
-                (pitch != null && pitch.ListNameDetails.Count == 0))
+            if (pitch == null)
             {
                 return new ServiceResultModel()
                 {
@@ -321,14 +336,15 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var context = _contextService.GetContext();
-            if (context == null)
+            var isValid = ValidateModelByAttribute(pitch, new List<string>());
+
+            if (!isValid || pitch.TimeFrameInfos.Count == 0 || pitch.ListNameDetails.Count == 0)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    ErrorCode = ErrorCodes.EMPTY_INPUT,
+                    Message = "Dữ liệu đầu vào không được để trống"
                 };
             }
 

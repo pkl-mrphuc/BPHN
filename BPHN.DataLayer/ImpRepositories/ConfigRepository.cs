@@ -12,14 +12,14 @@ namespace BPHN.DataLayer.ImpRepositories
 
         }
 
-        public async Task<List<Config>> GetConfigs(Guid accountId, string key = null)
+        public async Task<List<Config>> GetConfigs(Guid accountId, string? key = null)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
                 Dictionary<string, object> dic = new Dictionary<string, object>();
                 dic.Add("@accountId", accountId);
-                string query = $"select c.* from configs c where c.AccountId = @accountId";
+                var query = $"select c.* from configs c where c.AccountId = @accountId";
                 if (!string.IsNullOrEmpty(key))
                 {
                     dic.Add("@key", key);
@@ -39,7 +39,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 {
                     foreach (var config in configs)
                     {
-                        Dictionary<string, object> dic = new Dictionary<string, object>();
+                        var dic = new Dictionary<string, object?>();
                         dic.Add("@id", config.Id);
                         dic.Add("@accountId", config.AccountId);
                         dic.Add("@key", config.Key);
@@ -48,12 +48,12 @@ namespace BPHN.DataLayer.ImpRepositories
                         dic.Add("@createdBy", config.CreatedBy);
                         dic.Add("@modifiedDate", config.ModifiedDate);
                         dic.Add("@modifiedBy", config.ModifiedBy);
-                        string query = @"set @idConfig = (select c.id from configs c where c.AccountId = @accountId and c.`Key` = @key);
+                        var query = @"set @idConfig = (select c.id from configs c where c.AccountId = @accountId and c.`Key` = @key);
                                         set @idConfig = if(@idConfig is null, @id, @idConfig);
                                         insert into configs(Id, AccountId, `Key`, Value, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
                                             value(@idConfig, @accountId, @key, @value, @createdDate, @createdBy, @modifiedDate, @modifiedBy)
                                         on duplicate key update Value = @value, ModifiedDate = @modifiedDate, ModifiedBy = @modifiedBy";
-                        int affect = await connection.ExecuteAsync(query, dic, tranction, commandType: System.Data.CommandType.Text);
+                        var affect = await connection.ExecuteAsync(query, dic, tranction, commandType: System.Data.CommandType.Text);
                         if(affect == 0)
                         {
                             tranction.Rollback();

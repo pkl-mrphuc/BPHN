@@ -22,7 +22,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _cacheService = cacheService;
         }
 
-        public async Task<ServiceResultModel> GetConfigs(string key = null)
+        public async Task<ServiceResultModel> GetConfigs(string? key = null)
         {
             var context = _contextService.GetContext();
             if (context == null)
@@ -78,7 +78,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            if (configs == null || (configs != null && configs.Count == 0))
+            if (configs == null)
             {
                 return new ServiceResultModel()
                 {
@@ -98,11 +98,11 @@ namespace BPHN.BusinessLayer.ImpServices
                 return item;
             }).ToList();
 
-            bool saveResult = await _configRepository.Save(configs);
+            var saveResult = await _configRepository.Save(configs);
             if(saveResult)
             {
                 _cacheService.Remove(_cacheService.GetKeyCache("All", "Config"));
-                Thread thread = new Thread(delegate ()
+                var thread = new Thread(delegate ()
                 {
                     _historyLogService.Write(new HistoryLog()
                     {
