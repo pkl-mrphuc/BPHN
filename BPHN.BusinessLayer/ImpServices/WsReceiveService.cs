@@ -8,8 +8,20 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly static ConnectionMapping<string> _connections = new ConnectionMapping<string>();
         public void CLIENT_LoginSuccess(string accountId)
         {
-            _connections.Add(accountId, Context.ConnectionId);
-            Clients.Client(Context.ConnectionId).SERVER_AfterClientLoginSuccess(accountId, Context.ConnectionId);
+            var connections = _connections.GetConnections(accountId).ToList();
+            if(connections.Count() == 0)
+            {
+                _connections.Add(accountId, Context.ConnectionId);
+                Clients.Client(Context.ConnectionId).SERVER_AfterClientLoginSuccess(accountId, Context.ConnectionId);
+            }
+            else
+            {
+                for (int i = 0; i < connections.Count; i++)
+                {
+                    Clients.Client(connections[i]).SERVER_ConfirmOtherClientLogin();
+                }
+            }
+            
         }
     }
 

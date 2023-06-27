@@ -8,6 +8,7 @@ import "element-plus/dist/index.css";
 import "element-plus/theme-chalk/dark/css-vars.css";
 import "@/assets/css/index.css";
 import { jwtInterceptor } from "@/interceptors.js";
+import { startWs } from "@/ws.js";
 
 // dialogs
 import Dialog from "@/components/dialogs/BPHNDialog.vue";
@@ -18,6 +19,7 @@ import AccountInfoDialog from "@/components/dialogs/BPHNAccountInfoDialog.vue";
 import TenantDialog from "@/components/dialogs/BPHNTenantDialog.vue";
 
 jwtInterceptor();
+startWs();
 
 createApp(App)
     .use(ElementPlus)
