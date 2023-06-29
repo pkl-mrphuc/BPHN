@@ -82,6 +82,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     _historyLogService.Write(new HistoryLog()
                     {
+                        IPAddress = context.IPAddress,
                         Actor = context.UserName,
                         ActorId = context.Id,
                         ActionType = ActionEnum.SUBMIT_RESET_PASSWORD,
@@ -500,6 +501,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     _historyLogService.Write(new HistoryLog()
                     {
+                        IPAddress = context.IPAddress,
                         Actor = context.UserName,
                         ActorId = context.Id,
                         ActionType = ActionEnum.REGISTER_ACCOUNT,
@@ -568,13 +570,15 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 var fakeContext = new Account()
                 {
-                    FullName = realAccount.FullName
+                    FullName = realAccount.FullName,
+                    IPAddress = _contextService.GetIPAddress()
                 };
 
                 var thread = new Thread(delegate()
                 {
                     _historyLogService.Write(new HistoryLog()
                     {
+                        IPAddress = fakeContext.IPAddress,
                         Actor = realAccount.UserName,
                         ActorId = realAccount.Id,
                         ActionType = ActionEnum.SEND_RESET_PASSWORD,
@@ -651,13 +655,15 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 var fakeContext = new Account()
                 {
-                    FullName = realAccount.FullName
+                    FullName = realAccount.FullName,
+                    IPAddress = _contextService.GetIPAddress()
                 };
 
                 var thread = new Thread(delegate()
                 {
                     _historyLogService.Write(new HistoryLog()
                     {
+                        IPAddress = fakeContext.IPAddress,
                         Actor = realAccount.UserName,
                         ActorId = realAccount.Id,
                         ActionType = ActionEnum.SUBMIT_RESET_PASSWORD,

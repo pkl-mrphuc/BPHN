@@ -46,7 +46,7 @@ const renderCalendar = async (resources) => {
       },
       events: async function (data, callback) {
         if (data) {
-          let events = await getEventByDate(dateToString(data.start), "yyyy-MM-dd");
+          let events = await getEventByDate(dateToString(data.start, "yyyy-MM-dd"));
           callback(events);
         }
         callback([]);

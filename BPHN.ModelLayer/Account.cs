@@ -25,5 +25,6 @@ namespace BPHN.ModelLayer
         public string Token { get; set; }
         public string Status { get; set; }
         public Guid? ParentId { get; set; }
+        public string IPAddress { get; set; }
     }
 }

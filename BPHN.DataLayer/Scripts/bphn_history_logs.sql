@@ -24,6 +24,7 @@ DROP TABLE IF EXISTS `history_logs`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `history_logs` (
   `Id` char(36) NOT NULL,
+  `IPAddress` varchar(255) NOT NULL,
   `ActionName` varchar(255) NOT NULL,
   `Actor` varchar(255) NOT NULL,
   `ActorId` char(36) NOT NULL,

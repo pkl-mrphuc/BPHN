@@ -78,10 +78,11 @@ namespace BPHN.DataLayer.ImpRepositories
 
         public async Task<bool> Write(HistoryLog history)
         {
-            var query = @"insert into history_logs(Id, ActionName, Actor, ActorId, Entity, Description, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
-                                value (@id, @actionName, @actor, @actorId, @entity, @description, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
+            var query = @"insert into history_logs(Id, IPAddress, ActionName, Actor, ActorId, Entity, Description, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
+                                value (@id, @ipAddress, @actionName, @actor, @actorId, @entity, @description, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
             var dic = new Dictionary<string, object?>();
             dic.Add("@id", history.Id);
+            dic.Add("@ipAddress", history.IPAddress);
             dic.Add("@actionName", history.ActionName);
             dic.Add("@actor", history.Actor);
             dic.Add("@actorId", history.ActorId);

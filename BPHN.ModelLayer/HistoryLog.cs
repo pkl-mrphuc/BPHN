@@ -13,5 +13,6 @@ namespace BPHN.ModelLayer
         public string Actor { get; set; }
         public Guid ActorId { get; set; }
         public string Entity { get; set; }
+        public string IPAddress { get; set; }
     }
 }

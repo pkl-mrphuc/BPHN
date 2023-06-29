@@ -1,7 +1,5 @@
 import AccountAPI from "@/apis/AccountAPI";
 import i18n from "@/i18n/index.js";
-import ws from "@/ws.js";
-import { isConnected } from "@/ws.js";
 
 const state = {
     context: null
@@ -56,17 +54,8 @@ const actions = {
             if (res?.data?.success) {
                 let user = res.data.data
                 if (user) {
-                    if(isConnected()) {
-                        ws.invoke("CLIENT_LoginSuccess", user.id);
-                        ws.on("SERVER_AfterClientLoginSuccess", function () {
-                            commit("setContext", user);
-                            window.location = "/bm";
-                        });
-                    }
-                    else {
-                        commit("setContext", user);
-                        window.location = "/bm";
-                    }
+                    commit("setContext", user);
+                    window.location = "/bm";
                 }
             }
             else {

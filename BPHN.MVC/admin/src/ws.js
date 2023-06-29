@@ -10,10 +10,6 @@ export const startWs = (() => {
     }).catch(function (err) {
         console.error(err.toString());
     });
-
-    connection.on("SERVER_ConfirmOtherClientLogin", function() {
-        console.log("open confirm dialog");
-    });
 });
 
 export const isConnected = (() => {

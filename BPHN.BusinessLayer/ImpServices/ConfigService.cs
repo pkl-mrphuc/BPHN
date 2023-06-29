@@ -106,6 +106,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     _historyLogService.Write(new HistoryLog()
                     {
+                        IPAddress = context.IPAddress,
                         Actor = context.UserName,
                         ActorId = context.Id,
                         ActionType = ActionEnum.SAVE,
