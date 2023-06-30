@@ -3,6 +3,7 @@ using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
 using Dapper;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace BPHN.DataLayer.ImpRepositories
 {
@@ -45,6 +46,19 @@ namespace BPHN.DataLayer.ImpRepositories
             
         }
 
+        public async Task<HistoryLogDescription?> GetDescription(string historyLogId)
+        {
+            var query = @"select * from history_log_descriptions where Id = @id";
+            var dic = new Dictionary<string, object>();
+            dic.Add("@id", historyLogId);
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var data = await connection.QueryFirstAsync<HistoryLogDescription>(query, dic);
+                return data;
+            }
+        }
+
         public async Task<List<HistoryLog>> GetPaging(int pageIndex, int pageSize, List<WhereCondition> where)
         {
             var whereQuery = BuildWhereQuery(where);
@@ -79,7 +93,8 @@ namespace BPHN.DataLayer.ImpRepositories
         public async Task<bool> Write(HistoryLog history)
         {
             var query = @"insert into history_logs(Id, IPAddress, ActionName, Actor, ActorId, Entity, Description, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
-                                value (@id, @ipAddress, @actionName, @actor, @actorId, @entity, @description, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
+                                value (@id, @ipAddress, @actionName, @actor, @actorId, @entity, @description, @createdDate, @createdBy, @modifiedDate, @modifiedBy);";
+            
             var dic = new Dictionary<string, object?>();
             dic.Add("@id", history.Id);
             dic.Add("@ipAddress", history.IPAddress);
@@ -88,6 +103,12 @@ namespace BPHN.DataLayer.ImpRepositories
             dic.Add("@actorId", history.ActorId);
             dic.Add("@entity", history.Entity);
             dic.Add("@description", history.Description);
+            if (history.Data != null)
+            {
+                query += "insert into history_log_descriptions(Id, OldData, NewData) value (@id, @oldData, @newData);";
+                dic.Add("@oldData", history.Data.OldData);
+                dic.Add("@newData", history.Data.NewData);
+            }
             dic.Add("@createdDate", history.CreatedDate);
             dic.Add("@createdBy", history.CreatedBy);
             dic.Add("@modifiedDate", history.ModifiedDate);

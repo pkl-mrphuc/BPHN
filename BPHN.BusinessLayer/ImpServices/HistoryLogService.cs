@@ -56,6 +56,15 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
+        public async Task<ServiceResultModel> GetDescription(string historyLogId)
+        {
+            return new ServiceResultModel()
+            {
+                Success = true,
+                Data = await _historyLogRepository.GetDescription(historyLogId)
+            };
+        }
+
         public async Task<ServiceResultModel> GetPaging(int pageIndex, int pageSize, string txtSearch)
         {
             if (pageIndex < 1) pageIndex = 1;
@@ -139,7 +148,7 @@ namespace BPHN.BusinessLayer.ImpServices
             history.ModifiedBy = context.FullName;
             history.CreatedBy = context.FullName;
             history.CreatedDate = DateTime.Now;
-            history.Id = Guid.NewGuid();
+            history.Id = history.Id.Equals(Guid.Empty) ? Guid.NewGuid() : history.Id;
 
             return new ServiceResultModel()
             {

@@ -1,6 +1,9 @@
 ﻿using BPHN.BusinessLayer.IServices;
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
+using BPHN.ModelLayer.Others;
+using Newtonsoft.Json;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
@@ -298,14 +301,20 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 Thread thread = new Thread(delegate ()
                 {
+                    var historyLogId = Guid.NewGuid();
                     _historyLogService.Write(new HistoryLog()
                     {
+                        Id = historyLogId,
                         IPAddress = context.IPAddress,
                         Actor = context.UserName,
                         ActorId = context.Id,
                         ActionType = ActionEnum.INSERT,
                         Entity = "Thông tin đặt sân bóng",
-                        Description = BuildDescriptionForHistoryLog<Booking>(null, data)
+                        Description = BuildLinkDescription(historyLogId),
+                        Data = new HistoryLogDescription()
+                        {
+                            NewData = JsonConvert.SerializeObject(data)
+                        }
                     }, context);
                 });
                 thread.Start();

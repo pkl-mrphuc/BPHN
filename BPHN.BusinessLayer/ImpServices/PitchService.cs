@@ -2,6 +2,8 @@
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
+using Newtonsoft.Json;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
@@ -293,15 +295,21 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 Thread thread = new Thread(delegate ()
                 {
+                    var historyLogId = Guid.NewGuid();
                     _historyLogService.Write(new HistoryLog()
                     {
+                        Id = historyLogId,
                         IPAddress = context.IPAddress,
                         Actor = context.UserName,
                         ActorId = context.Id,
                         ActionType = ActionEnum.INSERT,
                         ActionName = string.Empty,
                         Entity = "Sân bóng",
-                        Description = BuildDescriptionForHistoryLog<Pitch>(null, pitch),
+                        Description = BuildLinkDescription(historyLogId),
+                        Data = new HistoryLogDescription()
+                        {
+                            NewData = JsonConvert.SerializeObject(pitch)
+                        }
                     }, context);
                 });
                 thread.Start();
@@ -365,23 +373,30 @@ namespace BPHN.BusinessLayer.ImpServices
                 item.TimeEnd = new DateTime(item.TimeEndTick);
                 return item;
             }).ToList();
-            
 
+            var oldPitch = await _pitchRepository.GetById(pitch.Id.ToString());
             var updateResult = await _pitchRepository.Update(pitch);
 
             if (updateResult)
             {
                 Thread thread = new Thread(delegate ()
                 {
+                    var historyLogId = Guid.NewGuid();
                     _historyLogService.Write(new HistoryLog()
                     {
+                        Id = historyLogId,
                         IPAddress = context.IPAddress,
                         Actor = context.UserName,
                         ActorId = context.Id,
                         ActionType = ActionEnum.UPDATE,
                         ActionName = string.Empty,
                         Entity = "Sân bóng",
-                        Description = BuildDescriptionForHistoryLog<Pitch>(null, pitch),
+                        Description = BuildLinkDescription(historyLogId),
+                        Data = new HistoryLogDescription()
+                        {
+                            OldData = JsonConvert.SerializeObject(oldPitch),
+                            NewData = JsonConvert.SerializeObject(pitch)
+                        }
                     }, context);
                 });
                 thread.Start();

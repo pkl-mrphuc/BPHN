@@ -30,5 +30,13 @@ namespace BPHN.WebAPI.Controllers
             Log.Debug($"HistoryLog/GetCountPaging start: {JsonConvert.SerializeObject(new { PageIndex = pageIndex, PageSize = pageSize, TxtSearch = txtSearch })}");
             return Ok(await _historyLogService.GetCountPaging(pageIndex, pageSize, txtSearch));
         }
+
+        [HttpGet]
+        [Route("description")]
+        public async Task<IActionResult> GetDescription(string historyLogId)
+        {
+            Log.Debug($"GetDescription start: {historyLogId}");
+            return Ok(await _historyLogService.GetDescription(historyLogId));
+        }
     }
 }

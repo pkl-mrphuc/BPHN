@@ -84,44 +84,9 @@ namespace BPHN.BusinessLayer.ImpServices
             return true;
         }
 
-        public virtual string BuildDescriptionForHistoryLog<T>(List<T>? oldData, List<T> newData)
+        public virtual string BuildLinkDescription(Guid historyLogId)
         {
-            return string.Empty;
-        }
-
-        public virtual string BuildDescriptionForHistoryLog<T>(T? oldData, T newData)
-        {
-            var description = string.Empty;
-            return description;
-            if (oldData == null)
-            {
-                var properties = newData.GetType().GetProperties().ToList();
-                for (int i = 0; i < properties.Count; i++)
-                {
-                    var property = properties[i];
-                    var customAttributes = property.GetCustomAttributes().ToList();
-                    var isIgnoreLog = false;
-                    for (int j = 0; j < customAttributes.Count; j++)
-                    {
-                        var attribute = customAttributes[j];
-                        var namePropertyOfAttribute = attribute.TypeId.GetType().GetProperty("Name") ?? null;
-                        if (namePropertyOfAttribute != null)
-                        {
-                            var nameAttribute = namePropertyOfAttribute.GetValue(attribute.TypeId, null);
-                            if (nameAttribute != null && nameAttribute.ToString() == "IgnoreLogAttribute")
-                            {
-                                isIgnoreLog = true;
-                            }
-                        }
-                    }
-
-                    if(!isIgnoreLog)
-                    {
-                        var value = property.GetValue(newData, null);
-                        description += string.Format("{0} = {1};\n", property.Name, value != null ? value.ToString() : "");
-                    }
-                }           
-            }
+            var description = $"<a href='#' target='_blank'>Xem chi tiết</a>";
             return description;
         }
     }

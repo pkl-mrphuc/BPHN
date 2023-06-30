@@ -104,6 +104,11 @@ onMounted(() => {
               {{ dateToString(scope.row.createdDate, formatDate, true) }}
             </template>
           </el-table-column>
+          <el-table-column :label="t('IPAddress')">
+            <template #default="scope">
+              {{ scope.row.ipAddress }}
+            </template>
+          </el-table-column>
           <el-table-column :label="t('Actor')">
             <template #default="scope">
               {{ scope.row.actor }}
@@ -120,8 +125,8 @@ onMounted(() => {
             </template>
           </el-table-column>
           <el-table-column :label="t('Description')">
-            <template #default="scope">
-              {{ scope.row.description }}
+            <template v-slot="scope">
+              <span v-html="scope.row.description"></span>
             </template>
           </el-table-column>
         </el-table>

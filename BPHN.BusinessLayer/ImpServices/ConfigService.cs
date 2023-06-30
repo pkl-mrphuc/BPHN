@@ -1,6 +1,7 @@
 ﻿using BPHN.BusinessLayer.IServices;
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
+using BPHN.ModelLayer.Others;
 using Newtonsoft.Json;
 
 namespace BPHN.BusinessLayer.ImpServices
@@ -98,22 +99,31 @@ namespace BPHN.BusinessLayer.ImpServices
                 return item;
             }).ToList();
 
+            var oldConfigs = await _configRepository.GetConfigs(context.Id);
             var saveResult = await _configRepository.Save(configs);
             if(saveResult)
             {
                 _cacheService.Remove(_cacheService.GetKeyCache("All", "Config"));
                 var thread = new Thread(delegate ()
                 {
+                    var historyLogId = Guid.NewGuid();
                     _historyLogService.Write(new HistoryLog()
                     {
+                        Id = historyLogId,
                         IPAddress = context.IPAddress,
                         Actor = context.UserName,
                         ActorId = context.Id,
                         ActionType = ActionEnum.SAVE,
                         Entity = "Cấu hình",
                         ActionName = string.Empty,
-                        Description = BuildDescriptionForHistoryLog<Config>(null, configs)
+                        Description = BuildLinkDescription(historyLogId),
+                        Data = new HistoryLogDescription()
+                        {
+                            OldData = JsonConvert.SerializeObject(oldConfigs),
+                            NewData = JsonConvert.SerializeObject(configs)
+                        }
                     }, context);
+
                 });
                 thread.Start();
             }

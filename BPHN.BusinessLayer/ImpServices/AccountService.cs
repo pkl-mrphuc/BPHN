@@ -383,13 +383,15 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var fakeContext = new Account()
             {
-                FullName = realAccount.FullName
+                FullName = realAccount.FullName,
+                IPAddress = _contextService.GetIPAddress()
             };
 
             var thread = new Thread(delegate()
             {
                 _historyLogService.Write(new HistoryLog()
                 {
+                    IPAddress = fakeContext.IPAddress,
                     Actor = realAccount.UserName,
                     ActorId = realAccount.Id,
                     ActionType = ActionEnum.LOGIN,
