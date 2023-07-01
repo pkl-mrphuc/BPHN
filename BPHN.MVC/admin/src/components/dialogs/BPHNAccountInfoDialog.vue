@@ -3,7 +3,9 @@ import { useI18n } from "vue-i18n";
 import useToggleModal from "@/register-components/actionDialog";
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const store = useStore();
 const { t } = useI18n();
 const { toggleModel } = useToggleModal();
@@ -44,7 +46,7 @@ const changePassword = () => {
   store.dispatch("account/changePassword", data).then((res) => {
     if (res?.data?.success) {
       alert(t("SaveSuccess"));
-      window.location = "/login";
+      router.push("login");
     } else {
       let msg = res?.data?.message;
       alert(msg ?? t("ErrorMesg"));

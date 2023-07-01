@@ -3,7 +3,6 @@ using BPHN.ModelLayer;
 using BPHN.ModelLayer.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Asn1.Ocsp;
 using Serilog;
 
 namespace BPHN.WebAPI.Controllers

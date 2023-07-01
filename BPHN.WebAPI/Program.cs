@@ -1,5 +1,4 @@
 using BPHN.BusinessLayer.ImpServices;
-using BPHN.BusinessLayer.ImpServices.MailBuilders;
 using BPHN.BusinessLayer.IServices;
 using BPHN.DataLayer.ImpRepositories;
 using BPHN.DataLayer.IRepositories;
@@ -7,9 +6,6 @@ using BPHN.ImpRabbitMQLayer;
 using BPHN.IRabbitMQLayer;
 using BPHN.ModelLayer;
 using BPHN.WebAPI;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Serilog;
 

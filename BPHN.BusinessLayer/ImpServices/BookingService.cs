@@ -3,7 +3,6 @@ using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
 using Newtonsoft.Json;
-using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace BPHN.BusinessLayer.ImpServices
 {

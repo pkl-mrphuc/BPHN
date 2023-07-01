@@ -1,5 +1,6 @@
 import ConfigAPI from "@/apis/ConfigAPI";
 import i18n from "@/i18n/index.js";
+import router from "@/routers";
 
 const state = {
     language: process.env.VUE_APP_I18N_LOCALE,
@@ -105,7 +106,7 @@ const actions = {
             if (res?.data?.success) {
                 alert(i18n.global.t("SaveSuccess"))
                 localStorage.removeItem("config-key")
-                window.location.reload()
+                router.go()
             }
             else {
                 let msg = res?.data?.message

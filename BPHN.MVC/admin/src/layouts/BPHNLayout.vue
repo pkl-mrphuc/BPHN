@@ -26,12 +26,15 @@ import BphnMenu from "@/layouts/BPHNMenu.vue";
 import AccountAPI from "@/apis/AccountAPI";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
+
 export default {
   name: "BPHNLayout",
   components: { BphnHeader, BphnMenu },
   async created() {
     const store = useStore();
     const t = useI18n();
+    const router = useRouter();
 
     let validateResult = await AccountAPI.validateToken(
       store.getters["account/getToken"]
@@ -49,7 +52,7 @@ export default {
         else document.documentElement.removeAttribute("class");
       }
     } else {
-      window.location = "/login";
+      router.push("login");
     }
   },
 };

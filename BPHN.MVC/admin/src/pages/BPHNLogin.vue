@@ -2,9 +2,11 @@
 import { ref } from "vue";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 
 const { t } = useI18n();
 const store = useStore();
+const router = useRouter();
 const username = ref("");
 const password = ref("");
 const isLoading = ref(false);
@@ -29,7 +31,7 @@ const login = () => {
 };
 
 const goToForgot = () => {
-  window.location = "/forgot";
+  router.push("forgot");
 };
 </script>
 

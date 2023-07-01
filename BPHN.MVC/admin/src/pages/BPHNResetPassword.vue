@@ -2,11 +2,12 @@
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const { t } = useI18n();
 const store = useStore();
 const route = useRoute();
+const router = useRouter();
 
 const password = ref("");
 const passwordAgain = ref("");
@@ -20,7 +21,7 @@ const getQueryStringByKey = (key) => {
 };
 
 const goToLogin = () => {
-  window.location = "/login";
+  router.push("login");
 };
 
 const submit = () => {

@@ -3,11 +3,6 @@ using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
 using Dapper;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BPHN.DataLayer.ImpRepositories
 {

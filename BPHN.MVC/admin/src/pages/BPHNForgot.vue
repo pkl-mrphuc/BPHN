@@ -2,13 +2,15 @@
 import { ref } from "vue";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const { t } = useI18n();
 const store = useStore();
 const email = ref("");
 
 const goToLogin = () => {
-  window.location = "/login";
+  router.push("login");
 };
 
 const forgot = () => {

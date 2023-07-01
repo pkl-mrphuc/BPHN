@@ -1,14 +1,11 @@
-﻿using BPHN.BusinessLayer.ImpServices;
-using BPHN.BusinessLayer.IServices;
+﻿using BPHN.BusinessLayer.IServices;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Attributes;
 using BPHN.ModelLayer.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Asn1.Ocsp;
 using Serilog;
-using System.Drawing.Printing;
 
 namespace BPHN.WebAPI.Controllers
 {
