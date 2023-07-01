@@ -18,19 +18,10 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
+                var query = "select Id, Name, Address, MinutesPerMatch, Quantity, TimeSlotPerDay, Status, NameDetails from pitchs where id = @id";
                 var dic = new Dictionary<string, object>();
                 dic.Add("@id", id);
-                var pitch = await connection.QueryFirstOrDefaultAsync<Pitch>("select * from pitchs where id = @id", dic);
-                if(pitch != null)
-                {
-                    dic = new Dictionary<string, object>();
-                    dic.Add("@pitchId", pitch.Id);
-                    var lstTimeFrame = await connection.QueryAsync<TimeFrameInfo>("select * from time_frame_infos where PitchId = @pitchId", dic);
-                    if(lstTimeFrame != null && lstTimeFrame.Count() > 0)
-                    {
-                        pitch.TimeFrameInfos = lstTimeFrame.ToList();
-                    }
-                }
+                var pitch = await connection.QueryFirstOrDefaultAsync<Pitch>(query, dic);
                 return pitch;
             }
         }
@@ -38,7 +29,7 @@ namespace BPHN.DataLayer.ImpRepositories
         public async Task<object> GetCountPaging(int pageIndex, int pageSize, List<WhereCondition> where)
         {
             var whereQuery = BuildWhereQuery(where);
-            var countQuery = $@"select count(*) from pitchs where {whereQuery}";
+            var countQuery = $@"select count(1) from pitchs where {whereQuery}";
 
             using (var connection = ConnectDB(GetConnectionString()))
             {
@@ -72,8 +63,8 @@ namespace BPHN.DataLayer.ImpRepositories
         public async Task<List<Pitch>> GetPaging(int pageIndex, int pageSize, List<WhereCondition> where)
         {
             var whereQuery = BuildWhereQuery(where);
-            var query = $@"select * from pitchs where {whereQuery} order by Name limit @offset, @pageSize";
-            var countQuery = $@"select count(*) from pitchs where {whereQuery}";
+            var query = $@"select Id, Name, Status from pitchs where {whereQuery} order by Name limit @offset, @pageSize";
+            var countQuery = $@"select count(1) from pitchs where {whereQuery}";
             
             using(var connection = ConnectDB(GetConnectionString()))
             {

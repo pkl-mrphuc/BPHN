@@ -27,7 +27,7 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var totalRecord = await connection.QuerySingleAsync<int>($"select count(*) from history_logs where {whereQuery}", dic);
+                var totalRecord = await connection.QuerySingleAsync<int>($"select count(1) from history_logs where {whereQuery}", dic);
                 var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
                 var totalRecordCurrentPage = 0;
                 if(totalRecord > 0)
@@ -48,7 +48,7 @@ namespace BPHN.DataLayer.ImpRepositories
 
         public async Task<HistoryLogDescription?> GetDescription(string historyLogId)
         {
-            var query = @"select * from history_log_descriptions where Id = @id";
+            var query = @"select ModelId, OldData, NewData from history_log_descriptions where Id = @id";
             var dic = new Dictionary<string, object>();
             dic.Add("@id", historyLogId);
             using (var connection = ConnectDB(GetConnectionString()))
@@ -69,13 +69,13 @@ namespace BPHN.DataLayer.ImpRepositories
                 var item = string.Format("@where{0}", i);
                 dic.Add(item, where[i].Value);
             }
-            var query = $"select * from history_logs where {whereQuery} order by CreatedDate desc limit @offSet, @pageSize";
+            var query = $"select CreatedDate, IPAddress, Actor, ActionName, Entity, Description from history_logs where {whereQuery} order by CreatedDate desc limit @offSet, @pageSize";
 
 
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var totalRecord = await connection.QuerySingleAsync<int>($"select count(*) from history_logs where {whereQuery}", dic);
+                var totalRecord = await connection.QuerySingleAsync<int>($"select count(1) from history_logs where {whereQuery}", dic);
                 var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
                 if(pageIndex > totalPage)
                 {
@@ -105,7 +105,8 @@ namespace BPHN.DataLayer.ImpRepositories
             dic.Add("@description", history.Description);
             if (history.Data != null)
             {
-                query += "insert into history_log_descriptions(Id, OldData, NewData) value (@id, @oldData, @newData);";
+                query += "insert into history_log_descriptions(Id, ModelId, OldData, NewData) value (@id, @modelId, @oldData, @newData);";
+                dic.Add("@modelId", history.Data.ModelId);
                 dic.Add("@oldData", history.Data.OldData);
                 dic.Add("@newData", history.Data.NewData);
             }

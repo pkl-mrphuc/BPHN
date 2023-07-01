@@ -119,6 +119,7 @@ namespace BPHN.BusinessLayer.ImpServices
                         Description = BuildLinkDescription(historyLogId),
                         Data = new HistoryLogDescription()
                         {
+                            ModelId = context.Id,
                             OldData = JsonConvert.SerializeObject(oldConfigs),
                             NewData = JsonConvert.SerializeObject(configs)
                         }

@@ -135,7 +135,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     };
                 }
 
-
+                data.TimeFrameInfos = await _timeFrameInfoRepository.GetByPitchId(data.Id);
                 if(!string.IsNullOrEmpty(data.NameDetails))
                 {
                     var lstNameDetails = data.NameDetails.Split(";").ToList();
@@ -308,6 +308,7 @@ namespace BPHN.BusinessLayer.ImpServices
                         Description = BuildLinkDescription(historyLogId),
                         Data = new HistoryLogDescription()
                         {
+                            ModelId = pitch.Id,
                             NewData = JsonConvert.SerializeObject(pitch)
                         }
                     }, context);
@@ -394,6 +395,7 @@ namespace BPHN.BusinessLayer.ImpServices
                         Description = BuildLinkDescription(historyLogId),
                         Data = new HistoryLogDescription()
                         {
+                            ModelId = pitch.Id,
                             OldData = JsonConvert.SerializeObject(oldPitch),
                             NewData = JsonConvert.SerializeObject(pitch)
                         }

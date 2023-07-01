@@ -24,6 +24,7 @@ DROP TABLE IF EXISTS `history_log_descriptions`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `history_log_descriptions` (
   `Id` char(36) NOT NULL,
+  `ModelId` char(36) NOT NULL,
   `OldData` longtext,
   `NewData` longtext NOT NULL,
   PRIMARY KEY (`Id`)

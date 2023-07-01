@@ -313,6 +313,7 @@ namespace BPHN.BusinessLayer.ImpServices
                         Description = BuildLinkDescription(historyLogId),
                         Data = new HistoryLogDescription()
                         {
+                            ModelId = data.Id,
                             NewData = JsonConvert.SerializeObject(data)
                         }
                     }, context);
