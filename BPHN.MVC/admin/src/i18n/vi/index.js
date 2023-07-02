@@ -111,7 +111,11 @@ const vi = {
     FullNameEmptyMesg: 'Tên người dùng không được để trống',
     MultiUser: 'Nhiều người dùng',
     FeatureIsDeveloping: 'Tính năng đang được phát triển',
-    ContactSupplier: 'Vui lòng liên hệ nhà cung cấp để sử dụng tính năng này.'
+    ContactSupplier: 'Vui lòng liên hệ nhà cung cấp để sử dụng tính năng này.',
+    MatchInfoForm: 'Trận đấu',
+    TeamA: 'Đội A',
+    TeamB: 'Đội B',
+    Note: 'Ghi chú'
 }
 
 export default vi;

@@ -5,10 +5,14 @@ import resourceTimeGridPlugin from "@fullcalendar/resource-timegrid";
 import allLocales from "@fullcalendar/core/locales-all";
 import { useStore } from "vuex";
 import useCommonFn from "@/commonFn";
+import useToggleModal from "@/register-components/actionDialog";
 
 const store = useStore();
 const resources = ref([]);
 const { dateToString } = useCommonFn();
+const { hasRole, openModal } = useToggleModal();
+const matchDataForm = ref(null);
+const objEvent = ref(null);
 
 onMounted(() => {
   store
@@ -46,11 +50,20 @@ const renderCalendar = async (resources) => {
       },
       events: async function (data, callback) {
         if (data) {
-          let events = await getEventByDate(dateToString(data.start, "yyyy-MM-dd"));
+          let events = await getEventByDate(
+            dateToString(data.start, "yyyy-MM-dd")
+          );
           callback(events);
         }
         callback([]);
         handleAfterRenderCalendar(calendarEl);
+      },
+      eventContent: function (arg) {
+        let eventInfo = arg.event.extendedProps;
+        return { domNodes: buildEventInfoHtml(arg.timeText, eventInfo) };
+      },
+      eventClick: function (calEvent) {
+        openForm(calEvent);
       },
     });
     calendar.render();
@@ -74,12 +87,53 @@ const getEventByDate = async (date) => {
       let item = data[i];
       lstResult.push({
         resourceId: item.pitchId,
-        title: `${item.phoneNumber}-${item.nameDetail}`,
         start: item.start,
         end: item.end,
+        extendedProps: {
+          bookingDetailId: item.id,
+          teamA: item.teamA,
+          teamB: item.teamB ?? "",
+          stadium: item.stadium,
+          goalTeamA: item.goalTeamA,
+          goalTeamB: item.goalTeamB,
+          note: item.note ?? "",
+        },
       });
     }
     return lstResult;
+  }
+};
+
+const buildEventInfoHtml = (timeText, eventInfo) => {
+  let eventContainer = document.createElement("div");
+  eventContainer.style.display = "flex";
+  eventContainer.style.flexDirection = "column";
+  eventContainer.style.height = "100%";
+  eventContainer.style.padding = "5px";
+  eventContainer.style.boxSizing = "border-box";
+  let html = `<i>${timeText} | ${eventInfo.stadium}</i> 
+              <ul>
+                <li style="font-weight: bold; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" title="${eventInfo.teamA}">- ${eventInfo.teamA}</li>
+                <li style="font-weight: bold; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" title="${eventInfo.teamB}">- ${!eventInfo.teamB ? "?" : eventInfo.teamB}</li>
+              </ul>
+              <div style="margin-top: auto; font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${eventInfo.note}">Note: ${eventInfo.note}</div>`;
+
+  eventContainer.innerHTML = html;
+  let arrayOfDomNodes = [eventContainer];
+  return arrayOfDomNodes;
+};
+
+const openForm = (calEvent) => {
+  openModal("MatchInfoDialog");
+  objEvent.value = calEvent;
+  matchDataForm.value = calEvent.event.extendedProps;
+};
+
+const loadEvent = (data) => {
+  if (objEvent.value && data) {
+    objEvent.value.event.setExtendedProp("teamA", data.teamA);
+    objEvent.value.event.setExtendedProp("teamB", data.teamB);
+    objEvent.value.event.setExtendedProp("note", data.note);
   }
 };
 </script>
@@ -92,6 +146,12 @@ const getEventByDate = async (date) => {
       </div>
     </div>
   </section>
+  <MatchInfoDialog
+    v-if="hasRole('MatchInfoDialog')"
+    :data="matchDataForm"
+    @callback="loadEvent"
+  >
+  </MatchInfoDialog>
 </template>
 
 <style scoped>

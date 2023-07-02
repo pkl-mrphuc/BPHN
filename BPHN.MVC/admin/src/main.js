@@ -17,6 +17,7 @@ import BookingDialog from "@/components/dialogs/BPHNBookingDialog.vue";
 import FindBlankDialog from "@/components/dialogs/BPHNFindBlankDialog.vue";
 import AccountInfoDialog from "@/components/dialogs/BPHNAccountInfoDialog.vue";
 import TenantDialog from "@/components/dialogs/BPHNTenantDialog.vue";
+import MatchInfoDialog from "@/components/dialogs/BPHNMatchInfoDialog.vue";
 
 jwtInterceptor();
 startWs();
@@ -37,4 +38,5 @@ createApp(App)
     .component("FindBlankDialog", FindBlankDialog)
     .component("AccountInfoDialog", AccountInfoDialog)
     .component("TenantDialog", TenantDialog)
+    .component("MatchInfoDialog", MatchInfoDialog)
     .mount("#app");

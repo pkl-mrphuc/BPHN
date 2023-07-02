@@ -97,7 +97,7 @@ const en = {
     ActionName: 'Action name',
     Description: 'Description',
     CreatedDate: 'Created date',
-    AccountInfoForm: 'Account info form',
+    AccountInfoForm: 'Account information form',
     FormatDate: 'Format date',
     FullName: 'Full name',
     Gender: 'Gender',
@@ -111,6 +111,10 @@ const en = {
     FullNameEmptyMesg: 'Full name is not empty',
     MultiUser: 'Multiple user',
     FeatureIsDeveloping: 'Feature is developing',
-    ContactSupplier: 'Please contact supplier to use this feature.'
+    ContactSupplier: 'Please contact supplier to use this feature.',
+    MatchInfoForm: 'Match information form',
+    TeamA: 'Team A',
+    TeamB: 'Team B',
+    Note: 'Note'
 }
 export default en;

@@ -11,7 +11,11 @@ namespace BPHN.ModelLayer.Others
         public Guid PitchId { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
-        public string NameDetail { get; set; }
-        public string PhoneNumber { get; set; }
+        public string Stadium { get; set; }
+        public string TeamA { get; set; }
+        public string TeamB { get; set; }
+        public string Note { get; set; }
+        public int GoalTeamA { get; set; }
+        public int GoalTeamB { get; set; }
     }
 }
