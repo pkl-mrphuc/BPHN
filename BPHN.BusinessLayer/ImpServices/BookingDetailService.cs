@@ -1,6 +1,7 @@
 ﻿using BPHN.BusinessLayer.IServices;
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
+using BPHN.ModelLayer.Others;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
@@ -102,6 +103,26 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 Success = true,
                 Data = lstBookingDetail
+            };
+        }
+
+        public async Task<ServiceResultModel> UpdateMatch(CalendarEvent eventInfo)
+        {
+            var context = _contextService.GetContext();
+            if (context == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = "Token đã hết hạn"
+                };
+            }
+
+            var result = await _bookingDetailRepository.UpdateMatch(eventInfo);
+            return new ServiceResultModel()
+            {
+                Success = result
             };
         }
     }

@@ -115,6 +115,8 @@ const en = {
     MatchInfoForm: 'Match information form',
     TeamA: 'Team A',
     TeamB: 'Team B',
-    Note: 'Note'
+    Note: 'Note',
+    TeamAEmptyMesg: 'Team A is not empty',
+    ShouldContainPhoneNumber: 'Team A should contain phone number to contact'
 }
 export default en;

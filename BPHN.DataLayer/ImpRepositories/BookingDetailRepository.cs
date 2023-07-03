@@ -36,7 +36,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 dic.Add("@accountId", accountId);
                 dic.Add("@startDate", $"{date} 00:00:00");
                 dic.Add("@endDate", $"{date} 23:59:59");
-                var query = @"select bd.*, b.PitchId, tfi.TimeBegin as Start, tfi.TimeEnd as End, b.NameDetail as Stadium, b.PhoneNumber as TeamA  from booking_details bd 
+                var query = @"select bd.*, b.PitchId, tfi.TimeBegin as Start, tfi.TimeEnd as End, b.NameDetail as Stadium, b.PhoneNumber as PhoneNumber  from booking_details bd 
                                                 inner join bookings b on b.Id = bd.BookingId
                                                 inner join time_frame_infos tfi on b.TimeFrameInfoId = tfi.Id
                                                 where   bd.Status in (@status0) and 
@@ -60,6 +60,22 @@ namespace BPHN.DataLayer.ImpRepositories
                 var query = @"select bd.* from booking_details bd inner join bookings b on b.Id = bd.BookingId where bd.Status in (@status0) and b.AccountId = @accountId and bd.MatchDate between @startDate and @endDate";
                 var data = await connection.QueryAsync<BookingDetail>(query, dic);
                 return data.ToList();
+            }
+        }
+
+        public async Task<bool> UpdateMatch(CalendarEvent eventInfo)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var dic = new Dictionary<string, object>();
+                dic.Add("@id", eventInfo.Id);
+                dic.Add("@teamA", eventInfo.TeamA);
+                dic.Add("@teamB", eventInfo.TeamB);
+                dic.Add("@note", eventInfo.Note);
+                var query = "update booking_details set TeamA = @teamA, TeamB = @teamB, Note = @note where Id = @id";
+                var affect = await connection.ExecuteAsync(query, dic);
+                return affect > 0 ? true : false;
             }
         }
     }

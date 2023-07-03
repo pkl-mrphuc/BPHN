@@ -115,7 +115,9 @@ const vi = {
     MatchInfoForm: 'Trận đấu',
     TeamA: 'Đội A',
     TeamB: 'Đội B',
-    Note: 'Ghi chú'
+    Note: 'Ghi chú',
+    TeamAEmptyMesg: 'Tên đội đặt sân không được để trống',
+    ShouldContainPhoneNumber: 'Tên đội đặt sân nên chứa số điện thoại liên hệ'
 }
 
 export default vi;

@@ -1,8 +1,10 @@
 ﻿using BPHN.BusinessLayer.IServices;
 using BPHN.ModelLayer.Attributes;
+using BPHN.ModelLayer.Others;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Serilog;
+using System.Globalization;
 
 namespace BPHN.WebAPI.Controllers
 {
@@ -19,7 +21,7 @@ namespace BPHN.WebAPI.Controllers
         [Route("cancel/{id}")]
         public async Task<IActionResult> Cancel(string id)
         {
-            Log.Debug($"BookingDetail/Cancel start: {JsonConvert.DeserializeObject(id)}");
+            Log.Debug($"BookingDetail/Cancel start: {id}");
             return Ok(await _bookingDetailService.Cancel(id));
         }
 
@@ -29,6 +31,14 @@ namespace BPHN.WebAPI.Controllers
         {
             Log.Debug($"BookingDetail/GetByDate start: {date}");
             return Ok(await _bookingDetailService.GetByDate(date));
+        }
+
+        [HttpPost]
+        [Route("update-match")]
+        public async Task<IActionResult> UpdateMatch([FromBody]CalendarEvent request)
+        {
+            Log.Debug($"BookingDetail/UpdateMatch start: {JsonConvert.SerializeObject(request)}");
+            return Ok(await _bookingDetailService.UpdateMatch(request));
         }
     }
 }

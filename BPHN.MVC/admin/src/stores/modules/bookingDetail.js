@@ -19,6 +19,10 @@ const actions = {
 
     getByDate: ((commit, date) => {
         return BookingDetailAPI.getByDate(date);
+    }),
+
+    updateMatch: ((commit, data) => {
+        return BookingDetailAPI.updateMatch(data);
     })
 };
 

@@ -2,9 +2,11 @@
 import useToggleModal from "@/register-components/actionDialog";
 import { useI18n } from "vue-i18n";
 import { defineProps, ref, defineEmits } from "vue";
+import { useStore } from "vuex";
 
 const { toggleModel } = useToggleModal();
 const { t } = useI18n();
+const store = useStore();
 const props = defineProps({
   data: Object,
 });
@@ -15,12 +17,18 @@ const note = ref(props.data?.note ?? "");
 const id = ref(props.data?.bookingDetailId ?? "");
 
 const save = () => {
+  if(!teamA.value) {
+    alert(t("TeamAEmptyMesg"));
+    return;
+  }
+
   let data = {
     id: id.value,
     teamA: teamA.value,
     teamB: teamB.value,
     note: note.value,
   };
+  store.dispatch("bookingDetail/updateMatch", data);
   emit("callback", data);
   toggleModel();
 };
@@ -34,7 +42,7 @@ const save = () => {
           <b>{{ t("TeamA") }}<span class="red">(*)</span></b>
         </el-col>
         <el-col :span="17">
-          <el-input v-model="teamA" maxlength="255" />
+          <el-input v-model="teamA" maxlength="255" :placeholder="t('ShouldContainPhoneNumber')" />
         </el-col>
       </el-form-item>
       <el-form-item>

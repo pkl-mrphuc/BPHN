@@ -91,11 +91,9 @@ const getEventByDate = async (date) => {
         end: item.end,
         extendedProps: {
           bookingDetailId: item.id,
-          teamA: item.teamA,
+          teamA: !item.teamA ? item.phoneNumber : item.teamA,
           teamB: item.teamB ?? "",
           stadium: item.stadium,
-          goalTeamA: item.goalTeamA,
-          goalTeamB: item.goalTeamB,
           note: item.note ?? "",
         },
       });

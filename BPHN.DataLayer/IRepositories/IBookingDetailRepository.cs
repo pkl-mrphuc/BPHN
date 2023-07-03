@@ -13,5 +13,6 @@ namespace BPHN.DataLayer.IRepositories
         Task<List<BookingDetail>> GetInRangeDate(Guid accountId, DateTime startDate, DateTime endDate);
         Task<bool> Cancel(string id);
         Task<List<CalendarEvent>> GetByDate(string date, Guid accountId);
+        Task<bool> UpdateMatch(CalendarEvent eventInfo);
     }
 }

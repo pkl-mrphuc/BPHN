@@ -24,6 +24,17 @@ class BookingDetailAPI {
             return false;
         }
     }
+
+    async updateMatch(data) {
+        try {
+            let requestUrl = `${process.env.VUE_APP_API_URL}/bookingdetails/update-match`;
+            let requestParam = data;
+            return axios.post(requestUrl, requestParam);
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
 }
 
 export default new BookingDetailAPI();

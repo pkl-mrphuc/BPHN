@@ -1,4 +1,5 @@
 ﻿using BPHN.ModelLayer;
+using BPHN.ModelLayer.Others;
 
 namespace BPHN.BusinessLayer.IServices
 {
@@ -8,5 +9,6 @@ namespace BPHN.BusinessLayer.IServices
         ServiceResultModel GetMatchDates(DateTime startDate, DateTime endDate);
         Task<ServiceResultModel> Cancel(string id);
         Task<ServiceResultModel> GetByDate(string date);
+        Task<ServiceResultModel> UpdateMatch(CalendarEvent eventInfo);
     }
 }
