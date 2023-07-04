@@ -19,7 +19,7 @@
               <el-menu-item index="0">Trang chủ</el-menu-item>
             </router-link>
             <router-link to="/search" class="menu_item">
-              <el-menu-item index="1">Tra cứu</el-menu-item>
+              <el-menu-item index="1">Tìm sân</el-menu-item>
             </router-link>
             <el-sub-menu index="2" class="menu_item">
               <template #title>Đăng ký dịch vụ</template>
