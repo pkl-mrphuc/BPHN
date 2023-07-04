@@ -63,7 +63,7 @@ namespace BPHN.DataLayer.ImpRepositories
         public async Task<List<Pitch>> GetPaging(int pageIndex, int pageSize, List<WhereCondition> where)
         {
             var whereQuery = BuildWhereQuery(where);
-            var query = $@"select Id, Name, Status, NameDetails from pitchs where {whereQuery} order by Name limit @offset, @pageSize";
+            var query = $@"select Id, Name, Status, NameDetails, Address from pitchs where {whereQuery} order by Name limit @offset, @pageSize";
             var countQuery = $@"select count(1) from pitchs where {whereQuery}";
             
             using(var connection = ConnectDB(GetConnectionString()))

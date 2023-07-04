@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "@/pages/BPHNHome.vue";
-import Search from "@/pages/BPHNSearch.vue";
-import RegisterService from "@/pages/BPHNRegisterService.vue";
-import Contact from "@/pages/BPHNContact.vue";
+import Booking from "@/pages/BPHNBooking.vue";
+import PartnerService from "@/pages/BPHNPartnerService.vue";
+import ContactMe from "@/pages/BPHNContactMe.vue";
 
 const routes = [
     {
@@ -10,16 +10,16 @@ const routes = [
         component: Home
     },
     {
-        path: "/search",
-        component: Search
+        path: "/booking",
+        component: Booking
     },
     {
-        path: "/register-service",
-        component: RegisterService
+        path: "/partner-service",
+        component: PartnerService
     },
     {
-        path: "/contact",
-        component: Contact
+        path: "/contact-me",
+        component: ContactMe
     }
 ];
 

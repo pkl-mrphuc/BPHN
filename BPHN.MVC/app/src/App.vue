@@ -3,10 +3,8 @@
     <el-container>
       <el-header class="header p-0">
         <el-menu
-          :default-active="activeIndex"
           class="menu d-flex justify-content-between align-items-center"
           mode="horizontal"
-          @select="handleSelect"
         >
           <div>
             <div class="header_left">
@@ -16,20 +14,20 @@
 
           <div class="d-flex justify-content-center align-items-center">
             <router-link to="/" class="menu_item">
-              <el-menu-item index="0">Trang chủ</el-menu-item>
+              <el-menu-item index="0">{{ t('Home') }}</el-menu-item>
             </router-link>
-            <router-link to="/search" class="menu_item">
-              <el-menu-item index="1">Tìm sân</el-menu-item>
+            <router-link to="/booking" class="menu_item">
+              <el-menu-item index="1">{{ t('Booking') }}</el-menu-item>
             </router-link>
             <el-sub-menu index="2" class="menu_item">
-              <template #title>Đăng ký dịch vụ</template>
-              <router-link class="menu_item" to="/register-service">
-                <el-menu-item index="2-1">Chủ sân</el-menu-item>
+              <template #title>{{ t('Service') }}</template>
+              <router-link class="menu_item" to="/partner-service">
+                <el-menu-item index="2-1">{{ t('Partner') }}</el-menu-item>
               </router-link>
             </el-sub-menu>
 
             <router-link to="/contact-me" class="menu_item">
-              <el-menu-item index="3">Liên hệ</el-menu-item>
+              <el-menu-item index="3">{{ t('Contact') }}</el-menu-item>
             </router-link>
           </div>
 
@@ -73,9 +71,11 @@
 import FlagIcon from "@/components/FlagIcon.vue";
 import { ref, computed, watch, onMounted } from "vue";
 import { useStore } from "vuex";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
+const i18n = useI18n();
 const store = useStore();
-const activeIndex = ref("0");
 const darkMode = ref(store.getters["config/getDarkMode"]);
 const language = ref(store.getters["config/getLanguage"]);
 
@@ -96,21 +96,23 @@ watch(getLanguage, (newValue) => {
 });
 
 onMounted(() => {
-  loadDarkMode();
+  load(language.value, darkMode.value);
 })
 
 const changeLanguage = (command) => {
   store.commit("config/setLanguage", command);
+  load(command, darkMode.value);
 };
 
 const changeDarkMode = () => {
   store.commit("config/setDarkMode", darkMode.value);
-  loadDarkMode();
+  load(language.value, darkMode.value);
 };
 
-const loadDarkMode = () => {
-  if (darkMode.value) document.documentElement.setAttribute("class", "dark");
+const load = (language, darkMode) => {
+  if (darkMode) document.documentElement.setAttribute("class", "dark");
   else document.documentElement.removeAttribute("class");
+  i18n.locale.value = language;
 };
 </script>
 

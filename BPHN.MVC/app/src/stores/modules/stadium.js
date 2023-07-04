@@ -13,8 +13,12 @@ const mutations = {
 }
 
 const actions = {
-    fetchStadium: ((commit, key) => {
-        return StadiumAPI.fetchStadium(key)
+    getPaging: ((commit, data) => {
+        return StadiumAPI.getPaging(data)
+    }),
+
+    getCountPaging: ((commit, data) => {
+        return StadiumAPI.getCountPaging(data)
     })
 }
 

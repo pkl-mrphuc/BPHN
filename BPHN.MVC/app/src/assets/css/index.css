@@ -5,6 +5,10 @@ body {
     font-size: 14px;
 }
 
+.fs-36 {
+    font-size: 36px;
+}
+
 .d-flex {
     display: flex !important;
     flex-direction: row;
@@ -13,6 +17,7 @@ body {
 .justify-content-center {
     justify-content: center;
 }
+
 .justify-content-between {
     justify-content: space-between;
 }
@@ -24,9 +29,14 @@ body {
 .p-0 {
     padding: 0px !important;
 }
+.p-12 {
+    padding: 12px;
+}
+
 .px-20 {
     padding: 0px 20px !important;
 }
+
 .px-200 {
     padding: 0px 200px !important;
 }
@@ -34,18 +44,147 @@ body {
 .mx-12 {
     margin: 0px 12px;
 }
-
+.ml-8 {
+    margin-left: 8px;
+}
+.mb-8 {
+    margin-bottom: 8px !important;
+}
+.ml-auto {
+    margin-left: auto;
+}
+.my-8 {
+    margin: 8px 0px;
+}
 
 .wp-100 {
     width: 100%;
 }
+
 .wp-70 {
     width: 70%;
 }
+
 .wp-15 {
     width: 15%;
 }
 
 .hp-100 {
     height: 100%;
+}
+
+
+:root {
+    --fc-border-color: #ebeef5;
+    --fc-today-bg-color: #ecf5ff;
+}
+
+html.dark {
+    --fc-border-color: #363637;
+    --fc-today-bg-color: #18222c;
+}
+
+.fc .fc-timegrid-slot {
+    height: 2.5em;
+}
+
+.fc-col-header-cell {
+    height: 2.5em;
+    vertical-align: middle !important;
+}
+
+.fc-button-primary:disabled,
+.fc-button-primary:disabled:hover {
+    color: var(--el-button-disabled-text-color) !important;
+    cursor: not-allowed !important;
+    background-image: none !important;
+    background-color: var(--el-button-disabled-bg-color) !important;
+    border-color: var(--el-button-disabled-border-color) !important;
+}
+
+.fc-button-primary:hover {
+    color: var(--el-button-hover-text-color) !important;
+    border-color: var(--el-button-hover-border-color) !important;
+    background-color: var(--el-button-hover-bg-color) !important;
+    outline: 0 !important;
+}
+
+
+.fc-button-primary {
+    background-color: unset;
+    border-color: unset;
+    color: unset;
+
+    --el-button-text-color: var(--el-color-white);
+    --el-button-bg-color: var(--el-color-primary);
+    --el-button-border-color: var(--el-color-primary);
+    --el-button-outline-color: var(--el-color-primary-light-5);
+    --el-button-active-color: var(--el-color-primary-dark-2);
+    --el-button-hover-text-color: var(--el-color-white);
+    --el-button-hover-link-text-color: var(--el-color-primary-light-5);
+    --el-button-hover-bg-color: var(--el-color-primary-light-3);
+    --el-button-hover-border-color: var(--el-color-primary-light-3);
+    --el-button-active-bg-color: var(--el-color-primary-dark-2);
+    --el-button-active-border-color: var(--el-color-primary-dark-2);
+    --el-button-disabled-text-color: var(--el-color-white);
+    --el-button-disabled-bg-color: var(--el-color-primary-light-5);
+    --el-button-disabled-border-color: var(--el-color-primary-light-5);
+}
+
+.fc-button {
+    font-weight: unset !important;
+    line-height: unset !important;
+
+    display: inline-flex !important;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+    height: 32px;
+    white-space: nowrap;
+    cursor: pointer;
+    color: var(--el-button-text-color);
+    text-align: center !important;
+    box-sizing: border-box;
+    outline: 0;
+    transition: .1s;
+    font-weight: var(--el-button-font-weight);
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    vertical-align: middle !important;
+    -webkit-appearance: none;
+    background-color: var(--el-button-bg-color) !important;
+    border: var(--el-border) !important;
+    border-color: var(--el-button-border-color) !important;
+    padding: 8px 15px !important;
+    font-size: var(--el-font-size-base) !important;
+}
+
+.fc .fc-button:focus {
+    box-shadow: unset !important;
+    outline: unset !important;
+}
+
+.fc-button-group {
+    position: unset !important;
+
+    display: inline-block !important;
+    vertical-align: middle !important;
+}
+
+.fc-button-group .fc-button-primary:first-child {
+    border-right-color: var(--el-button-divide-border-color) !important;
+}
+
+.fc-button-group .fc-button-primary:last-child {
+    border-left-color: var(--el-button-divide-border-color) !important;
+}
+
+.fc-button-group>.fc-button:first-child {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.fc-button-group>.fc-button {
+    float: left !important;
+    position: relative !important;
 }

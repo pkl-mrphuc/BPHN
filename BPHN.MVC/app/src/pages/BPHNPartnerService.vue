@@ -1,6 +1,7 @@
 <template>
   <section>
-    <h1 class="fs-36">{{ t('Home') }}</h1>
+    <h1 class="fs-36">{{ t('Service') }} / {{ t('Partner') }}</h1>
+    
   </section>
 </template>
 
@@ -9,4 +10,3 @@ import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 </script>
-
