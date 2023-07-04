@@ -1,10 +1,10 @@
 <template>
   <div class="common-layout">
     <el-container>
-      <el-header class="p-0">
+      <el-header class="header p-0">
         <el-menu
           :default-active="activeIndex"
-          class="px-200 d-flex justify-content-between align-items-center"
+          class="menu d-flex justify-content-between align-items-center"
           mode="horizontal"
           @select="handleSelect"
         >
@@ -15,10 +15,22 @@
           </div>
 
           <div class="d-flex justify-content-center align-items-center">
-            <el-menu-item index="0">HOME</el-menu-item>
-            <el-menu-item index="1">CALENDAR</el-menu-item>
-            <el-menu-item index="2">REGISTER</el-menu-item>
-            <el-menu-item index="3">CONTACT</el-menu-item>
+            <router-link to="/" class="menu_item">
+              <el-menu-item index="0">Trang chủ</el-menu-item>
+            </router-link>
+            <router-link to="/search" class="menu_item">
+              <el-menu-item index="1">Tra cứu</el-menu-item>
+            </router-link>
+            <el-sub-menu index="2" class="menu_item">
+              <template #title>Đăng ký dịch vụ</template>
+              <router-link class="menu_item" to="/register-service">
+                <el-menu-item index="2-1">Chủ sân</el-menu-item>
+              </router-link>
+            </el-sub-menu>
+
+            <router-link to="/contact-me" class="menu_item">
+              <el-menu-item index="3">Liên hệ</el-menu-item>
+            </router-link>
           </div>
 
           <div class="d-flex align-items-center justify-content-center">
@@ -45,10 +57,13 @@
           </div>
         </el-menu>
       </el-header>
-      <el-main>
-        <router-view />
+      <el-main class="d-flex wp-100 p-0">
+        <section class="wp-15 hp-100"></section>
+        <section class="wp-70 hp-100">
+          <router-view />
+        </section>
+        <section class="wp-15 hp-100"></section>
       </el-main>
-      <el-footer>Footer</el-footer>
     </el-container>
   </div>
 </template>
@@ -73,9 +88,19 @@ const loadMode = () => {
 <style scoped>
 @import "@/assets/css/index.css";
 
-.el-menu-demo {
-  width: 100%;
-  margin: auto 20px;
+.menu {
+  border-bottom: 0;
+  width: 70%;
+  margin: 0 auto;
+}
+
+.menu_item {
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.header {
+  border-bottom: solid 1px var(--el-menu-border-color);
 }
 
 .header_left {
