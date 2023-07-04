@@ -39,10 +39,10 @@
               active-icon="Moon"
               inactive-icon="Sunny"
               class="mx-12"
-              @change="loadMode"
+              @change="changeDarkMode"
             />
             <el-dropdown @command="changeLanguage">
-              <flag-icon :name="lang"></flag-icon>
+              <flag-icon :name="language"></flag-icon>
               <template #dropdown>
                 <el-dropdown-menu>
                   <el-dropdown-item command="vi">
@@ -71,15 +71,44 @@
 
 <script setup>
 import FlagIcon from "@/components/FlagIcon.vue";
-import { ref } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
+import { useStore } from "vuex";
 
-const lang = ref("vi");
+const store = useStore();
 const activeIndex = ref("0");
-const darkMode = ref(false);
+const darkMode = ref(store.getters["config/getDarkMode"]);
+const language = ref(store.getters["config/getLanguage"]);
+
+const getDarkMode = computed(() => {
+  return store.getters["config/getDarkMode"];
+});
+
+const getLanguage = computed(() => {
+  return store.getters["config/getLanguage"];
+});
+
+watch(getDarkMode, (newValue) => {
+  darkMode.value = newValue;
+});
+
+watch(getLanguage, (newValue) => {
+  language.value = newValue;
+});
+
+onMounted(() => {
+  loadDarkMode();
+})
+
 const changeLanguage = (command) => {
-  lang.value = command;
+  store.commit("config/setLanguage", command);
 };
-const loadMode = () => {
+
+const changeDarkMode = () => {
+  store.commit("config/setDarkMode", darkMode.value);
+  loadDarkMode();
+};
+
+const loadDarkMode = () => {
   if (darkMode.value) document.documentElement.setAttribute("class", "dark");
   else document.documentElement.removeAttribute("class");
 };
