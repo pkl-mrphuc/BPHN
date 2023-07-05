@@ -14,5 +14,6 @@ namespace BPHN.DataLayer.IRepositories
         Task<bool> Cancel(string id);
         Task<List<CalendarEvent>> GetByDate(string date, Guid accountId);
         Task<bool> UpdateMatch(CalendarEvent eventInfo);
+        Task<List<CalendarEvent>> GetByRangeDate(string startDate, string endDate, string pitchId);
     }
 }

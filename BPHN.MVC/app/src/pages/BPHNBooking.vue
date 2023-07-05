@@ -5,28 +5,29 @@
       <el-alert
         type="warning"
         :closable="false"
-        description="Bạn có thể đặt sân theo sau khi hoàn thiện các bước sau hoặc liên hệ chủ sân bóng"
+        :description="t('BookingStep')"
         class="mb-8"
       />
       <el-alert
         type="warning"
         :closable="false"
-        description="Lưu ý: Bạn có thể đặt online nếu chủ sân là đối tác của BPHN. Xem chi tiết danh sách ở đây"
+        :description="t('OnlyPartner')"
         class="mb-8"
       />
       <el-steps :active="active" finish-status="success" simple>
-        <el-step title="Tìm sân" />
-        <el-step title="Xem lịch" />
-        <el-step title="Đặt sân" />
+        <el-step :title="t('Step1')" />
+        <el-step :title="t('Step2')" />
+        <el-step :title="t('Step3')" />
       </el-steps>
       <div class="p-12">
         <div class="content">
-          <div v-show="active == 0">
+          <div v-if="active == 0">
             <el-autocomplete
               class="wp-100 mb-8"
               v-model="state"
               :fetch-suggestions="querySearch"
               popper-class="my-autocomplete"
+              :placeholder="t('FindStadium')"
               @select="handleSelect"
             >
               <template #suffix>
@@ -40,21 +41,21 @@
             </el-autocomplete>
 
             <el-table :data="lstStadium" height="250" style="width: 100%">
-              <el-table-column prop="name" label="Tên" width="180" />
-              <el-table-column prop="address" label="Địa chỉ" />
+              <el-table-column prop="name" :label="t('Name')" width="180" />
+              <el-table-column prop="address" :label="t('Address')" />
               <el-table-column fixed="right" label="" width="200">
                 <template #default="scope">
                   <el-button
                     type="info"
                     size="small"
                     @click="view(scope.row)"
-                    >Xem chi tiết</el-button
+                    >{{ t("ViewDetail") }}</el-button
                   >
                   <el-button
                     type="primary"
                     size="small"
                     @click="choose(scope.row)"
-                    >Chọn</el-button
+                    >{{ t("Choose") }}</el-button
                   >
                 </template>
               </el-table-column>
@@ -72,13 +73,16 @@
               @current-change="currentPage"
             />
           </div>
-          <div v-show="active == 1">
+          <div v-if="active == 1">
             <div class="d-flex justify-content-between align-items-center">
               <span class="fs-36">{{ stadiumName }}</span>
               <div class="ml-auto"></div>
-              <el-button type="primary" @click="today" :disabled="isToday"
-                >Hôm nay</el-button
-              >
+              <el-button @click="prevStep" type="primary" v-if="active != 0">{{
+                t("Back")
+              }}</el-button>
+              <el-button type="primary" @click="today">{{
+                t("Today")
+              }}</el-button>
               <el-button-group class="ml-8">
                 <el-button type="primary" @click="prev">
                   <el-icon><ArrowLeft /></el-icon>
@@ -88,18 +92,9 @@
                 </el-button>
               </el-button-group>
             </div>
-            <div id="calendar" class="wp-100"></div>
           </div>
-          <div v-show="active == 2"></div>
-        </div>
-        <div class="d-flex justify-content-between align-items-center my-8">
-          <div class="ml-auto"></div>
-          <el-button @click="prevStep" type="primary" v-if="active != 0"
-            >Prev</el-button
-          >
-          <el-button @click="nextStep" type="primary" v-if="active == 2"
-            >Complete</el-button
-          >
+          <div v-if="active == 2"></div>
+          <div id="calendar" v-show="active == 1" class="wp-100"></div>
         </div>
       </div>
     </section>
@@ -118,7 +113,6 @@ const state = ref("");
 const store = useStore();
 const language = ref(store.getters["config/getLanguage"]);
 const objCalendar = ref(null);
-const isToday = ref(true);
 const { t } = useI18n();
 const active = ref(0);
 const lstStadium = ref([]);
@@ -126,6 +120,7 @@ const pageIndex = ref(1);
 const pageSize = ref(100);
 const totalRecord = ref(0);
 const stadiumName = ref("");
+const running = ref(0);
 
 const getLanguage = computed(() => {
   return store.getters["config/getLanguage"];
@@ -133,7 +128,7 @@ const getLanguage = computed(() => {
 
 watch(getLanguage, (newValue) => {
   language.value = newValue;
-  renderCalendar();
+  renderCalendar(localStorage.getItem("stadium-id"));
 });
 
 const querySearch = (queryString, cb) => {
@@ -165,27 +160,45 @@ const handleSelect = (item) => {
 };
 
 const today = () => {
+  if (running.value > 0) return;
+  ++running.value;
+
   if (objCalendar.value) {
     objCalendar.value.today();
-    isToday.value = true;
   }
+
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
 };
 
 const prev = () => {
+  if (running.value > 0) return;
+  ++running.value;
+
   if (objCalendar.value) {
     objCalendar.value.prev();
-    isToday.value = false;
   }
+
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
 };
 
 const next = () => {
+  if (running.value > 0) return;
+  ++running.value;
+
   if (objCalendar.value) {
     objCalendar.value.next();
-    isToday.value = false;
   }
+
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
 };
 
-const renderCalendar = () => {
+const renderCalendar = (stadiumId) => {
   let calendarElement = document.getElementById("calendar");
   if (calendarElement) {
     const calendar = new Calendar(calendarElement, {
@@ -198,10 +211,111 @@ const renderCalendar = () => {
         right: "",
       },
       height: "1785px",
+      events: async function (data, callback) {
+        if (data) {
+          let events = await getEventByDate(
+            dateToString(data.start, "yyyy-MM-dd"),
+            dateToString(data.end, "yyyy-MM-dd"),
+            stadiumId
+          );
+          callback(events);
+        }
+        callback([]);
+      },
+      eventContent: function (arg) {
+        let eventInfo = arg.event.extendedProps;
+        return { domNodes: buildEventInfoHtml(arg.timeText, eventInfo) };
+      },
     });
     objCalendar.value = calendar;
     calendar.render();
   }
+};
+
+const dateToString = (date, formatDate, hasTime = false) => {
+  if (typeof date == "string") {
+    date = new Date(date);
+  }
+  let fullYear = date.getFullYear();
+  let month =
+    date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+  let day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+
+  let result = "";
+  switch (formatDate) {
+    case "yyyy-MM-dd":
+      result = `${fullYear}-${month}-${day}`;
+      break;
+    case "dd-MM-yyyy":
+      result = `${day}-${month}-${fullYear}`;
+      break;
+    default:
+      result = `${day}/${month}/${fullYear}`;
+      break;
+  }
+
+  if (hasTime) {
+    let hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
+    let minutes =
+      date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+    let seconds =
+      date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds();
+    return `${result} ${hours}:${minutes}:${seconds}`;
+  }
+  return result;
+};
+
+const getEventByDate = async (start, end, stadiumId) => {
+  let result = await store.dispatch("bookingDetail/getByDate", {
+    startDate: start,
+    endDate: end,
+    pitchId: stadiumId,
+  });
+  if (result?.data?.data) {
+    let data = result.data.data;
+    let lstResult = [];
+    for (let i = 0; i < data.length; i++) {
+      let item = data[i];
+      lstResult.push({
+        start: item.start,
+        end: item.end,
+        extendedProps: {
+          bookingDetailId: item.id,
+          pitchId: item.pitchId,
+          teamA: !item.teamA ? item.phoneNumber : item.teamA,
+          teamB: item.teamB ?? "",
+          stadium: item.stadium,
+          note: item.note ?? "",
+        },
+      });
+    }
+    return lstResult;
+  }
+};
+
+const buildEventInfoHtml = (timeText, eventInfo) => {
+  let eventContainer = document.createElement("div");
+  eventContainer.style.display = "flex";
+  eventContainer.style.flexDirection = "column";
+  eventContainer.style.height = "100%";
+  eventContainer.style.padding = "5px";
+  eventContainer.style.boxSizing = "border-box";
+  let html = `<i>${eventInfo.stadium}</i> 
+              <div>
+                <div style="font-weight: bold; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" title="${
+                  eventInfo.teamA
+                }">- ${eventInfo.teamA}</div>
+                <div style="font-weight: bold; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" title="${
+                  eventInfo.teamB
+                }">- ${!eventInfo.teamB ? "?" : eventInfo.teamB}</div>
+              </div>
+              <div style="margin-top: auto; font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${
+                eventInfo.note
+              }">${eventInfo.note}</div>`;
+
+  eventContainer.innerHTML = html;
+  let arrayOfDomNodes = [eventContainer];
+  return arrayOfDomNodes;
 };
 
 const nextStep = () => {
@@ -230,8 +344,15 @@ const view = (stadium) => {
 };
 
 const choose = (stadium) => {
-  stadiumName.value = stadium.name;
-  nextStep();
-  renderCalendar();
+  if (stadium) {
+    let stadiumId = localStorage.getItem("stadium-id");
+    if (stadiumId) {
+      localStorage.removeItem("stadium-id");
+    }
+    localStorage.setItem("stadium-id", stadium.id);
+    stadiumName.value = stadium.name;
+    nextStep();
+    renderCalendar(stadium.id);
+  }
 };
 </script>

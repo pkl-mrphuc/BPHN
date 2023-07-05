@@ -63,6 +63,22 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
+        public async Task<ServiceResultModel> GetByRangeDate(string startDate, string endDate, string pitchId)
+        {
+            var result = await _bookingDetailRepository.GetByRangeDate(startDate, endDate, pitchId);
+            result = result.Select(item =>
+            {
+                item.Start = new DateTime(item.MatchDate.Year, item.MatchDate.Month, item.MatchDate.Day, item.Start.Hour, item.Start.Minute, 0);
+                item.End = new DateTime(item.MatchDate.Year, item.MatchDate.Month, item.MatchDate.Day, item.End.Hour, item.End.Minute, 0);
+                return item;
+            }).ToList();
+            return new ServiceResultModel()
+            {
+                Success = true,
+                Data = result
+            };
+        }
+
         public ServiceResultModel GetMatchDates(DateTime startDate, DateTime endDate)
         {
             var lstBookingDetail = new List<BookingDetail>();

@@ -1,6 +1,7 @@
 ﻿using BPHN.BusinessLayer.IServices;
 using BPHN.ModelLayer.Attributes;
 using BPHN.ModelLayer.Others;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Serilog;
@@ -8,7 +9,6 @@ using System.Globalization;
 
 namespace BPHN.WebAPI.Controllers
 {
-    [ApiAuthorize]
     public class BookingDetailsController : BaseController
     {
         private readonly IBookingDetailService _bookingDetailService;
@@ -17,6 +17,7 @@ namespace BPHN.WebAPI.Controllers
             _bookingDetailService = provider.GetRequiredService<IBookingDetailService>();
         }
 
+        [ApiAuthorize]
         [HttpPost]
         [Route("cancel/{id}")]
         public async Task<IActionResult> Cancel(string id)
@@ -25,6 +26,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _bookingDetailService.Cancel(id));
         }
 
+        [ApiAuthorize]
         [HttpGet]
         [Route("{date}")]
         public async Task<IActionResult> GetByDate(string date)
@@ -33,12 +35,21 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _bookingDetailService.GetByDate(date));
         }
 
+        [ApiAuthorize]
         [HttpPost]
         [Route("update-match")]
         public async Task<IActionResult> UpdateMatch([FromBody]CalendarEvent request)
         {
             Log.Debug($"BookingDetail/UpdateMatch start: {JsonConvert.SerializeObject(request)}");
             return Ok(await _bookingDetailService.UpdateMatch(request));
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetByRangeDate(string startDate, string endDate, string pitchId)
+        {
+            Log.Debug($"BookingDetail/GetByRangeDate start: {JsonConvert.SerializeObject(new { StartDate = startDate, EndDate = endDate, PitchId = pitchId })}");
+            return Ok(await _bookingDetailService.GetByRangeDate(startDate, endDate, pitchId));
         }
     }
 }

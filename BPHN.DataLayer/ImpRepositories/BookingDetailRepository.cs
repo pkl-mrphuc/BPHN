@@ -47,6 +47,27 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
+        public async Task<List<CalendarEvent>> GetByRangeDate(string startDate, string endDate, string pitchId)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var dic = new Dictionary<string, object>();
+                dic.Add("@status0", BookingStatusEnum.SUCCESS.ToString());
+                dic.Add("@startDate", $"{startDate} 00:00:00");
+                dic.Add("@endDate", $"{endDate} 23:59:59");
+                dic.Add("@pitchId", pitchId);
+                var query = @"select bd.*, b.PitchId, tfi.TimeBegin as Start, tfi.TimeEnd as End, b.NameDetail as Stadium, b.PhoneNumber as PhoneNumber  from booking_details bd 
+                                                inner join bookings b on b.Id = bd.BookingId
+                                                inner join time_frame_infos tfi on b.TimeFrameInfoId = tfi.Id
+                                                inner join pitchs p on p.Id = b.PitchId and p.Id = @pitchId
+                                                where   bd.Status in (@status0) and 
+                                                        bd.MatchDate between @startDate and @endDate";
+                var lstBookingDetail = (await connection.QueryAsync<CalendarEvent>(query, dic)).ToList();
+                return lstBookingDetail;
+            }
+        }
+
         public async Task<List<BookingDetail>> GetInRangeDate(Guid accountId, DateTime startDate, DateTime endDate)
         {
             using (var connection = ConnectDB(GetConnectionString()))
