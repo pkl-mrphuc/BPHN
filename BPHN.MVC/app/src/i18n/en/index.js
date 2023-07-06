@@ -15,7 +15,16 @@ const en = {
     ViewDetail: 'View detail',
     Choose: 'Choose',
     Back: 'Back to previous step',
-    FindStadium: 'Typing key to search stadium ...'
+    FindStadium: 'Typing key to search stadium ...',
+    NameDetails: 'Details',
+    TimeFrameName: 'Time frame name',
+    TimeFrameStart: 'Start time',
+    TimeFrameEnd: 'End time',
+    TimeFramePrice: 'Price',
+    DragDropOnCalendar: 'Note: Drag and drop on calendar to choose time frame of booking order',
+    OK: 'Ok',
+    Cancel: 'Cancel',
+    ConfirmBooking: 'Do you want book {name} at {time} ?'
 };
 
 export default en;

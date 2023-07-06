@@ -15,7 +15,16 @@ const vi = {
     ViewDetail: 'Xem chi tiết',
     Choose: 'Chọn',
     Back: 'Quay lại bước trước',
-    FindStadium: 'Nhập từ khóa để tìm kiếm sân ...'
+    FindStadium: 'Nhập từ khóa để tìm kiếm sân ...',
+    NameDetails: 'Sân',
+    TimeFrameName: 'Khung giờ',
+    TimeFrameStart: 'Bắt đầu',
+    TimeFrameEnd: 'Kết thúc',
+    TimeFramePrice: 'Giá',
+    DragDropOnCalendar: 'Lưu ý: Kéo thả chuột trên lịch sân bóng để chọn khung giờ cần đặt',
+    OK: 'Đồng ý',
+    Cancel: 'Hủy bỏ',
+    ConfirmBooking: 'Bạn có muốn đặt sân {name} vào lúc {time} không ?'
 };
 
 export default vi;
