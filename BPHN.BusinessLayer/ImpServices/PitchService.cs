@@ -2,6 +2,7 @@
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
+using MySqlX.XDevAPI.Relational;
 using Newtonsoft.Json;
 
 namespace BPHN.BusinessLayer.ImpServices
@@ -219,10 +220,16 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var resultPaging = await _pitchRepository.GetPaging(pageIndex, pageSize, lstWhere);
+            var now = DateTime.Now;
             resultPaging = resultPaging.Select(item =>
             {
                 item.AvatarUrl = (string)(_fileService.GetLinkFile(item.Id.ToString()).Data ?? "");
-                item.TimeFrameInfos = hasDetail ? _timeFrameInfoRepository.GetByPitchId(item.Id).Result : new List<TimeFrameInfo>();
+                item.TimeFrameInfos = hasDetail ? _timeFrameInfoRepository.GetByPitchId(item.Id).Result.Select(item =>
+                {
+                    item.TimeBegin = new DateTime(now.Year, now.Month, now.Day, item.TimeBegin.Hour, item.TimeBegin.Minute, 0);
+                    item.TimeEnd = new DateTime(now.Year, now.Month, now.Day, item.TimeEnd.Hour, item.TimeEnd.Minute, 0);
+                    return item;
+                }).ToList() : new List<TimeFrameInfo>();
                 return item;
             }).ToList();
 

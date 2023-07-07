@@ -360,12 +360,22 @@ const openConfirmDialog = (selectedInfo, stadiumData) => {
 };
 
 const validateSelectDateTimeOnCalendar = (selectedInfo, stadiumData) => {
-  let startTime = dateToString(selectedInfo.start, "dd/MM/yyyy", true, false);
-  let endTime = dateToString(selectedInfo.end, "dd/MM/yyyy", true, false);
-  let selectedTime = `${startTime}-${endTime}`;
+  let inPeriodTimeFrame = false;
+  for (let i = 0; i < stadiumData.timeFrames.length; i++) {
+    const items = stadiumData.timeFrames[i].split('|');
+    let startTime = new Date(items[0]);
+    let endTime = new Date(items[1]);
+    if( (selectedInfo.start >= startTime && selectedInfo.start <= endTime) ||
+        (selectedInfo.end >= startTime && selectedInfo.end <= endTime) ||
+        (selectedInfo.start <= startTime && selectedInfo.end >= endTime) ||
+        (selectedInfo.start > endTime)) {
+      inPeriodTimeFrame = true;
+      break;
+    }
+  }
   if (
     stadiumData &&
-    stadiumData.timeFrames.includes(selectedTime) &&
+    inPeriodTimeFrame &&
     selectedInfo.start >= new Date()
   ) {
     return true;
@@ -496,12 +506,12 @@ const choose = (stadium) => {
       const item = lstTimeFrame[i];
       let startTime = dateToString(
         item.timeFrameStart,
-        "dd/MM/yyyy",
+        "yyyy-MM-dd",
         true,
-        false
+        true
       );
-      let endTime = dateToString(item.timeFrameEnd, "dd/MM/yyyy", true, false);
-      let timeFrame = `${startTime}-${endTime}`;
+      let endTime = dateToString(item.timeFrameEnd, "yyyy-MM-dd", true, true);
+      let timeFrame = `${startTime}|${endTime}`;
       timeFrames.push(timeFrame);
     }
     stadium.timeFrames = timeFrames;
