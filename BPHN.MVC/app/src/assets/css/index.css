@@ -8,6 +8,9 @@ body {
 .fs-36 {
     font-size: 36px;
 }
+.fs-20 {
+    font-size: 20px;
+}
 
 .d-flex {
     display: flex !important;
@@ -60,7 +63,9 @@ body {
 .wp-100 {
     width: 100%;
 }
-
+.wp-30 {
+    width: 30%;
+}
 .wp-70 {
     width: 70%;
 }

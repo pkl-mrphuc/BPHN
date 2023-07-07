@@ -8,14 +8,14 @@
         :description="t('BookingStep')"
         class="mb-8"
       />
-      <el-steps :active="active" finish-status="success" simple>
+      <el-steps :step="step" finish-status="success" simple>
         <el-step :title="t('Step1')" />
         <el-step :title="t('Step2')" />
         <el-step :title="t('Step3')" />
       </el-steps>
       <div class="p-12">
         <div class="content">
-          <div v-if="active == 0">
+          <div v-if="step == 0">
             <el-alert
               type="warning"
               :closable="false"
@@ -24,7 +24,7 @@
             />
             <el-autocomplete
               class="wp-100 mb-8"
-              v-model="state"
+              v-model="key"
               :fetch-suggestions="querySearch"
               popper-class="my-autocomplete"
               :placeholder="t('FindStadium')"
@@ -109,7 +109,7 @@
               @current-change="currentPage"
             />
           </div>
-          <div v-if="active == 1">
+          <div v-if="step == 1">
             <el-alert
               type="warning"
               :closable="false"
@@ -119,7 +119,7 @@
             <div class="d-flex justify-content-between align-items-center">
               <span class="fs-36">{{ stadiumName }}</span>
               <div class="ml-auto"></div>
-              <el-button @click="prevStep" type="primary" v-if="active != 0">{{
+              <el-button @click="prevStep" type="primary" v-if="step != 0">{{
                 t("Back")
               }}</el-button>
               <el-button type="primary" @click="today">{{
@@ -135,8 +135,98 @@
               </el-button-group>
             </div>
           </div>
-          <div v-if="active == 2"></div>
-          <div id="calendar" v-show="active == 1" class="wp-100"></div>
+          <div v-if="step == 2">
+            <div class="d-flex justify-content-between">
+              <div class="booking-info">
+                <h1
+                  class="fs-20 d-flex justify-content-center align-items-center"
+                >
+                  {{ t("Booking") }}
+                </h1>
+                <el-form-item>
+                  <el-col :span="7">
+                    <b>{{ t("StadiumName") }}</b>
+                  </el-col>
+                  <el-col :span="17"> {{ stadiumName }} </el-col>
+                </el-form-item>
+                <el-form-item>
+                  <el-col :span="7">
+                    <b>{{ t("BookingDate") }}</b>
+                  </el-col>
+                  <el-col :span="17">
+                    {{ bookingDate }}
+                  </el-col>
+                </el-form-item>
+                <el-form-item>
+                  <el-col :span="7">
+                    <b>{{ t("MatchDate") }}</b>
+                  </el-col>
+                  <el-col :span="17">
+                    {{ matchDate }}
+                  </el-col>
+                </el-form-item>
+                <el-form-item>
+                  <el-col :span="7">
+                    <b>{{ t("TimeFrame") }}</b>
+                  </el-col>
+                  <el-col :span="17"> {{ timeFrameInfo }} </el-col>
+                </el-form-item>
+                <el-form-item>
+                  <el-col :span="7">
+                    <b>{{ t("Price") }}</b>
+                  </el-col>
+                  <el-col :span="17"> {{ price }} </el-col>
+                </el-form-item>
+              </div>
+              <div class="user-info">
+                <el-form-item>
+                  <el-col>
+                    <b>{{ t("PhoneNumber") }} <span class="red">(*)</span></b>
+                  </el-col>
+                  <el-col>
+                    <el-input v-model="phoneNumber" maxlength="255" />
+                  </el-col>
+                </el-form-item>
+                <el-form-item>
+                  <el-col>
+                    <b>{{ t("Email") }}<span class="red">(*)</span></b>
+                  </el-col>
+                  <el-col>
+                    <el-input v-model="email" maxlength="255" />
+                  </el-col>
+                </el-form-item>
+                <el-form-item>
+                  <el-col>
+                    <b>{{ t("FootballTeam") }}</b>
+                  </el-col>
+                  <el-col>
+                    <el-input v-model="teamA" maxlength="255" />
+                  </el-col>
+                </el-form-item>
+                <el-form-item>
+                  <el-col>
+                    <b>{{ t("Note") }}</b>
+                  </el-col>
+                  <el-col>
+                    <el-input
+                      v-model="note"
+                      maxlength="500"
+                      :rows="3"
+                      type="textarea"
+                    />
+                  </el-col>
+                </el-form-item>
+                <el-form-item>
+                  <div class="ml-auto"></div>
+                  <el-button @click="prevStep">{{ t("Back") }}</el-button>
+                  <el-button type="primary" @click="complete">{{
+                    t("Complete")
+                  }}</el-button>
+                </el-form-item>
+              </div>
+            </div>
+          </div>
+          <div id="calendar" v-show="step == 1" class="wp-100"></div>
         </div>
       </div>
     </section>
@@ -153,18 +243,66 @@ import allLocales from "@fullcalendar/core/locales-all";
 import { useI18n } from "vue-i18n";
 import { ElMessageBox } from "element-plus";
 
-const state = ref("");
+const key = ref("");
 const store = useStore();
 const language = ref(store.getters["config/getLanguage"]);
 const objCalendar = ref(null);
+const objStadium = ref(null);
+const objBooking = ref(null);
 const { t } = useI18n();
-const active = ref(0);
+const step = ref(0);
 const lstStadium = ref([]);
 const pageIndex = ref(1);
 const pageSize = ref(100);
 const totalRecord = ref(0);
-const stadiumName = ref("");
 const running = ref(0);
+
+
+const bookingId = ref(null);
+const timeFrameInfoId = ref(null);
+const stadiumName = ref(null);
+const phoneNumber = ref(null);
+const bookingDate = ref(null);
+const matchDate = ref(null);
+const matchDateReal = ref(null);
+const email = ref(null);
+const note = ref(null);
+const teamA = ref(null);
+const price = ref(null);
+const timeFrameInfo = ref(null);
+const pitchId = ref(null);
+const weekdays = ref(null);
+const accountId = ref(null);
+
+const complete = () => {
+  if(!phoneNumber.value) {
+    alert(t(""));
+    return;
+  }
+  if(!email.value) {
+    alert(t(""));
+    return;
+  }
+
+  store.dispatch("booking/insertBookingRequest", {
+    id: bookingId.value,
+    phoneNumber: phoneNumber.value,
+    email: email.value,
+    isRecurring: false,
+    startDate: dateToString(matchDateReal.value, "yyyy-MM-dd"),
+    endDate: dateToString(matchDateReal.value, "yyyy-MM-dd"),
+    weekendays: weekdays.value,
+    timeFrameInfoId: timeFrameInfoId.value,
+    pitchId: pitchId.value,
+    nameDetail: "Sân 1",
+    teamA: teamA.value,
+    note: note.value,
+    accountId: accountId.value,
+    bookingDate: dateToString(objBooking.value.bookingDate, "yyyy-MM-dd")
+  }).then((res) => {
+    console.log(res);
+  })
+};
 
 const objectSpanMethod = ({ row, column, rowIndex, columnIndex }) => {
   console.log(column ? "" : "");
@@ -237,12 +375,14 @@ const querySearch = (queryString, cb) => {
               id: item.id,
               name: item.name,
               address: item.address,
+              managerId: item.managerId,
               nameDetails: nameDetails(item.nameDetails),
               timeFrameName: propItem.name,
               timeFrameStart: propItem.timeBegin,
               timeFrameEnd: propItem.timeEnd,
               timeFramePrice: propItem.price,
               timeFrameId: propItem.id,
+              timeFrameInfos: item.timeFrameInfos
             });
           }
         }
@@ -261,8 +401,8 @@ const querySearch = (queryString, cb) => {
 };
 
 const handleSelect = (item) => {
-  state.value = item.name;
-  querySearch(state.value);
+  key.value = item.name;
+  querySearch(key.value);
 };
 
 const today = () => {
@@ -323,7 +463,7 @@ const renderCalendar = (stadiumData) => {
           let events = await getEventByDate(
             dateToString(data.start, "yyyy-MM-dd"),
             dateToString(data.end, "yyyy-MM-dd"),
-            stadiumData.id
+            stadiumData
           );
           callback(events);
         }
@@ -334,53 +474,105 @@ const renderCalendar = (stadiumData) => {
         return { domNodes: buildEventInfoHtml(arg.timeText, eventInfo) };
       },
       select: function (selectedInfo) {
-        if (validateSelectDateTimeOnCalendar(selectedInfo, stadiumData)) {
-          openConfirmDialog(selectedInfo, stadiumData);
+        let result = validateSelectDateTimeOnCalendar(selectedInfo);
+        if (result) {
+          openConfirmDialog(selectedInfo, result);
         }
       },
     });
     objCalendar.value = calendar;
+    objStadium.value = stadiumData;
+    stadiumName.value = stadiumData.name;
     calendar.render();
   }
 };
 
-const openConfirmDialog = (selectedInfo, stadiumData) => {
-  let startTime = dateToString(selectedInfo.start, "dd/MM/yyyy", true, false);
-  let endTime = dateToString(selectedInfo.end, "dd/MM/yyyy", true, false);
-  let selectedTime = `${startTime}-${endTime}`;
-  ElMessageBox.confirm(t('ConfirmBooking', { name: stadiumData.name, time: selectedTime }), "", {
-    confirmButtonText: t("OK"),
-    cancelButtonText: t("Cancel"),
-    type: "info",
-  })
+const openConfirmDialog = (selectedInfo, timeFrame) => {
+  let selectedDate = dateToString(selectedInfo.end, "dd/MM/yyyy", false, true);
+  let selectedStartTime = dateToString(
+    timeFrame.timeBegin,
+    "dd/MM/yyyy",
+    true,
+    false
+  );
+  let selectedEndTime = dateToString(
+    timeFrame.timeEnd,
+    "dd/MM/yyyy",
+    true,
+    false
+  );
+  let selectedTime = `${selectedStartTime} - ${selectedEndTime}`;
+  ElMessageBox.confirm(
+    t("ConfirmBooking", {
+      name: objStadium.value.name,
+      time: selectedTime,
+      date: selectedDate,
+    }),
+    "",
+    {
+      confirmButtonText: t("OK"),
+      cancelButtonText: t("Cancel"),
+      type: "info",
+    }
+  )
     .then(() => {
       nextStep();
+      store.dispatch("booking/getInstance", "").then((res) => {
+        if (res?.data?.data) {
+          objBooking.value = res.data.data;
+          bookingId.value = objBooking.value.id;
+          timeFrameInfoId.value = timeFrame.id;
+          stadiumName.value = objStadium.value.name;
+          bookingDate.value = dateToString(objBooking.value.bookingDate, "dd/MM/yyyy");
+          matchDate.value = selectedDate;
+          matchDateReal.value = selectedInfo.end
+          price.value = timeFrame.price;
+          timeFrameInfo.value = selectedTime;
+          pitchId.value = objStadium.value.id;
+          weekdays.value = selectedInfo.end.getDay(),
+          accountId.value = objStadium.value.managerId
+        }
+      });
     })
     .catch(() => {});
 };
 
-const validateSelectDateTimeOnCalendar = (selectedInfo, stadiumData) => {
-  let inPeriodTimeFrame = false;
-  for (let i = 0; i < stadiumData.timeFrames.length; i++) {
-    const items = stadiumData.timeFrames[i].split('|');
-    let startTime = new Date(items[0]);
-    let endTime = new Date(items[1]);
-    if( (selectedInfo.start >= startTime && selectedInfo.start <= endTime) ||
-        (selectedInfo.end >= startTime && selectedInfo.end <= endTime) ||
-        (selectedInfo.start <= startTime && selectedInfo.end >= endTime) ||
-        (selectedInfo.start > endTime)) {
-      inPeriodTimeFrame = true;
-      break;
+const validateSelectDateTimeOnCalendar = (selectedInfo) => {
+  let selectedStart = selectedInfo.start;
+  let selectedEnd = selectedInfo.end;
+  for (let i = 0; i < objStadium.value.timeFrameInfos.length; i++) {
+    const items = objStadium.value.timeFrameInfos[i];
+    let startTime = new Date(items.timeBegin);
+    let endTime = new Date(items.timeEnd);
+    if (selectedStart > endTime) {
+      let now = new Date();
+      selectedStart = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        selectedInfo.start.getHours(),
+        selectedInfo.start.getMinutes(),
+        selectedInfo.start.getSeconds()
+      );
+      selectedEnd = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        selectedInfo.start.getHours(),
+        selectedInfo.end.getMinutes(),
+        selectedInfo.end.getSeconds()
+      );
+    }
+
+    if (
+      (selectedStart >= startTime && selectedStart <= endTime) ||
+      (selectedEnd >= startTime && selectedEnd <= endTime) ||
+      (selectedStart <= startTime && selectedEnd >= endTime)
+    ) {
+      return items;
     }
   }
-  if (
-    stadiumData &&
-    inPeriodTimeFrame &&
-    selectedInfo.start >= new Date()
-  ) {
-    return true;
-  }
-  return false;
+  return null;
 };
 
 const dateToString = (date, formatDate, hasTime = false, hasDate = true) => {
@@ -420,11 +612,11 @@ const dateToString = (date, formatDate, hasTime = false, hasDate = true) => {
   return result;
 };
 
-const getEventByDate = async (start, end, stadiumId) => {
+const getEventByDate = async (start, end, stadiumData) => {
   let result = await store.dispatch("bookingDetail/getByDate", {
     startDate: start,
     endDate: end,
-    pitchId: stadiumId,
+    pitchId: stadiumData.id,
   });
   if (result?.data?.data) {
     let data = result.data.data;
@@ -474,24 +666,24 @@ const buildEventInfoHtml = (timeText, eventInfo) => {
 };
 
 const nextStep = () => {
-  active.value++;
+  step.value++;
 };
 
 const prevStep = () => {
-  active.value--;
-  if (active.value < 0) active.value = 0;
+  step.value--;
+  if (step.value < 0) step.value = 0;
 };
 
 const nextPage = () => {
-  querySearch(state.value);
+  querySearch(key.value);
 };
 
 const prevPage = () => {
-  querySearch(state.value);
+  querySearch(key.value);
 };
 
 const currentPage = () => {
-  querySearch(state.value);
+  querySearch(key.value);
 };
 
 const choose = (stadium) => {
@@ -500,25 +692,22 @@ const choose = (stadium) => {
     if (stadiumData) {
       localStorage.removeItem("stadium-data");
     }
-    let lstTimeFrame = lstStadium.value.filter((item) => item.id == stadium.id);
-    let timeFrames = [];
-    for (let i = 0; i < lstTimeFrame.length; i++) {
-      const item = lstTimeFrame[i];
-      let startTime = dateToString(
-        item.timeFrameStart,
-        "yyyy-MM-dd",
-        true,
-        true
-      );
-      let endTime = dateToString(item.timeFrameEnd, "yyyy-MM-dd", true, true);
-      let timeFrame = `${startTime}|${endTime}`;
-      timeFrames.push(timeFrame);
-    }
-    stadium.timeFrames = timeFrames;
     localStorage.setItem("stadium-data", JSON.stringify(stadium));
-    stadiumName.value = stadium.name;
     nextStep();
     renderCalendar(stadium);
   }
 };
 </script>
+
+<style scoped>
+.booking-info {
+  width: 40%;
+  border: var(--el-border);
+  padding: 30px;
+}
+
+.user-info {
+  width: 60%;
+  padding: 30px;
+}
+</style>>

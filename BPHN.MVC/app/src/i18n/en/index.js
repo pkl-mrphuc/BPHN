@@ -24,7 +24,17 @@ const en = {
     DragDropOnCalendar: 'Note: Drag and drop on calendar to choose time frame of booking order',
     OK: 'Ok',
     Cancel: 'Cancel',
-    ConfirmBooking: 'Do you want book {name} at {time} ?'
+    ConfirmBooking: 'Do you want book {name} at {date} {time} ?',
+    StadiumName: 'Name',
+    BookingDate: 'Booking date',
+    MatchDate: 'Match date',
+    TimeFrame: 'Time frame',
+    Price: 'Price',
+    PhoneNumber: 'Phone number',
+    Email: 'Email',
+    FootballTeam: 'Football team',
+    Note: 'Note',
+    Complete: 'Complete'
 };
 
 export default en;

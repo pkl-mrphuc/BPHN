@@ -142,8 +142,19 @@ onMounted(() => {
                     prop="status"
                   >
                     <template #default="scope">
-                      <el-tag type="success" v-if="scope.row.status == 'SUCCESS'">{{ scope.row.status }}</el-tag>
-                      <el-tag type="danger" v-else>{{ scope.row.status }}</el-tag>
+                      <el-tag
+                        type="success"
+                        v-if="scope.row.status == 'SUCCESS'"
+                        >{{ scope.row.status }}</el-tag
+                      >
+                      <el-tag
+                        type="info"
+                        v-else-if="scope.row.status == 'PENDING'"
+                        >{{ scope.row.status }}</el-tag
+                      >
+                      <el-tag type="danger" v-else>{{
+                        scope.row.status
+                      }}</el-tag>
                     </template>
                   </el-table-column>
                   <el-table-column
@@ -189,7 +200,13 @@ onMounted(() => {
           </el-table-column>
           <el-table-column :label="t('Status')" width="150">
             <template #default="scope">
-              <el-tag type="success">{{ scope.row.status }}</el-tag>
+              <el-tag type="success" v-if="scope.row.status == 'SUCCESS'">{{
+                scope.row.status
+              }}</el-tag>
+              <el-tag type="info" v-else-if="scope.row.status == 'PENDING'">{{
+                scope.row.status
+              }}</el-tag>
+              <el-tag type="danger" v-else>{{ scope.row.status }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column :label="t('BookingDate')">

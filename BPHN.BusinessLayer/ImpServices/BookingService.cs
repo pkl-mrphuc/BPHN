@@ -327,6 +327,97 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
+        public async Task<ServiceResultModel> InsertBookingRequest(Booking data)
+        {
+            var fakeContext = new Account()
+            {
+                FullName = data.PhoneNumber,
+                UserName = data.PhoneNumber,
+                IPAddress = _contextService.GetIPAddress()
+            };
+
+            var isValid = ValidateModelByAttribute(data, new List<string>());
+            if (!isValid)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.EMPTY_INPUT,
+                    Message = "Dữ liệu đầu vào không được để trống"
+                };
+            }
+
+            if ((data.IsRecurring && data.StartDate.Date.Equals(data.EndDate.Date)) ||
+                (data.IsRecurring && (!data.Weekendays.HasValue || (data.Weekendays.HasValue && data.Weekendays.Value < 0) || (data.Weekendays.HasValue && data.Weekendays.Value > 6))) ||
+                data.EndDate.Date < DateTime.Now.Date)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.NO_INTEGRITY,
+                    Message = "Dữ liệu đầu vào không hợp lệ"
+                };
+            }
+
+            var checkFreeServiceResult = await CheckFreeTimeFrame(data);
+            if (!checkFreeServiceResult.Success)
+            {
+                return checkFreeServiceResult;
+            }
+
+            data.Id = data.Id.Equals(Guid.Empty) ? Guid.NewGuid() : data.Id;
+            data.BookingDate = DateTime.Now;
+            data.Status = BookingStatusEnum.PENDING.ToString();
+            data.AccountId = data.AccountId;
+            data.CreatedDate = DateTime.Now;
+            data.CreatedBy = fakeContext.UserName;
+            data.ModifiedBy = fakeContext.UserName;
+            data.ModifiedDate = DateTime.Now;
+
+            data.BookingDetails = data.BookingDetails.Select(item =>
+            {
+                item.Id = item.Id.Equals(Guid.Empty) ? Guid.NewGuid() : item.Id;
+                item.CreatedDate = DateTime.Now;
+                item.CreatedBy = fakeContext.UserName;
+                item.ModifiedBy = fakeContext.UserName;
+                item.ModifiedDate = DateTime.Now;
+                item.BookingId = data.Id;
+                item.Status = BookingStatusEnum.PENDING.ToString();
+                return item;
+            }).ToList();
+
+            var insertResult = await _bookingRepository.Insert(data);
+            if (insertResult)
+            {
+                Thread thread = new Thread(delegate ()
+                {
+                    var historyLogId = Guid.NewGuid();
+                    _historyLogService.Write(new HistoryLog()
+                    {
+                        Id = historyLogId,
+                        IPAddress = fakeContext.IPAddress,
+                        Actor = fakeContext.FullName,
+                        ActorId = data.AccountId,
+                        ActionType = ActionEnum.INSERT,
+                        Entity = "Thông tin đặt sân bóng",
+                        Description = BuildLinkDescription(historyLogId),
+                        Data = new HistoryLogDescription()
+                        {
+                            ModelId = data.Id,
+                            NewData = JsonConvert.SerializeObject(data)
+                        }
+                    }, fakeContext);
+                });
+                thread.Start();
+            }
+
+            return new ServiceResultModel()
+            {
+                Success = true,
+                Data = insertResult
+            };
+        }
+
         private async Task<List<Booking>> GetAllTimeFrameInfoCanBookInADay(string accountId)
         {
             var lstBooking = new List<Booking>();
