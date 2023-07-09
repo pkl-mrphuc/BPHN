@@ -7,7 +7,7 @@ class BookingDetailAPI {
 
     async getByDate(data) {
         try {
-            let requestUrl = `${process.env.VUE_APP_API_URL}/bookingdetails?startDate=${data.startDate}&endDate=${data.endDate}&pitchId=${data.pitchId}`;
+            let requestUrl = `${process.env.VUE_APP_API_URL}/bookingdetails?startDate=${data.startDate}&endDate=${data.endDate}&pitchId=${data.pitchId}&nameDetail=${data.nameDetail}`;
             return axios.get(requestUrl);
         } catch (error) {
             console.log(error);

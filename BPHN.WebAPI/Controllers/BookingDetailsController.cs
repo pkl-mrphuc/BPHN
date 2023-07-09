@@ -46,10 +46,10 @@ namespace BPHN.WebAPI.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> GetByRangeDate(string startDate, string endDate, string pitchId)
+        public async Task<IActionResult> GetByRangeDate(string startDate, string endDate, string pitchId, string nameDetail)
         {
-            Log.Debug($"BookingDetail/GetByRangeDate start: {JsonConvert.SerializeObject(new { StartDate = startDate, EndDate = endDate, PitchId = pitchId })}");
-            return Ok(await _bookingDetailService.GetByRangeDate(startDate, endDate, pitchId));
+            Log.Debug($"BookingDetail/GetByRangeDate start: {JsonConvert.SerializeObject(new { StartDate = startDate, EndDate = endDate, PitchId = pitchId, NameDetail = nameDetail })}");
+            return Ok(await _bookingDetailService.GetByRangeDate(startDate, endDate, pitchId, nameDetail));
         }
     }
 }

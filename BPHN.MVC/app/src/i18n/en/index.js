@@ -24,7 +24,7 @@ const en = {
     DragDropOnCalendar: 'Note: Drag and drop on calendar to choose time frame of booking order',
     OK: 'Ok',
     Cancel: 'Cancel',
-    ConfirmBooking: 'Do you want book {name} at {date} {time} ?',
+    ConfirmBooking: 'Do you want book {name} - {detail} at {date} {time} ?',
     StadiumName: 'Name',
     BookingDate: 'Booking date',
     MatchDate: 'Match date',
@@ -34,7 +34,13 @@ const en = {
     Email: 'Email',
     FootballTeam: 'Football team',
     Note: 'Note',
-    Complete: 'Complete'
+    Complete: 'Complete',
+    NotEmptyMesg: '{name} is not empty',
+    ChooseNameDetailMesg: 'Please choose detail stadium to complete this step',
+    All: 'All',
+    Confirm: 'Confirm',
+    BookingSuccessMesg: "Please check mail to check booking result.",
+    ErrorMesg: 'An error occurred. Please contract supplier'
 };
 
 export default en;

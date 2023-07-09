@@ -193,3 +193,7 @@ html.dark {
     float: left !important;
     position: relative !important;
 }
+
+.fc-event {
+    width: 95%;
+}

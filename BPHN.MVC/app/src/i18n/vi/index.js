@@ -24,7 +24,7 @@ const vi = {
     DragDropOnCalendar: 'Lưu ý: Kéo thả chuột trên lịch sân bóng để chọn khung giờ cần đặt',
     OK: 'Đồng ý',
     Cancel: 'Hủy bỏ',
-    ConfirmBooking: 'Bạn có muốn đặt sân {name} vào {date} lúc {time} không ?',
+    ConfirmBooking: 'Bạn có muốn đặt sân {name} - {detail} vào {date} lúc {time} không ?',
     StadiumName: 'Tên sân',
     BookingDate: 'Ngày đặt',
     MatchDate: 'Ngày diễn ra',
@@ -34,7 +34,13 @@ const vi = {
     Email: 'Email',
     FootballTeam: 'Tên đội bóng',
     Note: 'Ghi chú',
-    Complete: 'Hoàn thành'
+    Complete: 'Hoàn thành',
+    NotEmptyMesg: '{name} không được để trống',
+    ChooseNameDetailMesg: 'Vui lòng chọn sân để hoàn thiện bước này',
+    All: 'Tất cả',
+    Confirm: 'Xác nhận',
+    BookingSuccessMesg: "Vui lòng kiểm tra mail để biết kết quả đặt sân.",
+    ErrorMesg: 'Đã có lỗi xảy ra. Vui lòng liên hệ đến nhà cung cấp'
 };
 
 export default vi;

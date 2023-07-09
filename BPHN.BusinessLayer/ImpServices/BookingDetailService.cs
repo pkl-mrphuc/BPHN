@@ -63,9 +63,9 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task<ServiceResultModel> GetByRangeDate(string startDate, string endDate, string pitchId)
+        public async Task<ServiceResultModel> GetByRangeDate(string startDate, string endDate, string pitchId, string nameDetail)
         {
-            var result = await _bookingDetailRepository.GetByRangeDate(startDate, endDate, pitchId);
+            var result = await _bookingDetailRepository.GetByRangeDate(startDate, endDate, pitchId, nameDetail);
             result = result.Select(item =>
             {
                 item.Start = new DateTime(item.MatchDate.Year, item.MatchDate.Month, item.MatchDate.Day, item.Start.Hour, item.Start.Minute, 0);

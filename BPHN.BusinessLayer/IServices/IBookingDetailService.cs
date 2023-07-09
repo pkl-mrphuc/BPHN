@@ -10,6 +10,6 @@ namespace BPHN.BusinessLayer.IServices
         Task<ServiceResultModel> Cancel(string id);
         Task<ServiceResultModel> GetByDate(string date);
         Task<ServiceResultModel> UpdateMatch(CalendarEvent eventInfo);
-        Task<ServiceResultModel> GetByRangeDate(string startDate, string endDate, string pitchId);
+        Task<ServiceResultModel> GetByRangeDate(string startDate, string endDate, string pitchId, string nameDetail);
     }
 }
