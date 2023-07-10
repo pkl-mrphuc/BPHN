@@ -54,5 +54,5 @@ const forgot = () => {
 </template>
 
 <style scoped>
-@import "@/assets/css/BPHNLogin.css";
+@import "@/assets/css/page.css";
 </style>

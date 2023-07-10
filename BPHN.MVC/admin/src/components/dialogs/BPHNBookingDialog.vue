@@ -184,7 +184,7 @@ onMounted(() => {
         <el-form-item>
           <el-col :span="7">
             <el-select
-              style="width: 100%"
+              class="w-100"
               :placeholder="t('Infrastructure')"
               v-model="pitchId"
               @change="changePitchId"
@@ -199,7 +199,7 @@ onMounted(() => {
           </el-col>
           <el-col :span="7">
             <el-select
-              style="width: 100%"
+              class="w-100"
               :placeholder="t('TimeFrame')"
               v-model="timeFrameInfoId"
             >
@@ -213,7 +213,7 @@ onMounted(() => {
           </el-col>
           <el-col :span="7">
             <el-select
-              style="width: 100%"
+              class="w-100"
               :placeholder="t('NameDetail')"
               v-model="nameDetail"
             >
@@ -248,7 +248,7 @@ onMounted(() => {
           <el-date-picker
             type="date"
             placeholder="Ngày"
-            style="width: 100%"
+            class="w-100"
             v-model="fromDate"
             @change="changeDate"
             :disabled-date="disabledDate"
@@ -259,7 +259,7 @@ onMounted(() => {
             <el-date-picker
               type="date"
               :placeholder="t('FromDate')"
-              style="width: 100%"
+              class="w-100"
               v-model="fromDate"
               @change="changeDate"
               :disabled-date="disabledDate"
@@ -269,7 +269,7 @@ onMounted(() => {
             <el-date-picker
               type="date"
               :placeholder="t('ToDate')"
-              style="width: 100%"
+             class="w-100"
               v-model="toDate"
               @change="changeDate"
               disabled
@@ -279,8 +279,8 @@ onMounted(() => {
       </el-form>
     </template>
     <template #foot>
-      <div class="action-footer">
-        <span class="other-footer">
+      <div class="d-flex flex-row justify-content-between align-items-center">
+        <span>
           <el-button @click="quickCheck">{{ t("QuickCheck") }}</el-button>
           <el-button @click="finder">{{ t("Finder") }}</el-button>
         </span>
@@ -299,11 +299,3 @@ onMounted(() => {
     @callback="bindBlankData"
   ></FindBlankDialog>
 </template>
-
-<style scoped>
-.action-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-</style>

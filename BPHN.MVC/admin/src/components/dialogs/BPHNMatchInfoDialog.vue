@@ -17,7 +17,7 @@ const note = ref(props.data?.note ?? "");
 const id = ref(props.data?.bookingDetailId ?? "");
 
 const save = () => {
-  if(!teamA.value) {
+  if (!teamA.value) {
     alert(t("TeamAEmptyMesg"));
     return;
   }
@@ -38,24 +38,28 @@ const save = () => {
   <Dialog :title="t('MatchInfoForm')" :width="500">
     <template #body>
       <el-form-item>
-        <el-col :span="7">
-          <b>{{ t("TeamA") }}<span class="red">(*)</span></b>
+        <el-col :span="7" class="fw-bold">
+          {{ t("TeamA") }}<span class="text-danger">(*)</span>
         </el-col>
         <el-col :span="17">
-          <el-input v-model="teamA" maxlength="255" :placeholder="t('ShouldContainPhoneNumber')" />
+          <el-input
+            v-model="teamA"
+            maxlength="255"
+            :placeholder="t('ShouldContainPhoneNumber')"
+          />
         </el-col>
       </el-form-item>
       <el-form-item>
-        <el-col :span="7">
-          <b>{{ t("TeamB") }}</b>
+        <el-col :span="7" class="fw-bold">
+          {{ t("TeamB") }}
         </el-col>
         <el-col :span="17">
           <el-input v-model="teamB" maxlength="255" />
         </el-col>
       </el-form-item>
       <el-form-item>
-        <el-col :span="7">
-          <b>{{ t("Note") }}</b>
+        <el-col :span="7" class="fw-bold">
+          {{ t("Note") }}
         </el-col>
         <el-col :span="17">
           <el-input v-model="note" maxlength="500" :rows="3" type="textarea" />
@@ -70,9 +74,3 @@ const save = () => {
     </template>
   </Dialog>
 </template>
-
-<style scoped>
-.red {
-  color: #f56c6c;
-}
-</style>

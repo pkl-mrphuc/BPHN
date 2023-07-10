@@ -268,7 +268,10 @@ const isValidNameDetail = () => {
           </el-col>
         </el-form-item>
         <el-form-item>
-          <el-col :span="8" class="center">
+          <el-col
+            :span="8"
+            class="d-flex flex-column align-items-center justify-content-center"
+          >
             <div>{{ t("QuantityFootballField") }}</div>
             <el-input-number
               id="inpQuantity"
@@ -278,7 +281,10 @@ const isValidNameDetail = () => {
               :max="100"
             />
           </el-col>
-          <el-col :span="8" class="center">
+          <el-col
+            :span="8"
+            class="d-flex flex-column align-items-center justify-content-center"
+          >
             <div>{{ t("MinutesPerMatch") }}</div>
             <el-input-number
               v-model="minutesPerMatch"
@@ -287,7 +293,10 @@ const isValidNameDetail = () => {
               :step="30"
             />
           </el-col>
-          <el-col :span="8" class="center">
+          <el-col
+            :span="8"
+            class="d-flex flex-column align-items-center justify-content-center"
+          >
             <div>{{ t("TimeSlotPerDay") }}</div>
             <el-input-number
               id="inpTimeSlot"
@@ -300,7 +309,7 @@ const isValidNameDetail = () => {
         </el-form-item>
         <el-tabs type="border-card">
           <el-tab-pane :label="t('FootballFieldInfo')">
-            <el-table :data="configFootballFieldInfoData" class="w100">
+            <el-table :data="configFootballFieldInfoData" class="w-100">
               <el-table-column label="" width="200">
                 <template #default="scope">
                   <span>{{ scope.row.name }}</span>
@@ -323,7 +332,7 @@ const isValidNameDetail = () => {
             </el-table>
           </el-tab-pane>
           <el-tab-pane :label="t('TimeFrameInfo')">
-            <el-table :data="configTimeFrameData" class="w100">
+            <el-table :data="configTimeFrameData" class="w-100">
               <el-table-column label="" width="200">
                 <template #default="scope">
                   <span>{{ scope.row.name }}</span>
@@ -340,7 +349,7 @@ const isValidNameDetail = () => {
                   <el-input-number
                     v-if="scope.row.key == 'Price'"
                     v-model="item.price"
-                    style="width: 100%"
+                    class="w-100"
                     :min="0"
                     :step="100"
                   />
@@ -348,14 +357,14 @@ const isValidNameDetail = () => {
                   <el-time-picker
                     v-if="scope.row.key == 'TimeBegin'"
                     v-model="item.timeBegin"
-                    style="width: 100%"
+                    class="w-100"
                     @change="changeTimeBegin(item)"
                   />
 
                   <el-time-picker
                     v-if="scope.row.key == 'TimeEnd'"
                     v-model="item.timeEnd"
-                    style="width: 100%"
+                    class="w-100"
                     @change="changeTimeEnd(item)"
                   />
                 </template>
@@ -373,16 +382,3 @@ const isValidNameDetail = () => {
     </template>
   </Dialog>
 </template>
-
-<style scoped>
-.center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.m0 {
-  margin: 0;
-}
-</style>

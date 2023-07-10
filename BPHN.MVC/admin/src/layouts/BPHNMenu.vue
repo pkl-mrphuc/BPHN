@@ -26,43 +26,43 @@ const multiUser = computed(() => {
 
 <template>
   <section>
-    <el-menu class="el-menu-vertical-demo bphn-menu">
-      <router-link class="menu-item_link" to="/bm">
+    <el-menu class="el-menu-vertical-demo">
+      <router-link class="text-decoration-none" to="/bm">
         <el-menu-item index="1" :title="t('BMTitle')">
           <el-icon><Ticket /></el-icon>
           <span>{{ t("BM") }}</span>
         </el-menu-item>
       </router-link>
 
-      <router-link class="menu-item_link" to="/calendar">
+      <router-link class="text-decoration-none" to="/calendar">
         <el-menu-item index="2" :title="t('CalendarTitle')">
           <el-icon><Calendar /></el-icon>
           <span>{{ t("Calendar") }}</span>
         </el-menu-item>
       </router-link>
 
-      <router-link class="menu-item_link" to="/my-football-fields">
+      <router-link class="text-decoration-none" to="/my-football-fields">
         <el-menu-item index="3" :title="t('FootballFieldTitle')">
           <el-icon><MapLocation /></el-icon>
           <span>{{ t("FootballField") }}</span>
         </el-menu-item>
       </router-link>
 
-      <router-link class="menu-item_link" to="/tenants" v-if="role == RoleEnum.ADMIN || multiUser">
+      <router-link class="text-decoration-none" to="/tenants" v-if="role == RoleEnum.ADMIN || multiUser">
         <el-menu-item index="4" :title="t('AccountsTitle')">
           <el-icon><User /></el-icon>
           <span>{{ t("Accounts") }}</span>
         </el-menu-item>
       </router-link>
 
-      <router-link class="menu-item_link" to="/configuartions" v-if="role == RoleEnum.ADMIN || multiUser">
+      <router-link class="text-decoration-none" to="/configuartions" v-if="role == RoleEnum.ADMIN || multiUser">
         <el-menu-item index="5" :title="t('ConfigurationsTitle')">
           <el-icon><Setting /></el-icon>
           <span>{{ t("Configurations") }}</span>
         </el-menu-item>
       </router-link>
 
-      <router-link class="menu-item_link" to="/history-logs">
+      <router-link class="text-decoration-none" to="/history-logs">
         <el-menu-item index="6" :title="t('HistoryLogsTitle')">
           <el-icon><VideoCameraFilled /></el-icon>
           <span>{{ t("HistoryLog") }}</span>
@@ -73,5 +73,11 @@ const multiUser = computed(() => {
 </template>
 
 <style scoped>
-@import "@/assets/css/BPHNMenu.css";
-</style>
+.el-menu-vertical-demo {
+    height: calc(100vh - 60px - 1px);
+    width: 100%;
+    box-sizing: border-box;
+    overflow-y: scroll;
+    border-right: 1px solid #cecece;
+}
+</style>>

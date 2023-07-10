@@ -97,7 +97,7 @@ onMounted(() => {
         <el-form-item>
           <el-col :span="5">
             <el-select
-              style="width: 100%"
+              class="w-100"
               :placeholder="t('Infrastructure')"
               v-model="pitchName"
               @change="filter"
@@ -112,7 +112,7 @@ onMounted(() => {
           </el-col>
           <el-col :span="5">
             <el-select
-              style="width: 100%"
+              class="w-100"
               :placeholder="t('TimeFrame')"
               v-model="timeFrameInfoName"
               @change="filter"
@@ -127,7 +127,7 @@ onMounted(() => {
           </el-col>
           <el-col :span="5">
             <el-select
-              style="width: 100%"
+              class="w-100"
               :placeholder="t('NameDetail')"
               v-model="detailName"
               @change="filter"
@@ -142,7 +142,7 @@ onMounted(() => {
           </el-col>
           <el-col :span="5">
             <el-select
-              style="width: 100%"
+              class="w-100"
               :placeholder="t('Weekdays')"
               v-model="weekdays"
               @change="filter"
@@ -157,7 +157,7 @@ onMounted(() => {
           </el-col>
         </el-form-item>
       </el-form>
-      <el-table :data="lstBlank" class="w100" height="350">
+      <el-table :data="lstBlank" class="w-100" height="350">
         <el-table-column :label="t('FromDate')" width="100">
           <template #default="scope">
             <span>{{ dateToString(scope.row.startDate, formatDate) }}</span>
@@ -204,6 +204,3 @@ onMounted(() => {
     </template>
   </Dialog>
 </template>
-
-<style scoped>
-</style>

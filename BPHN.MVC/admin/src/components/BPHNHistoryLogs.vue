@@ -76,27 +76,27 @@ onMounted(() => {
 
 
 <template>
-  <section class="pbhn-screen" style="height: 100%">
-    <div class="container" style="height: 100%">
-      <div class="head">
-        <h3 class="head_title">{{ t("HistoryLog") }}</h3>
-        <div class="head_toolbar">
+  <section>
+    <div class="container">
+      <div class="d-flex flex-row align-items-center justify-content-between">
+        <h3 class="fs-3">{{ t("HistoryLog") }}</h3>
+        <div class="d-flex flex-row">
           <el-input
-            style="margin-right: 12px; width: 300px"
             v-model="txtSearch"
             :placeholder="t('Search')"
             :suffix-icon="Search"
             @keyup.enter="loadData"
+            class="mx-2"
           />
           <el-button @click="loadData">
             <el-icon><Refresh /></el-icon>
           </el-button>
         </div>
       </div>
-      <div class="body" style="margin-top: 20px">
+      <div>
         <el-table
           :data="historyLogData"
-          style="height: calc(100vh - 220px)"
+          style="height: calc(100vh - 252px)"
           :empty-text="t('NoData')"
         >
           <el-table-column :label="t('CreatedDate')">
@@ -131,7 +131,7 @@ onMounted(() => {
           </el-table-column>
         </el-table>
       </div>
-      <div class="footer">
+      <div class="p-3 d-flex flex-row align-items-center justify-content-end">
         <el-pagination
           background
           v-model:current-page="pageIndex"
@@ -148,12 +148,3 @@ onMounted(() => {
     </div>
   </section>
 </template>
-
-<style scoped>
-.footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-top: 20px;
-}
-</style>

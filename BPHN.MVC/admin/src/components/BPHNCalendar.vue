@@ -111,10 +111,16 @@ const buildEventInfoHtml = (timeText, eventInfo) => {
   eventContainer.style.boxSizing = "border-box";
   let html = `<i>${timeText} | ${eventInfo.stadium}</i> 
               <ul>
-                <li style="font-weight: bold; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" title="${eventInfo.teamA}">- ${eventInfo.teamA}</li>
-                <li style="font-weight: bold; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" title="${eventInfo.teamB}">- ${!eventInfo.teamB ? "?" : eventInfo.teamB}</li>
+                <li style="font-weight: bold; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" title="${
+                  eventInfo.teamA
+                }">- ${eventInfo.teamA}</li>
+                <li style="font-weight: bold; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" title="${
+                  eventInfo.teamB
+                }">- ${!eventInfo.teamB ? "?" : eventInfo.teamB}</li>
               </ul>
-              <div style="margin-top: auto; font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${eventInfo.note}">Note: ${eventInfo.note}</div>`;
+              <div style="margin-top: auto; font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${
+                eventInfo.note
+              }">Note: ${eventInfo.note}</div>`;
 
   eventContainer.innerHTML = html;
   let arrayOfDomNodes = [eventContainer];
@@ -137,11 +143,9 @@ const loadEvent = (data) => {
 </script>
 
 <template>
-  <section class="pbhn-screen" style="height: 100%">
-    <div class="container" style="height: 100%">
-      <div class="body">
-        <div id="calendarTimeGrid"></div>
-      </div>
+  <section>
+    <div class="container">
+      <div id="calendarTimeGrid"></div>
     </div>
   </section>
   <MatchInfoDialog
@@ -154,6 +158,6 @@ const loadEvent = (data) => {
 
 <style scoped>
 #calendarTimeGrid {
-  height: calc(100vh - 120px);
+  height: calc(100vh - 100px);
 }
 </style>

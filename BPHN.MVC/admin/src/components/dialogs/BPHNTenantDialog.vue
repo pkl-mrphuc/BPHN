@@ -43,7 +43,7 @@ const save = () => {
   }
 
   let actionPath = "account/register";
-  if(props.mode == "edit") {
+  if (props.mode == "edit") {
     actionPath = "account/update";
     alert(t("FeatureIsDeveloping"));
     return;
@@ -58,7 +58,7 @@ const save = () => {
       email: email.value,
       phoneNumber: phoneNumber.value,
       gender: gender.value,
-      status: status.value
+      status: status.value,
     })
     .then((res) => {
       if (res?.data?.success) {
@@ -76,69 +76,79 @@ const save = () => {
 <template>
   <Dialog :title="t('TenantForm')">
     <template #body>
-      <div class="d-flex">
-        <div class="w30">
-          <el-avatar
-            :size="120"
-            src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
-          />
-        </div>
-        <div class="w70">
-          <el-form-item>
-            <el-col :span="7">
-              <b>{{ t("Status") }}</b>
-            </el-col>
-            <el-col :span="17">
-              <el-select v-model="status" style="width: 100%">
-                <el-option :label="t('Active')" value="ACTIVE" />
-                <el-option :label="t('Inactive')" value="INACTIVE" />
-              </el-select>
-            </el-col>
-          </el-form-item>
-          <el-form-item>
-            <el-col :span="7">
-              <b>{{ t("Username") }} <span class="red">(*)</span></b>
-            </el-col>
-            <el-col :span="17">
-              <el-input v-model="userName" :disabled="isDisabled" maxlength="255" />
-            </el-col>
-          </el-form-item>
-          <el-form-item>
-            <el-col :span="7">
-              <b>{{ t("FullName") }}<span class="red">(*)</span></b>
-            </el-col>
-            <el-col :span="17">
-              <el-input v-model="fullName" maxlength="255" />
-            </el-col>
-          </el-form-item>
-          <el-form-item>
-            <el-col :span="7">
-              <b>{{ t("Gender") }}</b>
-            </el-col>
-            <el-col :span="17">
-              <el-select v-model="gender" style="width: 100%">
-                <el-option value="MALE" :label="t('Male')" />
-                <el-option value="FEMALE" :label="t('Female')" />
-                <el-option value="OTHER" :label="t('Other')" />
-              </el-select>
-            </el-col>
-          </el-form-item>
-          <el-form-item>
-            <el-col :span="7">
-              <b>{{ t("PhoneNumber") }}<span class="red">(*)</span></b>
-            </el-col>
-            <el-col :span="17">
-              <el-input v-model="phoneNumber" maxlength="255" />
-            </el-col>
-          </el-form-item>
-          <el-form-item>
-            <el-col :span="7">
-              <b>{{ t("Email") }}<span class="red">(*)</span></b>
-            </el-col>
-            <el-col :span="17">
-              <el-input v-model="email" :disabled="isDisabled" maxlength="255" />
-            </el-col>
-          </el-form-item>
+      <div class="container">
+        <div class="row">
+          <div class="col-4">
+            <el-avatar
+              :size="120"
+              src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
+            />
+          </div>
+          <div class="col-8">
+            <el-form-item>
+              <el-col :span="7" class="fw-bold">
+                {{ t("Status") }}
+              </el-col>
+              <el-col :span="17">
+                <el-select v-model="status" class="w-100">
+                  <el-option :label="t('Active')" value="ACTIVE" />
+                  <el-option :label="t('Inactive')" value="INACTIVE" />
+                </el-select>
+              </el-col>
+            </el-form-item>
+            <el-form-item>
+              <el-col :span="7" class="fw-bold">
+                {{ t("Username") }} <span class="text-danger">(*)</span>
+              </el-col>
+              <el-col :span="17">
+                <el-input
+                  v-model="userName"
+                  :disabled="isDisabled"
+                  maxlength="255"
+                />
+              </el-col>
+            </el-form-item>
+            <el-form-item>
+              <el-col :span="7" class="fw-bold">
+                {{ t("FullName") }}<span class="text-danger">(*)</span>
+              </el-col>
+              <el-col :span="17">
+                <el-input v-model="fullName" maxlength="255" />
+              </el-col>
+            </el-form-item>
+            <el-form-item>
+              <el-col :span="7" class="fw-bold">
+                {{ t("Gender") }}
+              </el-col>
+              <el-col :span="17">
+                <el-select v-model="gender" class="w-100">
+                  <el-option value="MALE" :label="t('Male')" />
+                  <el-option value="FEMALE" :label="t('Female')" />
+                  <el-option value="OTHER" :label="t('Other')" />
+                </el-select>
+              </el-col>
+            </el-form-item>
+            <el-form-item>
+              <el-col :span="7" class="fw-bold">
+                {{ t("PhoneNumber") }}<span class="text-danger">(*)</span>
+              </el-col>
+              <el-col :span="17">
+                <el-input v-model="phoneNumber" maxlength="255" />
+              </el-col>
+            </el-form-item>
+            <el-form-item>
+              <el-col :span="7" class="fw-bold">
+                {{ t("Email") }}<span class="text-danger">(*)</span>
+              </el-col>
+              <el-col :span="17">
+                <el-input
+                  v-model="email"
+                  :disabled="isDisabled"
+                  maxlength="255"
+                />
+              </el-col>
+            </el-form-item>
+          </div>
         </div>
       </div>
     </template>
@@ -150,29 +160,3 @@ const save = () => {
     </template>
   </Dialog>
 </template>
-
-<style scoped>
-.d-flex {
-  display: flex;
-}
-
-.flex-column {
-  flex-direction: column;
-}
-
-.align-items-center {
-  align-items: center;
-}
-
-.w30 {
-  width: 30%;
-}
-
-.w70 {
-  width: 70%;
-}
-
-.red {
-  color: #f56c6c;
-}
-</style>

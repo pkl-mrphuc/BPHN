@@ -1,7 +1,3 @@
-<script setup>
-</script>
-
-
 <template>
   <div class="common-layout">
     <el-container>

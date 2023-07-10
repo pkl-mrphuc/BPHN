@@ -30,24 +30,19 @@ const goToHome = () => {
 </script>
 
 <template>
-  <section class="pbhn-header">
-    <div class="header_left">
-      <h1 class="header_left__logo" @click="goToHome">BPHN</h1>
-    </div>
-    <div class="header_right">
-      <p class="header_right__fullname">
+  <section
+    class="h-100 d-flex flex-row align-items-center justify-content-between"
+  >
+    <h1 class="fs-1 m-0 pointer text-decoration-underline" @click="goToHome">BPHN</h1>
+    <div class="d-flex flex-row align-items-center">
+      <p class="pointer">
         {{ t("Hello") }}
-        <span class="header_right__fullname--underline" @click="showAccountInfo">{{ fullname }}</span>
+        <span class="mx-1 text-decoration-underline" @click="showAccountInfo">{{ fullname }}</span>
       </p>
-      <div class="header_right__logout" @click="logout">
+      <div class="mx-1 pointer" @click="logout">
         <el-icon size="24"><SwitchButton /></el-icon>
       </div>
     </div>
   </section>
-  <AccountInfoDialog v-if="hasRole('AccountInfoDialog')">
-  </AccountInfoDialog>
+  <AccountInfoDialog v-if="hasRole('AccountInfoDialog')"> </AccountInfoDialog>
 </template>
-
-<style scoped>
-@import "@/assets/css/BPHNHeader.css";
-</style>

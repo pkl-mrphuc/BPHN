@@ -65,11 +65,11 @@ const loadData = () => {
 </script>
 
 <template>
-  <section class="pbhn-screen" style="height: 100%">
-    <div class="container" style="height: 100%">
-      <div class="head">
-        <h3 class="head_title">{{ t("MyFootballFields") }}</h3>
-        <div class="head_toolbar">
+  <section>
+    <div class="container">
+      <div class="d-flex flex-row align-items-center justify-content-between">
+        <h3 class="fs-3">{{ t("MyFootballFields") }}</h3>
+        <div class="d-flex flex-row">
           <el-button @click="loadData">
             <el-icon><Refresh /></el-icon>
           </el-button>
@@ -78,13 +78,13 @@ const loadData = () => {
           }}</el-button>
         </div>
       </div>
-      <div class="body" style="height: calc(100vh - 160px); overflow: scroll; margin-top: 20px">
+      <div style="height: calc(100vh - 190px); overflow: scroll;">
         <el-row>
           <el-col
             v-for="item in listPitch"
             :key="item.id"
             :span="7"
-            class="football-field-card"
+            class="mb-3 mr-3"
           >
             <football-field-card
               :name="item.name"
@@ -108,10 +108,3 @@ const loadData = () => {
   >
   </FootballFieldDialog>
 </template>
-
-<style scoped>
-.football-field-card {
-  margin-bottom: 40px;
-  margin-right: 40px;
-}
-</style>

@@ -138,18 +138,3 @@ html.dark {
   float: left !important;
   position: relative !important;
 }
-
-.head {
-  display: flex;
-  align-items: center;
-}
-
-.head_title {
-  font-weight: 700;
-  font-size: 24px;
-  margin: 0;
-}
-
-.head_toolbar {
-  margin-left: auto;
-}

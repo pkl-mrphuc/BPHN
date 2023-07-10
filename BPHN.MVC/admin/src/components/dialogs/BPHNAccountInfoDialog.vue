@@ -59,69 +59,71 @@ const changePassword = () => {
 <template>
   <Dialog :title="t('AccountInfoForm')">
     <template #body>
-      <div class="d-flex">
-        <div class="w30">
-          <el-avatar
-            :size="120"
-            src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
-          />
-        </div>
-        <div class="w70">
-          <el-form-item>
-            <el-col :span="7">
-              <b>{{ t("Username") }}:</b>
-            </el-col>
-            <el-col :span="17"> {{ userName }} </el-col>
-          </el-form-item>
-          <el-form-item>
-            <el-col :span="7">
-              <b>{{ t("FullName") }}:</b>
-            </el-col>
-            <el-col :span="17"> {{ fullName }} </el-col>
-          </el-form-item>
-          <el-form-item>
-            <el-col :span="7">
-              <b>{{ t("Gender") }}:</b>
-            </el-col>
-            <el-col :span="17"> Nam </el-col>
-          </el-form-item>
-          <el-form-item>
-            <el-col :span="7">
-              <b>{{ t("PhoneNumber") }}:</b>
-            </el-col>
-            <el-col :span="17"> {{ phoneNumber }} </el-col>
-          </el-form-item>
-          <el-form-item>
-            <el-col :span="7">
-              <b>{{ t("Email") }}:</b>
-            </el-col>
-            <el-col :span="17"> {{ email }} </el-col>
-          </el-form-item>
-          <el-form-item>
-            <el-col :span="7"> </el-col>
-            <el-col :span="17">
-              <el-checkbox
-                v-model="showResetPassword"
-                :label="t('ResetPasswordTitle')"
-              />
-            </el-col>
-          </el-form-item>
-          <el-form-item v-if="showResetPassword">
-            <el-col :span="7">
-              <b>{{ t("Password") }}</b>
-            </el-col>
-            <el-col :span="17">
-              <el-input type="password" v-model="password" :placeholder="t('Password')" />
-            </el-col>
-          </el-form-item>
-          <el-form-item v-if="showResetPassword">
-            <el-col :span="7">
-              <b>{{ t("PasswordAgain") }}</b>
-            </el-col>
-            <el-col :span="17">
-              <el-input type="password" v-model="passwordAgain" :placeholder="t('PasswordAgain')" />
-            </el-col>
-          </el-form-item>
+      <div class="container">
+        <div class="row">
+          <div class="col-4">
+            <el-avatar
+              :size="120"
+              src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
+            />
+          </div>
+          <div class="col-8">
+            <el-form-item>
+              <el-col :span="7" class="fw-bold">{{ t("Username") }}: </el-col>
+              <el-col :span="17"> {{ userName }} </el-col>
+            </el-form-item>
+            <el-form-item>
+              <el-col :span="7" class="fw-bold"> {{ t("FullName") }}: </el-col>
+              <el-col :span="17"> {{ fullName }} </el-col>
+            </el-form-item>
+            <el-form-item>
+              <el-col :span="7" class="fw-bold"> {{ t("Gender") }}: </el-col>
+              <el-col :span="17"> Nam </el-col>
+            </el-form-item>
+            <el-form-item>
+              <el-col :span="7" class="fw-bold">
+                {{ t("PhoneNumber") }}:
+              </el-col>
+              <el-col :span="17"> {{ phoneNumber }} </el-col>
+            </el-form-item>
+            <el-form-item>
+              <el-col :span="7" class="fw-bold"> {{ t("Email") }}: </el-col>
+              <el-col :span="17"> {{ email }} </el-col>
+            </el-form-item>
+            <el-form-item>
+              <el-col :span="7"> </el-col>
+              <el-col :span="17">
+                <el-checkbox
+                  v-model="showResetPassword"
+                  :label="t('ResetPasswordTitle')"
+                />
+              </el-col>
+            </el-form-item>
+            <el-form-item v-if="showResetPassword">
+              <el-col :span="7" class="fw-bold">
+                {{ t("Password") }}
+              </el-col>
+              <el-col :span="17">
+                <el-input
+                  type="password"
+                  v-model="password"
+                  :placeholder="t('Password')"
+                />
+              </el-col>
+            </el-form-item>
+            <el-form-item v-if="showResetPassword">
+              <el-col :span="7" class="fw-bold">
+                {{ t("PasswordAgain") }}
+              </el-col>
+              <el-col :span="17">
+                <el-input
+                  type="password"
+                  v-model="passwordAgain"
+                  :placeholder="t('PasswordAgain')"
+                />
+              </el-col>
+            </el-form-item>
+          </div>
         </div>
       </div>
     </template>
@@ -138,25 +140,3 @@ const changePassword = () => {
     </template>
   </Dialog>
 </template>
-
-<style scoped>
-.d-flex {
-  display: flex;
-}
-
-.flex-column {
-  flex-direction: column;
-}
-
-.align-items-center {
-  align-items: center;
-}
-
-.w30 {
-  width: 30%;
-}
-
-.w70 {
-  width: 70%;
-}
-</style>

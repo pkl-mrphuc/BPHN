@@ -22,12 +22,14 @@ const login = () => {
   }
 
   isLoading.value = true;
-  store.dispatch("account/login", {
-    username: username.value,
-    password: password.value,
-  }).then(() => {
-    isLoading.value = false;
-  });
+  store
+    .dispatch("account/login", {
+      username: username.value,
+      password: password.value,
+    })
+    .then(() => {
+      isLoading.value = false;
+    });
 };
 
 const goToForgot = () => {
@@ -80,5 +82,5 @@ const goToForgot = () => {
 </template>
 
 <style scoped>
-@import "@/assets/css/BPHNLogin.css";
+@import "@/assets/css/page.css";
 </style>

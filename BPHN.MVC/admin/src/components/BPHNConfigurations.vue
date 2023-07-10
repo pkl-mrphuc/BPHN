@@ -22,12 +22,12 @@ const configData = [
   },
   {
     name: t("FormatDate"),
-    key: "FormatDate"
+    key: "FormatDate",
   },
   {
     name: t("MultiUser"),
-    key: "MultiUser"
-  }
+    key: "MultiUser",
+  },
 ];
 
 const getDarkMode = computed(() => {
@@ -43,7 +43,7 @@ const getFormatDate = computed(() => {
 });
 
 const getMultiUser = computed(() => {
-  return  store.getters["config/getMultiUser"];
+  return store.getters["config/getMultiUser"];
 });
 
 watch(getDarkMode, (newValue) => {
@@ -63,14 +63,14 @@ watch(getMultiUser, (newValue) => {
 });
 
 const useMultiUser = () => {
-  if(multiUser.value) {
+  if (multiUser.value) {
     alert(t("ContactSupplier"));
     multiUser.value = false;
   }
 };
 
 const save = () => {
-  if(running.value > 0) return;
+  if (running.value > 0) return;
   ++running.value;
   isLoading.value = true;
   let configs = [
@@ -84,12 +84,12 @@ const save = () => {
     },
     {
       Key: "FormatDate",
-      Value: formatDate.value
+      Value: formatDate.value,
     },
     {
       Key: "MultiUser",
-      Value: `${multiUser.value}`
-    }
+      Value: `${multiUser.value}`,
+    },
   ];
   store.dispatch("config/save", configs).then(() => {
     setTimeout(() => {
@@ -101,16 +101,18 @@ const save = () => {
 </script>
 
 <template>
-  <section class="pbhn-screen" style="height: 100%">
-    <div class="container" style="height: 100%">
-      <div class="head">
-        <h3 class="head_title">{{ t("Configurations") }}</h3>
-        <div class="head_toolbar">
-          <el-button type="primary" @click="save" :loading="isLoading">{{ t("Save") }}</el-button>
+  <section>
+    <div class="container">
+      <div class="d-flex flex-row align-items-center justify-content-between">
+        <h3 class="fs-3">{{ t("Configurations") }}</h3>
+        <div>
+          <el-button type="primary" @click="save" :loading="isLoading">{{
+            t("Save")
+          }}</el-button>
         </div>
       </div>
-      <div class="body" style="margin-top: 20px">
-        <el-table :data="configData" style="height: calc(100vh - 220px)">
+      <div>
+        <el-table :data="configData" style="height: calc(100vh - 190px)">
           <el-table-column :label="t('Title')" width="200">
             <template #default="scope">
               <span>{{ scope.row.name }}</span>
@@ -126,7 +128,10 @@ const save = () => {
                 <el-option value="vi" label="Vietnamese" />
                 <el-option value="en" label="English" />
               </el-select>
-              <el-select v-if="scope.row.key == 'FormatDate'" v-model="formatDate">
+              <el-select
+                v-if="scope.row.key == 'FormatDate'"
+                v-model="formatDate"
+              >
                 <el-option value="yyyy-MM-dd" label="yyyy-MM-dd" />
                 <el-option value="dd/MM/yyyy" label="dd/MM/yyyy" />
                 <el-option value="dd-MM-yyyy" label="dd-MM-yyyy" />
@@ -143,6 +148,3 @@ const save = () => {
     </div>
   </section>
 </template>
-
-<style scoped>
-</style>
