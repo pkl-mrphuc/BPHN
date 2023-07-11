@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -11,6 +11,11 @@ const router = useRouter();
 
 const password = ref("");
 const passwordAgain = ref("");
+const inpPassword = ref(null);
+
+onMounted(() => {
+  inpPassword.value.focus();
+});
 
 const userName = computed(() => {
   return getQueryStringByKey("userName");
@@ -64,6 +69,8 @@ const submit = () => {
               show-password
               :placeholder="t('Password')"
               type="password"
+              tabindex="1"
+              ref="inpPassword"
             />
           </el-form-item>
           <el-form-item>
@@ -73,18 +80,26 @@ const submit = () => {
               show-password
               :placeholder="t('PasswordAgain')"
               type="password"
+              tabindex="2"
+              @keyup.enter="submit"
             />
           </el-form-item>
           <el-form-item>
-            <el-button style="width: 100%" type="primary" @click="submit()">{{
-              t("Submit")
-            }}</el-button>
+            <el-button
+              class="w-100"
+              type="primary"
+              @click="submit"
+              tabindex="3"
+              @keyup.enter="submit"
+              >{{ t("Submit") }}</el-button
+            >
           </el-form-item>
         </el-form>
         <a
           class="back-login-btn"
-          @click="goToLogin()"
+          @click="goToLogin"
           href="javascript:void(0)"
+          tabindex="4"
           >{{ t("BackToLogin") }}</a
         >
       </div>

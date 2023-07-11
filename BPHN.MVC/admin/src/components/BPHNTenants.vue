@@ -74,6 +74,7 @@ const currentChange = () => {
 
 const addNew = () => {
   openForm("");
+  mode.value = "add";
 };
 
 const edit = (id) => {
@@ -134,19 +135,25 @@ onMounted(() => {
                 type="success"
                 size="small"
                 v-if="equals(scope.row.status, StatusEnum.ACTIVE)"
-                >{{ t("ACTIVE") }}</el-tag
+                >{{ t("Active") }}</el-tag
               >
-              <el-tag type="danger" size="small" v-else>{{ t("INACTIVE") }}</el-tag>
+              <el-tag type="danger" size="small" v-else>{{
+                t("Inactive")
+              }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column :label="t('Username')">
             <template #default="scope">
-              {{ scope.row.userName }}
+              <span class="text-truncate" :title="scope.row.userName">{{
+                scope.row.userName
+              }}</span>
             </template>
           </el-table-column>
           <el-table-column :label="t('FullName')">
             <template #default="scope">
-              {{ scope.row.fullName }}
+              <span class="text-truncate" :title="scope.row.fullName">{{
+                scope.row.fullName
+              }}</span>
             </template>
           </el-table-column>
           <el-table-column :label="t('Gender')">
@@ -168,7 +175,9 @@ onMounted(() => {
           </el-table-column>
           <el-table-column :label="t('PhoneNumber')">
             <template #default="scope">
-              {{ scope.row.phoneNumber }}
+              <span class="text-truncate" :title="scope.row.phoneNumber">{{
+                scope.row.phoneNumber
+              }}</span>
             </template>
           </el-table-column>
           <el-table-column label="">

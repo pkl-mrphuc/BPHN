@@ -15,6 +15,7 @@ import { useStore } from "vuex";
 import { ElLoading } from "element-plus";
 import useCommonFn from "@/commonFn";
 import { StatusEnum } from "@/const";
+import { LocationInformation } from "@element-plus/icons-vue";
 
 const props = defineProps({
   data: Object,
@@ -54,9 +55,18 @@ const address = ref(props.data?.address ?? "");
 const status = ref(props.data?.status ?? StatusEnum.ACTIVE);
 const lstTimeFrame = ref(props.data?.timeFrameInfos);
 const lstDetail = ref(props.data?.listNameDetails);
+const inpName = ref(null);
 const maxTimeSlot = computed(() => {
   return 1440 / minutesPerMatch.value;
 });
+
+const nameDetail = (sortOrder) => {
+  return `${t("Detail")} ${sortOrder}`;
+};
+
+const nameTimeFrame = (sortOrder) => {
+  return `${t("Frame")} ${sortOrder}`;
+};
 
 const save = () => {
   if (!name.value) {
@@ -108,6 +118,7 @@ const save = () => {
 
 onMounted(() => {
   nextTick(() => {
+    inpName.value.focus();
     setReadonlyInputField();
     addEvent("inpTimeSlot", decreaseTimeFrameInfosFn, increaseTimeFrameInfosFn);
     addEvent(
@@ -152,7 +163,7 @@ const increaseTimeFrameInfosFn = () => {
 
     let id = uuidv4();
     let sortOrder = lastItem.sortOrder + 1;
-    let name = `Khung ${sortOrder}`;
+    let name = nameTimeFrame(sortOrder);
 
     let now = new Date();
     let timeBegin = new Date(now.setSeconds(0));
@@ -241,31 +252,35 @@ const isValidNameDetail = () => {
 
 
 <template>
-  <Dialog :title="t('FootballFieldForm')" :width="1200">
+  <Dialog :title="t('FootballFieldForm')">
     <template #body>
       <el-form>
         <el-form-item>
-          <el-col :span="19">
+          <el-col :span="17">
             <el-input
               v-model="name"
               :placeholder="t('NameFootballField')"
               maxlength="500"
+              ref="inpName"
             />
           </el-col>
-          <el-col :span="4">
-            <el-select v-model="status" :placeholder="t('StatusFootballField')">
+          <el-col :span="7">
+            <el-select v-model="status" :placeholder="t('StatusFootballField')" class="ml-2">
               <el-option :label="t('Active')" :value="StatusEnum.ACTIVE" />
               <el-option :label="t('Inactive')" :value="StatusEnum.INACTIVE" />
             </el-select>
           </el-col>
         </el-form-item>
         <el-form-item>
-          <el-col :span="24">
+          <el-col :span="23">
             <el-input
               v-model="address"
               :placeholder="t('Address')"
               maxlength="500"
             />
+          </el-col>
+          <el-col :span="1" class="d-flex flex-row align-items-center">
+            <el-icon size="24" class="ml-2 pointer"><LocationInformation /></el-icon>
           </el-col>
         </el-form-item>
         <el-form-item>
@@ -313,14 +328,14 @@ const isValidNameDetail = () => {
             <el-table :data="lstConfigInfo" class="w-100">
               <el-table-column label="" width="200">
                 <template #default="scope">
-                  <span>{{ scope.row.name }}</span>
+                  <span>{{ t(scope.row.name) }}</span>
                 </template>
               </el-table-column>
 
               <el-table-column
                 v-for="(item, index) in lstDetail"
                 :key="index"
-                :label="`${index + 1}`"
+                :label="nameDetail(index + 1)"
                 :min-width="160"
               >
                 <template #default="scope">
@@ -336,7 +351,7 @@ const isValidNameDetail = () => {
             <el-table :data="lstConfigTimeFrame" class="w-100">
               <el-table-column label="" width="200">
                 <template #default="scope">
-                  <span>{{ scope.row.name }}</span>
+                  <span>{{ t(scope.row.name) }}</span>
                 </template>
               </el-table-column>
 
@@ -376,9 +391,9 @@ const isValidNameDetail = () => {
       </el-form>
     </template>
     <template #foot>
-      <span class="dialog-footer">
+      <span class="d-flex flex-row-reverse">
+        <el-button type="primary" @click="save" class="ml-2">{{ t("Save") }}</el-button>
         <el-button @click="toggleModel">{{ t("Close") }}</el-button>
-        <el-button type="primary" @click="save">{{ t("Save") }}</el-button>
       </span>
     </template>
   </Dialog>

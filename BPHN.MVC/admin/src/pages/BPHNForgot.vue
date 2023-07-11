@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -8,6 +8,11 @@ const router = useRouter();
 const { t } = useI18n();
 const store = useStore();
 const email = ref("");
+const inpEmail = ref(null);
+
+onMounted(() => {
+  inpEmail.value.focus();
+});
 
 const goToLogin = () => {
   router.push("login");
@@ -34,17 +39,29 @@ const forgot = () => {
         <h2>{{ t("ForgotPasswordTitle") }}</h2>
         <el-form class="box_right__form">
           <el-form-item>
-            <el-input v-model="email" maxlength="255" placeholder="Email" />
+            <el-input
+              v-model="email"
+              maxlength="255"
+              placeholder="Email"
+              ref="inpEmail"
+              tabindex="1"
+            />
           </el-form-item>
           <el-form-item>
-            <el-button style="width: 100%" type="primary" @click="forgot()">{{
-              t("SendRequest")
-            }}</el-button>
+            <el-button
+              class="w-100"
+              type="primary"
+              @keyup.enter="forgot"
+              @click="forgot"
+              tabindex="2"
+              >{{ t("SendRequest") }}</el-button
+            >
           </el-form-item>
         </el-form>
         <a
           class="back-login-btn"
-          @click="goToLogin()"
+          @click="goToLogin"
+          tabindex="3"
           href="javascript:void(0)"
           >{{ t("BackToLogin") }}</a
         >

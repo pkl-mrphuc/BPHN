@@ -49,7 +49,7 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var query = "select UserName, FullName, Gender, PhoneNumber, Email, Id, Role, Status from accounts where Id = @id";
+                var query = "select UserName, FullName, Gender, PhoneNumber, Email, Id, Role, Status, ParentId from accounts where Id = @id";
                 Dictionary<string, object> dic = new Dictionary<string, object>();
                 dic.Add("@id", id);
                 var account = await connection.QueryFirstOrDefaultAsync<Account>(query, dic);
@@ -112,6 +112,8 @@ namespace BPHN.DataLayer.ImpRepositories
                                                     union 
                                                     select * from accounts where {whereQuery} and Email like @where
                                                     union 
+                                                    select * from accounts where {whereQuery} and PhoneNumber like @where
+                                                    union 
                                                     select * from accounts where {whereQuery} and FulLName like @where) as ac
                             order by ac.ModifiedDate desc
                             limit @offSet, @pageSize";
@@ -119,6 +121,8 @@ namespace BPHN.DataLayer.ImpRepositories
                                                                 select * from accounts where Role = {whereQuery} and UserName like @where
                                                                 union 
                                                                 select * from accounts where Role = {whereQuery} and Email like @where
+                                                                union 
+                                                                select * from accounts where {whereQuery} and PhoneNumber like @where
                                                                 union 
                                                                 select * from accounts where Role = {whereQuery} and FulLName like @where) as ac";
                 
@@ -165,6 +169,8 @@ namespace BPHN.DataLayer.ImpRepositories
                                                                 select * from accounts where {whereQuery} and UserName like @where
                                                                 union 
                                                                 select * from accounts where {whereQuery} and Email like @where
+                                                                union 
+                                                                select * from accounts where {whereQuery} and PhoneNumber like @where
                                                                 union 
                                                                 select * from accounts where {whereQuery} and FulLName like @where) as ac";
                 dic.Add("@where", $"%{txtSearch}%");

@@ -51,8 +51,8 @@ const vi = {
     MinutesPerMatch: "Số phút / trận",
     TimeSlotPerDay: "Khung giờ / ngày",
     ConfictTimeFrame: "Có xung đột khung thời gian. Vui lòng kiểm tra lại",
-    FootballFieldInfo: "Thông tin sân",
-    TimeFrameInfo: "Chi tiết khung giờ",
+    FootballFieldInfo: "Danh sách sân",
+    TimeFrameInfo: "Danh sách khung giờ",
     NameDetailsEmptyMesg: "Tên sân bóng không được để trống",
     NoData: "Dữ liệu trống",
     BookingManager: "Danh sách đặt sân",
@@ -117,7 +117,10 @@ const vi = {
     TeamB: 'Đội B',
     Note: 'Ghi chú',
     TeamAEmptyMesg: 'Tên đội đặt sân không được để trống',
-    ShouldContainPhoneNumber: 'Tên đội đặt sân nên chứa số điện thoại liên hệ'
+    ShouldContainPhoneNumber: 'Tên đội đặt sân nên chứa số điện thoại liên hệ',
+    InvalidEmail: 'Email không hợp lệ',
+    Detail: 'Sân',
+    Frame: 'Khung'
 }
 
 export default vi;

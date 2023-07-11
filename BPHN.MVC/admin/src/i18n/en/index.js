@@ -40,7 +40,7 @@ const en = {
     NameFootballFieldEmptyMesg: "Name is not empty",
     AddressFootballFieldEmptyMesg: "Address is not empty",
     TimeSlotInvalidMesg: "Time slot is invalid",
-    FootballFieldForm: "Football field",
+    FootballFieldForm: "My stadium",
     StatusFootballField: "Status",
     Active: "Active",
     Inactive: "Inactive",
@@ -51,8 +51,8 @@ const en = {
     MinutesPerMatch: "Minutes / match",
     TimeSlotPerDay: "Time slot / day",
     ConfictTimeFrame: "Has conflict time frame. Please check again",
-    FootballFieldInfo: "Football field information",
-    TimeFrameInfo: "Time frame information",
+    FootballFieldInfo: "Details",
+    TimeFrameInfo: "Time frames",
     NameDetailsEmptyMesg: "Name details is not empty",
     NoData: "No data",
     BookingManager: "Booking manager",
@@ -117,6 +117,9 @@ const en = {
     TeamB: 'Team B',
     Note: 'Note',
     TeamAEmptyMesg: 'Team A is not empty',
-    ShouldContainPhoneNumber: 'Team A should contain phone number to contact'
+    ShouldContainPhoneNumber: 'Team A should contain phone number to contact',
+    InvalidEmail: 'Invalid email',
+    Detail: 'Detail',
+    Frame: 'Frame'
 }
 export default en;

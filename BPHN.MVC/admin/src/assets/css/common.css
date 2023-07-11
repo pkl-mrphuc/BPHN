@@ -6,6 +6,10 @@
     flex-direction: row;
 }
 
+.flex-row-reverse {
+    flex-direction: row-reverse;
+}
+
 .flex-column {
     flex-direction: column;
 }
@@ -301,6 +305,17 @@
 
 .text-decoration-none {
     text-decoration: none;
+}
+
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+a:focus-visible {
+    outline: none;
+    color: -webkit-activelink;
 }
 
 :root {

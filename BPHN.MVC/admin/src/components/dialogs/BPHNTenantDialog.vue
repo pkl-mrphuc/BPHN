@@ -1,10 +1,19 @@
 <script setup>
 import useToggleModal from "@/register-components/actionDialog";
 import { useI18n } from "vue-i18n";
-import { ref, inject, defineEmits, defineProps, computed } from "vue";
+import {
+  ref,
+  inject,
+  defineEmits,
+  defineProps,
+  computed,
+  onMounted,
+  nextTick,
+} from "vue";
 import { useStore } from "vuex";
 import { ElLoading } from "element-plus";
-import { GenderEnum, StatusEnum } from "@/const"
+import { GenderEnum, StatusEnum } from "@/const";
+import useCommonFn from "@/commonFn";
 
 const props = defineProps({
   data: Object,
@@ -13,21 +22,33 @@ const props = defineProps({
 const { toggleModel } = useToggleModal();
 const { t } = useI18n();
 const store = useStore();
+const { equals, isEmail } = useCommonFn();
 const emits = defineEmits(["callback"]);
-const fullName = ref(props.data?.fullName ?? "");
-const userName = ref(props.data?.userName ?? "");
-const email = ref(props.data?.email ?? "");
-const phoneNumber = ref(props.data?.phoneNumber ?? "");
+const fullName = ref(props.data?.fullName);
+const email = ref(props.data?.email);
+const phoneNumber = ref(props.data?.phoneNumber);
 const gender = ref(props.data?.gender ?? GenderEnum.MALE);
 const status = ref(props.data?.status ?? StatusEnum.ACTIVE);
 const loadingOptions = inject("loadingOptions");
+const inpEmail = ref(null);
+const inpFullName = ref(null);
 const isDisabled = computed(() => {
-  return props.mode == "edit" ? true : false;
+  return equals(props.mode, "edit");
+});
+
+onMounted(() => {
+  nextTick(() => {
+    if (equals(props.mode, "edit")) {
+      inpFullName.value.focus();
+    } else {
+      inpEmail.value.focus();
+    }
+  });
 });
 
 const save = () => {
-  if (!userName.value) {
-    alert(t("UsernameEmptyMesg"));
+  if (!email.value) {
+    alert(t("EmailEmptyMesg"));
     return;
   }
   if (!fullName.value) {
@@ -38,8 +59,8 @@ const save = () => {
     alert(t("PhoneNumberEmptyMesg"));
     return;
   }
-  if (!email.value) {
-    alert(t("EmailEmptyMesg"));
+  if (!isEmail(email.value)) {
+    alert(t("InvalidEmail"));
     return;
   }
 
@@ -54,7 +75,7 @@ const save = () => {
   store
     .dispatch(actionPath, {
       id: props.data?.id,
-      userName: userName.value,
+      userName: email.value,
       fullName: fullName.value,
       email: email.value,
       phoneNumber: phoneNumber.value,
@@ -92,49 +113,12 @@ const save = () => {
               </el-col>
               <el-col :span="17">
                 <el-select v-model="status" class="w-100">
-                  <el-option :label="t('Active')" value="ACTIVE" />
-                  <el-option :label="t('Inactive')" value="INACTIVE" />
+                  <el-option :label="t('Active')" :value="StatusEnum.ACTIVE" />
+                  <el-option
+                    :label="t('Inactive')"
+                    :value="StatusEnum.INACTIVE"
+                  />
                 </el-select>
-              </el-col>
-            </el-form-item>
-            <el-form-item>
-              <el-col :span="7" class="fw-bold">
-                {{ t("Username") }} <span class="text-danger">(*)</span>
-              </el-col>
-              <el-col :span="17">
-                <el-input
-                  v-model="userName"
-                  :disabled="isDisabled"
-                  maxlength="255"
-                />
-              </el-col>
-            </el-form-item>
-            <el-form-item>
-              <el-col :span="7" class="fw-bold">
-                {{ t("FullName") }}<span class="text-danger">(*)</span>
-              </el-col>
-              <el-col :span="17">
-                <el-input v-model="fullName" maxlength="255" />
-              </el-col>
-            </el-form-item>
-            <el-form-item>
-              <el-col :span="7" class="fw-bold">
-                {{ t("Gender") }}
-              </el-col>
-              <el-col :span="17">
-                <el-select v-model="gender" class="w-100">
-                  <el-option value="MALE" :label="t('Male')" />
-                  <el-option value="FEMALE" :label="t('Female')" />
-                  <el-option value="OTHER" :label="t('Other')" />
-                </el-select>
-              </el-col>
-            </el-form-item>
-            <el-form-item>
-              <el-col :span="7" class="fw-bold">
-                {{ t("PhoneNumber") }}<span class="text-danger">(*)</span>
-              </el-col>
-              <el-col :span="17">
-                <el-input v-model="phoneNumber" maxlength="255" />
               </el-col>
             </el-form-item>
             <el-form-item>
@@ -146,7 +130,40 @@ const save = () => {
                   v-model="email"
                   :disabled="isDisabled"
                   maxlength="255"
+                  ref="inpEmail"
                 />
+              </el-col>
+            </el-form-item>
+            <el-form-item>
+              <el-col :span="7" class="fw-bold">
+                {{ t("FullName") }}<span class="text-danger">(*)</span>
+              </el-col>
+              <el-col :span="17">
+                <el-input
+                  v-model="fullName"
+                  maxlength="255"
+                  ref="inpFullName"
+                />
+              </el-col>
+            </el-form-item>
+            <el-form-item>
+              <el-col :span="7" class="fw-bold">
+                {{ t("Gender") }}
+              </el-col>
+              <el-col :span="17">
+                <el-select v-model="gender" class="w-100">
+                  <el-option :value="GenderEnum.MALE" :label="t('Male')" />
+                  <el-option :value="GenderEnum.FEMALE" :label="t('Female')" />
+                  <el-option :value="GenderEnum.OTHER" :label="t('Other')" />
+                </el-select>
+              </el-col>
+            </el-form-item>
+            <el-form-item>
+              <el-col :span="7" class="fw-bold">
+                {{ t("PhoneNumber") }}<span class="text-danger">(*)</span>
+              </el-col>
+              <el-col :span="17">
+                <el-input v-model="phoneNumber" maxlength="255" />
               </el-col>
             </el-form-item>
           </div>
@@ -154,10 +171,12 @@ const save = () => {
       </div>
     </template>
     <template #foot>
-      <span class="dialog-footer">
+      <div class="d-flex flex-row-reverse">
+        <el-button type="primary" @click="save" class="ml-2">{{
+          t("Save")
+        }}</el-button>
         <el-button @click="toggleModel">{{ t("Close") }}</el-button>
-        <el-button type="primary" @click="save">{{ t("Save") }}</el-button>
-      </span>
+      </div>
     </template>
   </Dialog>
 </template>

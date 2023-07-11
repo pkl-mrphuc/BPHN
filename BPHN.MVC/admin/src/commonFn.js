@@ -80,6 +80,10 @@ export default function useCommonFn() {
         return string1 === string2;
     }
 
+    const isEmail = (string) => {
+        return /^[^@]+@\w+(\.\w+)+\w$/.test(string);
+    }
+
     return {
         sameDate,
         newDate,
@@ -88,6 +92,7 @@ export default function useCommonFn() {
         dateToString,
         getWeekdays,
         ticks,
-        equals
+        equals,
+        isEmail
     }
 }

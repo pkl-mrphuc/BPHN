@@ -64,7 +64,7 @@ const multiUser = computed(() => {
       <router-link
         class="text-decoration-none"
         to="/configuartions"
-        v-if="equals(role, RoleEnum.ADMIN) || multiUser"
+        v-if="equals(role, RoleEnum.ADMIN) || equals(role, RoleEnum.TENANT)"
       >
         <el-menu-item index="5" :title="t('ConfigurationsTitle')">
           <el-icon><Setting /></el-icon>

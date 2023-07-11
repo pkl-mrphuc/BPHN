@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
-import { SwitchButton } from "@element-plus/icons-vue";
+import { SwitchButton, Refresh } from "@element-plus/icons-vue";
 import useToggleModal from "@/register-components/actionDialog";
 import { useRouter } from "vue-router";
 
@@ -21,24 +21,36 @@ const showAccountInfo = () => {
 
 const logout = () => {
   localStorage.clear();
-  router.push("login");
+  router.go();
 };
 
 const goToHome = () => {
   router.push("calendar");
 };
+
+const refresh = () => {
+  localStorage.removeItem("config-key");
+  router.go();
+}
 </script>
 
 <template>
   <section
     class="h-100 d-flex flex-row align-items-center justify-content-between"
   >
-    <h1 class="fs-1 m-0 pointer text-decoration-underline" @click="goToHome">BPHN</h1>
+    <h1 class="fs-1 m-0 pointer text-decoration-underline" @click="goToHome">
+      BPHN
+    </h1>
     <div class="d-flex flex-row align-items-center">
       <p class="pointer">
         {{ t("Hello") }}
-        <span class="mx-1 text-decoration-underline" @click="showAccountInfo">{{ fullname }}</span>
+        <span class="mx-1 text-decoration-underline" @click="showAccountInfo">{{
+          fullname
+        }}</span>
       </p>
+      <div class="mx-1 pointer" @click="refresh">
+        <el-icon size="24"><Refresh /></el-icon>
+      </div>
       <div class="mx-1 pointer" @click="logout">
         <el-icon size="24"><SwitchButton /></el-icon>
       </div>
