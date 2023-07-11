@@ -132,10 +132,11 @@ onMounted(() => {
             <template #default="scope">
               <el-tag
                 type="success"
+                size="small"
                 v-if="equals(scope.row.status, StatusEnum.ACTIVE)"
                 >{{ t("ACTIVE") }}</el-tag
               >
-              <el-tag type="danger" v-else>{{ t("INACTIVE") }}</el-tag>
+              <el-tag type="danger" size="small" v-else>{{ t("INACTIVE") }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column :label="t('Username')">
@@ -152,15 +153,17 @@ onMounted(() => {
             <template #default="scope">
               <el-tag
                 type="success"
+                size="small"
                 v-if="equals(scope.row.gender, GenderEnum.MALE)"
                 >{{ t("Male") }}</el-tag
               >
               <el-tag
                 type="danger"
+                size="small"
                 v-else-if="equals(scope.row.gender, GenderEnum.FEMALE)"
                 >{{ t("Female") }}</el-tag
               >
-              <el-tag type="info" v-else>{{ t("Other") }}</el-tag>
+              <el-tag type="info" size="small" v-else>{{ t("Other") }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column :label="t('PhoneNumber')">

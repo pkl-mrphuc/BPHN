@@ -119,7 +119,7 @@ const save = () => {
         <el-table :data="lstConfig" style="height: calc(100vh - 190px)">
           <el-table-column :label="t('Title')" width="200">
             <template #default="scope">
-              <span>{{ scope.row.name }}</span>
+              <span>{{ t(scope.row.name) }}</span>
             </template>
           </el-table-column>
           <el-table-column label="">

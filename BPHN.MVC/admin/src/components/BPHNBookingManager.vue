@@ -145,6 +145,7 @@ onMounted(() => {
                     <template #default="scope">
                       <el-tag
                         type="success"
+                        size="small"
                         v-if="
                           equals(scope.row.status, BookingStatusEnum.SUCCESS)
                         "
@@ -152,12 +153,13 @@ onMounted(() => {
                       >
                       <el-tag
                         type="info"
+                        size="small"
                         v-else-if="
                           equals(scope.row.status, BookingStatusEnum.PENDING)
                         "
                         >{{ scope.row.status }}</el-tag
                       >
-                      <el-tag type="danger" v-else>{{
+                      <el-tag type="danger" v-else size="small">{{
                         scope.row.status
                       }}</el-tag>
                     </template>
@@ -207,13 +209,13 @@ onMounted(() => {
           </el-table-column>
           <el-table-column :label="t('Status')" width="150">
             <template #default="scope">
-              <el-tag type="success" v-if="equals(scope.row.status, BookingStatusEnum.SUCCESS)">{{
+              <el-tag type="success" size="small" v-if="equals(scope.row.status, BookingStatusEnum.SUCCESS)">{{
                 scope.row.status
               }}</el-tag>
-              <el-tag type="info" v-else-if="equals(scope.row.status, BookingStatusEnum.PENDING)">{{
+              <el-tag type="info" size="small" v-else-if="equals(scope.row.status, BookingStatusEnum.PENDING)">{{
                 scope.row.status
               }}</el-tag>
-              <el-tag type="danger" v-else>{{ scope.row.status }}</el-tag>
+              <el-tag type="danger" size="small" v-else>{{ scope.row.status }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column :label="t('BookingDate')">
