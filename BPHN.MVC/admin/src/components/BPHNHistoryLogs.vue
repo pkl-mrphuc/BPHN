@@ -86,9 +86,8 @@ onMounted(() => {
             :placeholder="t('Search')"
             :suffix-icon="Search"
             @keyup.enter="loadData"
-            class="mx-2"
           />
-          <el-button @click="loadData">
+          <el-button @click="loadData" class="ml-2">
             <el-icon><Refresh /></el-icon>
           </el-button>
         </div>

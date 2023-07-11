@@ -227,6 +227,26 @@
     margin-right: calc(var(--spacer) * 3) !important;
 }
 
+.ml-1 {
+    margin-left: calc(var(--spacer) * .25) !important;
+}
+
+.ml-2 {
+    margin-left: calc(var(--spacer) * .5) !important;
+}
+
+.ml-3 {
+    margin-left: var(--spacer) !important;
+}
+
+.ml-4 {
+    margin-left: calc(var(--spacer) * 1.5) !important;
+}
+
+.ml-5 {
+    margin-left: calc(var(--spacer) * 3) !important;
+}
+
 .mb-1 {
     margin-bottom: calc(var(--spacer) * .25) !important;
 }

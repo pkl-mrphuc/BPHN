@@ -117,12 +117,12 @@ onMounted(() => {
             :placeholder="t('SearchBy')"
             :suffix-icon="Search"
             @keyup.enter="loadData"
-            class="mx-2 w-100"
+            class="w-100"
           />
-          <el-button @click="loadData">
+          <el-button @click="loadData" class="ml-2">
             <el-icon><Refresh /></el-icon>
           </el-button>
-          <el-button type="primary" @click="addNew">{{
+          <el-button type="primary" @click="addNew" class="ml-2">{{
             t("AddNew")
           }}</el-button>
         </div>

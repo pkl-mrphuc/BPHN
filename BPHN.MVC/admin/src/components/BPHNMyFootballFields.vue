@@ -73,7 +73,7 @@ const loadData = () => {
           <el-button @click="loadData">
             <el-icon><Refresh /></el-icon>
           </el-button>
-          <el-button type="primary" @click="addNew">{{
+          <el-button type="primary" @click="addNew" class="ml-2">{{
             t("AddNew")
           }}</el-button>
         </div>

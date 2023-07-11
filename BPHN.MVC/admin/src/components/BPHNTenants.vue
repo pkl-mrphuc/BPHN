@@ -108,16 +108,16 @@ onMounted(() => {
         <h3 class="fs-3">{{ t("Accounts") }}</h3>
         <div class="d-flex flex-row">
           <el-input
-            class="mx-2"
+            class="ml-2"
             v-model="txtSearch"
             :placeholder="t('Search')"
             :suffix-icon="Search"
             @keyup.enter="loadData"
           />
-          <el-button @click="loadData">
+          <el-button @click="loadData" class="ml-2">
             <el-icon><Refresh /></el-icon>
           </el-button>
-          <el-button type="primary" @click="addNew">{{
+          <el-button type="primary" @click="addNew" class="ml-2">{{
             t("AddNew")
           }}</el-button>
         </div>
