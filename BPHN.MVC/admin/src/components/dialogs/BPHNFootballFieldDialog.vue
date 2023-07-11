@@ -14,18 +14,19 @@ import { v4 as uuidv4 } from "uuid";
 import { useStore } from "vuex";
 import { ElLoading } from "element-plus";
 import useCommonFn from "@/commonFn";
+import { StatusEnum } from "@/const";
 
 const props = defineProps({
   data: Object,
   mode: String,
 });
-const { newDate, ticks } = useCommonFn();
+const { newDate, ticks, equals } = useCommonFn();
 const emit = defineEmits(["callback"]);
 const loadingOptions = inject("loadingOptions");
 const { t } = useI18n();
 const store = useStore();
 const { toggleModel } = useToggleModal();
-const configTimeFrameData = ref([
+const lstConfigTimeFrame = ref([
   {
     name: t("Price"),
     key: "Price",
@@ -39,7 +40,7 @@ const configTimeFrameData = ref([
     key: "TimeEnd",
   },
 ]);
-const configFootballFieldInfoData = ref([
+const lstConfigInfo = ref([
   {
     name: t("NameFootballField"),
     key: "Name",
@@ -50,9 +51,9 @@ const minutesPerMatch = ref(props.data?.minutesPerMatch ?? 90);
 const timeSlotPerDay = ref(props.data?.timeSlotPerDay ?? 1);
 const name = ref(props.data?.name ?? "");
 const address = ref(props.data?.address ?? "");
-const status = ref(props.data?.status ?? "ACTIVE");
-const timeFrameInfos = ref(props.data?.timeFrameInfos);
-const listNameDetails = ref(props.data?.listNameDetails);
+const status = ref(props.data?.status ?? StatusEnum.ACTIVE);
+const lstTimeFrame = ref(props.data?.timeFrameInfos);
+const lstDetail = ref(props.data?.listNameDetails);
 const maxTimeSlot = computed(() => {
   return 1440 / minutesPerMatch.value;
 });
@@ -67,7 +68,7 @@ const save = () => {
     return;
   }
   if (
-    timeSlotPerDay.value != timeFrameInfos.value.length ||
+    timeSlotPerDay.value != lstTimeFrame.value.length ||
     timeSlotPerDay.value > maxTimeSlot.value
   ) {
     alert(t("TimeSlotInvalidMesg"));
@@ -95,8 +96,8 @@ const save = () => {
       quantity: quantity.value,
       timeSlotPerDay: timeSlotPerDay.value,
       status: status.value,
-      timeFrameInfos: timeFrameInfos.value,
-      listNameDetails: listNameDetails.value,
+      timeFrameInfos: lstTimeFrame.value,
+      listNameDetails: lstDetail.value,
     })
     .then((res) => {
       emit("callback", res);
@@ -137,17 +138,17 @@ const addEvent = (name, callbackDecreaseFn, callbackIncreaseFn) => {
 
 const decreaseTimeFrameInfosFn = () => {
   if (
-    timeFrameInfos.value &&
-    Array.isArray(timeFrameInfos.value) &&
-    timeFrameInfos.value.length > 0
+    lstTimeFrame.value &&
+    Array.isArray(lstTimeFrame.value) &&
+    lstTimeFrame.value.length > 0
   ) {
-    timeFrameInfos.value.pop();
+    lstTimeFrame.value.pop();
   }
 };
 
 const increaseTimeFrameInfosFn = () => {
-  if (timeFrameInfos.value && Array.isArray(timeFrameInfos.value)) {
-    let lastItem = timeFrameInfos.value[timeFrameInfos.value.length - 1];
+  if (lstTimeFrame.value && Array.isArray(lstTimeFrame.value)) {
+    let lastItem = lstTimeFrame.value[lstTimeFrame.value.length - 1];
 
     let id = uuidv4();
     let sortOrder = lastItem.sortOrder + 1;
@@ -158,7 +159,7 @@ const increaseTimeFrameInfosFn = () => {
     let timeEnd = new Date(
       timeBegin.getTime() + minutesPerMatch.value * 60 * 1000
     );
-    timeFrameInfos.value.push({
+    lstTimeFrame.value.push({
       id: id,
       sortOrder: sortOrder,
       name: name,
@@ -173,17 +174,17 @@ const increaseTimeFrameInfosFn = () => {
 
 const decreaseListNameDetailsFn = () => {
   if (
-    listNameDetails.value &&
-    Array.isArray(listNameDetails.value) &&
-    listNameDetails.value.length > 0
+    lstDetail.value &&
+    Array.isArray(lstDetail.value) &&
+    lstDetail.value.length > 0
   ) {
-    listNameDetails.value.pop();
+    lstDetail.value.pop();
   }
 };
 
 const increaseListNameDetailsFn = () => {
-  if (listNameDetails.value && Array.isArray(listNameDetails.value)) {
-    listNameDetails.value.push("");
+  if (lstDetail.value && Array.isArray(lstDetail.value)) {
+    lstDetail.value.push("");
   }
 };
 
@@ -204,8 +205,8 @@ const changeTimeEnd = (item) => {
 
 const hasConflictTimeFrame = () => {
   let timeLine = [];
-  for (let i = 0; i < timeFrameInfos.value.length; i++) {
-    const item = timeFrameInfos.value[i];
+  for (let i = 0; i < lstTimeFrame.value.length; i++) {
+    const item = lstTimeFrame.value[i];
     timeLine.push({
       data: new Date(item.timeBegin),
       key: i,
@@ -230,8 +231,8 @@ const hasConflictTimeFrame = () => {
 };
 
 const isValidNameDetail = () => {
-  for (let i = 0; i < listNameDetails.value.length; i++) {
-    const item = listNameDetails.value[i];
+  for (let i = 0; i < lstDetail.value.length; i++) {
+    const item = lstDetail.value[i];
     if (!item) return false;
   }
   return true;
@@ -253,8 +254,8 @@ const isValidNameDetail = () => {
           </el-col>
           <el-col :span="4">
             <el-select v-model="status" :placeholder="t('StatusFootballField')">
-              <el-option :label="t('Active')" value="ACTIVE" />
-              <el-option :label="t('Inactive')" value="INACTIVE" />
+              <el-option :label="t('Active')" :value="StatusEnum.ACTIVE" />
+              <el-option :label="t('Inactive')" :value="StatusEnum.INACTIVE" />
             </el-select>
           </el-col>
         </el-form-item>
@@ -309,7 +310,7 @@ const isValidNameDetail = () => {
         </el-form-item>
         <el-tabs type="border-card">
           <el-tab-pane :label="t('FootballFieldInfo')">
-            <el-table :data="configFootballFieldInfoData" class="w-100">
+            <el-table :data="lstConfigInfo" class="w-100">
               <el-table-column label="" width="200">
                 <template #default="scope">
                   <span>{{ scope.row.name }}</span>
@@ -317,22 +318,22 @@ const isValidNameDetail = () => {
               </el-table-column>
 
               <el-table-column
-                v-for="(item, index) in listNameDetails"
+                v-for="(item, index) in lstDetail"
                 :key="index"
                 :label="`${index + 1}`"
                 :min-width="160"
               >
                 <template #default="scope">
                   <el-input
-                    v-if="scope.row.key == 'Name'"
-                    v-model="listNameDetails[index]"
+                    v-if="equals(scope.row.key, 'Name')"
+                    v-model="lstDetail[index]"
                   />
                 </template>
               </el-table-column>
             </el-table>
           </el-tab-pane>
           <el-tab-pane :label="t('TimeFrameInfo')">
-            <el-table :data="configTimeFrameData" class="w-100">
+            <el-table :data="lstConfigTimeFrame" class="w-100">
               <el-table-column label="" width="200">
                 <template #default="scope">
                   <span>{{ scope.row.name }}</span>
@@ -340,14 +341,14 @@ const isValidNameDetail = () => {
               </el-table-column>
 
               <el-table-column
-                v-for="item in timeFrameInfos"
+                v-for="item in lstTimeFrame"
                 :key="item"
                 :label="item.name"
                 :min-width="160"
               >
                 <template #default="scope">
                   <el-input-number
-                    v-if="scope.row.key == 'Price'"
+                    v-if="equals(scope.row.key, 'Price')"
                     v-model="item.price"
                     class="w-100"
                     :min="0"
@@ -355,14 +356,14 @@ const isValidNameDetail = () => {
                   />
 
                   <el-time-picker
-                    v-if="scope.row.key == 'TimeBegin'"
+                    v-if="equals(scope.row.key, 'TimeBegin')"
                     v-model="item.timeBegin"
                     class="w-100"
                     @change="changeTimeBegin(item)"
                   />
 
                   <el-time-picker
-                    v-if="scope.row.key == 'TimeEnd'"
+                    v-if="equals(scope.row.key, 'TimeEnd')"
                     v-model="item.timeEnd"
                     class="w-100"
                     @change="changeTimeEnd(item)"

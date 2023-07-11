@@ -20,10 +20,10 @@ const pitchName = ref(null);
 const timeFrameInfoName = ref(null);
 const detailName = ref(null);
 const weekdays = ref(null);
-const listWeekday = ref([]);
-const listPitch = ref([]);
-const listTimeFrame = ref([]);
-const listDetail = ref([]);
+const lstWeekday = ref([]);
+const lstStadium = ref([]);
+const lstTimeFrame = ref([]);
+const lstDetail = ref([]);
 
 const formatDate = computed(() => {
   return store.getters["config/getFormatDate"];
@@ -73,16 +73,16 @@ onMounted(() => {
     .then((res) => {
       if (res?.data?.data) {
         lstBlank.value = res.data.data;
-        listPitch.value = Array.from(
+        lstStadium.value = Array.from(
           new Set(lstBlank.value.map((item) => item.pitchName))
         );
-        listTimeFrame.value = Array.from(
+        lstTimeFrame.value = Array.from(
           new Set(lstBlank.value.map((item) => item.timeFrameInfoName))
         );
-        listDetail.value = Array.from(
+        lstDetail.value = Array.from(
           new Set(lstBlank.value.map((item) => item.nameDetail))
         );
-        listWeekday.value = Array.from(
+        lstWeekday.value = Array.from(
           new Set(lstBlank.value.map((item) => t(getWeekdays(item.weekendays))))
         );
       }
@@ -103,7 +103,7 @@ onMounted(() => {
               @change="filter"
             >
               <el-option
-                v-for="item in listPitch"
+                v-for="item in lstStadium"
                 :key="item"
                 :label="item"
                 :value="item"
@@ -118,7 +118,7 @@ onMounted(() => {
               @change="filter"
             >
               <el-option
-                v-for="item in listTimeFrame"
+                v-for="item in lstTimeFrame"
                 :key="item"
                 :label="item"
                 :value="item"
@@ -133,7 +133,7 @@ onMounted(() => {
               @change="filter"
             >
               <el-option
-                v-for="item in listDetail"
+                v-for="item in lstDetail"
                 :key="item"
                 :label="item"
                 :value="item"
@@ -148,7 +148,7 @@ onMounted(() => {
               @change="filter"
             >
               <el-option
-                v-for="item in listWeekday"
+                v-for="item in lstWeekday"
                 :key="item"
                 :label="item"
                 :value="item"

@@ -1,15 +1,18 @@
 <script setup>
+import useCommonFn from "@/commonFn";
+import { StatusEnum } from "@/const";
 import { defineProps } from "vue";
 
 const props = defineProps({
   status: String,
   message: String,
 });
+const { equals } = useCommonFn();
 </script>
 
 <template>
   <section class="dot">
-    <div class="active dot_icon" v-if="props.status == 'ACTIVE'"></div>
+    <div class="active dot_icon" v-if="equals(props.status, StatusEnum.ACTIVE)"></div>
     <div class="inactive dot_icon" v-else></div>
     <p>{{ props.message }}</p>
   </section>

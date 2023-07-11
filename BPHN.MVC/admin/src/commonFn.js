@@ -76,6 +76,10 @@ export default function useCommonFn() {
         return (date.getTime() * 10000 + 621355968000000000) - (date.getTimezoneOffset() * 600000000);
     }
 
+    const equals = (string1, string2) => {
+        return string1 === string2;
+    }
+
     return {
         sameDate,
         newDate,
@@ -83,6 +87,7 @@ export default function useCommonFn() {
         time,
         dateToString,
         getWeekdays,
-        ticks
+        ticks,
+        equals
     }
 }

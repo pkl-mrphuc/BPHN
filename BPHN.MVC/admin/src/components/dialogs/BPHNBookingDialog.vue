@@ -20,9 +20,9 @@ const isRecurring = ref(props.data?.isRecurring ?? false);
 const weekdays = ref(props.data?.weekendays + "");
 const fromDate = ref(props.data?.fromDate ?? new Date());
 const toDate = ref(props.data?.toDate ?? new Date());
-const listPitch = ref([]);
-const listTimeFrame = ref([]);
-const listDetail = ref([]);
+const lstStadium = ref([]);
+const lstTimeFrame = ref([]);
+const lstDetail = ref([]);
 const pitchId = ref(props.data?.pitchId ?? null);
 const nameDetail = ref(props.data?.nameDetail ?? null);
 const timeFrameInfoId = ref(props.data?.timeFrameInfoId ?? null);
@@ -48,17 +48,17 @@ const changeDate = () => {
 };
 
 const changePitchId = () => {
-  let pitchSelected = listPitch.value.filter(
+  let pitchSelected = lstStadium.value.filter(
     (item) => item.id == pitchId.value
   );
   if (pitchSelected && pitchSelected.length > 0) {
     let pitch = pitchSelected[0];
-    listDetail.value = pitch.nameDetails.split(";");
+    lstDetail.value = pitch.nameDetails.split(";");
     for (let i = 0; i < pitch.timeFrameInfos.length; i++) {
       const item = pitch.timeFrameInfos[i];
       item["newName"] = `Khung ${time(item.timeBegin)} - ${time(item.timeEnd)}`;
     }
-    listTimeFrame.value = pitch.timeFrameInfos;
+    lstTimeFrame.value = pitch.timeFrameInfos;
   }
 };
 
@@ -155,7 +155,7 @@ onMounted(() => {
     })
     .then((res) => {
       if (res?.data?.data) {
-        listPitch.value = res.data.data;
+        lstStadium.value = res.data.data;
       }
     });
 });
@@ -190,7 +190,7 @@ onMounted(() => {
               @change="changePitchId"
             >
               <el-option
-                v-for="item in listPitch"
+                v-for="item in lstStadium"
                 :key="item"
                 :label="item.name"
                 :value="item.id"
@@ -204,7 +204,7 @@ onMounted(() => {
               v-model="timeFrameInfoId"
             >
               <el-option
-                v-for="item in listTimeFrame"
+                v-for="item in lstTimeFrame"
                 :key="item"
                 :label="item.newName"
                 :value="item.id"
@@ -218,7 +218,7 @@ onMounted(() => {
               v-model="nameDetail"
             >
               <el-option
-                v-for="item in listDetail"
+                v-for="item in lstDetail"
                 :key="item"
                 :label="item"
                 :value="item"

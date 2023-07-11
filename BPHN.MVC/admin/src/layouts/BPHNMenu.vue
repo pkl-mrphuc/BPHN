@@ -6,14 +6,16 @@ import {
   Setting,
   MapLocation,
   VideoCameraFilled,
-  User
+  User,
 } from "@element-plus/icons-vue";
 import { useStore } from "vuex";
 import { computed } from "vue";
 import { RoleEnum } from "@/const";
+import useCommonFn from "@/commonFn";
 
 const { t } = useI18n();
 const store = useStore();
+const { equals } = useCommonFn();
 
 const role = computed(() => {
   return store.getters["account/getRole"];
@@ -48,14 +50,22 @@ const multiUser = computed(() => {
         </el-menu-item>
       </router-link>
 
-      <router-link class="text-decoration-none" to="/tenants" v-if="role == RoleEnum.ADMIN || multiUser">
+      <router-link
+        class="text-decoration-none"
+        to="/tenants"
+        v-if="equals(role, RoleEnum.ADMIN) || multiUser"
+      >
         <el-menu-item index="4" :title="t('AccountsTitle')">
           <el-icon><User /></el-icon>
           <span>{{ t("Accounts") }}</span>
         </el-menu-item>
       </router-link>
 
-      <router-link class="text-decoration-none" to="/configuartions" v-if="role == RoleEnum.ADMIN || multiUser">
+      <router-link
+        class="text-decoration-none"
+        to="/configuartions"
+        v-if="equals(role, RoleEnum.ADMIN) || multiUser"
+      >
         <el-menu-item index="5" :title="t('ConfigurationsTitle')">
           <el-icon><Setting /></el-icon>
           <span>{{ t("Configurations") }}</span>
@@ -74,10 +84,10 @@ const multiUser = computed(() => {
 
 <style scoped>
 .el-menu-vertical-demo {
-    height: calc(100vh - 60px - 1px);
-    width: 100%;
-    box-sizing: border-box;
-    overflow-y: scroll;
-    border-right: 1px solid #cecece;
+  height: calc(100vh - 60px - 1px);
+  width: 100%;
+  box-sizing: border-box;
+  overflow-y: scroll;
+  border-right: 1px solid #cecece;
 }
 </style>>

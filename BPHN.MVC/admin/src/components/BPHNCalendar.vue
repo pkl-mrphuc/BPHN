@@ -8,10 +8,10 @@ import useCommonFn from "@/commonFn";
 import useToggleModal from "@/register-components/actionDialog";
 
 const store = useStore();
-const resources = ref([]);
+const lstResource = ref([]);
 const { dateToString } = useCommonFn();
 const { hasRole, openModal } = useToggleModal();
-const matchDataForm = ref(null);
+const objMatch = ref(null);
 const objEvent = ref(null);
 
 onMounted(() => {
@@ -23,25 +23,25 @@ onMounted(() => {
     })
     .then(async (res) => {
       let lstPitch = res?.data?.data ?? [];
-      resources.value = [];
+      lstResource.value = [];
       for (let i = 0; i < lstPitch.length; i++) {
         const item = lstPitch[i];
-        resources.value.push({
+        lstResource.value.push({
           title: item.name,
           id: item.id,
         });
       }
-      await renderCalendar(resources.value);
+      await renderCalendar(lstResource.value);
     });
 });
 
-const renderCalendar = async (resources) => {
-  if (resources?.length > 0) {
+const renderCalendar = async (lstResource) => {
+  if (lstResource?.length > 0) {
     let calendarEl = document.getElementById("calendarTimeGrid");
     let calendar = new Calendar(calendarEl, {
       plugins: [resourceTimeGridPlugin],
       initialView: "resourceTimeGridDay",
-      resources: resources,
+      resources: lstResource,
       locales: allLocales,
       locale: store.getters["config/getLanguage"],
       headerToolbar: {
@@ -130,7 +130,7 @@ const buildEventInfoHtml = (timeText, eventInfo) => {
 const openForm = (calEvent) => {
   openModal("MatchInfoDialog");
   objEvent.value = calEvent;
-  matchDataForm.value = calEvent.event.extendedProps;
+  objMatch.value = calEvent.event.extendedProps;
 };
 
 const loadEvent = (data) => {
@@ -150,7 +150,7 @@ const loadEvent = (data) => {
   </section>
   <MatchInfoDialog
     v-if="hasRole('MatchInfoDialog')"
-    :data="matchDataForm"
+    :data="objMatch"
     @callback="loadEvent"
   >
   </MatchInfoDialog>

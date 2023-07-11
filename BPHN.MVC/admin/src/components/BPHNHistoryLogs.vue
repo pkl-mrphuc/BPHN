@@ -7,7 +7,7 @@ import useCommonFn from "@/commonFn";
 
 const { t } = useI18n();
 const store = useStore();
-const historyLogData = ref([]);
+const lstHistoryLog = ref([]);
 const pageIndex = ref(1);
 const pageSize = ref(50);
 const totalRecord = ref(0);
@@ -32,7 +32,7 @@ const loadData = () => {
     })
     .then((res) => {
       if (res?.data?.data) {
-        historyLogData.value = res.data.data;
+        lstHistoryLog.value = res.data.data;
       }
       setTimeout(() => {
         running.value = 0;
@@ -95,7 +95,7 @@ onMounted(() => {
       </div>
       <div>
         <el-table
-          :data="historyLogData"
+          :data="lstHistoryLog"
           style="height: calc(100vh - 252px)"
           :empty-text="t('NoData')"
         >
@@ -138,7 +138,7 @@ onMounted(() => {
           v-model:page-size="pageSize"
           layout="sizes, prev, pager, next"
           :total="totalRecord"
-          v-if="historyLogData.length > 0"
+          v-if="lstHistoryLog.length > 0"
           @prev-click="prevClick"
           @next-click="nextClick"
           @size-change="sizePageChange"

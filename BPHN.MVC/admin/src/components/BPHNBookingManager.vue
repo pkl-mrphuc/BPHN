@@ -6,18 +6,19 @@ import { useStore } from "vuex";
 import { ElLoading } from "element-plus";
 import { inject, ref, onMounted, computed } from "vue";
 import useCommonFn from "@/commonFn";
+import { BookingStatusEnum } from "@/const";
 
 const { t } = useI18n();
 const { openModal, hasRole } = useToggleModal();
 const store = useStore();
 const loadingOptions = inject("loadingOptions");
-const bookingForm = ref(null);
+const objBooking = ref(null);
 const pageIndex = ref(1);
 const pageSize = ref(50);
 const totalRecord = ref(0);
 const txtSearch = ref("");
-const { dateToString, getWeekdays } = useCommonFn();
-const bmData = ref([]);
+const { dateToString, getWeekdays, equals } = useCommonFn();
+const lstBooking = ref([]);
 const running = ref(0);
 
 const formatDate = computed(() => {
@@ -29,7 +30,7 @@ const addNew = () => {
   store.dispatch("booking/getInstance", "").then((res) => {
     if (res?.data?.data) {
       openModal("BookingDialog");
-      bookingForm.value = res.data.data;
+      objBooking.value = res.data.data;
     } else {
       let msg = res?.data?.message;
       alert(msg ?? t("ErrorMesg"));
@@ -53,7 +54,7 @@ const loadData = () => {
     })
     .then((res) => {
       if (res?.data?.data) {
-        bmData.value = res.data.data;
+        lstBooking.value = res.data.data;
       }
       setTimeout(() => {
         running.value = 0;
@@ -128,7 +129,7 @@ onMounted(() => {
       </div>
       <div class="body">
         <el-table
-          :data="bmData"
+          :data="lstBooking"
           :empty-text="t('NoData')"
           style="height: calc(100vh - 252px)"
         >
@@ -144,12 +145,16 @@ onMounted(() => {
                     <template #default="scope">
                       <el-tag
                         type="success"
-                        v-if="scope.row.status == 'SUCCESS'"
+                        v-if="
+                          equals(scope.row.status, BookingStatusEnum.SUCCESS)
+                        "
                         >{{ scope.row.status }}</el-tag
                       >
                       <el-tag
                         type="info"
-                        v-else-if="scope.row.status == 'PENDING'"
+                        v-else-if="
+                          equals(scope.row.status, BookingStatusEnum.PENDING)
+                        "
                         >{{ scope.row.status }}</el-tag
                       >
                       <el-tag type="danger" v-else>{{
@@ -189,7 +194,9 @@ onMounted(() => {
                         :class="scope.row.id"
                         @click="cancel(scope.row.id)"
                         type="danger"
-                        v-if="scope.row.status != 'CANCEL'"
+                        v-if="
+                          !equals(scope.row.status, BookingStatusEnum.CANCEL)
+                        "
                         >{{ t("Cancel") }}</el-button
                       >
                     </template>
@@ -200,10 +207,10 @@ onMounted(() => {
           </el-table-column>
           <el-table-column :label="t('Status')" width="150">
             <template #default="scope">
-              <el-tag type="success" v-if="scope.row.status == 'SUCCESS'">{{
+              <el-tag type="success" v-if="equals(scope.row.status, BookingStatusEnum.SUCCESS)">{{
                 scope.row.status
               }}</el-tag>
-              <el-tag type="info" v-else-if="scope.row.status == 'PENDING'">{{
+              <el-tag type="info" v-else-if="equals(scope.row.status, BookingStatusEnum.PENDING)">{{
                 scope.row.status
               }}</el-tag>
               <el-tag type="danger" v-else>{{ scope.row.status }}</el-tag>
@@ -246,7 +253,7 @@ onMounted(() => {
           v-model:page-size="pageSize"
           layout="sizes, prev, pager, next"
           :total="totalRecord"
-          v-if="bmData.length > 0"
+          v-if="lstBooking.length > 0"
           @prev-click="prevClick"
           @next-click="nextClick"
           @size-change="sizePageChange"
@@ -257,7 +264,7 @@ onMounted(() => {
   </section>
   <BookingDialog
     v-if="hasRole('BookingDialog')"
-    :data="bookingForm"
+    :data="objBooking"
     @callback="loadData"
   ></BookingDialog>
 </template>

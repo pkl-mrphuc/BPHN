@@ -1,7 +1,9 @@
 <script setup>
+import useCommonFn from "@/commonFn";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useStore } from "vuex";
+import { ConfigKeyEnum } from "@/const";
 
 const store = useStore();
 const { t } = useI18n();
@@ -11,22 +13,24 @@ const formatDate = ref(store.getters["config/getFormatDate"]);
 const multiUser = ref(store.getters["config/getMultiUser"]);
 const running = ref(0);
 const isLoading = ref(false);
-const configData = [
+const { equals } = useCommonFn();
+
+const lstConfig = [
   {
     name: t("DarkMode"),
-    key: "DarkMode",
+    key: ConfigKeyEnum.DARKMODE,
   },
   {
     name: t("Language"),
-    key: "Language",
+    key: ConfigKeyEnum.LANGUAGE,
   },
   {
     name: t("FormatDate"),
-    key: "FormatDate",
+    key: ConfigKeyEnum.FORMATDATE,
   },
   {
     name: t("MultiUser"),
-    key: "MultiUser",
+    key: ConfigKeyEnum.MULTIUSER,
   },
 ];
 
@@ -75,19 +79,19 @@ const save = () => {
   isLoading.value = true;
   let configs = [
     {
-      Key: "DarkMode",
+      Key: ConfigKeyEnum.DARKMODE,
       Value: `${darkMode.value}`,
     },
     {
-      Key: "Language",
+      Key: ConfigKeyEnum.LANGUAGE,
       Value: language.value,
     },
     {
-      Key: "FormatDate",
+      Key: ConfigKeyEnum.FORMATDATE,
       Value: formatDate.value,
     },
     {
-      Key: "MultiUser",
+      Key: ConfigKeyEnum.MULTIUSER,
       Value: `${multiUser.value}`,
     },
   ];
@@ -112,7 +116,7 @@ const save = () => {
         </div>
       </div>
       <div>
-        <el-table :data="configData" style="height: calc(100vh - 190px)">
+        <el-table :data="lstConfig" style="height: calc(100vh - 190px)">
           <el-table-column :label="t('Title')" width="200">
             <template #default="scope">
               <span>{{ scope.row.name }}</span>
@@ -121,15 +125,15 @@ const save = () => {
           <el-table-column label="">
             <template #default="scope">
               <el-switch
-                v-if="scope.row.key == 'DarkMode'"
+                v-if="equals(scope.row.key, ConfigKeyEnum.DARKMODE)"
                 v-model="darkMode"
               />
-              <el-select v-if="scope.row.key == 'Language'" v-model="language">
+              <el-select v-if="equals(scope.row.key, ConfigKeyEnum.LANGUAGE)" v-model="language">
                 <el-option value="vi" label="Vietnamese" />
                 <el-option value="en" label="English" />
               </el-select>
               <el-select
-                v-if="scope.row.key == 'FormatDate'"
+                v-if="equals(scope.row.key, ConfigKeyEnum.FORMATDATE)"
                 v-model="formatDate"
               >
                 <el-option value="yyyy-MM-dd" label="yyyy-MM-dd" />
@@ -137,7 +141,7 @@ const save = () => {
                 <el-option value="dd-MM-yyyy" label="dd-MM-yyyy" />
               </el-select>
               <el-switch
-                v-if="scope.row.key == 'MultiUser'"
+                v-if="equals(scope.row.key, ConfigKeyEnum.MULTIUSER)"
                 v-model="multiUser"
                 @change="useMultiUser"
               />

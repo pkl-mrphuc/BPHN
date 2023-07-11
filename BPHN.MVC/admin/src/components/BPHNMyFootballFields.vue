@@ -11,8 +11,8 @@ const { t } = useI18n();
 const store = useStore();
 const { openModal, hasRole } = useToggleModal();
 const loadingOptions = inject("loadingOptions");
-const pitchDataForm = ref(null);
-const listPitch = ref([]);
+const objStadium = ref(null);
+const lstStadium = ref([]);
 const mode = ref("add");
 const running = ref(0);
 
@@ -35,7 +35,7 @@ const openForm = (id) => {
   store.dispatch("pitch/getInstance", id).then((res) => {
     if (res?.data?.data) {
       openModal("FootballFieldDialog");
-      pitchDataForm.value = res.data.data;
+      objStadium.value = res.data.data;
     } else {
       let msg = res?.data?.message;
       alert(msg ?? t("ErrorMesg"));
@@ -59,7 +59,7 @@ const loadData = () => {
       setTimeout(() => {
         running.value = 0;
       }, 1000);
-      listPitch.value = res?.data?.data ?? [];
+      lstStadium.value = res?.data?.data ?? [];
     });
 };
 </script>
@@ -81,7 +81,7 @@ const loadData = () => {
       <div style="height: calc(100vh - 190px); overflow: scroll;">
         <el-row>
           <el-col
-            v-for="item in listPitch"
+            v-for="item in lstStadium"
             :key="item.id"
             :span="7"
             class="mb-3 mr-3"
@@ -95,14 +95,14 @@ const loadData = () => {
             ></football-field-card>
           </el-col>
         </el-row>
-        <el-empty :description="t('NoData')" v-if="listPitch.length == 0" />
+        <el-empty :description="t('NoData')" v-if="lstStadium.length == 0" />
       </div>
     </div>
   </section>
   
   <FootballFieldDialog
     v-if="hasRole('FootballFieldDialog')"
-    :data="pitchDataForm"
+    :data="objStadium"
     :mode="mode"
     @callback="loadData"
   >

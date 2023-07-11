@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import { ref, inject, defineEmits, defineProps, computed } from "vue";
 import { useStore } from "vuex";
 import { ElLoading } from "element-plus";
+import { GenderEnum, StatusEnum } from "@/const"
 
 const props = defineProps({
   data: Object,
@@ -17,8 +18,8 @@ const fullName = ref(props.data?.fullName ?? "");
 const userName = ref(props.data?.userName ?? "");
 const email = ref(props.data?.email ?? "");
 const phoneNumber = ref(props.data?.phoneNumber ?? "");
-const gender = ref(props.data?.gender ?? "MALE");
-const status = ref(props.data?.status ?? "ACTIVE");
+const gender = ref(props.data?.gender ?? GenderEnum.MALE);
+const status = ref(props.data?.status ?? StatusEnum.ACTIVE);
 const loadingOptions = inject("loadingOptions");
 const isDisabled = computed(() => {
   return props.mode == "edit" ? true : false;

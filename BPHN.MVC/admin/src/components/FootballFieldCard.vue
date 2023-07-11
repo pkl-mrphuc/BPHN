@@ -3,6 +3,7 @@ import { computed, defineProps, ref, defineEmits } from "vue";
 import StatusDot from "@/components/StatusDot.vue";
 import { useI18n } from "vue-i18n";
 import { useStore } from "vuex";
+import { StatusEnum } from "@/const";
 
 const { t } = useI18n();
 const store = useStore();
@@ -19,12 +20,12 @@ const imgAvatar = ref(null);
 
 const status = computed(() => {
   switch (props.status) {
-    case "ACTIVE":
-      return "Đang hoạt động";
-    case "INACTIVE":
-      return "Ngừng hoạt động";
+    case StatusEnum.ACTIVE:
+      return t("Active");
+    case StatusEnum.INACTIVE:
+      return t("Inactive");
   }
-  return "Ngừng hoạt động";
+  return t("Inactive");
 });
 
 const edit = () => {

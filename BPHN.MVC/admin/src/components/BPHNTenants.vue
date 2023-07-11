@@ -5,18 +5,21 @@ import { ref, onMounted, inject } from "vue";
 import { useStore } from "vuex";
 import useToggleModal from "@/register-components/actionDialog";
 import { ElLoading } from "element-plus";
+import { StatusEnum, GenderEnum } from "@/const";
+import useCommonFn from "@/commonFn";
 
 const loadingOptions = inject("loadingOptions");
 const { openModal, hasRole } = useToggleModal();
 const { t } = useI18n();
 const store = useStore();
-const accountData = ref([]);
+const { equals } = useCommonFn();
+const lstAccount = ref([]);
 const pageIndex = ref(1);
 const pageSize = ref(50);
 const totalRecord = ref(0);
 const txtSearch = ref("");
 const running = ref(0);
-const tenantDataForm = ref(null);
+const objTenant = ref(null);
 const mode = ref("add");
 
 const loadData = () => {
@@ -32,7 +35,7 @@ const loadData = () => {
     })
     .then((res) => {
       if (res?.data?.data) {
-        accountData.value = res.data.data;
+        lstAccount.value = res.data.data;
       }
       setTimeout(() => {
         running.value = 0;
@@ -83,7 +86,7 @@ const openForm = (id) => {
   store.dispatch("account/getInstance", id).then((res) => {
     if (res?.data?.data) {
       openModal("TenantDialog");
-      tenantDataForm.value = res.data.data;
+      objTenant.value = res.data.data;
     } else {
       let msg = res?.data?.message;
       alert(msg ?? t("ErrorMesg"));
@@ -121,15 +124,17 @@ onMounted(() => {
       </div>
       <div>
         <el-table
-          :data="accountData"
+          :data="lstAccount"
           style="height: calc(100vh - 252px)"
           :empty-text="t('NoData')"
         >
           <el-table-column :label="t('Status')">
             <template #default="scope">
-              <el-tag type="success" v-if="scope.row.status == 'ACTIVE'">{{
-                t("ACTIVE")
-              }}</el-tag>
+              <el-tag
+                type="success"
+                v-if="equals(scope.row.status, StatusEnum.ACTIVE)"
+                >{{ t("ACTIVE") }}</el-tag
+              >
               <el-tag type="danger" v-else>{{ t("INACTIVE") }}</el-tag>
             </template>
           </el-table-column>
@@ -145,12 +150,16 @@ onMounted(() => {
           </el-table-column>
           <el-table-column :label="t('Gender')">
             <template #default="scope">
-              <el-tag type="success" v-if="scope.row.gender == 'MALE'">{{
-                t("Male")
-              }}</el-tag>
-              <el-tag type="danger" v-else-if="scope.row.gender == 'FEMALE'">{{
-                t("Female")
-              }}</el-tag>
+              <el-tag
+                type="success"
+                v-if="equals(scope.row.gender, GenderEnum.MALE)"
+                >{{ t("Male") }}</el-tag
+              >
+              <el-tag
+                type="danger"
+                v-else-if="equals(scope.row.gender, GenderEnum.FEMALE)"
+                >{{ t("Female") }}</el-tag
+              >
               <el-tag type="info" v-else>{{ t("Other") }}</el-tag>
             </template>
           </el-table-column>
@@ -161,11 +170,9 @@ onMounted(() => {
           </el-table-column>
           <el-table-column label="">
             <template #default="scope">
-              <el-button
-                @click="edit(scope.row.id)"
-                type="primary"
-                >{{ t("Edit") }}</el-button
-              >
+              <el-button @click="edit(scope.row.id)" type="primary">{{
+                t("Edit")
+              }}</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -177,7 +184,7 @@ onMounted(() => {
           v-model:page-size="pageSize"
           layout="sizes, prev, pager, next"
           :total="totalRecord"
-          v-if="accountData.length > 0"
+          v-if="lstAccount.length > 0"
           @prev-click="prevClick"
           @next-click="nextClick"
           @size-change="sizePageChange"
@@ -188,7 +195,7 @@ onMounted(() => {
   </section>
   <TenantDialog
     v-if="hasRole('TenantDialog')"
-    :data="tenantDataForm"
+    :data="objTenant"
     :mode="mode"
     @callback="loadData"
   >
