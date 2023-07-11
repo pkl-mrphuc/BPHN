@@ -4,16 +4,16 @@
       type="warning"
       :closable="false"
       :description="t('DragDropOnCalendar')"
-      class="mb-8"
+      class="mb-2"
     />
-    <div class="d-flex justify-content-between align-items-center">
-      <span class="fs-36">{{ stadiumName }}</span>
+    <div class="d-flex flex-row justify-content-between align-items-center">
+      <span class="fs-2">{{ stadiumName }}</span>
       <el-dropdown
-        class="ml-8"
         @command="chooseNameDetail"
+        class="ml-2"
         style="margin-bottom: -20px"
       >
-        <span class="el-dropdown-link d-flex align-items-center">
+        <span class="el-dropdown-link d-flex flex-row align-items-center">
           {{ !nameDetail ? t("All") : nameDetail }}
           <el-icon class="el-icon--right">
             <arrow-down />
@@ -32,8 +32,8 @@
       </el-dropdown>
       <div class="ml-auto"></div>
       <el-button @click="prevStep">{{ t("Back") }}</el-button>
-      <el-button type="primary" @click="today">{{ t("Today") }}</el-button>
-      <el-button-group class="ml-8">
+      <el-button type="primary" @click="today" class="ml-2">{{ t("Today") }}</el-button>
+      <el-button-group class="ml-2">
         <el-button type="primary" @click="prev">
           <el-icon><ArrowLeft /></el-icon>
         </el-button>
@@ -42,7 +42,7 @@
         </el-button>
       </el-button-group>
     </div>
-    <div id="calendar" class="wp-100"></div>
+    <div id="calendar" class="w-100"></div>
   </div>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
   <section>
-    <h1 class="fs-36">{{ t('Home') }}</h1>
+    <h2 class="fs-2">{{ t('Home') }}</h2>
   </section>
 </template>
 

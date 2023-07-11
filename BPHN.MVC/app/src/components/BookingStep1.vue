@@ -4,10 +4,10 @@
       type="warning"
       :closable="false"
       :description="t('OnlyPartner')"
-      class="mb-8"
+      class="mb-2"
     />
     <el-autocomplete
-      class="wp-100 mb-8"
+      class="w-100 mb-2"
       v-model="key"
       :fetch-suggestions="searchStadium"
       popper-class="my-autocomplete"
@@ -27,7 +27,7 @@
     <el-table
       :data="lstStadium"
       height="250"
-      style="width: 100%"
+      class="w-100"
       :span-method="objSpanMethod"
     >
       <el-table-column prop="name" :label="t('Name')" />
@@ -60,7 +60,7 @@
       </el-table-column>
     </el-table>
     <el-pagination
-      class="my-8"
+      class="m-3 d-flex flex-row align-items-center justify-content-end"
       background
       layout="prev, pager, next"
       v-if="totalRecord != 0"

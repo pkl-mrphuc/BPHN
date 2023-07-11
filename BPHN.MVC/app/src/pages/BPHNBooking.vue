@@ -1,20 +1,20 @@
 <template>
   <section>
-    <h1 class="fs-36">{{ t("Booking") }}</h1>
+    <h2 class="fs-2">{{ t("Booking") }}</h2>
     <section>
       <el-alert
         type="warning"
         :closable="false"
         :description="t('BookingStep')"
-        class="mb-8"
+        class="mb-2"
       />
       <el-steps :active="step" finish-status="success" simple>
         <el-step :title="t('Step1')" />
         <el-step :title="t('Step2')" />
         <el-step :title="t('Step3')" />
       </el-steps>
-      <div class="p-12">
-        <div class="content">
+      <div class="p-2">
+        <div>
           <booking-step-1 v-if="step == 0" @choose="choose"></booking-step-1>
           <booking-step-2
             v-if="step == 1"

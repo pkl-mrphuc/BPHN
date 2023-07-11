@@ -1,73 +1,78 @@
 <template>
-  <div>
-    <div class="d-flex justify-content-between">
-      <div class="booking-info">
-        <h1 class="fs-20 d-flex justify-content-center align-items-center">
+  <div class="container">
+    <div class="row">
+      <div
+        class="col-5 px-5 pb-5"
+        style="border: var(--el-border);"
+      >
+        <h1
+          class="fs-3 d-flex flex-row align-items-center justify-content-center"
+        >
           {{ t("Booking") }}
         </h1>
         <el-form-item>
-          <el-col :span="7">
-            <b>{{ t("StadiumName") }}</b>
+          <el-col :span="7" class="fw-bold">
+            {{ t("StadiumName") }}
           </el-col>
           <el-col :span="17"> {{ stadiumName }} - {{ nameDetail }} </el-col>
         </el-form-item>
         <el-form-item>
-          <el-col :span="7">
-            <b>{{ t("BookingDate") }}</b>
+          <el-col :span="7" class="fw-bold">
+            {{ t("BookingDate") }}
           </el-col>
           <el-col :span="17">
             {{ bookingDate }}
           </el-col>
         </el-form-item>
         <el-form-item>
-          <el-col :span="7">
-            <b>{{ t("MatchDate") }}</b>
+          <el-col :span="7" class="fw-bold">
+            {{ t("MatchDate") }}
           </el-col>
           <el-col :span="17">
             {{ matchDate }}
           </el-col>
         </el-form-item>
         <el-form-item>
-          <el-col :span="7">
-            <b>{{ t("TimeFrame") }}</b>
+          <el-col :span="7" class="fw-bold">
+            {{ t("TimeFrame") }}
           </el-col>
           <el-col :span="17"> {{ timeFrameInfo }} </el-col>
         </el-form-item>
         <el-form-item>
-          <el-col :span="7">
-            <b>{{ t("Price") }}</b>
+          <el-col :span="7" class="fw-bold">
+            {{ t("Price") }}
           </el-col>
           <el-col :span="17"> {{ price }} </el-col>
         </el-form-item>
       </div>
-      <div class="user-info">
+      <div class="col-7 p-5">
         <el-form-item>
-          <el-col>
-            <b>{{ t("PhoneNumber") }} <span class="red">(*)</span></b>
+          <el-col class="fw-bold">
+            {{ t("PhoneNumber") }} <span class="text-danger">(*)</span>
           </el-col>
           <el-col>
             <el-input v-model="phoneNumber" maxlength="255" />
           </el-col>
         </el-form-item>
         <el-form-item>
-          <el-col>
-            <b>{{ t("Email") }}<span class="red">(*)</span></b>
+          <el-col class="fw-bold">
+            {{ t("Email") }}<span class="text-danger">(*)</span>
           </el-col>
           <el-col>
             <el-input v-model="email" maxlength="255" />
           </el-col>
         </el-form-item>
         <el-form-item>
-          <el-col>
-            <b>{{ t("FootballTeam") }}</b>
+          <el-col class="fw-bold">
+            {{ t("FootballTeam") }}
           </el-col>
           <el-col>
             <el-input v-model="teamA" maxlength="255" />
           </el-col>
         </el-form-item>
         <el-form-item>
-          <el-col>
-            <b>{{ t("Note") }}</b>
+          <el-col class="fw-bold">
+            {{ t("Note") }}
           </el-col>
           <el-col>
             <el-input
@@ -153,11 +158,10 @@ const complete = () => {
       bookingDate: dateToString(bookingDateReal.value, "yyyy-MM-dd"),
     })
     .then((res) => {
-      if(res.data?.success) {
+      if (res.data?.success) {
         alert(t("BookingSuccessMesg"));
         emit("complete");
-      }
-      else {
+      } else {
         alert(t("ErrorMesg"));
       }
     });
@@ -176,7 +180,7 @@ const complete = () => {
   padding: 30px;
 }
 
-.red {
+.text-danger {
   color: #f56c6c;
 }
 </style>>

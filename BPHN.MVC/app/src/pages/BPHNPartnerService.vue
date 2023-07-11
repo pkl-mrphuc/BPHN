@@ -1,6 +1,6 @@
 <template>
   <section>
-    <h1 class="fs-36">{{ t('Service') }} / {{ t('Partner') }}</h1>
+    <h2 class="fs-2">{{ t('Service') }} / {{ t('Partner') }}</h2>
     
   </section>
 </template>
