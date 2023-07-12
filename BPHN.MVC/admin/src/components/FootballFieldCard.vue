@@ -77,9 +77,9 @@ const readImageFile = (file) => {
 
     <div style="padding: 14px">
       <h3 style="margin: 5px 0px">{{ props.name }}</h3>
-      <div class="bottom">
-        <status-dot :status="props.status" :message="status"></status-dot>
-        <div>
+      <div class="row">
+        <status-dot :status="props.status" :message="status" class="col-12 col-sm-6 col-md-12 col-lg-12 col-xl-6"></status-dot>
+        <div class="col-12 col-sm-6 col-md-12 col-lg-12 col-xl-6 d-flex flex-row align-items-center">
           <el-button class="button" @click="upload">{{
             t("UploadImage")
           }}</el-button>
@@ -102,11 +102,6 @@ const readImageFile = (file) => {
 </template>
 
 <style scoped>
-.bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
 
 .image {
   width: 100%;

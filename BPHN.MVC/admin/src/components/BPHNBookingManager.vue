@@ -109,9 +109,13 @@ onMounted(() => {
 <template>
   <section>
     <div class="container">
-      <div class="d-flex flex-row align-items-center justify-content-between">
-        <h3 class="fs-3">{{ t("BookingManager") }}</h3>
-        <div class="d-flex flex-row">
+      <div
+        class="row mb-3 d-flex flex-row align-items-center justify-content-between"
+      >
+        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">
+          {{ t("BookingManager") }}
+        </h3>
+        <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row">
           <el-input
             v-model="txtSearch"
             :placeholder="t('SearchBy')"
@@ -131,7 +135,7 @@ onMounted(() => {
         <el-table
           :data="lstBooking"
           :empty-text="t('NoData')"
-          style="height: calc(100vh - 252px)"
+          style="height: calc(100vh - 300px)"
         >
           <el-table-column type="expand">
             <template #default="props">
@@ -207,23 +211,31 @@ onMounted(() => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column :label="t('Status')" width="150">
+          <el-table-column :label="t('Status')" width="100">
             <template #default="scope">
-              <el-tag type="success" size="small" v-if="equals(scope.row.status, BookingStatusEnum.SUCCESS)">{{
+              <el-tag
+                type="success"
+                size="small"
+                v-if="equals(scope.row.status, BookingStatusEnum.SUCCESS)"
+                >{{ scope.row.status }}</el-tag
+              >
+              <el-tag
+                type="info"
+                size="small"
+                v-else-if="equals(scope.row.status, BookingStatusEnum.PENDING)"
+                >{{ scope.row.status }}</el-tag
+              >
+              <el-tag type="danger" size="small" v-else>{{
                 scope.row.status
               }}</el-tag>
-              <el-tag type="info" size="small" v-else-if="equals(scope.row.status, BookingStatusEnum.PENDING)">{{
-                scope.row.status
-              }}</el-tag>
-              <el-tag type="danger" size="small" v-else>{{ scope.row.status }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column :label="t('BookingDate')">
+          <el-table-column :label="t('BookingDate')" width="100">
             <template #default="scope">
               {{ dateToString(scope.row.bookingDate, formatDate) }}
             </template>
           </el-table-column>
-          <el-table-column :label="t('BookingUser')">
+          <el-table-column :label="t('BookingUser')" min-width="200">
             <template #default="scope">
               <span
                 ><el-icon :title="scope.row.email"><User /></el-icon>
@@ -231,19 +243,21 @@ onMounted(() => {
               >
             </template>
           </el-table-column>
-          <el-table-column :label="t('Infrastructure')">
+          <el-table-column :label="t('Infrastructure')" min-width="200">
             <template #default="scope">
-              {{ scope.row.pitchName }}
+              <span class="text-truncate">{{ scope.row.pitchName }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="t('TimeFrame')">
+          <el-table-column :label="t('TimeFrame')" min-width="200">
             <template #default="scope">
-              {{ scope.row.timeFrameInfoName }}
+              <span class="text-truncate">{{
+                scope.row.timeFrameInfoName
+              }}</span>
             </template>
           </el-table-column>
           <el-table-column :label="t('NameDetail')">
             <template #default="scope">
-              {{ scope.row.nameDetail }}
+              <span class="text-truncate">{{ scope.row.nameDetail }}</span>
             </template>
           </el-table-column>
         </el-table>

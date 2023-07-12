@@ -6,16 +6,18 @@ import {
   Setting,
   MapLocation,
   VideoCameraFilled,
-  User,
+  User
 } from "@element-plus/icons-vue";
 import { useStore } from "vuex";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { RoleEnum } from "@/const";
 import useCommonFn from "@/commonFn";
+import router from "@/routers";
 
 const { t } = useI18n();
 const store = useStore();
 const { equals } = useCommonFn();
+const toggle = ref(true);
 
 const role = computed(() => {
   return store.getters["account/getRole"];
@@ -24,59 +26,72 @@ const role = computed(() => {
 const multiUser = computed(() => {
   return store.getters["config/getMultiUser"];
 });
+
+const goTo = (link) => {
+  router.push(link);
+}
 </script>
 
 <template>
   <section>
-    <el-menu class="el-menu-vertical-demo">
-      <router-link class="text-decoration-none" to="/bm">
-        <el-menu-item index="1" :title="t('BMTitle')">
-          <el-icon><Ticket /></el-icon>
-          <span>{{ t("BM") }}</span>
-        </el-menu-item>
-      </router-link>
+    <el-menu class="el-menu-vertical-demo" :collapse="toggle">
+      <el-menu-item>
+        <el-icon @click="goTo('bm')"><Ticket /></el-icon>
+        <template #title>
+          <router-link class="text-decoration-none" to="/bm">
+            <span>{{ t("BM") }}</span>
+          </router-link>
+        </template>
+      </el-menu-item>
 
-      <router-link class="text-decoration-none" to="/calendar">
-        <el-menu-item index="2" :title="t('CalendarTitle')">
-          <el-icon><Calendar /></el-icon>
-          <span>{{ t("Calendar") }}</span>
-        </el-menu-item>
-      </router-link>
+      <el-menu-item>
+        <el-icon @click="goTo('calendar')"><Calendar /></el-icon>
+        <template #title>
+          <router-link class="text-decoration-none" to="/calendar">
+            <span>{{ t("Calendar") }}</span>
+          </router-link>
+        </template>
+      </el-menu-item>
 
-      <router-link class="text-decoration-none" to="/my-football-fields">
-        <el-menu-item index="3" :title="t('FootballFieldTitle')">
-          <el-icon><MapLocation /></el-icon>
-          <span>{{ t("FootballField") }}</span>
-        </el-menu-item>
-      </router-link>
+      <el-menu-item>
+        <el-icon @click="goTo('my-football-fields')"><MapLocation /></el-icon>
+        <template #title>
+          <router-link class="text-decoration-none" to="/my-football-fields">
+            <span>{{ t("FootballField") }}</span>
+          </router-link>
+        </template>
+      </el-menu-item>
 
-      <router-link
-        class="text-decoration-none"
-        to="/tenants"
-        v-if="equals(role, RoleEnum.ADMIN) || multiUser"
-      >
-        <el-menu-item index="4" :title="t('AccountsTitle')">
-          <el-icon><User /></el-icon>
-          <span>{{ t("Accounts") }}</span>
-        </el-menu-item>
-      </router-link>
+      <el-menu-item>
+        <el-icon @click="goTo('tenants')"><User /></el-icon>
+        <template #title>
+          <router-link
+            class="text-decoration-none"
+            to="/tenants"
+            v-if="equals(role, RoleEnum.ADMIN) || multiUser"
+          >
+            <span>{{ t("Accounts") }}</span>
+          </router-link>
+        </template>
+      </el-menu-item>
 
-      <router-link
-        class="text-decoration-none"
-        to="/configuartions"
-      >
-        <el-menu-item index="5" :title="t('ConfigurationsTitle')">
-          <el-icon><Setting /></el-icon>
-          <span>{{ t("Configurations") }}</span>
-        </el-menu-item>
-      </router-link>
+      <el-menu-item>
+        <el-icon @click="goTo('configuartions')"><Setting /></el-icon>
+        <template #title>
+          <router-link class="text-decoration-none" to="/configuartions">
+            <span>{{ t("Configurations") }}</span>
+          </router-link>
+        </template>
+      </el-menu-item>
 
-      <router-link class="text-decoration-none" to="/history-logs">
-        <el-menu-item index="6" :title="t('HistoryLogsTitle')">
-          <el-icon><VideoCameraFilled /></el-icon>
-          <span>{{ t("HistoryLog") }}</span>
-        </el-menu-item>
-      </router-link>
+      <el-menu-item>
+        <el-icon @click="goTo('history-logs')"><VideoCameraFilled /></el-icon>
+        <template #title>
+          <router-link class="text-decoration-none" to="/history-logs">
+            <span>{{ t("HistoryLog") }}</span>
+          </router-link>
+        </template>
+      </el-menu-item>
     </el-menu>
   </section>
 </template>
@@ -84,9 +99,6 @@ const multiUser = computed(() => {
 <style scoped>
 .el-menu-vertical-demo {
   height: calc(100vh - 60px - 1px);
-  width: 100%;
-  box-sizing: border-box;
   overflow-y: scroll;
-  border-right: 1px solid #cecece;
 }
 </style>>

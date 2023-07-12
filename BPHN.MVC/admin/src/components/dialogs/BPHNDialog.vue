@@ -5,8 +5,7 @@ const { toggleModel } = useToggleModal();
 const show = ref(true);
 
 const props = defineProps({
-  title: String,
-  width: Number,
+  title: String
 });
 </script>
 
@@ -14,9 +13,9 @@ const props = defineProps({
   <el-dialog
     v-model="show"
     :title="props.title"
-    :width="props.width ?? 700"
     :before-close="toggleModel"
     :close-on-click-modal="false"
+    class="w-100 w-sm-75 w-md-75 w-xl-50"
   >
     <slot name="body"></slot>
     <template #footer>

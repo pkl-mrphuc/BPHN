@@ -76,24 +76,27 @@ const loadData = () => {
 <template>
   <section>
     <div class="container">
-      <div class="d-flex flex-row align-items-center justify-content-between">
-        <h3 class="fs-3">{{ t("MyFootballFields") }}</h3>
-        <div class="d-flex flex-row">
-          <el-button @click="loadData">
-            <el-icon><Refresh /></el-icon>
-          </el-button>
+      <div
+        class="row d-flex flex-row align-items-center justify-content-between"
+      >
+        <h3 class="fs-3 col-4 col-sm-4 col-md-4 col-lg-8">
+          {{ t("MyFootballFields") }}
+        </h3>
+        <div class="col-8 col-sm-8 col-md-8 col-lg-4 d-flex flex-row-reverse">
           <el-button type="primary" @click="addNew" class="ml-2">{{
             t("AddNew")
           }}</el-button>
+          <el-button @click="loadData">
+            <el-icon><Refresh /></el-icon>
+          </el-button>
         </div>
       </div>
       <div style="height: calc(100vh - 190px); overflow: scroll">
-        <el-row>
-          <el-col
+        <div class="row">
+          <div
             v-for="item in lstStadium"
             :key="item.id"
-            :span="7"
-            class="mb-3 mr-3"
+            class="mb-3 mr-3 col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4 col-xxl-3"
           >
             <football-field-card
               :name="item.name"
@@ -102,8 +105,8 @@ const loadData = () => {
               :avatarUrl="item.avatarUrl"
               @edit="edit"
             ></football-field-card>
-          </el-col>
-        </el-row>
+          </div>
+        </div>
         <el-empty :description="t('NoData')" v-if="lstStadium.length == 0" />
       </div>
     </div>

@@ -5,7 +5,7 @@
         <bphn-header></bphn-header>
       </el-header>
       <el-container>
-        <el-aside width="200px" class="menu-layout">
+        <el-aside class="w-auto">
           <bphn-menu></bphn-menu>
         </el-aside>
         <el-main class="main-layout">

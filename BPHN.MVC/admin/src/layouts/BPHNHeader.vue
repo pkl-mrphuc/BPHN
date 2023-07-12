@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
-import { SwitchButton, Refresh } from "@element-plus/icons-vue";
+import { SwitchButton, Refresh, Avatar } from "@element-plus/icons-vue";
 import useToggleModal from "@/register-components/actionDialog";
 import { useRouter } from "vue-router";
 
@@ -31,7 +31,7 @@ const goToHome = () => {
 const refresh = () => {
   localStorage.removeItem("config-key");
   router.go();
-}
+};
 </script>
 
 <template>
@@ -42,12 +42,15 @@ const refresh = () => {
       BPHN
     </h1>
     <div class="d-flex flex-row align-items-center">
-      <p class="pointer">
+      <p class="account pointer">
         {{ t("Hello") }}
         <span class="mx-1 text-decoration-underline" @click="showAccountInfo">{{
           fullname
         }}</span>
       </p>
+      <div class="mx-1 pointer account-sm" @click="showAccountInfo">
+        <el-icon size="24"><Avatar /></el-icon>
+      </div>
       <div class="mx-1 pointer" @click="refresh">
         <el-icon size="24"><Refresh /></el-icon>
       </div>
@@ -58,3 +61,23 @@ const refresh = () => {
   </section>
   <AccountInfoDialog v-if="hasRole('AccountInfoDialog')"> </AccountInfoDialog>
 </template>
+
+<style scoped>
+.account {
+  display: none;
+}
+
+.account-sm {
+  display: block;
+}
+
+@media (min-width: 576px) {
+  .account-sm {
+    display: none;
+  }
+
+  .account {
+    display: block;
+  }
+}
+</style>

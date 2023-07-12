@@ -78,9 +78,9 @@ onMounted(() => {
 <template>
   <section>
     <div class="container">
-      <div class="d-flex flex-row align-items-center justify-content-between">
-        <h3 class="fs-3">{{ t("HistoryLog") }}</h3>
-        <div class="d-flex flex-row">
+      <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
+        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("HistoryLog") }}</h3>
+        <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row">
           <el-input
             v-model="txtSearch"
             :placeholder="t('Search')"
@@ -95,35 +95,35 @@ onMounted(() => {
       <div>
         <el-table
           :data="lstHistoryLog"
-          style="height: calc(100vh - 252px)"
+          style="height: calc(100vh - 300px)"
           :empty-text="t('NoData')"
         >
-          <el-table-column :label="t('CreatedDate')">
+          <el-table-column :label="t('CreatedDate')" width="200">
             <template #default="scope">
               {{ dateToString(scope.row.createdDate, formatDate, true) }}
             </template>
           </el-table-column>
-          <el-table-column :label="t('IPAddress')">
+          <el-table-column :label="t('IPAddress')" width="150">
             <template #default="scope">
               {{ scope.row.ipAddress }}
             </template>
           </el-table-column>
-          <el-table-column :label="t('Actor')">
+          <el-table-column :label="t('Actor')" min-width="150">
             <template #default="scope">
-              {{ scope.row.actor }}
+              <span class="text-truncate">{{ scope.row.actor }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="t('ActionName')">
+          <el-table-column :label="t('ActionName')" min-width="150">
             <template #default="scope">
-              {{ scope.row.actionName }}
+              <span class="text-truncate">{{ scope.row.actionName }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="t('Entity')">
+          <el-table-column :label="t('Entity')" min-width="150">
             <template #default="scope">
-              {{ scope.row.entity }}
+              <span class="text-truncate">{{ scope.row.entity }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="t('Description')">
+          <el-table-column :label="t('Description')" min-width="150">
             <template v-slot="scope">
               <span v-html="scope.row.description"></span>
             </template>

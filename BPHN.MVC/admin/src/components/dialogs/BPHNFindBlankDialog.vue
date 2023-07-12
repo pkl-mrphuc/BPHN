@@ -91,7 +91,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <Dialog :title="t('FindBlankForm')" :width="900">
+  <Dialog :title="t('FindBlankForm')">
     <template #body>
       <el-form>
         <el-form-item>

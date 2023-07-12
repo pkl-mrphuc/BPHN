@@ -162,78 +162,88 @@ onMounted(() => {
 </script>
 
 <template>
-  <Dialog :title="t('BookingForm')" :width="750">
+  <Dialog :title="t('BookingForm')">
     <template #body>
       <el-form>
-        <el-form-item>
-          <el-col :span="11">
-            <el-input
-              :placeholder="t('PhoneNumber')"
-              v-model="phoneNumber"
-              maxlength="225"
-            />
-          </el-col>
-          <el-col :span="11">
-            <el-input
-              :placeholder="t('Email')"
-              v-model="email"
-              maxlength="225"
-            />
-          </el-col>
-        </el-form-item>
-        <el-form-item>
-          <el-col :span="7">
-            <el-select
-              class="w-100"
-              :placeholder="t('Infrastructure')"
-              v-model="pitchId"
-              @change="changePitchId"
-            >
-              <el-option
-                v-for="item in lstStadium"
-                :key="item"
-                :label="item.name"
-                :value="item.id"
+        <div class="row">
+          <div class="mb-2 col-12">
+            <div class="mx-2">
+              <el-input
+                :placeholder="t('PhoneNumber')"
+                v-model="phoneNumber"
+                maxlength="225"
               />
-            </el-select>
-          </el-col>
-          <el-col :span="7">
-            <el-select
-              class="w-100"
-              :placeholder="t('TimeFrame')"
-              v-model="timeFrameInfoId"
-            >
-              <el-option
-                v-for="item in lstTimeFrame"
-                :key="item"
-                :label="item.newName"
-                :value="item.id"
+            </div>
+          </div>
+          <div class="mb-2 col-12">
+            <div class="mx-2">
+              <el-input
+                :placeholder="t('Email')"
+                v-model="email"
+                maxlength="225"
               />
-            </el-select>
-          </el-col>
-          <el-col :span="7">
-            <el-select
-              class="w-100"
-              :placeholder="t('NameDetail')"
-              v-model="nameDetail"
-            >
-              <el-option
-                v-for="item in lstDetail"
-                :key="item"
-                :label="item"
-                :value="item"
-              />
-            </el-select>
-          </el-col>
-        </el-form-item>
-        <el-form-item>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="mb-2 col-12 col-sm-4">
+            <div class="mx-2">
+              <el-select
+                class="w-100"
+                :placeholder="t('Infrastructure')"
+                v-model="pitchId"
+                @change="changePitchId"
+              >
+                <el-option
+                  v-for="item in lstStadium"
+                  :key="item"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </div>
+          </div>
+          <div class="mb-2 col-12 col-sm-4">
+            <div class="mx-2">
+              <el-select
+                class="w-100"
+                :placeholder="t('TimeFrame')"
+                v-model="timeFrameInfoId"
+              >
+                <el-option
+                  v-for="item in lstTimeFrame"
+                  :key="item"
+                  :label="item.newName"
+                  :value="item.id"
+                />
+              </el-select>
+            </div>
+          </div>
+          <div class="mb-2 col-12 col-sm-4">
+            <div class="mx-2">
+              <el-select
+                class="w-100"
+                :placeholder="t('NameDetail')"
+                v-model="nameDetail"
+              >
+                <el-option
+                  v-for="item in lstDetail"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>
+            </div>
+          </div>
+        </div>
+        <div class="mx-2 mb-2">
           <el-checkbox
             :label="t('MakeRecurring')"
             v-model="isRecurring"
             @change="showMakeRecurring"
           />
-        </el-form-item>
-        <el-form-item>
+        </div>
+        <div class="mx-2 mb-2">
           <el-radio-group v-model="weekdays" :disabled="!isRecurring">
             <el-radio label="1">{{ t("Monday") }}</el-radio>
             <el-radio label="2">{{ t("Tuesday") }}</el-radio>
@@ -243,51 +253,66 @@ onMounted(() => {
             <el-radio label="6">{{ t("Saturday") }}</el-radio>
             <el-radio label="0">{{ t("Sunday") }}</el-radio>
           </el-radio-group>
-        </el-form-item>
-        <el-form-item v-if="!isRecurring">
-          <el-date-picker
-            type="date"
-            placeholder="Ngày"
-            class="w-100"
-            v-model="fromDate"
-            @change="changeDate"
-            :disabled-date="disabledDate"
-          />
-        </el-form-item>
-        <el-form-item v-if="isRecurring">
-          <el-col :span="11">
+        </div>
+        <div class="mb-2" v-if="!isRecurring">
+          <div class="mx-2">
             <el-date-picker
               type="date"
-              :placeholder="t('FromDate')"
+              placeholder="Ngày"
               class="w-100"
               v-model="fromDate"
               @change="changeDate"
               :disabled-date="disabledDate"
             />
-          </el-col>
-          <el-col :span="11">
-            <el-date-picker
-              type="date"
-              :placeholder="t('ToDate')"
-             class="w-100"
-              v-model="toDate"
-              @change="changeDate"
-              disabled
-            />
-          </el-col>
-        </el-form-item>
+          </div>
+        </div>
+        <div class="mb-2 row" v-if="isRecurring">
+          <div class="mb-2 col-12 col-sm-6">
+            <div class="mx-2">
+              <el-date-picker
+                type="date"
+                :placeholder="t('FromDate')"
+                class="w-100"
+                v-model="fromDate"
+                @change="changeDate"
+                :disabled-date="disabledDate"
+              />
+            </div>
+          </div>
+          <div class="mb-2 col-12 col-sm-6">
+            <div class="mx-2">
+              <el-date-picker
+                type="date"
+                :placeholder="t('ToDate')"
+                class="w-100"
+                v-model="toDate"
+                @change="changeDate"
+                disabled
+              />
+            </div>
+          </div>
+        </div>
       </el-form>
     </template>
     <template #foot>
-      <div class="d-flex flex-row justify-content-between align-items-center">
-        <span>
-          <el-button @click="quickCheck">{{ t("QuickCheck") }}</el-button>
-          <el-button @click="finder">{{ t("Finder") }}</el-button>
-        </span>
-        <span class="dialog-footer">
-          <el-button @click="toggleModel">{{ t("Close") }}</el-button>
-          <el-button type="primary" @click="save">{{ t("Save") }}</el-button>
-        </span>
+      <div
+        class="row d-flex flex-row justify-content-between align-items-center"
+      >
+        <div>
+          <el-button class="mb-2" @click="quickCheck">{{
+            t("QuickCheck")
+          }}</el-button>
+          <el-button class="mb-2" @click="finder">{{ t("Finder") }}</el-button>
+        </div>
+
+        <div>
+          <el-button class="mb-2" @click="toggleModel">{{
+            t("Close")
+          }}</el-button>
+          <el-button class="mb-2" type="primary" @click="save">{{
+            t("Save")
+          }}</el-button>
+        </div>
       </div>
     </template>
   </Dialog>

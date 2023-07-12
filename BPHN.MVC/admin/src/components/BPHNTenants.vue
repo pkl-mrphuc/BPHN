@@ -105,9 +105,9 @@ onMounted(() => {
 <template>
   <section>
     <div class="container">
-      <div class="d-flex flex-row align-items-center justify-content-between">
-        <h3 class="fs-3">{{ t("Accounts") }}</h3>
-        <div class="d-flex flex-row">
+      <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
+        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("Accounts") }}</h3>
+        <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row">
           <el-input
             class="ml-2"
             v-model="txtSearch"
@@ -126,10 +126,10 @@ onMounted(() => {
       <div>
         <el-table
           :data="lstAccount"
-          style="height: calc(100vh - 252px)"
+          style="height: calc(100vh - 300px)"
           :empty-text="t('NoData')"
         >
-          <el-table-column :label="t('Status')">
+          <el-table-column :label="t('Status')" width="150">
             <template #default="scope">
               <el-tag
                 type="success"
@@ -180,7 +180,7 @@ onMounted(() => {
               }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="">
+          <el-table-column label="" width="100">
             <template #default="scope">
               <el-button @click="edit(scope.row.id)" type="primary">{{
                 t("Edit")

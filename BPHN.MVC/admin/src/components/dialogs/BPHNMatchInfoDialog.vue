@@ -35,7 +35,7 @@ const save = () => {
 </script>
 
 <template>
-  <Dialog :title="t('MatchInfoForm')" :width="500">
+  <Dialog :title="t('MatchInfoForm')">
     <template #body>
       <el-form-item>
         <el-col :span="7" class="fw-bold">

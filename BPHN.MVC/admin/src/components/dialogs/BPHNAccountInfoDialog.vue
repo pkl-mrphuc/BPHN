@@ -61,13 +61,13 @@ const changePassword = () => {
     <template #body>
       <div class="container">
         <div class="row">
-          <div class="col-4">
+          <div class="col-12 col-sm-12 col-md-4">
             <el-avatar
               :size="120"
               src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
             />
           </div>
-          <div class="col-8">
+          <div class="col-12 col-sm-12 col-md-8">
             <el-form-item>
               <el-col :span="7" class="fw-bold">{{ t("Username") }}: </el-col>
               <el-col :span="17"> {{ userName }} </el-col>
@@ -128,15 +128,13 @@ const changePassword = () => {
       </div>
     </template>
     <template #foot>
-      <span class="dialog-footer">
-        <el-button
-          type="primary"
-          @click="changePassword"
-          v-if="showResetPassword"
-          >{{ t("Submit") }}</el-button
-        >
-        <el-button @click="toggleModel">{{ t("Close") }}</el-button>
-      </span>
+      <el-button
+        type="primary"
+        @click="changePassword"
+        v-if="showResetPassword"
+        >{{ t("Submit") }}</el-button
+      >
+      <el-button @click="toggleModel">{{ t("Close") }}</el-button>
     </template>
   </Dialog>
 </template>
