@@ -22,6 +22,11 @@ const getters = {
         return state.context.id
     },
 
+    getParentId: (state) => {
+        if(!state.context) return ""
+        return state.context.parentId
+    },
+
     getUserName: (state) => {
         if (!state.context) return ""
         return state.context.userName;

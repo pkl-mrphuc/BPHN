@@ -411,6 +411,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     Email = realAccount.Email,
                     Gender = realAccount.Gender,
                     Role = realAccount.Role,
+                    ParentId = realAccount.ParentId,
                     Token = token
                 }
             };

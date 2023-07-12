@@ -6,10 +6,13 @@ import { ElLoading } from "element-plus";
 import { onMounted, inject, ref } from "vue";
 import { useStore } from "vuex";
 import { Refresh } from "@element-plus/icons-vue";
+import { RoleEnum } from "@/const";
+import useCommonFn from "@/commonFn";
 
 const { t } = useI18n();
 const store = useStore();
 const { openModal, hasRole } = useToggleModal();
+const { equals } = useCommonFn();
 const loadingOptions = inject("loadingOptions");
 const objStadium = ref(null);
 const lstStadium = ref([]);
@@ -45,12 +48,18 @@ const openForm = (id) => {
 };
 
 const loadData = () => {
-  if(running.value > 0) return;
+  if (running.value > 0) return;
   ++running.value;
   const loading = ElLoading.service(loadingOptions);
+  let accountId = store.getters["account/getAccountId"];
+  let role = store.getters["account/getRole"];
+  let parentId = store.getters["account/getParentId"];
+  if (equals(role, RoleEnum.USER) && parentId) {
+    accountId = parentId;
+  }
   store
     .dispatch("pitch/getPaging", {
-      accountId: store.getters["account/getAccountId"],
+      accountId: accountId,
       hasDetail: false,
       hasInactive: true,
     })
@@ -78,7 +87,7 @@ const loadData = () => {
           }}</el-button>
         </div>
       </div>
-      <div style="height: calc(100vh - 190px); overflow: scroll;">
+      <div style="height: calc(100vh - 190px); overflow: scroll">
         <el-row>
           <el-col
             v-for="item in lstStadium"
@@ -99,7 +108,7 @@ const loadData = () => {
       </div>
     </div>
   </section>
-  
+
   <FootballFieldDialog
     v-if="hasRole('FootballFieldDialog')"
     :data="objStadium"

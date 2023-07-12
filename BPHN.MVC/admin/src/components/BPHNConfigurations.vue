@@ -3,7 +3,7 @@ import useCommonFn from "@/commonFn";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useStore } from "vuex";
-import { ConfigKeyEnum } from "@/const";
+import { ConfigKeyEnum, RoleEnum } from "@/const";
 
 const store = useStore();
 const { t } = useI18n();
@@ -11,12 +11,16 @@ const darkMode = ref(store.getters["config/getDarkMode"]);
 const language = ref(store.getters["config/getLanguage"]);
 const formatDate = ref(store.getters["config/getFormatDate"]);
 const multiUser = ref(store.getters["config/getMultiUser"]);
+const role = ref(store.getters["account/getRole"]);
 const running = ref(0);
 const isLoading = ref(false);
 const { equals } = useCommonFn();
 
 const lstConfig = computed(() => {
-  if (multiUser.value) {
+  if (
+    multiUser.value &&
+    (equals(role, RoleEnum.ADMIN) || equals(role, RoleEnum.TENANT))
+  ) {
     return [
       {
         name: t("DarkMode"),

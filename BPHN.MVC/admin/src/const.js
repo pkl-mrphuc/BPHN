@@ -1,6 +1,7 @@
 export const RoleEnum = {
     TENANT: 1,
     ADMIN: 0,
+    USER: 2
 };
 
 export const StatusEnum = {
