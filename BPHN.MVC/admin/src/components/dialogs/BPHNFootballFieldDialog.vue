@@ -255,38 +255,52 @@ const isValidNameDetail = () => {
   <Dialog :title="t('FootballFieldForm')">
     <template #body>
       <el-form>
-        <el-form-item>
-          <el-col :span="17">
-            <el-input
-              v-model="name"
-              :placeholder="t('NameFootballField')"
-              maxlength="500"
-              ref="inpName"
-            />
-          </el-col>
-          <el-col :span="7">
-            <el-select v-model="status" :placeholder="t('StatusFootballField')" class="ml-2">
-              <el-option :label="t('Active')" :value="StatusEnum.ACTIVE" />
-              <el-option :label="t('Inactive')" :value="StatusEnum.INACTIVE" />
-            </el-select>
-          </el-col>
-        </el-form-item>
-        <el-form-item>
-          <el-col :span="23">
-            <el-input
-              v-model="address"
-              :placeholder="t('Address')"
-              maxlength="500"
-            />
-          </el-col>
-          <el-col :span="1" class="d-flex flex-row align-items-center">
-            <el-icon size="24" class="ml-2 pointer"><LocationInformation /></el-icon>
-          </el-col>
-        </el-form-item>
-        <el-form-item>
-          <el-col
-            :span="8"
-            class="d-flex flex-column align-items-center justify-content-center"
+        <div class="row">
+          <div class="mb-2 col-12 col-sm-12 col-md-8">
+            <div class="mx-2">
+              <el-input
+                v-model="name"
+                :placeholder="t('NameFootballField')"
+                maxlength="500"
+                ref="inpName"
+              />
+            </div>
+          </div>
+          <div class="mb-2 col-12 col-sm-12 col-md-4">
+            <div class="mx-2">
+              <el-select
+                v-model="status"
+                :placeholder="t('StatusFootballField')"
+                class="w-100"
+              >
+                <el-option :label="t('Active')" :value="StatusEnum.ACTIVE" />
+                <el-option
+                  :label="t('Inactive')"
+                  :value="StatusEnum.INACTIVE"
+                />
+              </el-select>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-11">
+            <div class="mx-2">
+              <el-input
+                v-model="address"
+                :placeholder="t('Address')"
+                maxlength="500"
+              />
+            </div>
+          </div>
+          <div class="col-1 d-flex flex-row align-items-center">
+              <el-icon size="24" class="pointer"
+                ><LocationInformation
+              /></el-icon>
+          </div>
+        </div>
+        <div class="row">
+          <div
+            class="col-12 col-sm-12 col-md-4 mb-2 d-flex flex-column align-items-center justify-content-center"
           >
             <div>{{ t("QuantityFootballField") }}</div>
             <el-input-number
@@ -296,10 +310,9 @@ const isValidNameDetail = () => {
               :min="1"
               :max="100"
             />
-          </el-col>
-          <el-col
-            :span="8"
-            class="d-flex flex-column align-items-center justify-content-center"
+          </div>
+          <div
+            class="col-12 col-sm-12 col-md-4 mb-2 d-flex flex-column align-items-center justify-content-center"
           >
             <div>{{ t("MinutesPerMatch") }}</div>
             <el-input-number
@@ -308,10 +321,9 @@ const isValidNameDetail = () => {
               :max="1440"
               :step="30"
             />
-          </el-col>
-          <el-col
-            :span="8"
-            class="d-flex flex-column align-items-center justify-content-center"
+          </div>
+          <div
+            class="col-12 col-sm-12 col-md-4 mb-2 d-flex flex-column align-items-center justify-content-center"
           >
             <div>{{ t("TimeSlotPerDay") }}</div>
             <el-input-number
@@ -321,8 +333,8 @@ const isValidNameDetail = () => {
               :min="1"
               :max="maxTimeSlot"
             />
-          </el-col>
-        </el-form-item>
+          </div>
+        </div>
         <el-tabs type="border-card">
           <el-tab-pane :label="t('FootballFieldInfo')">
             <el-table :data="lstConfigInfo" class="w-100">
@@ -392,7 +404,9 @@ const isValidNameDetail = () => {
     </template>
     <template #foot>
       <span class="d-flex flex-row-reverse">
-        <el-button type="primary" @click="save" class="ml-2">{{ t("Save") }}</el-button>
+        <el-button type="primary" @click="save" class="ml-2">{{
+          t("Save")
+        }}</el-button>
         <el-button @click="toggleModel">{{ t("Close") }}</el-button>
       </span>
     </template>

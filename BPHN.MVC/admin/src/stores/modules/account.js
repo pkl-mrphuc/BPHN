@@ -45,6 +45,11 @@ const getters = {
     getRole: (state) => {
         if(!state.context) return "";
         return state.context.role;
+    },
+
+    getGender: (state) => {
+        if(!state.context) return "";
+        return state.context.gender;
     }
 };
 

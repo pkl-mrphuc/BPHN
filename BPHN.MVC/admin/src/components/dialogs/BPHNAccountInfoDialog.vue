@@ -4,6 +4,7 @@ import useToggleModal from "@/register-components/actionDialog";
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
+import { GenderEnum } from "@/const";
 
 const router = useRouter();
 const store = useStore();
@@ -27,6 +28,18 @@ const email = computed(() => {
 
 const phoneNumber = computed(() => {
   return store.getters["account/getPhoneNumber"];
+});
+
+const gender = computed(() => {
+  let gender = store.getters["account/getGender"];
+  switch (gender) {
+    case GenderEnum.MALE:
+      return t("Male");
+    case GenderEnum.FEMALE:
+      return t("Female");
+    default:
+      return t("Other");
+  }
 });
 
 const changePassword = () => {
@@ -61,68 +74,112 @@ const changePassword = () => {
     <template #body>
       <div class="container">
         <div class="row">
-          <div class="col-12 col-sm-12 col-md-4">
+          <div
+            class="d-flex flex-row justify-content-center mb-3 col-12 col-sm-12 col-md-3"
+          >
             <el-avatar
               :size="120"
               src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
             />
           </div>
-          <div class="col-12 col-sm-12 col-md-8">
-            <el-form-item>
-              <el-col :span="7" class="fw-bold">{{ t("Username") }}: </el-col>
-              <el-col :span="17"> {{ userName }} </el-col>
-            </el-form-item>
-            <el-form-item>
-              <el-col :span="7" class="fw-bold"> {{ t("FullName") }}: </el-col>
-              <el-col :span="17"> {{ fullName }} </el-col>
-            </el-form-item>
-            <el-form-item>
-              <el-col :span="7" class="fw-bold"> {{ t("Gender") }}: </el-col>
-              <el-col :span="17"> Nam </el-col>
-            </el-form-item>
-            <el-form-item>
-              <el-col :span="7" class="fw-bold">
-                {{ t("PhoneNumber") }}:
-              </el-col>
-              <el-col :span="17"> {{ phoneNumber }} </el-col>
-            </el-form-item>
-            <el-form-item>
-              <el-col :span="7" class="fw-bold"> {{ t("Email") }}: </el-col>
-              <el-col :span="17"> {{ email }} </el-col>
-            </el-form-item>
-            <el-form-item>
-              <el-col :span="7"> </el-col>
-              <el-col :span="17">
-                <el-checkbox
-                  v-model="showResetPassword"
-                  :label="t('ResetPasswordTitle')"
-                />
-              </el-col>
-            </el-form-item>
-            <el-form-item v-if="showResetPassword">
-              <el-col :span="7" class="fw-bold">
-                {{ t("Password") }}
-              </el-col>
-              <el-col :span="17">
-                <el-input
-                  type="password"
-                  v-model="password"
-                  :placeholder="t('Password')"
-                />
-              </el-col>
-            </el-form-item>
-            <el-form-item v-if="showResetPassword">
-              <el-col :span="7" class="fw-bold">
-                {{ t("PasswordAgain") }}
-              </el-col>
-              <el-col :span="17">
-                <el-input
-                  type="password"
-                  v-model="passwordAgain"
-                  :placeholder="t('PasswordAgain')"
-                />
-              </el-col>
-            </el-form-item>
+          <div class="col-12 col-sm-12 col-md-9">
+            <div class="row mb-3">
+              <div class="col-6 fw-bold d-flex flex-row justify-content-end">
+                <div class="mx-3">{{ t("Username") }}</div>
+              </div>
+              <div class="col-6">
+                <div class="mx-3">
+                  {{ userName }}
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-6 fw-bold d-flex flex-row justify-content-end">
+                <div class="mx-3">{{ t("FullName") }}</div>
+              </div>
+              <div class="col-6">
+                <div class="mx-3">
+                  {{ fullName }}
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-6 fw-bold d-flex flex-row justify-content-end">
+                <div class="mx-3">{{ t("Gender") }}</div>
+              </div>
+              <div class="col-6">
+                <div class="mx-3">
+                  {{ gender }}
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-6 fw-bold d-flex flex-row justify-content-end">
+                <div class="mx-3">{{ t("PhoneNumber") }}</div>
+              </div>
+              <div class="col-6">
+                <div class="mx-3">
+                  {{ phoneNumber }}
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-6 fw-bold d-flex flex-row justify-content-end">
+                <div class="mx-3">{{ t("Email") }}</div>
+              </div>
+              <div class="col-6">
+                <div class="mx-3">
+                  {{ email }}
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-6 fw-bold"></div>
+              <div class="col-6">
+                <div class="mx-3">
+                  <el-checkbox
+                    v-model="showResetPassword"
+                    :label="t('ResetPasswordTitle')"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3" v-if="showResetPassword">
+              <div
+                class="col-6 fw-bold d-flex flex-row align-items-center justify-content-end"
+              >
+                <div class="mx-3">
+                  {{ t("Password") }}
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="mx-3">
+                  <el-input
+                    type="password"
+                    v-model="password"
+                    :placeholder="t('Password')"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3" v-if="showResetPassword">
+              <div
+                class="col-6 fw-bold d-flex flex-row align-items-center justify-content-end"
+              >
+                <div class="mx-3">
+                  {{ t("PasswordAgain") }}
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="mx-3">
+                  <el-input
+                    type="password"
+                    v-model="passwordAgain"
+                    :placeholder="t('PasswordAgain')"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -100,72 +100,74 @@ const save = () => {
     <template #body>
       <div class="container">
         <div class="row">
-          <div class="col-4">
+          <div
+            class="d-flex flex-row justify-content-center mb-3 col-12 col-sm-12 col-md-4"
+          >
             <el-avatar
               :size="120"
               src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
             />
           </div>
-          <div class="col-8">
-            <el-form-item>
-              <el-col :span="7" class="fw-bold">
+          <div class="col-12 col-sm-12 col-md-8">
+            <div class="row">
+              <div class="mb-2 col-12 col-sm-12 col-md-4 fw-bold">
                 {{ t("Status") }}
-              </el-col>
-              <el-col :span="17">
-                <el-select v-model="status" class="w-100">
+              </div>
+              <div class="col-12 col-sm-12 col-md-8">
+                <el-select v-model="status" class="w-100 mb-2">
                   <el-option :label="t('Active')" :value="StatusEnum.ACTIVE" />
                   <el-option
                     :label="t('Inactive')"
                     :value="StatusEnum.INACTIVE"
                   />
                 </el-select>
-              </el-col>
-            </el-form-item>
-            <el-form-item>
-              <el-col :span="7" class="fw-bold">
+              </div>
+            </div>
+            <div class="row">
+              <div class="mb-2 col-12 col-sm-12 col-md-4 fw-bold">
                 {{ t("Email") }}<span class="text-danger">(*)</span>
-              </el-col>
-              <el-col :span="17">
+              </div>
+              <div class="mb-2 col-12 col-sm-12 col-md-8">
                 <el-input
                   v-model="email"
                   :disabled="isDisabled"
                   maxlength="255"
                   ref="inpEmail"
                 />
-              </el-col>
-            </el-form-item>
-            <el-form-item>
-              <el-col :span="7" class="fw-bold">
+              </div>
+            </div>
+            <div class="row">
+              <div class="mb-2 col-12 col-sm-12 col-md-4 fw-bold">
                 {{ t("FullName") }}<span class="text-danger">(*)</span>
-              </el-col>
-              <el-col :span="17">
+              </div>
+              <div class="mb-2 col-12 col-sm-12 col-md-8">
                 <el-input
                   v-model="fullName"
                   maxlength="255"
                   ref="inpFullName"
                 />
-              </el-col>
-            </el-form-item>
-            <el-form-item>
-              <el-col :span="7" class="fw-bold">
+              </div>
+            </div>
+            <div class="row">
+              <div class="mb-2 col-12 col-sm-12 col-md-4 fw-bold">
                 {{ t("Gender") }}
-              </el-col>
-              <el-col :span="17">
+              </div>
+              <div class="mb-2 col-12 col-sm-12 col-md-8">
                 <el-select v-model="gender" class="w-100">
                   <el-option :value="GenderEnum.MALE" :label="t('Male')" />
                   <el-option :value="GenderEnum.FEMALE" :label="t('Female')" />
                   <el-option :value="GenderEnum.OTHER" :label="t('Other')" />
                 </el-select>
-              </el-col>
-            </el-form-item>
-            <el-form-item>
-              <el-col :span="7" class="fw-bold">
+              </div>
+            </div>
+            <div class="row">
+              <div class="mb-2 col-12 col-sm-12 col-md-4 fw-bold">
                 {{ t("PhoneNumber") }}<span class="text-danger">(*)</span>
-              </el-col>
-              <el-col :span="17">
+              </div>
+              <div class="mb-2 col-12 col-sm-12 col-md-8">
                 <el-input v-model="phoneNumber" maxlength="255" />
-              </el-col>
-            </el-form-item>
+              </div>
+            </div>
           </div>
         </div>
       </div>

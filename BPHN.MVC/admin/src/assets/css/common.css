@@ -333,6 +333,14 @@
     background-color: #fff;
 }
 
+.bg-primary {
+    background-color: #409eff;
+}
+
+.bg-danger {
+    background-color: #f56c6c;
+}
+
 a {
     color: unset;
     outline: none;

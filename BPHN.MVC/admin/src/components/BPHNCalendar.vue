@@ -1,11 +1,13 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import {  onMounted, ref } from "vue";
 import { Calendar } from "@fullcalendar/core";
 import resourceTimeGridPlugin from "@fullcalendar/resource-timegrid";
 import allLocales from "@fullcalendar/core/locales-all";
 import { useStore } from "vuex";
 import useCommonFn from "@/commonFn";
 import useToggleModal from "@/register-components/actionDialog";
+import { ArrowLeft, ArrowRight } from "@element-plus/icons-vue";
+import { useI18n } from "vue-i18n";
 
 const store = useStore();
 const lstResource = ref([]);
@@ -13,6 +15,11 @@ const { dateToString } = useCommonFn();
 const { hasRole, openModal } = useToggleModal();
 const objMatch = ref(null);
 const objEvent = ref(null);
+const objCalendar = ref(null);
+const { t } = useI18n();
+const running = ref(0);
+const formatDate = ref(store.getters["config/getFormatDate"]);
+const selectedDate = ref(null);
 
 onMounted(() => {
   store
@@ -35,6 +42,10 @@ onMounted(() => {
     });
 });
 
+const getSelectedDate = () => {
+  return objCalendar.value ? dateToString(objCalendar.value.currentData.currentDate, formatDate.value) : "";
+};
+
 const renderCalendar = async (lstResource) => {
   if (lstResource?.length > 0) {
     let calendarEl = document.getElementById("calendarTimeGrid");
@@ -45,8 +56,8 @@ const renderCalendar = async (lstResource) => {
       locales: allLocales,
       locale: store.getters["config/getLanguage"],
       headerToolbar: {
-        left: "title",
-        right: "today prev,next",
+        left: "",
+        right: "",
       },
       events: async function (data, callback) {
         if (data) {
@@ -67,6 +78,8 @@ const renderCalendar = async (lstResource) => {
       },
     });
     calendar.render();
+    objCalendar.value = calendar;
+    selectedDate.value = getSelectedDate(calendar);
     handleAfterRenderCalendar(calendarEl);
   }
 };
@@ -104,23 +117,16 @@ const getEventByDate = async (date) => {
 
 const buildEventInfoHtml = (timeText, eventInfo) => {
   let eventContainer = document.createElement("div");
-  eventContainer.style.display = "flex";
-  eventContainer.style.flexDirection = "column";
-  eventContainer.style.height = "100%";
-  eventContainer.style.padding = "5px";
-  eventContainer.style.boxSizing = "border-box";
-  let html = `<i>${timeText} | ${eventInfo.stadium}</i> 
-              <ul>
-                <li style="font-weight: bold; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" title="${
-                  eventInfo.teamA
-                }">- ${eventInfo.teamA}</li>
-                <li style="font-weight: bold; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" title="${
-                  eventInfo.teamB
-                }">- ${!eventInfo.teamB ? "?" : eventInfo.teamB}</li>
-              </ul>
-              <div style="margin-top: auto; font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${
-                eventInfo.note
-              }">Note: ${eventInfo.note}</div>`;
+  if(eventInfo?.teamB) {
+    eventContainer.className = "p-2 w-100 h-100 bg-danger";
+  }
+  else {
+    eventContainer.className = "p-2 w-100 h-100 bg-primary";
+  }
+  let html = `<div class="fs-3 fw-bold">${eventInfo.stadium}</div>`;
+  if(eventInfo?.note) {
+    html += `<div class="fs-6 fst-italic">${eventInfo.note}</div>`
+  }
 
   eventContainer.innerHTML = html;
   let arrayOfDomNodes = [eventContainer];
@@ -140,11 +146,68 @@ const loadEvent = (data) => {
     objEvent.value.event.setExtendedProp("note", data.note);
   }
 };
+
+const today = () => {
+  if (running.value > 0) return;
+  ++running.value;
+
+  if (objCalendar.value) {
+    objCalendar.value.today();
+    selectedDate.value = getSelectedDate();
+  }
+
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
+};
+
+const prev = () => {
+  if (running.value > 0) return;
+  ++running.value;
+
+  if (objCalendar.value) {
+    objCalendar.value.prev();
+    selectedDate.value = getSelectedDate();
+  }
+
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
+};
+
+const next = () => {
+  if (running.value > 0) return;
+  ++running.value;
+
+  if (objCalendar.value) {
+    objCalendar.value.next();
+    selectedDate.value = getSelectedDate();
+  }
+
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
+};
 </script>
 
 <template>
   <section>
     <div class="container">
+      <div class="d-flex flex-row align-items-center justify-content-between">
+        <h3 class="fs-3 m-0">{{ selectedDate }}</h3>
+        <div>
+          <el-button class="mx-1" type="primary" @click="today">{{ t("Today") }}</el-button>
+          <el-button-group class="mx-1">
+            <el-button type="primary" @click="prev">
+              <el-icon><ArrowLeft /></el-icon>
+            </el-button>
+            <el-button type="primary" @click="next">
+              <el-icon><ArrowRight /></el-icon>
+            </el-button>
+          </el-button-group>
+        </div>
+      </div>
+
       <div id="calendarTimeGrid"></div>
     </div>
   </section>
@@ -158,6 +221,6 @@ const loadEvent = (data) => {
 
 <style scoped>
 #calendarTimeGrid {
-  height: calc(100vh - 100px);
+  height: calc(100vh - 170px);
 }
 </style>

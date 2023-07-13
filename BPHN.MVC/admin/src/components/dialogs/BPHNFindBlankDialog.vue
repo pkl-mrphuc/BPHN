@@ -94,68 +94,76 @@ onMounted(() => {
   <Dialog :title="t('FindBlankForm')">
     <template #body>
       <el-form>
-        <el-form-item>
-          <el-col :span="5">
-            <el-select
-              class="w-100"
-              :placeholder="t('Infrastructure')"
-              v-model="pitchName"
-              @change="filter"
-            >
-              <el-option
-                v-for="item in lstStadium"
-                :key="item"
-                :label="item"
-                :value="item"
-              />
-            </el-select>
-          </el-col>
-          <el-col :span="5">
-            <el-select
-              class="w-100"
-              :placeholder="t('TimeFrame')"
-              v-model="timeFrameInfoName"
-              @change="filter"
-            >
-              <el-option
-                v-for="item in lstTimeFrame"
-                :key="item"
-                :label="item"
-                :value="item"
-              />
-            </el-select>
-          </el-col>
-          <el-col :span="5">
-            <el-select
-              class="w-100"
-              :placeholder="t('NameDetail')"
-              v-model="detailName"
-              @change="filter"
-            >
-              <el-option
-                v-for="item in lstDetail"
-                :key="item"
-                :label="item"
-                :value="item"
-              />
-            </el-select>
-          </el-col>
-          <el-col :span="5">
-            <el-select
-              class="w-100"
-              :placeholder="t('Weekdays')"
-              v-model="weekdays"
-              @change="filter"
-            >
-              <el-option
-                v-for="item in lstWeekday"
-                :key="item"
-                :label="item"
-                :value="item"
-              />
-            </el-select>
-          </el-col>
-        </el-form-item>
+        <div class="row">
+          <div class="col-12 col-sm-12 col-md-6 col-lg-3">
+            <div class="m-1">
+              <el-select
+                class="w-100"
+                :placeholder="t('Infrastructure')"
+                v-model="pitchName"
+                @change="filter"
+              >
+                <el-option
+                  v-for="item in lstStadium"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>
+            </div>
+          </div>
+          <div class="col-12 col-sm-12 col-md-6 col-lg-3">
+            <div class="m-1">
+              <el-select
+                class="w-100"
+                :placeholder="t('TimeFrame')"
+                v-model="timeFrameInfoName"
+                @change="filter"
+              >
+                <el-option
+                  v-for="item in lstTimeFrame"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>
+            </div>
+          </div>
+          <div class="col-12 col-sm-12 col-md-6 col-lg-3">
+            <div class="m-1">
+              <el-select
+                class="w-100"
+                :placeholder="t('NameDetail')"
+                v-model="detailName"
+                @change="filter"
+              >
+                <el-option
+                  v-for="item in lstDetail"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>
+            </div>
+          </div>
+          <div class="col-12 col-sm-12 col-md-6 col-lg-3">
+            <div class="m-1">
+              <el-select
+                class="w-100"
+                :placeholder="t('Weekdays')"
+                v-model="weekdays"
+                @change="filter"
+              >
+                <el-option
+                  v-for="item in lstWeekday"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>
+            </div>
+          </div>
+        </div>
       </el-form>
       <el-table :data="lstBlank" class="w-100" height="350">
         <el-table-column :label="t('FromDate')" width="100">
@@ -168,27 +176,29 @@ onMounted(() => {
             <span>{{ dateToString(scope.row.endDate, formatDate) }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="t('Weekdays')">
+        <el-table-column :label="t('Weekdays')" width="80">
           <template #default="scope">
-            <span>{{ t(getWeekdays(scope.row.weekendays)) }}</span>
+            <span class="text-truncate">{{
+              t(getWeekdays(scope.row.weekendays))
+            }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="t('Infrastructure')">
+        <el-table-column :label="t('Infrastructure')" min-width="200">
           <template #default="scope">
-            <span>{{ scope.row.pitchName }}</span>
+            <span class="text-truncate">{{ scope.row.pitchName }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="t('TimeFrame')">
+        <el-table-column :label="t('TimeFrame')" min-width="200">
           <template #default="scope">
-            <span>{{ scope.row.timeFrameInfoName }}</span>
+            <span class="text-truncate">{{ scope.row.timeFrameInfoName }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="t('NameDetail')">
+        <el-table-column :label="t('NameDetail')" min-width="200">
           <template #default="scope">
-            <span>{{ scope.row.nameDetail }}</span>
+            <span class="text-truncate">{{ scope.row.nameDetail }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="">
+        <el-table-column label="" width="100">
           <template #default="scope">
             <el-button type="primary" @click="choose(scope.row.id)">{{
               t("Choose")
