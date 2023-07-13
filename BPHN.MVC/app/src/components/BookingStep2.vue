@@ -2,9 +2,11 @@
   <div>
     <el-alert
       type="warning"
-      :closable="false"
+      :closable="true"
       :description="t('DragDropOnCalendar')"
-      class="mb-2"
+      class="mb-3"
+      v-if="!getLocalStorage('note_3')"
+      @close="saveLocalStorage('note_3', '1')"
     />
     <div class="d-flex flex-row justify-content-between align-items-center">
       <span class="fs-2">{{ stadiumName }}</span>
@@ -66,7 +68,7 @@ import { ElMessageBox } from "element-plus";
 import useCommonFn from "@/commonFn";
 
 const nameDetail = ref("");
-const { dateToString } = useCommonFn();
+const { dateToString, getLocalStorage, saveLocalStorage } = useCommonFn();
 const store = useStore();
 const { t } = useI18n();
 const objCalendar = ref(null);
