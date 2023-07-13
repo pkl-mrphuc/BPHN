@@ -37,8 +37,20 @@ export default function useCommonFn() {
         return result;
     };
 
+    const saveLocalStorage = (key, value) => {
+        if(localStorage.getItem(key)) {
+            localStorage.removeItem(key);
+        }
+        localStorage.setItem(key, value);
+    }
+
+    const getLocalStorage = (key) => {
+        return localStorage.getItem(key);
+    }
 
     return {
-        dateToString
+        dateToString,
+        saveLocalStorage,
+        getLocalStorage
     }
 }

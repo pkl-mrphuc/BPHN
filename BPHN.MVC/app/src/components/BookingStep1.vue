@@ -2,12 +2,14 @@
   <div>
     <el-alert
       type="warning"
-      :closable="false"
+      :closable="true"
       :description="t('OnlyPartner')"
-      class="mb-2"
+      class="mb-3"
+      v-if="!getLocalStorage('note_2')"
+      @close="saveLocalStorage('note_2', '1')"
     />
     <el-autocomplete
-      class="w-100 mb-2"
+      class="w-100 mb-3"
       v-model="key"
       :fetch-suggestions="searchStadium"
       popper-class="my-autocomplete"
@@ -30,22 +32,28 @@
       class="w-100"
       :span-method="objSpanMethod"
     >
-      <el-table-column prop="name" :label="t('Name')" />
-      <el-table-column prop="address" :label="t('Address')" />
-      <el-table-column :label="t('NameDetails')">
+      <el-table-column prop="name" :label="t('Name')" min-width="200" />
+      <el-table-column prop="address" :label="t('Address')" min-width="200" />
+      <el-table-column :label="t('NameDetails')" width="100">
         <template #default="scope">
-          {{ nameDetails(scope.row.nameDetails) }}
+          <span class="text-truncate">{{
+            nameDetails(scope.row.nameDetails)
+          }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="timeFrameName" :label="t('TimeFrameName')" />
-      <el-table-column :label="t('TimeFrameStart')">
+      <el-table-column
+        prop="timeFrameName"
+        :label="t('TimeFrameName')"
+        width="100"
+      />
+      <el-table-column :label="t('TimeFrameStart')" width="150">
         <template #default="scope">
           {{
             dateToString(scope.row.timeFrameStart, "dd/MM/yyyy", true, false)
           }}
         </template>
       </el-table-column>
-      <el-table-column :label="t('TimeFrameEnd')">
+      <el-table-column :label="t('TimeFrameEnd')" width="150">
         <template #default="scope">
           {{ dateToString(scope.row.timeFrameEnd, "dd/MM/yyyy", true, false) }}
         </template>
@@ -80,7 +88,7 @@ import { useStore } from "vuex";
 import { ref, defineEmits, onMounted } from "vue";
 import useCommonFn from "@/commonFn";
 
-const { dateToString } = useCommonFn();
+const { dateToString, getLocalStorage, saveLocalStorage } = useCommonFn();
 const store = useStore();
 const { t } = useI18n();
 const emit = defineEmits(["choose"]);
@@ -203,7 +211,7 @@ const choose = (stadium) => {
 const searchStadiumFromDataCache = () => {
   let stadiumJSON = localStorage.getItem("stadium-data");
   if (stadiumJSON) {
-    let stadiumData = JSON.parse(stadiumJSON)
+    let stadiumData = JSON.parse(stadiumJSON);
     key.value = stadiumData.name;
     searchStadium(key.value);
   }
