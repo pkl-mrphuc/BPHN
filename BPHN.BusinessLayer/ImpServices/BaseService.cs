@@ -86,7 +86,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public virtual string BuildLinkDescription(Guid historyLogId)
         {
-            var description = $"<a href='#' target='_blank'>Xem chi tiết</a>";
+            var description = $"{historyLogId}";
             return description;
         }
     }

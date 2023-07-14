@@ -69,7 +69,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 var item = string.Format("@where{0}", i);
                 dic.Add(item, where[i].Value);
             }
-            var query = $"select CreatedDate, IPAddress, Actor, ActionName, Entity, Description from history_logs where {whereQuery} order by CreatedDate desc limit @offSet, @pageSize";
+            var query = $"select Id, CreatedDate, IPAddress, Actor, ActionName, Entity, Description from history_logs where {whereQuery} order by CreatedDate desc limit @offSet, @pageSize";
 
 
             using (var connection = ConnectDB(GetConnectionString()))

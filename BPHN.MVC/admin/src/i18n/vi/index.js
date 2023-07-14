@@ -120,7 +120,8 @@ const vi = {
     ShouldContainPhoneNumber: 'Tên đội đặt sân nên chứa số điện thoại liên hệ',
     InvalidEmail: 'Email không hợp lệ',
     Detail: 'Sân',
-    Frame: 'Khung'
+    Frame: 'Khung',
+    ViewDetail: 'Xem chi tiết'
 }
 
 export default vi;

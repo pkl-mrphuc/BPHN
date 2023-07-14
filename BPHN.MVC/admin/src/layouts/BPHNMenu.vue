@@ -62,13 +62,12 @@ const goTo = (link) => {
         </template>
       </el-menu-item>
 
-      <el-menu-item>
+      <el-menu-item v-if="equals(role, RoleEnum.ADMIN) || multiUser">
         <el-icon @click="goTo('tenants')"><User /></el-icon>
         <template #title>
           <router-link
             class="text-decoration-none"
             to="/tenants"
-            v-if="equals(role, RoleEnum.ADMIN) || multiUser"
           >
             <span>{{ t("Accounts") }}</span>
           </router-link>

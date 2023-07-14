@@ -28,7 +28,7 @@ const loadData = () => {
     .dispatch("historyLog/getPaging", {
       pageIndex: pageIndex.value,
       pageSize: pageSize.value,
-      txtSearch: txtSearch.value
+      txtSearch: txtSearch.value,
     })
     .then((res) => {
       if (res?.data?.data) {
@@ -51,6 +51,11 @@ const loadData = () => {
         totalRecord.value = result.totalAllRecords;
       }
     });
+};
+
+const goToViewDetail = (id) => {
+  console.log(id);
+  alert(t("FeatureIsDeveloping"));
 };
 
 const prevClick = () => {
@@ -78,8 +83,12 @@ onMounted(() => {
 <template>
   <section>
     <div class="container">
-      <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
-        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("HistoryLog") }}</h3>
+      <div
+        class="row mb-3 d-flex flex-row align-items-center justify-content-between"
+      >
+        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">
+          {{ t("HistoryLog") }}
+        </h3>
         <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row">
           <el-input
             v-model="txtSearch"
@@ -125,7 +134,14 @@ onMounted(() => {
           </el-table-column>
           <el-table-column :label="t('Description')" min-width="150">
             <template v-slot="scope">
-              <span v-html="scope.row.description"></span>
+              <el-button
+                v-if="scope.row.id == scope.row.description"
+                type="danger"
+                @click="goToViewDetail(scope.row.id)"
+                link
+                >{{ t("ViewDetail") }}</el-button
+              >
+              <span v-else v-html="scope.row.description"></span>
             </template>
           </el-table-column>
         </el-table>

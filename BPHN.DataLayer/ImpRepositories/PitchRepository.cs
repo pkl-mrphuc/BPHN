@@ -18,7 +18,16 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var query = "select Id, Name, Address, MinutesPerMatch, Quantity, TimeSlotPerDay, Status, NameDetails from pitchs where id = @id";
+                var query = @"select    Id, 
+                                        Name, 
+                                        Address, 
+                                        MinutesPerMatch, 
+                                        Quantity, 
+                                        TimeSlotPerDay, 
+                                        Status, 
+                                        NameDetails 
+                                        from pitchs 
+                                        where id = @id";
                 var dic = new Dictionary<string, object>();
                 dic.Add("@id", id);
                 var pitch = await connection.QueryFirstOrDefaultAsync<Pitch>(query, dic);
@@ -29,7 +38,9 @@ namespace BPHN.DataLayer.ImpRepositories
         public async Task<object> GetCountPaging(int pageIndex, int pageSize, List<WhereCondition> where)
         {
             var whereQuery = BuildWhereQuery(where);
-            var countQuery = $@"select count(1) from pitchs where {whereQuery}";
+            var countQuery = $@"select  count(1) 
+                                        from pitchs 
+                                        where {whereQuery}";
 
             using (var connection = ConnectDB(GetConnectionString()))
             {
@@ -63,8 +74,19 @@ namespace BPHN.DataLayer.ImpRepositories
         public async Task<List<Pitch>> GetPaging(int pageIndex, int pageSize, List<WhereCondition> where)
         {
             var whereQuery = BuildWhereQuery(where);
-            var query = $@"select Id, Name, Status, NameDetails, Address, ManagerId from pitchs where {whereQuery} order by Name limit @offset, @pageSize";
-            var countQuery = $@"select count(1) from pitchs where {whereQuery}";
+            var query = $@"select   Id, 
+                                    Name, 
+                                    Status, 
+                                    NameDetails, 
+                                    Address, 
+                                    ManagerId 
+                                    from pitchs 
+                                    where {whereQuery} 
+                                    order by Name 
+                                    limit @offset, @pageSize";
+            var countQuery = $@"select  count(1) 
+                                        from pitchs 
+                                        where {whereQuery}";
             
             using(var connection = ConnectDB(GetConnectionString()))
             {
@@ -94,11 +116,55 @@ namespace BPHN.DataLayer.ImpRepositories
 
         public async Task<bool> Insert(Pitch pitch)
         {
-            var query = @"insert into pitchs(Id, Name, Address, MinutesPerMatch, Quantity, TimeSlotPerDay, ManagerId, Status, NameDetails, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
-                            value (@id, @name, @address, @minutesPerMatch, @quantity, @timeSlotPerDay, @managerId, @status, @nameDetails, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
+            var query = @"insert into pitchs    (   Id, 
+                                                    Name, 
+                                                    Address, 
+                                                    MinutesPerMatch, 
+                                                    Quantity, 
+                                                    TimeSlotPerDay, 
+                                                    ManagerId, 
+                                                    Status, 
+                                                    NameDetails, 
+                                                    CreatedDate, 
+                                                    CreatedBy, 
+                                                    ModifiedDate, 
+                                                    ModifiedBy)
+                            value ( @id, 
+                                    @name, 
+                                    @address, 
+                                    @minutesPerMatch, 
+                                    @quantity, 
+                                    @timeSlotPerDay, 
+                                    @managerId, 
+                                    @status, 
+                                    @nameDetails, 
+                                    @createdDate, 
+                                    @createdBy, 
+                                    @modifiedDate, 
+                                    @modifiedBy)";
 
-            var queryChild = @"insert into time_frame_infos (Id, Name, SortOrder, TimeBegin, TimeEnd, Price, PitchId, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
-                                value (@id, @name, @sortOrder, @timeBegin, @timeEnd, @price, @pitchId, @createdDate, @createdBy, @modifiedDate, @modifedBy)";
+            var queryChild = @"insert into time_frame_infos (   Id, 
+                                                                Name, 
+                                                                SortOrder, 
+                                                                TimeBegin, 
+                                                                TimeEnd, 
+                                                                Price, 
+                                                                PitchId, 
+                                                                CreatedDate, 
+                                                                CreatedBy, 
+                                                                ModifiedDate, 
+                                                                ModifiedBy)
+                                value ( @id, 
+                                        @name, 
+                                        @sortOrder, 
+                                        @timeBegin, 
+                                        @timeEnd, 
+                                        @price, 
+                                        @pitchId, 
+                                        @createdDate, 
+                                        @createdBy, 
+                                        @modifiedDate, 
+                                        @modifedBy)";
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
@@ -170,16 +236,16 @@ namespace BPHN.DataLayer.ImpRepositories
                 dic.Add("@modifiedDate", pitch.ModifiedDate);
                 dic.Add("@modifiedBy", pitch.ModifiedBy);
                 var affect = await connection.ExecuteAsync(@"update pitchs set 
-                                                    Name = @name, 
-                                                    Address = @address, 
-                                                    MinutesPerMatch = @minutesPerMatch, 
-                                                    Quantity = @quantity, 
-                                                    TimeSlotPerDay = @timeSlotPerDay,
-                                                    Status = @status, 
-                                                    NameDetails = @nameDetails,
-                                                    ModifiedBy = @modifiedBy,
-                                                    ModifiedDate = @modifiedDate
-                                                    where Id = @id", dic, transaction);
+                                                                                Name = @name, 
+                                                                                Address = @address, 
+                                                                                MinutesPerMatch = @minutesPerMatch, 
+                                                                                Quantity = @quantity, 
+                                                                                TimeSlotPerDay = @timeSlotPerDay,
+                                                                                Status = @status, 
+                                                                                NameDetails = @nameDetails,
+                                                                                ModifiedBy = @modifiedBy,
+                                                                                ModifiedDate = @modifiedDate
+                                                                                where Id = @id", dic, transaction);
                 if(affect > 0)
                 {
                     dic = new Dictionary<string, object?>();

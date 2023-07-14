@@ -120,6 +120,7 @@ const en = {
     ShouldContainPhoneNumber: 'Team A should contain phone number to contact',
     InvalidEmail: 'Invalid email',
     Detail: 'Detail',
-    Frame: 'Frame'
+    Frame: 'Frame',
+    ViewDetail: 'View detail'
 }
 export default en;
