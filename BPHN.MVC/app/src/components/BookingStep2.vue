@@ -8,13 +8,11 @@
       v-if="!getLocalStorage('note_3')"
       @close="saveLocalStorage('note_3', '1')"
     />
-    <div class="d-flex flex-row justify-content-between align-items-center">
+    <div
+      class="mb-3 d-flex flex-row justify-content-between align-items-center"
+    >
       <span class="fs-2">{{ stadiumName }}</span>
-      <el-dropdown
-        @command="chooseNameDetail"
-        class="ml-2"
-        style="margin-bottom: -20px"
-      >
+      <el-dropdown @command="chooseNameDetail">
         <span class="el-dropdown-link d-flex flex-row align-items-center">
           {{ !nameDetail ? t("All") : nameDetail }}
           <el-icon class="el-icon--right">
@@ -32,19 +30,37 @@
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <div class="ml-auto"></div>
+    </div>
+    <div class="d-flex flex-row justify-content-between align-items-center">
       <el-button @click="prevStep">{{ t("Back") }}</el-button>
-      <el-button type="primary" @click="today" class="ml-2">{{ t("Today") }}</el-button>
-      <el-button-group class="ml-2">
-        <el-button type="primary" @click="prev">
-          <el-icon><ArrowLeft /></el-icon>
-        </el-button>
-        <el-button type="primary" @click="next">
-          <el-icon><ArrowRight /></el-icon>
-        </el-button>
-      </el-button-group>
+      <div>
+        <el-button type="primary" @click="today" class="ml-2">{{
+          t("Today")
+        }}</el-button>
+        <el-button-group class="ml-2">
+          <el-button type="primary" @click="prev">
+            <el-icon><ArrowLeft /></el-icon>
+          </el-button>
+          <el-button type="primary" @click="next">
+            <el-icon><ArrowRight /></el-icon>
+          </el-button>
+        </el-button-group>
+      </div>
     </div>
     <div id="calendar" class="w-100"></div>
+    <el-dialog v-model="showChooseNameDetail" :show-close="false">
+      <div class="mb-3 fs-5">{{ t('ChooseNameDetailMesg') }}</div>
+      <el-radio-group v-model="nameDetail" size="large">
+        <el-radio-button :label="item" v-for="item in options" :key="item" />
+      </el-radio-group>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="chooseNameDetail(nameDetail)">
+            {{ t("OK") }}
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -74,13 +90,15 @@ const { t } = useI18n();
 const objCalendar = ref(null);
 const running = ref(0);
 const language = ref(store.getters["config/getLanguage"]);
+const duration = ref(3);
+const showChooseNameDetail = ref(true);
 const props = defineProps({
   data: Object,
 });
 const emit = defineEmits(["agree", "back"]);
 
 const options = computed(() => {
-  return ["", ...props.data.nameDetails.split(",")];
+  return [...props.data.nameDetails.split("/")];
 });
 
 const stadiumName = computed(() => {
@@ -97,14 +115,29 @@ watch(getLanguage, (newValue) => {
 });
 
 onMounted(() => {
+  nameDetail.value = options.value?.length > 0 ? options.value[0] : "";
+  const { offsetWidth } = document.getElementById("app");
+  if (offsetWidth >= 576) {
+    duration.value = 4;
+  }
+  if (offsetWidth >= 768) {
+    duration.value = 5;
+  }
+  if (offsetWidth >= 992) {
+    duration.value = 6;
+  }
+  if (offsetWidth >= 1200) {
+    duration.value = 7;
+  }
   renderCalendar(props.data);
 });
 
 const chooseNameDetail = (command) => {
-  if (nameDetail.value != command) {
+  if (nameDetail.value != command || showChooseNameDetail.value) {
     nameDetail.value = command;
     renderCalendar(props.data);
   }
+  showChooseNameDetail.value = false;
 };
 
 const today = () => {
@@ -152,7 +185,13 @@ const renderCalendar = (stadiumData) => {
     const calendar = new Calendar(calendarElement, {
       selectable: true,
       plugins: [timeGridPlugin, interactionPlugin],
-      initialView: "timeGridWeek",
+      initialView: "timeGridFourDay",
+      views: {
+        timeGridFourDay: {
+          type: "timeGrid",
+          duration: { days: duration.value },
+        },
+      },
       locales: allLocales,
       locale: language.value,
       headerToolbar: {
@@ -160,7 +199,7 @@ const renderCalendar = (stadiumData) => {
         right: "",
       },
       height: "1785px",
-      events: async function (data, callback) {
+      events: async (data, callback) => {
         if (data) {
           let events = await getEventByDate(
             dateToString(data.start, "yyyy-MM-dd"),
@@ -171,14 +210,19 @@ const renderCalendar = (stadiumData) => {
         }
         callback([]);
       },
-      eventContent: function (arg) {
+      eventContent: (arg) => {
         let eventInfo = arg.event.extendedProps;
         return { domNodes: buildEventInfoHtml(arg.timeText, eventInfo) };
       },
-      select: function (selectedInfo) {
-        let result = validateSelectDateTimeOnCalendar(selectedInfo);
+      dateClick: (dateClickInfo) => {
+        let selectedStart = dateClickInfo.date;
+        let selectedEnd = dateClickInfo.date;
+        let result = validateSelectDateTimeOnCalendar(
+          selectedStart,
+          selectedEnd
+        );
         if (result) {
-          openConfirmDialog(selectedInfo, result);
+          openConfirmDialog(selectedEnd, result);
         }
       },
     });
@@ -187,12 +231,8 @@ const renderCalendar = (stadiumData) => {
   }
 };
 
-const openConfirmDialog = (selectedInfo, timeFrame) => {
-  if (!nameDetail.value) {
-    alert(t("ChooseNameDetailMesg"));
-    return;
-  }
-  let selectedDate = dateToString(selectedInfo.end, "dd/MM/yyyy", false, true);
+const openConfirmDialog = (selectedDateEnd, timeFrame) => {
+  let selectedDate = dateToString(selectedDateEnd, "dd/MM/yyyy", false, true);
   let selectedStartTime = dateToString(
     timeFrame.timeBegin,
     "dd/MM/yyyy",
@@ -235,11 +275,11 @@ const openConfirmDialog = (selectedInfo, timeFrame) => {
             bookingDate: dateToString(objBooking.bookingDate, "dd/MM/yyyy"),
             bookingDateReal: objBooking.bookingDate,
             matchDate: selectedDate,
-            matchDateReal: selectedInfo.end,
+            matchDateReal: selectedDateEnd,
             price: timeFrame.price,
             timeFrameInfo: selectedTime,
             pitchId: props.data.id,
-            weekdays: selectedInfo.end.getDay(),
+            weekdays: selectedDateEnd.getDay(),
             accountId: props.data.managerId,
             nameDetail: nameDetail.value,
           });
@@ -249,9 +289,12 @@ const openConfirmDialog = (selectedInfo, timeFrame) => {
     .catch(() => {});
 };
 
-const validateSelectDateTimeOnCalendar = (selectedInfo) => {
-  let selectedStart = selectedInfo.start;
-  let selectedEnd = selectedInfo.end;
+const validateSelectDateTimeOnCalendar = (
+  selectedStartReal,
+  selectedEndReal
+) => {
+  let selectedStart = selectedStartReal;
+  let selectedEnd = selectedEndReal;
   for (let i = 0; i < props.data.timeFrameInfos.length; i++) {
     const items = props.data.timeFrameInfos[i];
     let startTime = new Date(items.timeBegin);
@@ -262,17 +305,17 @@ const validateSelectDateTimeOnCalendar = (selectedInfo) => {
         now.getFullYear(),
         now.getMonth(),
         now.getDate(),
-        selectedInfo.start.getHours(),
-        selectedInfo.start.getMinutes(),
-        selectedInfo.start.getSeconds()
+        selectedStartReal.getHours(),
+        selectedStartReal.getMinutes(),
+        selectedStartReal.getSeconds()
       );
       selectedEnd = new Date(
         now.getFullYear(),
         now.getMonth(),
         now.getDate(),
-        selectedInfo.start.getHours(),
-        selectedInfo.end.getMinutes(),
-        selectedInfo.end.getSeconds()
+        selectedEndReal.getHours(),
+        selectedEndReal.getMinutes(),
+        selectedEndReal.getSeconds()
       );
     }
 
@@ -318,23 +361,15 @@ const getEventByDate = async (start, end, stadiumData) => {
 
 const buildEventInfoHtml = (timeText, eventInfo) => {
   let eventContainer = document.createElement("div");
-  eventContainer.style.display = "flex";
-  eventContainer.style.flexDirection = "column";
-  eventContainer.style.height = "100%";
-  eventContainer.style.padding = "5px";
-  eventContainer.style.boxSizing = "border-box";
-  let html = `<i>${eventInfo.stadium}</i> 
-              <div>
-                <div style="font-weight: bold; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" title="${
-                  eventInfo.teamA
-                }">- ${eventInfo.teamA}</div>
-                <div style="font-weight: bold; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" title="${
-                  eventInfo.teamB
-                }">- ${!eventInfo.teamB ? "?" : eventInfo.teamB}</div>
-              </div>
-              <div style="margin-top: auto; font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${
-                eventInfo.note
-              }">${eventInfo.note}</div>`;
+  if (eventInfo?.teamB) {
+    eventContainer.className = "p-2 w-100 h-100 bg-danger";
+  } else {
+    eventContainer.className = "p-2 w-100 h-100 bg-primary";
+  }
+  let html = `<div class="fs-3 fw-bold">${eventInfo.stadium}</div>`;
+  if (eventInfo?.note) {
+    html += `<div class="fs-6 fst-italic">${eventInfo.note}</div>`;
+  }
 
   eventContainer.innerHTML = html;
   let arrayOfDomNodes = [eventContainer];

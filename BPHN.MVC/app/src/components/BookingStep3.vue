@@ -2,94 +2,132 @@
   <div class="container">
     <div class="row">
       <div
-        class="col-5 px-5 pb-5"
-        style="border: var(--el-border);"
+        class="mb-3 col-12 col-sm-12 col-md-6 col-lg-5"
+        
       >
-        <h1
-          class="fs-3 d-flex flex-row align-items-center justify-content-center"
-        >
-          {{ t("Booking") }}
-        </h1>
-        <el-form-item>
-          <el-col :span="7" class="fw-bold">
-            {{ t("StadiumName") }}
-          </el-col>
-          <el-col :span="17"> {{ stadiumName }} - {{ nameDetail }} </el-col>
-        </el-form-item>
-        <el-form-item>
-          <el-col :span="7" class="fw-bold">
-            {{ t("BookingDate") }}
-          </el-col>
-          <el-col :span="17">
-            {{ bookingDate }}
-          </el-col>
-        </el-form-item>
-        <el-form-item>
-          <el-col :span="7" class="fw-bold">
-            {{ t("MatchDate") }}
-          </el-col>
-          <el-col :span="17">
-            {{ matchDate }}
-          </el-col>
-        </el-form-item>
-        <el-form-item>
-          <el-col :span="7" class="fw-bold">
-            {{ t("TimeFrame") }}
-          </el-col>
-          <el-col :span="17"> {{ timeFrameInfo }} </el-col>
-        </el-form-item>
-        <el-form-item>
-          <el-col :span="7" class="fw-bold">
-            {{ t("Price") }}
-          </el-col>
-          <el-col :span="17"> {{ price }} </el-col>
-        </el-form-item>
+        <div class="mx-4" style="border: var(--el-border)">
+          <h1
+            class="fs-3 m-0 m-4 d-flex flex-row align-items-center justify-content-center"
+          >
+            {{ t("Booking") }}
+          </h1>
+          <div class="row mb-3">
+            <div class="col-6 fw-bold d-flex flex-row-reverse">
+              <div class="mx-3">
+                {{ t("StadiumName") }}
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="mx-3">{{ stadiumName }} - {{ nameDetail }}</div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-6 fw-bold d-flex flex-row-reverse">
+              <div class="mx-3">
+                {{ t("BookingDate") }}
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="mx-3">
+                {{ bookingDate }}
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-6 fw-bold d-flex flex-row-reverse">
+              <div class="mx-3">
+                {{ t("MatchDate") }}
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="mx-3">
+                {{ matchDate }}
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-6 fw-bold d-flex flex-row-reverse">
+              <div class="mx-3">
+                {{ t("TimeFrame") }}
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="mx-3">{{ timeFrameInfo }}</div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-6 fw-bold d-flex flex-row-reverse">
+              <div class="mx-3">
+                {{ t("Price") }}
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="mx-3">{{ price }}</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="col-7 p-5">
-        <el-form-item>
-          <el-col class="fw-bold">
-            {{ t("PhoneNumber") }} <span class="text-danger">(*)</span>
-          </el-col>
-          <el-col>
-            <el-input v-model="phoneNumber" maxlength="255" />
-          </el-col>
-        </el-form-item>
-        <el-form-item>
-          <el-col class="fw-bold">
-            {{ t("Email") }}<span class="text-danger">(*)</span>
-          </el-col>
-          <el-col>
-            <el-input v-model="email" maxlength="255" />
-          </el-col>
-        </el-form-item>
-        <el-form-item>
-          <el-col class="fw-bold">
-            {{ t("FootballTeam") }}
-          </el-col>
-          <el-col>
-            <el-input v-model="teamA" maxlength="255" />
-          </el-col>
-        </el-form-item>
-        <el-form-item>
-          <el-col class="fw-bold">
-            {{ t("Note") }}
-          </el-col>
-          <el-col>
-            <el-input
-              v-model="note"
-              maxlength="500"
-              :rows="3"
-              type="textarea"
-            />
-          </el-col>
-        </el-form-item>
-        <el-form-item>
+      <div class="col-12 col-sm-12 col-md-6 col-lg-7">
+        <div>
+          <div class="mb-2 fw-bold">
+            <div class="mx-4">
+              {{ t("PhoneNumber") }} <span class="text-danger">(*)</span>
+            </div>
+          </div>
+          <div class="mb-3">
+            <div class="mx-4">
+              <el-input v-model="phoneNumber" maxlength="255" />
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="mb-2 fw-bold">
+            <div class="mx-4">
+              {{ t("Email") }}<span class="text-danger">(*)</span>
+            </div>
+          </div>
+          <div class="mb-3">
+            <div class="mx-4">
+              <el-input v-model="email" maxlength="255" />
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="mb-2 fw-bold">
+            <div class="mx-4">
+              {{ t("FootballTeam") }}
+            </div>
+          </div>
+          <div class="mb-3">
+            <div class="mx-4">
+              <el-input v-model="teamA" maxlength="255" />
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="mb-2 fw-bold">
+            <div class="mx-4">
+              {{ t("Note") }}
+            </div>
+          </div>
+          <div class="mb-3">
+            <div class="mx-4">
+              <el-input
+                v-model="note"
+                maxlength="500"
+                :rows="3"
+                type="textarea"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="d-flex flex-row mx-4">
           <div class="ml-auto"></div>
           <el-button @click="prevStep">{{ t("Back") }}</el-button>
           <el-button type="primary" @click="complete">{{
             t("Complete")
           }}</el-button>
-        </el-form-item>
+        </div>
       </div>
     </div>
   </div>
