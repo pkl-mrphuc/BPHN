@@ -32,6 +32,7 @@ const status = ref(props.data?.status ?? StatusEnum.ACTIVE);
 const loadingOptions = inject("loadingOptions");
 const inpEmail = ref(null);
 const inpFullName = ref(null);
+const running = ref(0);
 const isDisabled = computed(() => {
   return equals(props.mode, "edit");
 });
@@ -47,6 +48,9 @@ onMounted(() => {
 });
 
 const save = () => {
+  if (running.value > 0) return;
+  ++running.value;
+  
   if (!email.value) {
     alert(t("EmailEmptyMesg"));
     return;
@@ -91,6 +95,10 @@ const save = () => {
         alert(msg ?? t("ErrorMesg"));
       }
       loading.close();
+
+       setTimeout(() => {
+        running.value = 0;
+      }, 1000);
     });
 };
 </script>

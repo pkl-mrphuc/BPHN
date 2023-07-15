@@ -14,28 +14,28 @@ namespace BPHN.BusinessLayer.ImpServices
     public class AccountService : BaseService, IAccountService
     {
         private readonly IAccountRepository _accountRepository;
-        private readonly IContextService _contextService;
         private readonly IEmailService _mailService;
         private readonly IKeyGenerator _keyGenerator;
         private readonly IHistoryLogService _historyLogService;
-        private readonly IConfigService _configService;
-        private readonly AppSettings _appSettings;
+        private readonly IConfigRepository _configRepository;
+        private readonly IPermissionService _permissionService;
         
-        public AccountService(IAccountRepository accountRepository,
-            IContextService contextService, 
+        public AccountService(
+            IServiceProvider serviceProvider,
+            IOptions<AppSettings> appSettings,
+            IAccountRepository accountRepository,
             IEmailService mailService,
             IKeyGenerator keyGenerator,
             IHistoryLogService historyLogService,
-            IConfigService configService,
-            IOptions<AppSettings> appSettings)
+            IConfigRepository configRepository,
+            IPermissionService permissionService) : base(serviceProvider, appSettings)
         {
             _accountRepository = accountRepository;
-            _contextService = contextService;
             _mailService = mailService;
             _keyGenerator = keyGenerator;
             _historyLogService = historyLogService;
-            _appSettings = appSettings.Value;
-            _configService = configService;
+            _configRepository = configRepository;
+            _permissionService = permissionService;
         }
 
         public async Task<ServiceResultModel> ChangePassword(Account account)
@@ -101,10 +101,15 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> GetById(Guid id)
         {
+            var account = await _accountRepository.GetAccountById(id);
+            if(account != null)
+            {
+                account.Permissions = await _permissionRepository.GetPermissions(id);
+            }
             return new ServiceResultModel()
             {
                 Success = true,
-                Data = await _accountRepository.GetAccountById(id)
+                Data = account
             };
         }
 
@@ -121,7 +126,9 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            if (context.Role != RoleEnum.ADMIN && !(await AllowMultiUser()))
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEW_LIST_USER);
+            if( !hasPermission ||
+                (context.Role != RoleEnum.ADMIN && !await AllowMultiUser(context.Id)))
             {
                 return new ServiceResultModel()
                 {
@@ -228,7 +235,9 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            if(context.Role != RoleEnum.ADMIN && !(await AllowMultiUser()))
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEW_LIST_USER);
+            if(!hasPermission ||
+                (context.Role != RoleEnum.ADMIN && !await AllowMultiUser(context.Id)))
             {
                 return new ServiceResultModel()
                 {
@@ -430,7 +439,9 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            if (context.Role != RoleEnum.ADMIN && !(await AllowMultiUser()))
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.ADD_USER);
+            if (!hasPermission ||
+                (context.Role != RoleEnum.ADMIN && !await AllowMultiUser(context.Id)))
             {
                 return new ServiceResultModel()
                 {
@@ -440,7 +451,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-                var isValid = ValidateModelByAttribute(account, new List<string>() { "Id", "Password" });
+            var isValid = ValidateModelByAttribute(account, new List<string>() { "Id", "Password" });
             if(!isValid)
             {
                 return new ServiceResultModel()
@@ -475,6 +486,8 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var resultRegister = await _accountRepository.RegisterForTenant(account);
+            var permissions = _permissionService.GetDefaultPermissions(account.Id, context);
+            var resultPermission = await _permissionRepository.Save(permissions);
             if(resultRegister)
             {
                 if(account.Status.Equals(ActiveStatusEnum.ACTIVE.ToString()))
@@ -497,7 +510,6 @@ namespace BPHN.BusinessLayer.ImpServices
                     });
                     thread.Start();
                 }
-                
 
                 var threadLog = new Thread(delegate ()
                 {
@@ -692,21 +704,11 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        private async Task<bool> AllowMultiUser()
+        private async Task<bool> AllowMultiUser(Guid accountId)
         {
-            var multiUserConfig = await _configService.GetConfigs("MultiUser");
-
-            var allowMultiUser = false;
-            if (multiUserConfig != null && multiUserConfig.Data != null)
-            {
-                var multiUser = multiUserConfig.Data as List<Config>;
-                if (multiUser != null && multiUser.Any(item => item.Value == "true"))
-                {
-                    allowMultiUser = true;
-                }
-            }
-
-            return allowMultiUser;
+            var configs = await _configRepository.GetConfigs(accountId, "MultiUser");
+            return configs != null && configs.Any(item => item.Value == "true") ? true : false;
         }
+
     }
 }

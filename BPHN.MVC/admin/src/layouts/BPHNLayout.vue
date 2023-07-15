@@ -40,13 +40,12 @@ export default {
       let loadedConfig = store.getters["config/getLoadedConfig"];
       if (!configs || (!loadedConfig && configs))
         store.dispatch("config/loadConfig");
-      else {
-        let lang = store.getters["config/getLanguage"];
-        let darkMode = store.getters["config/getDarkMode"];
-        t.locale.value = lang;
-        if (darkMode) document.documentElement.setAttribute("class", "dark");
-        else document.documentElement.removeAttribute("class");
-      }
+      let lang = store.getters["config/getLanguage"];
+      let darkMode = store.getters["config/getDarkMode"];
+      t.locale.value = lang;
+      if (darkMode) document.documentElement.setAttribute("class", "dark");
+      else document.documentElement.removeAttribute("class");
+      
     } else {
       router.push("login");
     }

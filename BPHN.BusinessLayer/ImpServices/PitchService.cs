@@ -2,6 +2,7 @@
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
+using Microsoft.Extensions.Options;
 using MySqlX.XDevAPI.Relational;
 using Newtonsoft.Json;
 
@@ -10,18 +11,18 @@ namespace BPHN.BusinessLayer.ImpServices
     public class PitchService : BaseService, IPitchService
     {
         private readonly IPitchRepository _pitchRepository;
-        private readonly IContextService _contextService;
         private readonly IHistoryLogService _historyLogService;
         private readonly IFileService _fileService;
         private readonly ITimeFrameInfoRepository _timeFrameInfoRepository;
-        public PitchService(IPitchRepository pitchRepository, 
-            IContextService contextService,
+        public PitchService(
+            IServiceProvider serviceProvider,
+            IOptions<AppSettings> appSettings,
+            IPitchRepository pitchRepository, 
             IHistoryLogService historyLogService,
             IFileService fileService,
-            ITimeFrameInfoRepository timeFrameInfoRepository)
+            ITimeFrameInfoRepository timeFrameInfoRepository) : base(serviceProvider, appSettings)
         {
             _pitchRepository = pitchRepository;
-            _contextService = contextService;
             _historyLogService = historyLogService;
             _fileService = fileService;
             _timeFrameInfoRepository = timeFrameInfoRepository;
@@ -31,13 +32,24 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
-
             var lstWhere = new List<WhereCondition>();
 
             if (!string.IsNullOrEmpty(accountId))
             {
-                pageSize = int.MaxValue;
+                Guid id;
+                Guid.TryParse(accountId, out id);
+                var hasPermission = await IsValidPermission(id, FunctionTypeEnum.VIEW_LIST_PITCH);
+                if (!hasPermission)
+                {
+                    return new ServiceResultModel()
+                    {
+                        Success = false,
+                        ErrorCode = ErrorCodes.INVALID_ROLE,
+                        Message = "Bạn không có quyền thực hiện chức năng này"
+                    };
+                }
 
+                pageSize = int.MaxValue;
                 lstWhere.Add(new WhereCondition()
                 {
                     Column = "ManagerId",
@@ -175,13 +187,24 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
-
             var lstWhere = new List<WhereCondition>();
 
             if(!string.IsNullOrEmpty(accountId))
             {
-                pageSize = int.MaxValue;
+                Guid id;
+                Guid.TryParse(accountId, out id);
+                var hasPermission = await IsValidPermission(id, FunctionTypeEnum.VIEW_LIST_PITCH);
+                if (!hasPermission)
+                {
+                    return new ServiceResultModel()
+                    {
+                        Success = false,
+                        ErrorCode = ErrorCodes.INVALID_ROLE,
+                        Message = "Bạn không có quyền thực hiện chức năng này"
+                    };
+                }
 
+                pageSize = int.MaxValue;
                 lstWhere.Add(new WhereCondition()
                 {
                     Column = "ManagerId",
@@ -253,13 +276,14 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            if(pitch == null)
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.ADD_PITCH);
+            if(!hasPermission)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = "Dữ liệu đầu vào không được để trống"
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = "Bạn không có quyền thực hiện chức năng này"
                 };
             }
 
@@ -342,13 +366,14 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            if (pitch == null)
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDIT_PITCH);
+            if (!hasPermission)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = "Dữ liệu đầu vào không được để trống"
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = "Bạn không có quyền thực hiện chức năng này"
                 };
             }
 

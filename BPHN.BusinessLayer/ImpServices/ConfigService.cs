@@ -2,6 +2,7 @@
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace BPHN.BusinessLayer.ImpServices
@@ -9,18 +10,15 @@ namespace BPHN.BusinessLayer.ImpServices
     public class ConfigService : BaseService, IConfigService
     {
         private readonly IConfigRepository _configRepository;
-        private readonly IContextService _contextService;
         private readonly IHistoryLogService _historyLogService;
-        private readonly ICacheService _cacheService;
-        public ConfigService(IConfigRepository configRepository,
-            IContextService contextService,
-            IHistoryLogService historyLogService,
-            ICacheService cacheService)
+        public ConfigService(
+            IServiceProvider serviceProvider,
+            IOptions<AppSettings> appSettings,
+            IConfigRepository configRepository,
+            IHistoryLogService historyLogService) : base(serviceProvider, appSettings)
         {
             _configRepository = configRepository;
-            _contextService = contextService;
             _historyLogService = historyLogService;
-            _cacheService = cacheService;
         }
 
         public async Task<ServiceResultModel> GetConfigs(string? key = null)
@@ -36,14 +34,14 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var data = _cacheService.Get(_cacheService.GetKeyCache(key??"All", "Config"));
+            var cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(key ?? "All", "Config"));
 
-            if(string.IsNullOrEmpty(data))
+            if(string.IsNullOrEmpty(cacheResult))
             {
                 var result = await _configRepository.GetConfigs(context.Id, key);
-                if(string.IsNullOrEmpty(key))
+                if(string.IsNullOrEmpty(key) && result != null && result.Count > 0)
                 {
-                    _cacheService.Set(_cacheService.GetKeyCache("All", "Config"), JsonConvert.SerializeObject(result));
+                    await _cacheService.SetAsync(_cacheService.GetKeyCache("All", "Config"), JsonConvert.SerializeObject(result));
                 }
 
                 return new ServiceResultModel()
@@ -54,7 +52,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
             else
             {
-                var result = JsonConvert.DeserializeObject<List<Config>>(data);
+                var result = JsonConvert.DeserializeObject<List<Config>>(cacheResult);
 
                 return new ServiceResultModel()
                 {
@@ -62,8 +60,6 @@ namespace BPHN.BusinessLayer.ImpServices
                     Data = result
                 };
             }
-
-            
         }
 
         public async Task<ServiceResultModel> Save(List<Config> configs)
@@ -103,7 +99,8 @@ namespace BPHN.BusinessLayer.ImpServices
             var saveResult = await _configRepository.Save(configs);
             if(saveResult)
             {
-                _cacheService.Remove(_cacheService.GetKeyCache("All", "Config"));
+                var key = _cacheService.GetKeyCache("All", "Config");
+                await _cacheService.RemoveAsync(key);
                 var thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();

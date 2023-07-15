@@ -16,6 +16,7 @@ namespace BPHN.WebAPI.Controllers
             _pitchService = provider.GetRequiredService<IPitchService>();
         }
 
+        [Permission(FunctionTypeEnum.ADD_PITCH)]
         [ApiAuthorize]
         [Route("insert")]
         [HttpPost]
@@ -25,6 +26,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _pitchService.Insert(request));
         }
 
+        [Permission(FunctionTypeEnum.EDIT_PITCH)]
         [ApiAuthorize]
         [Route("update")]
         [HttpPost]
@@ -43,6 +45,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _pitchService.GetInstance(id));
         }
 
+        [Permission(FunctionTypeEnum.VIEW_LIST_PITCH)]
         [AllowAnonymous]
         [Route("paging")]
         [HttpGet]
@@ -52,6 +55,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _pitchService.GetPaging(pageIndex, pageSize, txtSearch, accountId, hasDetail, hasInactive));
         }
 
+        [Permission(FunctionTypeEnum.VIEW_LIST_PITCH)]
         [AllowAnonymous]
         [Route("count-paging")]
         [HttpGet]

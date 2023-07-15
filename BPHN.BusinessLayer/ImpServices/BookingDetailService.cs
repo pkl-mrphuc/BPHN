@@ -2,17 +2,18 @@
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
+using Microsoft.Extensions.Options;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
     public class BookingDetailService : BaseService, IBookingDetailService
     {
-        private readonly IContextService _contextService;
         private readonly IBookingDetailRepository _bookingDetailRepository;
-        public BookingDetailService(IContextService contextService, 
-            IBookingDetailRepository bookingDetailRepository)
+        public BookingDetailService(
+            IServiceProvider serviceProvider,
+            IOptions<AppSettings> appSettings,
+            IBookingDetailRepository bookingDetailRepository) : base(serviceProvider, appSettings)
         {
-            _contextService = contextService;
             _bookingDetailRepository = bookingDetailRepository;
         }
 
@@ -26,6 +27,17 @@ namespace BPHN.BusinessLayer.ImpServices
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
                     Message = "Token đã hết hạn"
+                };
+            }
+
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDIT_BOOKING);
+            if (!hasPermission)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = "Bạn không có quyền thực hiện chức năng này"
                 };
             }
 
@@ -46,6 +58,17 @@ namespace BPHN.BusinessLayer.ImpServices
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
                     Message = "Token đã hết hạn"
+                };
+            }
+
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEW_LIST_BOOKING_DETAIL);
+            if (!hasPermission)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = "Bạn không có quyền thực hiện chức năng này"
                 };
             }
 
@@ -79,7 +102,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel GetMatchDates(DateTime startDate, DateTime endDate)
+        public List<BookingDetail> GetMatchDates(DateTime startDate, DateTime endDate)
         {
             var lstBookingDetail = new List<BookingDetail>();
             while (startDate <= endDate)
@@ -90,14 +113,11 @@ namespace BPHN.BusinessLayer.ImpServices
                 });
                 startDate = startDate.AddDays(1);
             }
-            return new ServiceResultModel()
-            {
-                Success = true,
-                Data = lstBookingDetail
-            };
+
+            return lstBookingDetail;
         }
 
-        public ServiceResultModel GetMatchDatesByWeekendays(DateTime startDate, DateTime endDate, int weekendays)
+        public List<BookingDetail> GetMatchDatesByWeekendays(DateTime startDate, DateTime endDate, int weekendays)
         {
             var lstBookingDetail = new List<BookingDetail>();
             while (startDate <= endDate)
@@ -115,11 +135,8 @@ namespace BPHN.BusinessLayer.ImpServices
                     startDate = startDate.AddDays(1);
                 }
             }
-            return new ServiceResultModel()
-            {
-                Success = true,
-                Data = lstBookingDetail
-            };
+
+            return lstBookingDetail;
         }
 
         public async Task<ServiceResultModel> UpdateMatch(CalendarEvent eventInfo)
@@ -132,6 +149,17 @@ namespace BPHN.BusinessLayer.ImpServices
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
                     Message = "Token đã hết hạn"
+                };
+            }
+
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDIT_BOOKING);
+            if(!hasPermission)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = "Bạn không có quyền thực hiện chức năng này"
                 };
             }
 

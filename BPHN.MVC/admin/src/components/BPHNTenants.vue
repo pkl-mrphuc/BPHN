@@ -83,7 +83,11 @@ const edit = (id) => {
 };
 
 const permission = (id) => {
-  alert(id);
+  const loading = ElLoading.service(loadingOptions);
+  store.dispatch("permission/get", id).then((res) => {
+    console.log(res);
+    loading.close();
+  });
 };
 
 const openForm = (id) => {
@@ -219,4 +223,8 @@ onMounted(() => {
     @callback="loadData"
   >
   </TenantDialog>
+  <PermissionDialog
+  v-if="hasRole('PermissionDialog')"
+  >
+  </PermissionDialog>
 </template>

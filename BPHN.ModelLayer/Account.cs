@@ -26,5 +26,6 @@ namespace BPHN.ModelLayer
         public string Status { get; set; }
         public Guid? ParentId { get; set; }
         public string IPAddress { get; set; }
+        public List<Permission>? Permissions { get; set; }
     }
 }

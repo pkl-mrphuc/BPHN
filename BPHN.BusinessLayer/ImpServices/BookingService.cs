@@ -2,6 +2,7 @@
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace BPHN.BusinessLayer.ImpServices
@@ -9,32 +10,31 @@ namespace BPHN.BusinessLayer.ImpServices
     public class BookingService : BaseService, IBookingService
     {
         private readonly IBookingRepository _bookingRepository;
-        private readonly IContextService _contextService;
-        private readonly IBookingDetailService _bookingDetailService;
         private readonly IHistoryLogService _historyLogService;
-        private readonly IPitchService _pitchService;
+        private readonly IPitchRepository _pitchRepository;
         private readonly IBookingDetailRepository _bookingDetailRepository;
-        public BookingService(IBookingRepository bookingRepository,
-            IContextService contextService,
-            IBookingDetailService bookingDetailService,
+        private readonly IBookingDetailService _bookingDetailService;
+        public BookingService(
+            IServiceProvider serviceProvider,
+            IOptions<AppSettings> appSettings,
+            IBookingRepository bookingRepository,
             IHistoryLogService historyLogService,
-            IPitchService pitchService,
-            IBookingDetailRepository bookingDetailRepository)
+            IPitchRepository pitchRepository,
+            IBookingDetailRepository bookingDetailRepository,
+            IBookingDetailService bookingDetailService) : base(serviceProvider, appSettings)
         {
             _bookingRepository = bookingRepository;
-            _contextService = contextService;
-            _bookingDetailService = bookingDetailService;
             _historyLogService = historyLogService;
-            _pitchService = pitchService;
             _bookingDetailRepository = bookingDetailRepository;
+            _pitchRepository = pitchRepository;
+            _bookingDetailService = bookingDetailService;
         }
 
         public async Task<ServiceResultModel> CheckFreeTimeFrame(Booking data)
         {
             if (data.IsRecurring)
             {
-                var matchDatesResult = _bookingDetailService.GetMatchDatesByWeekendays(data.StartDate, data.EndDate, data.Weekendays ?? (int)DayOfWeek.Monday);
-                data.BookingDetails = matchDatesResult == null || matchDatesResult.Data == null ? new List<BookingDetail>() : (List<BookingDetail>)matchDatesResult.Data;
+                data.BookingDetails = _bookingDetailService.GetMatchDatesByWeekendays(data.StartDate, data.EndDate, data.Weekendays ?? (int)DayOfWeek.Monday);
             }
             else
             {
@@ -84,8 +84,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     for (int i = 0; i <= 6; i++)
                     {
-                        var serviceResult = _bookingDetailService.GetMatchDatesByWeekendays(data.StartDate, data.EndDate, i);
-                        var lstDateByWeekendays = serviceResult == null || serviceResult.Data == null ? new List<BookingDetail>() : (List<BookingDetail>)serviceResult.Data;
+                        var lstDateByWeekendays = _bookingDetailService.GetMatchDatesByWeekendays(data.StartDate, data.EndDate, i);
                         for (int j = 0; j < lstTimeFramesInADay.Count; j++)
                         {
                             var clone = (Booking)lstTimeFramesInADay[j].Clone();
@@ -105,8 +104,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 // lay lich theo ngay tu ngay => den ngay
                 else
                 {
-                    var serviceResult = _bookingDetailService.GetMatchDates(data.StartDate, data.EndDate);
-                    var lstDate = serviceResult == null || serviceResult.Data == null ? new List<BookingDetail>() : (List<BookingDetail>)serviceResult.Data;
+                    var lstDate = _bookingDetailService.GetMatchDates(data.StartDate, data.EndDate);
                     for (int i = 0; i < lstDate.Count; i++)
                     {
                         for (int j = 0; j < lstTimeFramesInADay.Count; j++)
@@ -421,7 +419,21 @@ namespace BPHN.BusinessLayer.ImpServices
         private async Task<List<Booking>> GetAllTimeFrameInfoCanBookInADay(string accountId)
         {
             var lstBooking = new List<Booking>();
-            var lstPitch = (await _pitchService.GetPaging(1, int.MaxValue, string.Empty, accountId, true)).Data as List<Pitch>;
+            var lstPitch = await _pitchRepository.GetPaging(1, int.MaxValue, new List<WhereCondition>()
+            {
+                new WhereCondition()
+                {
+                    Column = "ManagerId",
+                    Operator = "=",
+                    Value = accountId
+                },
+                new WhereCondition()
+                {
+                    Column = "Status",
+                    Operator = "=",
+                    Value = "ACTIVE"
+                }
+            });
             if (lstPitch != null)
             {
                 lstPitch = lstPitch.Where(item => item.Status == ActiveStatusEnum.ACTIVE.ToString()).ToList();

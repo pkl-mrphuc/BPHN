@@ -47,4 +47,21 @@
         CANCEL = 1,
         PENDING = 2
     }
+
+    public enum FunctionTypeEnum
+    {
+        ADD_PITCH = 0,
+        EDIT_PITCH = 1,
+        VIEW_LIST_PITCH = 2,
+
+        ADD_BOOKING = 3,
+        EDIT_BOOKING = 4,
+        VIEW_LIST_BOOKING = 5,
+
+        ADD_USER = 6,
+        EDIT_USER = 7,
+        VIEW_LIST_USER = 8,
+
+        VIEW_LIST_BOOKING_DETAIL = 9
+    }
 }

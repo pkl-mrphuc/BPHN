@@ -18,6 +18,7 @@ import FindBlankDialog from "@/components/dialogs/BPHNFindBlankDialog.vue";
 import AccountInfoDialog from "@/components/dialogs/BPHNAccountInfoDialog.vue";
 import TenantDialog from "@/components/dialogs/BPHNTenantDialog.vue";
 import MatchInfoDialog from "@/components/dialogs/BPHNMatchInfoDialog.vue";
+import PermissionDialog from "@/components/dialogs/BPHNPermissionDialog.vue";
 
 jwtInterceptor();
 startWs();
@@ -39,4 +40,5 @@ createApp(App)
     .component("AccountInfoDialog", AccountInfoDialog)
     .component("TenantDialog", TenantDialog)
     .component("MatchInfoDialog", MatchInfoDialog)
+    .component("PermissionDialog", PermissionDialog)
     .mount("#app");
