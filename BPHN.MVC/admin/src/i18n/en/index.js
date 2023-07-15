@@ -121,6 +121,7 @@ const en = {
     InvalidEmail: 'Invalid email',
     Detail: 'Detail',
     Frame: 'Frame',
-    ViewDetail: 'View detail'
+    ViewDetail: 'View detail',
+    Permission: 'Permission'
 }
 export default en;

@@ -82,6 +82,10 @@ const edit = (id) => {
   mode.value = "edit";
 };
 
+const permission = (id) => {
+  alert(id);
+};
+
 const openForm = (id) => {
   const loading = ElLoading.service(loadingOptions);
   store.dispatch("account/getInstance", id).then((res) => {
@@ -142,14 +146,14 @@ onMounted(() => {
               }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column :label="t('Username')">
+          <el-table-column :label="t('Username')" min-width="150">
             <template #default="scope">
               <span class="text-truncate" :title="scope.row.userName">{{
                 scope.row.userName
               }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="t('FullName')">
+          <el-table-column :label="t('FullName')" min-width="150">
             <template #default="scope">
               <span class="text-truncate" :title="scope.row.fullName">{{
                 scope.row.fullName
@@ -173,17 +177,20 @@ onMounted(() => {
               <el-tag type="info" size="small" v-else>{{ t("Other") }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column :label="t('PhoneNumber')">
+          <el-table-column :label="t('PhoneNumber')" min-width="150">
             <template #default="scope">
               <span class="text-truncate" :title="scope.row.phoneNumber">{{
                 scope.row.phoneNumber
               }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="" width="100">
+          <el-table-column label="" min-width="200" fixed="right">
             <template #default="scope">
-              <el-button @click="edit(scope.row.id)" type="primary">{{
+              <el-button size="small" @click="edit(scope.row.id)" type="primary">{{
                 t("Edit")
+              }}</el-button>
+              <el-button size="small" @click="permission(scope.row.id)" type="info">{{
+                t("Permission")
               }}</el-button>
             </template>
           </el-table-column>

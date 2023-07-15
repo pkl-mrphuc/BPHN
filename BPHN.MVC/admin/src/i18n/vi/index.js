@@ -121,7 +121,8 @@ const vi = {
     InvalidEmail: 'Email không hợp lệ',
     Detail: 'Sân',
     Frame: 'Khung',
-    ViewDetail: 'Xem chi tiết'
+    ViewDetail: 'Xem chi tiết',
+    Permission: 'Phân quyền'
 }
 
 export default vi;

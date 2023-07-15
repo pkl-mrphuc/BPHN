@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
-import { SwitchButton, Refresh, Avatar } from "@element-plus/icons-vue";
+import { SwitchButton, Refresh, Avatar, Bell } from "@element-plus/icons-vue";
 import useToggleModal from "@/register-components/actionDialog";
 import { useRouter } from "vue-router";
 
@@ -50,6 +50,9 @@ const refresh = () => {
       </p>
       <div class="mx-1 pointer account-sm" @click="showAccountInfo">
         <el-icon size="24"><Avatar /></el-icon>
+      </div>
+      <div class="mx-1 pointer">
+        <el-icon size="24"><Bell /></el-icon>
       </div>
       <div class="mx-1 pointer" @click="refresh">
         <el-icon size="24"><Refresh /></el-icon>
