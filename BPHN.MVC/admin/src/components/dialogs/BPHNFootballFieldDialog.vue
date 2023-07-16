@@ -110,9 +110,14 @@ const save = () => {
       listNameDetails: lstDetail.value,
     })
     .then((res) => {
-      emit("callback", res);
       loading.close();
-      toggleModel();
+      if (res.data?.success) {
+        emit("callback", res);
+        toggleModel();
+      } else {
+        let msg = res?.data?.message;
+        alert(msg ?? t("ErrorMesg"));
+      }
     });
 };
 
@@ -293,9 +298,7 @@ const isValidNameDetail = () => {
             </div>
           </div>
           <div class="col-1 d-flex flex-row align-items-center">
-              <el-icon size="24" class="pointer"
-                ><LocationInformation
-              /></el-icon>
+            <el-icon size="24" class="pointer"><LocationInformation /></el-icon>
           </div>
         </div>
         <div class="row">

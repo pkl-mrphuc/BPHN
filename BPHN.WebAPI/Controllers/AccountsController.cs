@@ -27,7 +27,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _accountService.Login(request));
         }
 
-        [Permission(FunctionTypeEnum.ADD_USER)]
+        [Permission(new[] { FunctionTypeEnum.ADD_USER })]
         [ApiAuthorize]
         [Route("register")]
         [HttpPost]
@@ -73,7 +73,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _accountService.ChangePassword(request));
         }
 
-        [Permission(FunctionTypeEnum.VIEW_LIST_USER)]
+        [Permission(new[] { FunctionTypeEnum.VIEW_LIST_USER })]
         [ApiAuthorize]
         [HttpGet]
         [Route("paging")]
@@ -83,7 +83,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _accountService.GetPaging(pageIndex, pageSize, txtSearch));
         }
 
-        [Permission(FunctionTypeEnum.VIEW_LIST_USER)]
+        [Permission(new[] { FunctionTypeEnum.VIEW_LIST_USER })]
         [ApiAuthorize]
         [HttpGet]
         [Route("count-paging")]

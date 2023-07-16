@@ -2,6 +2,7 @@
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.Options;
 using MySqlX.XDevAPI.Relational;
 using Newtonsoft.Json;
@@ -38,6 +39,28 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 Guid id;
                 Guid.TryParse(accountId, out id);
+
+                var context = _contextService.GetContext();
+                if (context == null)
+                {
+                    return new ServiceResultModel()
+                    {
+                        Success = false,
+                        ErrorCode = ErrorCodes.OUT_TIME,
+                        Message = "Token đã hết hạn"
+                    };
+                }
+
+                if (!context.Id.Equals(id))
+                {
+                    return new ServiceResultModel()
+                    {
+                        Success = false,
+                        ErrorCode = ErrorCodes.NO_INTEGRITY,
+                        Message = "Dữ liệu đầu vào không hợp lệ"
+                    };
+                }
+
                 var hasPermission = await IsValidPermission(id, FunctionTypeEnum.VIEW_LIST_PITCH);
                 if (!hasPermission)
                 {
@@ -50,30 +73,23 @@ namespace BPHN.BusinessLayer.ImpServices
                 }
 
                 pageSize = int.MaxValue;
+
+
                 lstWhere.Add(new WhereCondition()
                 {
                     Column = "ManagerId",
-                    Operator = "=",
-                    Value = accountId
+                    Operator = "in",
+                    Value = context.RelationIds.ToArray()
                 });
-
-                if (!hasInactive)
-                {
-                    lstWhere.Add(new WhereCondition()
-                    {
-                        Column = "Status",
-                        Operator = "=",
-                        Value = "ACTIVE"
-                    });
-                }
             }
-            else
+
+            if (!hasInactive || string.IsNullOrEmpty(accountId))
             {
                 lstWhere.Add(new WhereCondition()
                 {
                     Column = "Status",
                     Operator = "=",
-                    Value = "ACTIVE"
+                    Value = ActiveStatusEnum.ACTIVE.ToString()
                 });
             }
 
@@ -193,6 +209,28 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 Guid id;
                 Guid.TryParse(accountId, out id);
+
+                var context = _contextService.GetContext();
+                if (context == null)
+                {
+                    return new ServiceResultModel()
+                    {
+                        Success = false,
+                        ErrorCode = ErrorCodes.OUT_TIME,
+                        Message = "Token đã hết hạn"
+                    };
+                }
+
+                if(!context.Id.Equals(id))
+                {
+                    return new ServiceResultModel()
+                    {
+                        Success = false,
+                        ErrorCode = ErrorCodes.NO_INTEGRITY,
+                        Message = "Dữ liệu đầu vào không hợp lệ"
+                    };
+                }
+
                 var hasPermission = await IsValidPermission(id, FunctionTypeEnum.VIEW_LIST_PITCH);
                 if (!hasPermission)
                 {
@@ -208,27 +246,18 @@ namespace BPHN.BusinessLayer.ImpServices
                 lstWhere.Add(new WhereCondition()
                 {
                     Column = "ManagerId",
-                    Operator = "=",
-                    Value = accountId
+                    Operator = "in",
+                    Value = context.RelationIds.ToArray()
                 });
-
-                if(!hasInactive)
-                {
-                    lstWhere.Add(new WhereCondition()
-                    {
-                        Column = "Status",
-                        Operator = "=",
-                        Value = "ACTIVE"
-                    });
-                }
             }
-            else
+            
+            if(!hasInactive || string.IsNullOrEmpty(accountId))
             {
                 lstWhere.Add(new WhereCondition()
                 {
                     Column = "Status",
                     Operator = "=",
-                    Value = "ACTIVE"
+                    Value = ActiveStatusEnum.ACTIVE.ToString()
                 });
             }
 

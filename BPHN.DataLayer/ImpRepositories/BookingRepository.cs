@@ -60,23 +60,23 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public async Task<object> GetCountPaging(int pageIndex, int pageSize, Guid accountId, string txtSearch)
+        public async Task<object> GetCountPaging(int pageIndex, int pageSize, Guid[] relationIds, string txtSearch)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
                 var dic = new Dictionary<string, object>();
                 var countQuery = @"select distinct count(*) from (
-						                                                    select * from bookings where AccountId = @accountId and PhoneNumber like @txtSearch
+						                                                    select * from bookings where AccountId in @accountId and PhoneNumber like @txtSearch
                                                                             union 
-                                                                            select * from bookings where AccountId = @accountId and Email like @txtSearch 
+                                                                            select * from bookings where AccountId in @accountId and Email like @txtSearch 
                                                                             union 
-                                                                            select * from bookings where AccountId = @accountId and NameDetail like @txtSearch
+                                                                            select * from bookings where AccountId in @accountId and NameDetail like @txtSearch
                                                                             union 
-                                                                            (select b.* from bookings b inner join pitchs p on b.PitchId = p.Id where b.AccountId = @accountId and p.Name like @txtSearch)
+                                                                            (select b.* from bookings b inner join pitchs p on b.PitchId = p.Id where b.AccountId in @accountId and p.Name like @txtSearch)
                                                                         ) as bs";
 
-                dic.Add("@accountId", accountId);
+                dic.Add("@accountId", relationIds);
                 dic.Add("@txtSearch", $"%{txtSearch}%");
                 var totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
                 var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
@@ -96,34 +96,34 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public async Task<List<Booking>> GetPaging(int pageIndex, int pageSize, Guid accountId, string txtSearch, bool hasBookingDetail = false)
+        public async Task<List<Booking>> GetPaging(int pageIndex, int pageSize, Guid[] relationIds, string txtSearch, bool hasBookingDetail = false)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
                 var dic = new Dictionary<string, object>();
                 var query = @"select distinct bs.*, p.Name as PitchName, tfi.Name as TimeFrameInfoName from (
-						                                    select * from bookings where AccountId = @accountId and PhoneNumber like @txtSearch
+						                                    select * from bookings where AccountId in @accountId and PhoneNumber like @txtSearch
                                                             union 
-                                                            select * from bookings where AccountId = @accountId and Email like @txtSearch 
+                                                            select * from bookings where AccountId in @accountId and Email like @txtSearch 
                                                             union 
-                                                            select * from bookings where AccountId = @accountId and NameDetail like @txtSearch
+                                                            select * from bookings where AccountId in @accountId and NameDetail like @txtSearch
                                                             union 
-                                                            (select b.* from bookings b inner join pitchs p on b.PitchId = p.Id where b.AccountId = @accountId and p.Name like @txtSearch)
+                                                            (select b.* from bookings b inner join pitchs p on b.PitchId = p.Id where b.AccountId in @accountId and p.Name like @txtSearch)
                                                         ) as bs inner join pitchs p on bs.PitchId = p.Id
                                                                 inner join time_frame_infos tfi on p.Id = tfi.PitchId and tfi.Id = bs.TimeFrameInfoId order by bs.BookingDate desc
                         limit @offSize, @pageSize";
                 var countQuery = @"select distinct count(*) from (
-						                                                    select * from bookings where AccountId = @accountId and PhoneNumber like @txtSearch
+						                                                    select * from bookings where AccountId in @accountId and PhoneNumber like @txtSearch
                                                                             union 
-                                                                            select * from bookings where AccountId = @accountId and Email like @txtSearch 
+                                                                            select * from bookings where AccountId in @accountId and Email like @txtSearch 
                                                                             union 
-                                                                            select * from bookings where AccountId = @accountId and NameDetail like @txtSearch
+                                                                            select * from bookings where AccountId in @accountId and NameDetail like @txtSearch
                                                                             union 
-                                                                            (select b.* from bookings b inner join pitchs p on b.PitchId = p.Id where b.AccountId = @accountId and p.Name like @txtSearch)
+                                                                            (select b.* from bookings b inner join pitchs p on b.PitchId = p.Id where b.AccountId in @accountId and p.Name like @txtSearch)
                                                                         ) as bs";
                 
-                dic.Add("@accountId", accountId);
+                dic.Add("@accountId", relationIds);
                 dic.Add("@txtSearch", $"%{txtSearch}%");
                 var totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
                 var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;

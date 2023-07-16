@@ -72,7 +72,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var result = await _bookingDetailRepository.GetByDate(date, context.Id);
+            var result = await _bookingDetailRepository.GetByDate(date, context.RelationIds.ToArray());
             result = result.Select(item =>
             {
                 item.Start = new DateTime(item.MatchDate.Year, item.MatchDate.Month, item.MatchDate.Day, item.Start.Hour, item.Start.Minute, 0);

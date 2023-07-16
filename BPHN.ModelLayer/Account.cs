@@ -27,5 +27,6 @@ namespace BPHN.ModelLayer
         public Guid? ParentId { get; set; }
         public string IPAddress { get; set; }
         public List<Permission>? Permissions { get; set; }
+        public List<Guid> RelationIds { get; set; }
     }
 }

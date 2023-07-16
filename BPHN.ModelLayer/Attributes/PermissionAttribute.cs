@@ -2,7 +2,7 @@
 {
     public class PermissionAttribute : Attribute
     {
-        public PermissionAttribute(FunctionTypeEnum type)
+        public PermissionAttribute(FunctionTypeEnum[] type)
         {
             
         }

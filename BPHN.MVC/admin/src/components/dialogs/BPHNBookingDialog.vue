@@ -16,6 +16,7 @@ const props = defineProps({
   data: Object,
 });
 
+const running = ref(0);
 const isRecurring = ref(props.data?.isRecurring ?? false);
 const weekdays = ref(props.data?.weekendays + "");
 const fromDate = ref(props.data?.fromDate ?? new Date());
@@ -76,7 +77,7 @@ const checkFreeTimeFrame = async () => {
     nameDetail: nameDetail.value,
   });
 
-  return result?.data?.success ?? false;
+  return result;
 };
 
 const quickCheck = async () => {
@@ -85,10 +86,11 @@ const quickCheck = async () => {
     return;
   }
   let result = await checkFreeTimeFrame();
-  if (!result) {
-    alert(t("Reserved"));
-  } else {
+  if (result?.data?.success) {
     alert(t("Free"));
+  } else {
+    let msg = result?.data?.message;
+    alert(msg ?? t("Reserved"));
   }
 };
 
@@ -97,13 +99,14 @@ const finder = () => {
 };
 
 const save = () => {
+  if (running.value > 0) return;
+  ++running.value;
+
   if (!phoneNumber.value) {
     alert(t("PhoneNumberEmptyMesg"));
     return;
   }
-
   const loading = ElLoading.service(loadingOptions);
-
   store
     .dispatch("booking/insert", {
       id: props.data?.id,
@@ -118,6 +121,7 @@ const save = () => {
       nameDetail: nameDetail.value,
     })
     .then((res) => {
+      loading.close();
       if (res?.data?.success) {
         emits("callback");
         toggleModel();
@@ -125,7 +129,10 @@ const save = () => {
         let msg = res?.data?.message;
         alert(msg ?? t("ErrorMesg"));
       }
-      loading.close();
+
+      setTimeout(() => {
+        running.value = 0;
+      }, 1000);
     });
 };
 

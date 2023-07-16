@@ -1,4 +1,5 @@
 ﻿using BPHN.BusinessLayer.IServices;
+using BPHN.DataLayer.ImpRepositories;
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
@@ -14,6 +15,7 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IPitchRepository _pitchRepository;
         private readonly IBookingDetailRepository _bookingDetailRepository;
         private readonly IBookingDetailService _bookingDetailService;
+        private readonly ITimeFrameInfoRepository _timeFrameInfoRepository;
         public BookingService(
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
@@ -21,17 +23,42 @@ namespace BPHN.BusinessLayer.ImpServices
             IHistoryLogService historyLogService,
             IPitchRepository pitchRepository,
             IBookingDetailRepository bookingDetailRepository,
-            IBookingDetailService bookingDetailService) : base(serviceProvider, appSettings)
+            IBookingDetailService bookingDetailService,
+            ITimeFrameInfoRepository timeFrameInfoRepository) : base(serviceProvider, appSettings)
         {
             _bookingRepository = bookingRepository;
             _historyLogService = historyLogService;
             _bookingDetailRepository = bookingDetailRepository;
             _pitchRepository = pitchRepository;
             _bookingDetailService = bookingDetailService;
+            _timeFrameInfoRepository = timeFrameInfoRepository;
         }
 
         public async Task<ServiceResultModel> CheckFreeTimeFrame(Booking data)
         {
+            var context = _contextService.GetContext();
+            if (context == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = "Token đã hết hạn"
+                };
+            }
+
+            var hasPermissionAdd = await IsValidPermission(context.Id, FunctionTypeEnum.ADD_BOOKING);
+            var hasPermissionEdit = await IsValidPermission(context.Id, FunctionTypeEnum.EDIT_BOOKING);
+            if (!hasPermissionAdd && !hasPermissionEdit)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = "Bạn không có quyền thực hiện chức năng này"
+                };
+            }
+
             if (data.IsRecurring)
             {
                 data.BookingDetails = _bookingDetailService.GetMatchDatesByWeekendays(data.StartDate, data.EndDate, data.Weekendays ?? (int)DayOfWeek.Monday);
@@ -62,6 +89,18 @@ namespace BPHN.BusinessLayer.ImpServices
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
                     Message = "Token đã hết hạn"
+                };
+            }
+
+            var hasPermissionAdd = await IsValidPermission(context.Id, FunctionTypeEnum.ADD_BOOKING);
+            var hasPermissionEdit = await IsValidPermission(context.Id, FunctionTypeEnum.EDIT_BOOKING);
+            if (!hasPermissionAdd && !hasPermissionEdit)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = "Bạn không có quyền thực hiện chức năng này"
                 };
             }
 
@@ -162,10 +201,21 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEW_LIST_BOOKING);
+            if(!hasPermission)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = "Bạn không có quyền thực hiện chức năng này"
+                };
+            }
+
             if (pageIndex < 0) pageIndex = 1;
             if (pageSize > 100 || pageSize <= 0) pageSize = 50;
 
-            var result = await _bookingRepository.GetCountPaging(pageIndex, pageSize, context.Id, txtSearch);
+            var result = await _bookingRepository.GetCountPaging(pageIndex, pageSize, context.RelationIds.ToArray(), txtSearch);
             return new ServiceResultModel()
             {
                 Success = true,
@@ -219,10 +269,21 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEW_LIST_BOOKING);
+            if (!hasPermission)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = "Bạn không có quyền thực hiện chức năng này"
+                };
+            }
+
             if (pageIndex < 0) pageIndex = 1;
             if (pageSize > 100 || pageSize <= 0) pageSize = 50;
 
-            var lstBooking = await _bookingRepository.GetPaging(pageIndex, pageSize, context.Id, txtSearch, hasBookingDetail);
+            var lstBooking = await _bookingRepository.GetPaging(pageIndex, pageSize, context.RelationIds.ToArray(), txtSearch, hasBookingDetail);
             return new ServiceResultModel()
             {
                 Success = true,
@@ -240,6 +301,17 @@ namespace BPHN.BusinessLayer.ImpServices
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
                     Message = "Token đã hết hạn"
+                };
+            }
+
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.ADD_BOOKING);
+            if (!hasPermission)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = "Bạn không có quyền thực hiện chức năng này"
                 };
             }
 
@@ -434,6 +506,17 @@ namespace BPHN.BusinessLayer.ImpServices
                     Value = "ACTIVE"
                 }
             });
+            var now = DateTime.Now;
+            lstPitch = lstPitch.Select(item =>
+            {
+                item.TimeFrameInfos = _timeFrameInfoRepository.GetByPitchId(item.Id).Result.Select(item =>
+                {
+                    item.TimeBegin = new DateTime(now.Year, now.Month, now.Day, item.TimeBegin.Hour, item.TimeBegin.Minute, 0);
+                    item.TimeEnd = new DateTime(now.Year, now.Month, now.Day, item.TimeEnd.Hour, item.TimeEnd.Minute, 0);
+                    return item;
+                }).ToList();
+                return item;
+            }).ToList();
             if (lstPitch != null)
             {
                 lstPitch = lstPitch.Where(item => item.Status == ActiveStatusEnum.ACTIVE.ToString()).ToList();

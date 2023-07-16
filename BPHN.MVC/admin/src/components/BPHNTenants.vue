@@ -20,7 +20,9 @@ const totalRecord = ref(0);
 const txtSearch = ref("");
 const running = ref(0);
 const objTenant = ref(null);
+const lstPermission = ref([]);
 const mode = ref("add");
+const accountId = ref(null);
 
 const loadData = () => {
   if (running.value > 0) {
@@ -85,7 +87,14 @@ const edit = (id) => {
 const permission = (id) => {
   const loading = ElLoading.service(loadingOptions);
   store.dispatch("permission/get", id).then((res) => {
-    console.log(res);
+    if (res?.data?.data) {
+      openModal("PermissionDialog");
+      lstPermission.value = res.data.data;
+      accountId.value = id;
+    } else {
+      let msg = res?.data?.message;
+      alert(msg ?? t("ErrorMesg"));
+    }
     loading.close();
   });
 };
@@ -225,6 +234,8 @@ onMounted(() => {
   </TenantDialog>
   <PermissionDialog
   v-if="hasRole('PermissionDialog')"
+  :data="lstPermission"
+  :accountId="accountId"
   >
   </PermissionDialog>
 </template>

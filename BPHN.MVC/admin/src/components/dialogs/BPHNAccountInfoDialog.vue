@@ -1,11 +1,14 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import useToggleModal from "@/register-components/actionDialog";
-import { computed, ref } from "vue";
+import { computed, ref, inject } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { GenderEnum } from "@/const";
+import { ElLoading } from "element-plus";
 
+const running = ref(0);
+const loadingOptions = inject("loadingOptions");
 const router = useRouter();
 const store = useStore();
 const { t } = useI18n();
@@ -43,6 +46,10 @@ const gender = computed(() => {
 });
 
 const changePassword = () => {
+  if (running.value > 0) return;
+  ++running.value;
+  const loading = ElLoading.service(loadingOptions);
+
   if (!password.value || !passwordAgain.value) {
     alert(t("PasswordEmptyMesg"));
     return;
@@ -57,6 +64,7 @@ const changePassword = () => {
     password: password.value,
   };
   store.dispatch("account/changePassword", data).then((res) => {
+    loading.close();
     if (res?.data?.success) {
       alert(t("SaveSuccess"));
       router.push("login");
@@ -64,6 +72,10 @@ const changePassword = () => {
       let msg = res?.data?.message;
       alert(msg ?? t("ErrorMesg"));
     }
+
+    setTimeout(() => {
+      running.value = 0;
+    }, 1000);
   });
 };
 </script>

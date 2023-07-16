@@ -49,7 +49,16 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var query = "select UserName, FullName, Gender, PhoneNumber, Email, Id, Role, Status, ParentId from accounts where Id = @id";
+                var query = @"select    UserName, 
+                                        FullName, 
+                                        Gender, 
+                                        PhoneNumber, 
+                                        Email, 
+                                        Id, 
+                                        Role, 
+                                        Status, 
+                                        ParentId 
+                                        from accounts where Id = @id";
                 Dictionary<string, object> dic = new Dictionary<string, object>();
                 dic.Add("@id", id);
                 var account = await connection.QueryFirstOrDefaultAsync<Account>(query, dic);
@@ -217,6 +226,23 @@ namespace BPHN.DataLayer.ImpRepositories
                 dic.Add("@password", password);
                 var affect = await connection.ExecuteAsync(query, dic);
                 return affect > 0 ? true : false;
+            }
+        }
+
+        public async Task<List<Guid>> GetRelationIds(Guid id)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                string query = @"   select distinct * from (
+                                                                select Id from accounts where ParentId = @id
+                                                                union                                    
+                                                                select Id from accounts where Id = @id
+                                                            ) ids";
+                var dic = new Dictionary<string, object>();
+                dic.Add("@id", id);
+                var result = await connection.QueryAsync<Guid>(query, dic);
+                return result.ToList();
             }
         }
     }

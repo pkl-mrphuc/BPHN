@@ -71,7 +71,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
-                    FunctionType = (int)FunctionTypeEnum.EDIT_PITCH,
+                    FunctionType = (int)FunctionTypeEnum.EDIT_BOOKING,
                     Allow = false,
                     CreatedBy = context.FullName,
                     CreatedDate = DateTime.Now,

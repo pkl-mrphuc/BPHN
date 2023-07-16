@@ -122,6 +122,17 @@ const en = {
     Detail: 'Detail',
     Frame: 'Frame',
     ViewDetail: 'View detail',
-    Permission: 'Permission'
+    Permission: 'Permission',
+    FunctionName: 'Function',
+    ADD_PITCH: 'Add stadium',
+    EDIT_PITCH: 'Edit stadium',
+    VIEW_LIST_PITCH: 'View list stadium',
+    ADD_BOOKING: 'Add booking',
+    EDIT_BOOKING: 'Edit booking',
+    VIEW_LIST_BOOKING: 'View list booking',
+    ADD_USER: 'Add user',
+    EDIT_USER: 'Edit user',
+    VIEW_LIST_USER: 'View list user',
+    VIEW_LIST_BOOKING_DETAIL: 'View list match'
 }
 export default en;

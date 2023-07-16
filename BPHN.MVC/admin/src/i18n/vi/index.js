@@ -122,7 +122,18 @@ const vi = {
     Detail: 'Sân',
     Frame: 'Khung',
     ViewDetail: 'Xem chi tiết',
-    Permission: 'Phân quyền'
+    Permission: 'Phân quyền',
+    FunctionName: 'Chức năng',
+    ADD_PITCH: 'Thêm thông tin sân bóng',
+    EDIT_PITCH: 'Sửa thông tin sân bóng',
+    VIEW_LIST_PITCH: 'Xem danh sách sân bóng',
+    ADD_BOOKING: 'Thêm thông tin đặt sân',
+    EDIT_BOOKING: 'Sửa thông tin đặt sân',
+    VIEW_LIST_BOOKING: 'Xem danh sách đặt sân',
+    ADD_USER: 'Thêm thông tin người dùng',
+    EDIT_USER: 'Sửa thông tin người dùng',
+    VIEW_LIST_USER: 'Xem danh sách người dùng',
+    VIEW_LIST_BOOKING_DETAIL: 'Xem danh sách trận đấu'
 }
 
 export default vi;

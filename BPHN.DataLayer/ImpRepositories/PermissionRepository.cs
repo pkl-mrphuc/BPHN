@@ -17,7 +17,7 @@ namespace BPHN.DataLayer.ImpRepositories
             {
                 var dic = new Dictionary<string, object?>();
                 dic.Add("@accountId", accountId);
-                var query = @"select * from permissions where AccountId = @accountId";
+                var query = @"select * from permissions where AccountId = @accountId order by FunctionType";
                 var lstPermission = await connection.QueryAsync<Permission>(query, dic);
                 return lstPermission.ToList();
             }

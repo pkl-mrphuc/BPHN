@@ -105,6 +105,14 @@ namespace BPHN.BusinessLayer.ImpServices
             if(account != null)
             {
                 account.Permissions = await _permissionRepository.GetPermissions(id);
+                account.RelationIds = await _accountRepository.GetRelationIds   (
+                                                                                    account.ParentId.HasValue && 
+                                                                                    !account.ParentId.Value.Equals(Guid.Empty) 
+                                                                                    ? 
+                                                                                    account.ParentId.Value 
+                                                                                    : 
+                                                                                    id
+                                                                                );
             }
             return new ServiceResultModel()
             {
@@ -164,6 +172,20 @@ namespace BPHN.BusinessLayer.ImpServices
                         Column = "ParentId",
                         Operator = "=",
                         Value = context.Id.ToString()
+                    });
+                    break;
+                default:
+                    where.Add(new WhereCondition()
+                    {
+                        Column = "Role",
+                        Operator = "in",
+                        Value = new[] { RoleEnum.USER.ToString() }
+                    });
+                    where.Add(new WhereCondition()
+                    {
+                        Column = "ParentId",
+                        Operator = "in",
+                        Value = context.RelationIds.ToArray()
                     });
                     break;
             }
@@ -273,6 +295,26 @@ namespace BPHN.BusinessLayer.ImpServices
                         Column = "ParentId",
                         Operator = "=",
                         Value = context.Id.ToString()
+                    });
+                    break;
+                default:
+                    where.Add(new WhereCondition()
+                    {
+                        Column = "Role",
+                        Operator = "in",
+                        Value = new[] { RoleEnum.USER.ToString() }
+                    });
+                    where.Add(new WhereCondition()
+                    {
+                        Column = "Id",
+                        Operator = "!=",
+                        Value = context.Id
+                    });
+                    where.Add(new WhereCondition()
+                    {
+                        Column = "ParentId",
+                        Operator = "in",
+                        Value = context.RelationIds.ToArray()
                     });
                     break;
             }
@@ -479,9 +521,14 @@ namespace BPHN.BusinessLayer.ImpServices
             account.ModifiedBy = context.FullName;
             account.ModifiedDate = DateTime.Now;
             account.Role = RoleEnum.TENANT;
-            if(context.Role != RoleEnum.ADMIN)
+            if(context.Role == RoleEnum.TENANT)
             {
                 account.ParentId = context.Id;
+                account.Role = RoleEnum.USER;
+            }
+            if (context.Role == RoleEnum.USER)
+            {
+                account.ParentId = context.ParentId;
                 account.Role = RoleEnum.USER;
             }
 
