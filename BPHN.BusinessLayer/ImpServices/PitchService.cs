@@ -2,6 +2,7 @@
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -13,18 +14,21 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IHistoryLogService _historyLogService;
         private readonly IFileService _fileService;
         private readonly ITimeFrameInfoRepository _timeFrameInfoRepository;
+        private readonly INotificationService _notificationService;
         public PitchService(
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
             IPitchRepository pitchRepository, 
             IHistoryLogService historyLogService,
             IFileService fileService,
+            INotificationService notificationService,
             ITimeFrameInfoRepository timeFrameInfoRepository) : base(serviceProvider, appSettings)
         {
             _pitchRepository = pitchRepository;
             _historyLogService = historyLogService;
             _fileService = fileService;
             _timeFrameInfoRepository = timeFrameInfoRepository;
+            _notificationService = notificationService;
         }
 
         public async Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch, string accountId, bool hasInactive = true)
@@ -350,6 +354,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if(insertResult)
             {
+                var notification = _notificationService.Insert<Pitch>(context, NotificationTypeEnum.ADD_PITCH, pitch);
                 Thread thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();

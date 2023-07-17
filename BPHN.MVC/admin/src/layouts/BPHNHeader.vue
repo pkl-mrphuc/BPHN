@@ -1,15 +1,24 @@
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
 import { SwitchButton, Refresh, Avatar, Bell } from "@element-plus/icons-vue";
 import useToggleModal from "@/register-components/actionDialog";
 import { useRouter } from "vue-router";
+import NotificationCard from "@/components/NotificationCard.vue";
 
 const router = useRouter();
 const store = useStore();
 const { t } = useI18n();
 const { openModal, hasRole } = useToggleModal();
+const lstNotification = ref([]);
+const hasNewNoti = ref(false);
+
+onMounted(() => {
+  store.dispatch("notification/get").then((res) => {
+    lstNotification.value = res.data?.data ?? [];
+  });
+});
 
 const fullname = computed(() => {
   return store.getters["account/getFullName"];
@@ -32,6 +41,10 @@ const refresh = () => {
   localStorage.removeItem("config-key");
   router.go();
 };
+
+const markRead = () => {
+  hasNewNoti.value = false;
+};
 </script>
 
 <template>
@@ -52,7 +65,18 @@ const refresh = () => {
         <el-icon size="24"><Avatar /></el-icon>
       </div>
       <div class="mx-1 pointer">
-        <el-icon size="24"><Bell /></el-icon>
+        <el-popover trigger="click" :width="300">
+          <template #reference>
+            <el-badge is-dot :hidden="!hasNewNoti">
+              <el-icon size="24" @click="markRead"><Bell /></el-icon>
+            </el-badge>
+          </template>
+          <notification-card
+            v-for="item in lstNotification"
+            :key="item"
+            :data="item"
+          ></notification-card>
+        </el-popover>
       </div>
       <div class="mx-1 pointer" @click="refresh">
         <el-icon size="24"><Refresh /></el-icon>

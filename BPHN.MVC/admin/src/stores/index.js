@@ -8,6 +8,7 @@ import booking from "@/stores/modules/booking";
 import bookingDetail from "@/stores/modules/bookingDetail";
 import historyLog from "@/stores/modules/historyLog";
 import permission from "@/stores/modules/permission";
+import notification from "@/stores/modules/notification";
 
 export default createStore({
   modules: {
@@ -18,7 +19,8 @@ export default createStore({
     booking,
     bookingDetail,
     historyLog,
-    permission
+    permission,
+    notification
   },
   plugins: [
     createPersistedState({

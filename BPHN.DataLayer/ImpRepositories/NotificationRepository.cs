@@ -22,7 +22,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 var query = @$"select * from notifications where {whereQuery} order by CreatedDate desc limit 0, 5";
                 for (int i = 0; i < where.Count; i++)
                 {
-                    dic.Add($"@where{i}", where[i]);
+                    dic.Add($"@where{i}", where[i].Value);
                 }
                 var result = await connection.QueryAsync<Notification>(query, dic);
                 return result.ToList();

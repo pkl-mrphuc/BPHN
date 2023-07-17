@@ -67,6 +67,11 @@
 
     public enum NotificationTypeEnum
     {
-        DEMO = 1
+        ADD_PITCH = 0,
+        EDIT_PITCH = 1,
+        ADD_BOOKING = 2,
+        EDIT_BOOKING = 3,
+        ADD_USER = 4,
+        EDIT_USER = 5
     }
 }

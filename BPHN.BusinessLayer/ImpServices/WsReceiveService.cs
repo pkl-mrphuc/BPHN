@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using BPHN.BusinessLayer.IServices;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
-    public class WsReceiveService : Hub
+    public class WsReceiveService : Hub<IWsSendService>
     {
         private readonly static ConnectionMapping<string> _connections =
             new ConnectionMapping<string>();

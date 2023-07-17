@@ -5,6 +5,6 @@ namespace BPHN.BusinessLayer.IServices
     public interface INotificationService
     {
         Task<ServiceResultModel> GetTopFiveNewNotifications();
-        Task PushNotification(Account context, NotificationTypeEnum type);
+        ServiceResultModel Insert<T>(Account context, NotificationTypeEnum type, T model);
     }
 }
