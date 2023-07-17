@@ -1,7 +1,6 @@
 ﻿using BPHN.BusinessLayer.IServices;
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -14,6 +13,7 @@ namespace BPHN.BusinessLayer.ImpServices
         protected readonly IContextService _contextService;
         protected readonly IPermissionRepository _permissionRepository;
         protected readonly ICacheService _cacheService;
+        protected readonly INotificationService _notificationService;
         protected readonly AppSettings _appSettings;
 
         public BaseService(IServiceProvider provider, IOptions<AppSettings> appSettings)
@@ -21,6 +21,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _contextService = provider.GetRequiredService<IContextService>();
             _permissionRepository = provider.GetRequiredService<IPermissionRepository>();
             _cacheService = provider.GetRequiredService<ICacheService>();
+            _notificationService = provider.GetRequiredService<INotificationService>();
             _appSettings = appSettings.Value;
         }
         public virtual bool ValidateModelByAttribute(object model, List<string> ignoreProperties)

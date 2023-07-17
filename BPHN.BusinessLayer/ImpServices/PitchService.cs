@@ -2,9 +2,7 @@
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
-using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.Options;
-using MySqlX.XDevAPI.Relational;
 using Newtonsoft.Json;
 
 namespace BPHN.BusinessLayer.ImpServices

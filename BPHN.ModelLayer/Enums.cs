@@ -64,4 +64,9 @@
 
         VIEW_LIST_BOOKING_DETAIL = 9
     }
+
+    public enum NotificationTypeEnum
+    {
+        DEMO = 1
+    }
 }

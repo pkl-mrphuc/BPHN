@@ -23,6 +23,7 @@ import AccountAPI from "@/apis/AccountAPI";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import connection from "@/ws.js";
 
 export default {
   name: "BPHNLayout",
@@ -36,6 +37,14 @@ export default {
       store.getters["account/getToken"]
     );
     if (validateResult?.data?.success) {
+      connection.start().then(() => {
+        connection
+          .invoke("AddConnection", store.getters["account/getAccountId"])
+          .catch(function (err) {
+            console.error(err.toString());
+          });
+      });
+
       let configs = localStorage.getItem("config-key");
       let loadedConfig = store.getters["config/getLoadedConfig"];
       if (!configs || (!loadedConfig && configs))
@@ -44,8 +53,8 @@ export default {
       let darkMode = store.getters["config/getDarkMode"];
       t.locale.value = lang;
       if (darkMode) document.documentElement.setAttribute("class", "dark");
-      else document.documentElement.removeAttribute("class");
-      
+        else document.documentElement.removeAttribute("class");
+
     } else {
       router.push("login");
     }

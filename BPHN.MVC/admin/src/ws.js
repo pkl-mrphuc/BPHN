@@ -4,14 +4,6 @@ var connection = new signalR.HubConnectionBuilder().withUrl(process.env.VUE_APP_
     transport: signalR.HttpTransportType.WebSockets
 }).build();
 
-export const startWs = (() => {
-    connection.start().then(function () {
-        console.log("connected");
-    }).catch(function (err) {
-        console.error(err.toString());
-    });
-});
-
 export const isConnected = (() => {
     return connection.state === signalR.HubConnectionState.Connected;
 })
