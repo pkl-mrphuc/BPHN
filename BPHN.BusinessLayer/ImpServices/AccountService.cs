@@ -160,26 +160,18 @@ namespace BPHN.BusinessLayer.ImpServices
                         Value = new[] { RoleEnum.USER.ToString(), RoleEnum.TENANT.ToString() }
                     });
                     break;
-                case RoleEnum.TENANT:
-                    where.Add(new WhereCondition()
-                    {
-                        Column = "Role",
-                        Operator = "in",
-                        Value = new[] { RoleEnum.USER.ToString() }
-                    });
-                    where.Add(new WhereCondition()
-                    {
-                        Column = "ParentId",
-                        Operator = "=",
-                        Value = context.Id.ToString()
-                    });
-                    break;
                 default:
                     where.Add(new WhereCondition()
                     {
                         Column = "Role",
                         Operator = "in",
                         Value = new[] { RoleEnum.USER.ToString() }
+                    });
+                    where.Add(new WhereCondition()
+                    {
+                        Column = "Id",
+                        Operator = "!=",
+                        Value = context.Id
                     });
                     where.Add(new WhereCondition()
                     {
@@ -281,20 +273,6 @@ namespace BPHN.BusinessLayer.ImpServices
                         Column = "Role",
                         Operator = "in",
                         Value = new[] { RoleEnum.USER.ToString(), RoleEnum.TENANT.ToString() }
-                    });
-                    break;
-                case RoleEnum.TENANT:
-                    where.Add(new WhereCondition()
-                    {
-                        Column = "Role",
-                        Operator = "in",
-                        Value = new[] { RoleEnum.USER.ToString() }
-                    });
-                    where.Add(new WhereCondition()
-                    {
-                        Column = "ParentId",
-                        Operator = "=",
-                        Value = context.Id.ToString()
                     });
                     break;
                 default:
@@ -463,7 +441,8 @@ namespace BPHN.BusinessLayer.ImpServices
                     Gender = realAccount.Gender,
                     Role = realAccount.Role,
                     ParentId = realAccount.ParentId,
-                    Token = token
+                    Token = token,
+                    RelationIds = await _accountRepository.GetRelationIds(realAccount.Id)
                 }
             };
         }

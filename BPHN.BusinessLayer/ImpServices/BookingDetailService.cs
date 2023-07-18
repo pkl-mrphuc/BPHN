@@ -9,12 +9,15 @@ namespace BPHN.BusinessLayer.ImpServices
     public class BookingDetailService : BaseService, IBookingDetailService
     {
         private readonly IBookingDetailRepository _bookingDetailRepository;
+        private readonly INotificationService _notificationService;
         public BookingDetailService(
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
+            INotificationService notificationService,
             IBookingDetailRepository bookingDetailRepository) : base(serviceProvider, appSettings)
         {
             _bookingDetailRepository = bookingDetailRepository;
+            _notificationService = notificationService;
         }
 
         public async Task<ServiceResultModel> Cancel(string id)
@@ -42,6 +45,10 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var result = await _bookingDetailRepository.Cancel(id);
+            if(result)
+            {
+                _notificationService.Insert<string>(context, NotificationTypeEnum.EDIT_BOOKING, id);
+            }
             return new ServiceResultModel()
             {
                 Success = result
@@ -164,6 +171,10 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var result = await _bookingDetailRepository.UpdateMatch(eventInfo);
+            if(result)
+            {
+                _notificationService.Insert<CalendarEvent>(context, NotificationTypeEnum.EDIT_BOOKING, eventInfo);
+            }
             return new ServiceResultModel()
             {
                 Success = result

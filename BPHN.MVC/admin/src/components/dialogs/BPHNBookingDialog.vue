@@ -5,6 +5,8 @@ import useToggleModal from "@/register-components/actionDialog";
 import useCommonFn from "@/commonFn";
 import { useStore } from "vuex";
 import { ElLoading } from "element-plus";
+import { NotificationTypeEnum } from "@/const";
+import connection from "@/ws";
 
 const { toggleModel, openModal, hasRole } = useToggleModal();
 const { sameDate, yearEndDay, time, dateToString } = useCommonFn();
@@ -125,6 +127,12 @@ const save = () => {
       if (res?.data?.success) {
         emits("callback");
         toggleModel();
+        connection.invoke(
+          "PushNotification",
+          store.getters["account/getRelationIds"],
+          store.getters["account/getAccountId"],
+          NotificationTypeEnum.ADD_BOOKING
+        );
       } else {
         let msg = res?.data?.message;
         alert(msg ?? t("ErrorMesg"));

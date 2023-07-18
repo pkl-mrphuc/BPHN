@@ -14,8 +14,9 @@ import { v4 as uuidv4 } from "uuid";
 import { useStore } from "vuex";
 import { ElLoading } from "element-plus";
 import useCommonFn from "@/commonFn";
-import { StatusEnum } from "@/const";
+import { StatusEnum, NotificationTypeEnum } from "@/const";
 import { LocationInformation } from "@element-plus/icons-vue";
+import connection from "@/ws";
 
 const props = defineProps({
   data: Object,
@@ -114,6 +115,14 @@ const save = () => {
       if (res.data?.success) {
         emit("callback", res);
         toggleModel();
+        connection.invoke(
+          "PushNotification",
+          store.getters["account/getRelationIds"],
+          store.getters["account/getAccountId"],
+          props.mode == "edit"
+            ? NotificationTypeEnum.EDIT_PITCH
+            : NotificationTypeEnum.ADD_PITCH
+        );
       } else {
         let msg = res?.data?.message;
         alert(msg ?? t("ErrorMesg"));

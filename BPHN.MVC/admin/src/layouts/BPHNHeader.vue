@@ -6,6 +6,7 @@ import { SwitchButton, Refresh, Avatar, Bell } from "@element-plus/icons-vue";
 import useToggleModal from "@/register-components/actionDialog";
 import { useRouter } from "vue-router";
 import NotificationCard from "@/components/NotificationCard.vue";
+import connection from "@/ws";
 
 const router = useRouter();
 const store = useStore();
@@ -17,6 +18,11 @@ const hasNewNoti = ref(false);
 onMounted(() => {
   store.dispatch("notification/get").then((res) => {
     lstNotification.value = res.data?.data ?? [];
+  });
+
+  connection.on("PushNotification", function (type) {
+    console.log(type);
+    hasNewNoti.value = true;
   });
 });
 
@@ -76,6 +82,7 @@ const markRead = () => {
             :key="item"
             :data="item"
           ></notification-card>
+          <el-empty v-if="lstNotification.length == 0" />
         </el-popover>
       </div>
       <div class="mx-1 pointer" @click="refresh">

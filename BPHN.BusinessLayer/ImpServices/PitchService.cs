@@ -443,6 +443,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (updateResult)
             {
+                var notification = _notificationService.Insert<Pitch>(context, NotificationTypeEnum.EDIT_PITCH, pitch);
                 Thread thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();

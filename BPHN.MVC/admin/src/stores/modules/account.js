@@ -50,6 +50,11 @@ const getters = {
     getGender: (state) => {
         if (!state.context) return "";
         return state.context.gender;
+    },
+
+    getRelationIds: (state) => {
+        if (!state.context) return "";
+        return state.context.relationIds;
     }
 };
 

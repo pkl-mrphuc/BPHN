@@ -20,6 +20,22 @@ namespace BPHN.BusinessLayer.ImpServices
             }
             _connections.Add(accountId, Context.ConnectionId);
         }
+
+        public void PushNotification(List<string> accountIds, string currentId, int type)
+        {
+            for (int i = 0; i < accountIds.Count; i++)
+            {
+                if (!string.IsNullOrWhiteSpace(currentId) && !currentId.Equals(accountIds[i]))
+                {
+                    var connections = _connections.GetConnections(accountIds[i]);
+                    for (int j = 0; j < connections.Count(); j++)
+                    {
+                        Clients.Client(connections.ElementAt(j)).PushNotification(type);
+                    }
+                }
+            }
+            
+        }
     }
 
     public class ConnectionMapping<T>

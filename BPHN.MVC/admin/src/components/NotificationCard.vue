@@ -12,6 +12,7 @@
       <div class="text-truncate">{{ content }}</div>
       <div class="fst-italic">{{ author }}</div>
     </div>
+     <el-divider />
   </div>
 </template>
 

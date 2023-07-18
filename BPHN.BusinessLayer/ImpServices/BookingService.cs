@@ -16,6 +16,7 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IBookingDetailRepository _bookingDetailRepository;
         private readonly IBookingDetailService _bookingDetailService;
         private readonly ITimeFrameInfoRepository _timeFrameInfoRepository;
+        private readonly INotificationService _notificationService;
         public BookingService(
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
@@ -24,6 +25,7 @@ namespace BPHN.BusinessLayer.ImpServices
             IPitchRepository pitchRepository,
             IBookingDetailRepository bookingDetailRepository,
             IBookingDetailService bookingDetailService,
+            INotificationService notificationService,
             ITimeFrameInfoRepository timeFrameInfoRepository) : base(serviceProvider, appSettings)
         {
             _bookingRepository = bookingRepository;
@@ -32,6 +34,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _pitchRepository = pitchRepository;
             _bookingDetailService = bookingDetailService;
             _timeFrameInfoRepository = timeFrameInfoRepository;
+            _notificationService = notificationService;
         }
 
         public async Task<ServiceResultModel> CheckFreeTimeFrame(Booking data)
@@ -368,6 +371,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var insertResult = await _bookingRepository.Insert(data);
             if (insertResult)
             {
+                var notification = _notificationService.Insert<Booking>(context, NotificationTypeEnum.ADD_BOOKING, data);
                 Thread thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();

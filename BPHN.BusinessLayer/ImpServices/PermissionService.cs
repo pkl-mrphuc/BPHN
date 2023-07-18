@@ -11,12 +11,15 @@ namespace BPHN.BusinessLayer.ImpServices
     public class PermissionService : BaseService, IPermissionService
     {
         private readonly IHistoryLogService _historyLogService;
+        private readonly INotificationService _notificationService;
         public PermissionService(
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
+            INotificationService notificationService,
             IHistoryLogService historyLogService) : base(serviceProvider, appSettings)
         {
             _historyLogService = historyLogService;
+            _notificationService = notificationService;
         }
 
         public List<Permission> GetDefaultPermissions(Guid accountId, Account context)
@@ -201,6 +204,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var saveResult = await _permissionRepository.Save(permissions);
             if(saveResult)
             {
+                var notification = _notificationService.Insert<List<Permission>>(context, NotificationTypeEnum.EDIT_USER, permissions);
                 var key = _cacheService.GetKeyCache(accountId.ToString(), "Permission");
                 await _cacheService.RemoveAsync(key);
                 var thread = new Thread(delegate ()

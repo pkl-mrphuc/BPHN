@@ -3,6 +3,8 @@ import useToggleModal from "@/register-components/actionDialog";
 import { useI18n } from "vue-i18n";
 import { defineProps, ref, defineEmits } from "vue";
 import { useStore } from "vuex";
+import { NotificationTypeEnum } from "@/const";
+import connection from "@/ws";
 
 const { toggleModel } = useToggleModal();
 const { t } = useI18n();
@@ -31,6 +33,12 @@ const save = () => {
   store.dispatch("bookingDetail/updateMatch", data);
   emit("callback", data);
   toggleModel();
+  connection.invoke(
+    "PushNotification",
+    store.getters["account/getRelationIds"],
+    store.getters["account/getAccountId"],
+    NotificationTypeEnum.EDIT_BOOKING
+  );
 };
 </script>
 

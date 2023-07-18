@@ -40,3 +40,13 @@ export const FunctionTypeEnum = {
     VIEW_LIST_USER: 8,
     VIEW_LIST_BOOKING_DETAIL: 9
 };
+
+export const NotificationTypeEnum =
+{
+    ADD_PITCH: 0,
+    EDIT_PITCH: 1,
+    ADD_BOOKING: 2,
+    EDIT_BOOKING: 3,
+    ADD_USER: 4,
+    EDIT_USER: 5
+}

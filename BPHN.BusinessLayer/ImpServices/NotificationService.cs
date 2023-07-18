@@ -53,8 +53,8 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 Id = Guid.NewGuid(),
                 AccountId = context.Id,
-                Subject = "subject",
-                Content = "content",
+                Subject = BuildSubject<T>(type, model),
+                Content = BuildContent<T>(type, model),
                 NotificationType = (int)type,
                 CreatedBy = context.FullName,
                 CreatedDate = DateTime.Now,
@@ -73,6 +73,45 @@ namespace BPHN.BusinessLayer.ImpServices
                 Success = true,
                 Data = notification
             };
+        }
+
+        private string BuildSubject<T>(NotificationTypeEnum type, T model)
+        {
+            switch(type)
+            {
+                case NotificationTypeEnum.ADD_PITCH:
+                case NotificationTypeEnum.EDIT_PITCH:
+                    return "Sân bóng";
+                case NotificationTypeEnum.ADD_BOOKING:
+                case NotificationTypeEnum.EDIT_BOOKING:
+                    return "Đặt sân";
+                case NotificationTypeEnum.ADD_USER:
+                case NotificationTypeEnum.EDIT_USER:
+                    return "Tài khoản";
+                default:
+                    return "";
+            }
+        }
+
+        private string BuildContent<T>(NotificationTypeEnum type, T model)
+        {
+            switch (type)
+            {
+                case NotificationTypeEnum.ADD_PITCH:
+                    return $"Thêm mới sân bóng {(model as Pitch).Name}";
+                case NotificationTypeEnum.EDIT_PITCH:
+                    return $"Sửa thông tin sân bóng {(model as Pitch).Name}";
+                case NotificationTypeEnum.ADD_BOOKING:
+                    return $"A/c {(model as Booking).PhoneNumber} đặt sân";
+                case NotificationTypeEnum.EDIT_BOOKING:
+                    return $"Chỉnh sửa thông tin đặt sân";
+                case NotificationTypeEnum.ADD_USER:
+                    return $"Thêm mới tài khoản {(model as Account).UserName}";
+                case NotificationTypeEnum.EDIT_USER:
+                    return $"Sửa thông tin tài khoản {(model as Account).UserName}";
+                default:
+                    return "";
+            }
         }
     }
 }
