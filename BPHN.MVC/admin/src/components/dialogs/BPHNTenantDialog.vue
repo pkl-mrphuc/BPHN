@@ -91,14 +91,16 @@ const save = () => {
       if (res?.data?.success) {
         emits("callback");
         toggleModel();
-        connection.invoke(
-          "PushNotification",
-          store.getters["account/getRelationIds"],
-          store.getters["account/getAccountId"],
-          props.mode == "edit" ?
-          NotificationTypeEnum.EDIT_USER :
-          NotificationTypeEnum.ADD_USER
-        );
+        if (connection && connection.state === "Connected") {
+          connection.invoke(
+            "PushNotification",
+            store.getters["account/getRelationIds"],
+            store.getters["account/getAccountId"],
+            props.mode == "edit"
+              ? NotificationTypeEnum.EDIT_USER
+              : NotificationTypeEnum.ADD_USER
+          );
+        }
       } else {
         let msg = res?.data?.message;
         alert(msg ?? t("ErrorMesg"));

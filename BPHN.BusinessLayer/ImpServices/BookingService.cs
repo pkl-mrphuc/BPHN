@@ -463,6 +463,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var insertResult = await _bookingRepository.Insert(data);
             if (insertResult)
             {
+                _notificationService.Insert<Booking>(fakeContext, NotificationTypeEnum.ADD_BOOKING, data);
                 Thread thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();

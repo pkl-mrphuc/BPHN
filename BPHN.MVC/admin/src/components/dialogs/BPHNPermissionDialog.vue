@@ -13,7 +13,7 @@ const { toggleModel } = useToggleModal();
 const store = useStore();
 const props = defineProps({
   data: Array,
-  accountId: String
+  accountId: String,
 });
 
 const lstPermission = ref(props.data);
@@ -51,27 +51,31 @@ const save = () => {
   if (running.value > 0) return;
   ++running.value;
   const loading = ElLoading.service(loadingOptions);
-  store.dispatch("permission/save", {
-    accountId: props.accountId,
-    permissions: lstPermission.value
-  }).then((res) => {
-    loading.close();
-    if (res?.data?.success) {
-      toggleModel();
-      connection.invoke(
-          "PushNotification",
-          store.getters["account/getRelationIds"],
-          store.getters["account/getAccountId"],
-          NotificationTypeEnum.EDIT_USER
-        );
-    } else {
-      let msg = res?.data?.message;
-      alert(msg ?? t("ErrorMesg"));
-    }
-    setTimeout(() => {
-      running.value = 0;
-    }, 1000);
-  });
+  store
+    .dispatch("permission/save", {
+      accountId: props.accountId,
+      permissions: lstPermission.value,
+    })
+    .then((res) => {
+      loading.close();
+      if (res?.data?.success) {
+        toggleModel();
+        if (connection && connection.state === "Connected") {
+          connection.invoke(
+            "PushNotification",
+            store.getters["account/getRelationIds"],
+            store.getters["account/getAccountId"],
+            NotificationTypeEnum.EDIT_USER
+          );
+        }
+      } else {
+        let msg = res?.data?.message;
+        alert(msg ?? t("ErrorMesg"));
+      }
+      setTimeout(() => {
+        running.value = 0;
+      }, 1000);
+    });
 };
 </script>
 

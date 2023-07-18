@@ -127,12 +127,14 @@ const save = () => {
       if (res?.data?.success) {
         emits("callback");
         toggleModel();
-        connection.invoke(
-          "PushNotification",
-          store.getters["account/getRelationIds"],
-          store.getters["account/getAccountId"],
-          NotificationTypeEnum.ADD_BOOKING
-        );
+        if (connection && connection.state === "Connected") {
+          connection.invoke(
+            "PushNotification",
+            store.getters["account/getRelationIds"],
+            store.getters["account/getAccountId"],
+            NotificationTypeEnum.ADD_BOOKING
+          );
+        }
       } else {
         let msg = res?.data?.message;
         alert(msg ?? t("ErrorMesg"));

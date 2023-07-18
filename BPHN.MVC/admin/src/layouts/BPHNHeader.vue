@@ -7,6 +7,7 @@ import useToggleModal from "@/register-components/actionDialog";
 import { useRouter } from "vue-router";
 import NotificationCard from "@/components/NotificationCard.vue";
 import connection from "@/ws";
+import { ElNotification } from "element-plus";
 
 const router = useRouter();
 const store = useStore();
@@ -21,10 +22,31 @@ onMounted(() => {
   });
 
   connection.on("PushNotification", function (type) {
-    console.log(type);
     hasNewNoti.value = true;
+    ElNotification({
+      title: t("Notification"),
+      message: getMessage(type),
+      duration: 0
+    });
   });
 });
+
+const getMessage = (type) => {
+  switch (type) {
+    case 0:
+      return "Thêm mới sân bóng";
+    case 1:
+      return "Sửa thông tin sân bóng";
+    case 2:
+      return "Thêm mới thông tin đặt sân";
+    case 3:
+      return "Cập nhật thông tin đặt sân";
+    case 4:
+      return "Thêm mới tài khoản";
+    default:
+      return "Sửa thông tin tài khoản";
+  }
+};
 
 const fullname = computed(() => {
   return store.getters["account/getFullName"];
@@ -49,6 +71,11 @@ const refresh = () => {
 };
 
 const markRead = () => {
+  if (hasNewNoti.value) {
+    store.dispatch("notification/get").then((res) => {
+      lstNotification.value = res.data?.data ?? [];
+    });
+  }
   hasNewNoti.value = false;
 };
 </script>
@@ -82,7 +109,10 @@ const markRead = () => {
             :key="item"
             :data="item"
           ></notification-card>
-          <el-empty v-if="lstNotification.length == 0" />
+          <el-empty
+            v-if="lstNotification.length == 0"
+            :description="t('NoData')"
+          />
         </el-popover>
       </div>
       <div class="mx-1 pointer" @click="refresh">

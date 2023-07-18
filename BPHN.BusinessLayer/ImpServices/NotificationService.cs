@@ -98,17 +98,17 @@ namespace BPHN.BusinessLayer.ImpServices
             switch (type)
             {
                 case NotificationTypeEnum.ADD_PITCH:
-                    return $"Thêm mới sân bóng {(model as Pitch).Name}";
+                    return $"Thêm mới sân bóng";
                 case NotificationTypeEnum.EDIT_PITCH:
-                    return $"Sửa thông tin sân bóng {(model as Pitch).Name}";
+                    return $"Sửa thông tin sân bóng";
                 case NotificationTypeEnum.ADD_BOOKING:
-                    return $"A/c {(model as Booking).PhoneNumber} đặt sân";
+                    return $"Thêm mới thông tin đặt sân";
                 case NotificationTypeEnum.EDIT_BOOKING:
-                    return $"Chỉnh sửa thông tin đặt sân";
+                    return $"Sửa thông tin đặt sân";
                 case NotificationTypeEnum.ADD_USER:
-                    return $"Thêm mới tài khoản {(model as Account).UserName}";
+                    return $"Thêm mới tài khoản";
                 case NotificationTypeEnum.EDIT_USER:
-                    return $"Sửa thông tin tài khoản {(model as Account).UserName}";
+                    return $"Sửa thông tin tài khoản";
                 default:
                     return "";
             }

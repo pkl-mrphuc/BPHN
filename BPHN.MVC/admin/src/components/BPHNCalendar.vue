@@ -49,6 +49,7 @@ const getSelectedDate = () => {
 const renderCalendar = async (lstResource) => {
   if (lstResource?.length > 0) {
     let calendarEl = document.getElementById("calendarTimeGrid");
+    if(!calendarEl) return;
     let calendar = new Calendar(calendarEl, {
       plugins: [resourceTimeGridPlugin],
       initialView: "resourceTimeGridDay",

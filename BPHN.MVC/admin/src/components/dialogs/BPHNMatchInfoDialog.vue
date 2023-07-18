@@ -33,12 +33,14 @@ const save = () => {
   store.dispatch("bookingDetail/updateMatch", data);
   emit("callback", data);
   toggleModel();
-  connection.invoke(
-    "PushNotification",
-    store.getters["account/getRelationIds"],
-    store.getters["account/getAccountId"],
-    NotificationTypeEnum.EDIT_BOOKING
-  );
+  if (connection && connection.state === "Connected") {
+    connection.invoke(
+      "PushNotification",
+      store.getters["account/getRelationIds"],
+      store.getters["account/getAccountId"],
+      NotificationTypeEnum.EDIT_BOOKING
+    );
+  }
 };
 </script>
 

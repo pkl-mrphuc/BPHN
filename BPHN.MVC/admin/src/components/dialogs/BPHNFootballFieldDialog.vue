@@ -115,14 +115,19 @@ const save = () => {
       if (res.data?.success) {
         emit("callback", res);
         toggleModel();
-        connection.invoke(
-          "PushNotification",
-          store.getters["account/getRelationIds"],
-          store.getters["account/getAccountId"],
-          props.mode == "edit"
-            ? NotificationTypeEnum.EDIT_PITCH
-            : NotificationTypeEnum.ADD_PITCH
-        );
+        if (
+          connection &&
+          connection.state === "Connected"
+        ) {
+          connection.invoke(
+            "PushNotification",
+            store.getters["account/getRelationIds"],
+            store.getters["account/getAccountId"],
+            props.mode == "edit"
+              ? NotificationTypeEnum.EDIT_PITCH
+              : NotificationTypeEnum.ADD_PITCH
+          );
+        }
       } else {
         let msg = res?.data?.message;
         alert(msg ?? t("ErrorMesg"));
@@ -352,7 +357,7 @@ const isValidNameDetail = () => {
             <el-table :data="lstConfigInfo" class="w-100">
               <el-table-column label="" width="200">
                 <template #default="scope">
-                  <span>{{ t(scope.row.name) }}</span>
+                  <span>{{ scope.row.name }}</span>
                 </template>
               </el-table-column>
 
@@ -375,7 +380,7 @@ const isValidNameDetail = () => {
             <el-table :data="lstConfigTimeFrame" class="w-100">
               <el-table-column label="" width="200">
                 <template #default="scope">
-                  <span>{{ t(scope.row.name) }}</span>
+                  <span>{{ scope.row.name }}</span>
                 </template>
               </el-table-column>
 

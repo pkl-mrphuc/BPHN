@@ -133,7 +133,8 @@ const vi = {
     ADD_USER: 'Thêm thông tin người dùng',
     EDIT_USER: 'Sửa thông tin người dùng',
     VIEW_LIST_USER: 'Xem danh sách người dùng',
-    VIEW_LIST_BOOKING_DETAIL: 'Xem danh sách trận đấu'
+    VIEW_LIST_BOOKING_DETAIL: 'Xem danh sách trận đấu',
+    Notification: 'Thông báo'
 }
 
 export default vi;

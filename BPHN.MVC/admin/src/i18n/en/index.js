@@ -133,6 +133,7 @@ const en = {
     ADD_USER: 'Add user',
     EDIT_USER: 'Edit user',
     VIEW_LIST_USER: 'View list user',
-    VIEW_LIST_BOOKING_DETAIL: 'View list match'
+    VIEW_LIST_BOOKING_DETAIL: 'View list match',
+    Notification: 'Notification'
 }
 export default en;
