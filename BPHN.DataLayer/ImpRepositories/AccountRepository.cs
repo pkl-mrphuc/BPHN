@@ -238,6 +238,10 @@ namespace BPHN.DataLayer.ImpRepositories
                                                                 select Id from accounts where ParentId = @id
                                                                 union                                    
                                                                 select Id from accounts where Id = @id
+                                                                union                                    
+                                                                select ParentId as Id from accounts where Id = @id
+                                                                union                                    
+                                                                (select b.Id as Id from accounts a inner join accounts b on a.ParentId = b.ParentId where a.Id = @id)
                                                             ) ids";
                 var dic = new Dictionary<string, object>();
                 dic.Add("@id", id);

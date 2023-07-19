@@ -1,11 +1,12 @@
 ﻿using BPHN.BusinessLayer.IServices;
 using BPHN.ModelLayer.Attributes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR.Client;
 using Serilog;
 
 namespace BPHN.WebAPI.Controllers
 {
-    [ApiAuthorize]
     public class NotificationsController : BaseController
     {
         private readonly INotificationService _notificationService;
@@ -14,6 +15,7 @@ namespace BPHN.WebAPI.Controllers
             _notificationService = provider.GetRequiredService<INotificationService>();
         }
 
+        [ApiAuthorize]
         [HttpGet]
         [Route("top-5")]
         public async Task<IActionResult> GetNotifications()

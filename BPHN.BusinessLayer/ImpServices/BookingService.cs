@@ -1,8 +1,8 @@
 ﻿using BPHN.BusinessLayer.IServices;
-using BPHN.DataLayer.ImpRepositories;
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -17,6 +17,7 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IBookingDetailService _bookingDetailService;
         private readonly ITimeFrameInfoRepository _timeFrameInfoRepository;
         private readonly INotificationService _notificationService;
+        private readonly IAccountRepository _accountRepository;
         public BookingService(
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
@@ -26,7 +27,8 @@ namespace BPHN.BusinessLayer.ImpServices
             IBookingDetailRepository bookingDetailRepository,
             IBookingDetailService bookingDetailService,
             INotificationService notificationService,
-            ITimeFrameInfoRepository timeFrameInfoRepository) : base(serviceProvider, appSettings)
+            ITimeFrameInfoRepository timeFrameInfoRepository,
+            IAccountRepository accountRepository) : base(serviceProvider, appSettings)
         {
             _bookingRepository = bookingRepository;
             _historyLogService = historyLogService;
@@ -35,6 +37,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _bookingDetailService = bookingDetailService;
             _timeFrameInfoRepository = timeFrameInfoRepository;
             _notificationService = notificationService;
+            _accountRepository = accountRepository;
         }
 
         public async Task<ServiceResultModel> CheckFreeTimeFrame(Booking data)
@@ -405,6 +408,7 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             var fakeContext = new Account()
             {
+                Id = data.AccountId,
                 FullName = data.PhoneNumber,
                 UserName = data.PhoneNumber,
                 IPAddress = _contextService.GetIPAddress()
@@ -483,6 +487,19 @@ namespace BPHN.BusinessLayer.ImpServices
             if (insertResult)
             {
                 _notificationService.Insert<Booking>(fakeContext, NotificationTypeEnum.ADD_BOOKING, booking);
+
+                if(!string.IsNullOrWhiteSpace(_appSettings.SignalrUrl))
+                {
+                    var lstRelationId = await _accountRepository.GetRelationIds(data.AccountId);
+                    if(lstRelationId == null)
+                    {
+                        lstRelationId = new List<Guid>() { data.AccountId };
+                    }
+                    var connection = new HubConnectionBuilder().WithUrl(new Uri(_appSettings.SignalrUrl)).Build();
+                    await connection.StartAsync();
+                    await connection.InvokeAsync("PushNotification", lstRelationId.Select(item => item.ToString()).ToList(), Guid.NewGuid().ToString(), NotificationTypeEnum.ADD_BOOKING);
+                }
+
                 Thread thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();

@@ -12,6 +12,7 @@
         public string ConnectionString { get; set; }
         public string FileFolder { get; set; }
         public string FileUrl { get; set; }
+        public string SignalrUrl { get; set; }
     }
 
     public class RabbitMQConfiguration

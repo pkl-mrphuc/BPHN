@@ -16,9 +16,9 @@ var appSettings = builder.Configuration.GetSection("AppSettings");
 builder.Services.Configure<AppSettings>(appSettings);
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddStackExchangeRedisCache(options => 
-{ 
-    options.Configuration = appSettings.GetValue<string>("RedisCacheUrl"); 
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = appSettings.GetValue<string>("RedisCacheUrl");
 });
 builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
@@ -74,7 +74,7 @@ builder.Services.AddSwaggerGen(option =>
             new List<string>()
         }
     });
-}); 
+});
 builder.Services.AddSignalR();
 
 var app = builder.Build();
