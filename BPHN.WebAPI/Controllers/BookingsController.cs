@@ -1,6 +1,7 @@
 ﻿using BPHN.BusinessLayer.IServices;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Attributes;
+using BPHN.ModelLayer.Others;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -38,7 +39,7 @@ namespace BPHN.WebAPI.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("insert-booking-request")]
-        public async Task<IActionResult> InsertBookingRequest([FromBody] Booking request)
+        public async Task<IActionResult> InsertBookingRequest([FromBody] BookingRequest request)
         {
             Log.Debug($"Booking/BookingRequest start: {JsonConvert.SerializeObject(request)}");
             return Ok(await _bookingService.InsertBookingRequest(request));

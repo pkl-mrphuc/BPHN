@@ -26,7 +26,7 @@ onMounted(() => {
     ElNotification({
       title: t("Notification"),
       message: getMessage(type),
-      duration: 0
+      duration: 0,
     });
   });
 });
@@ -118,9 +118,14 @@ const markRead = () => {
       <div class="mx-1 pointer" @click="refresh">
         <el-icon size="24"><Refresh /></el-icon>
       </div>
-      <div class="mx-1 pointer" @click="logout">
-        <el-icon size="24"><SwitchButton /></el-icon>
-      </div>
+      <el-button
+        class="mx-1 pointer"
+        type="info"
+        :icon="SwitchButton"
+        circle
+        @click="logout"
+      >
+      </el-button>
     </div>
   </section>
   <AccountInfoDialog v-if="hasRole('AccountInfoDialog')"> </AccountInfoDialog>

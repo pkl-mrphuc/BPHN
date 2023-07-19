@@ -113,7 +113,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (lstTimeFramesInADay.Count > 0)
             {
                 var now = DateTime.Now;
-                if(data.StartDate < now)
+                if (data.StartDate < now)
                 {
                     data.StartDate = now;
                 }
@@ -170,13 +170,13 @@ namespace BPHN.BusinessLayer.ImpServices
                 for (int i = 0; i < lstBooking.Count; i++)
                 {
                     var a = lstBooking[i];
-                    var isConflict = lstBooked.Where(b => 
+                    var isConflict = lstBooked.Where(b =>
                                                         b.Item1 == a.PitchId &&
                                                         b.Item2 == a.TimeFrameInfoId &&
                                                         b.Item3 == a.NameDetail &&
                                                         a.BookingDetails.Where(c => setMatchDate.Contains(c.MatchDate.ToString("dd/MM/yyyy"))).FirstOrDefault() != null
                                                     ).FirstOrDefault() != null ? true : false;
-                    
+
                     if (!isConflict)
                     {
                         lstResult.Add(a);
@@ -205,7 +205,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEW_LIST_BOOKING);
-            if(!hasPermission)
+            if (!hasPermission)
             {
                 return new ServiceResultModel()
                 {
@@ -401,7 +401,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task<ServiceResultModel> InsertBookingRequest(Booking data)
+        public async Task<ServiceResultModel> InsertBookingRequest(BookingRequest data)
         {
             var fakeContext = new Account()
             {
@@ -421,49 +421,68 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            if ((data.IsRecurring && data.StartDate.Date.Equals(data.EndDate.Date)) ||
-                (data.IsRecurring && (!data.Weekendays.HasValue || (data.Weekendays.HasValue && data.Weekendays.Value < 0) || (data.Weekendays.HasValue && data.Weekendays.Value > 6))) ||
-                data.EndDate.Date < DateTime.Now.Date)
+
+            var checkFreeServiceResult = await _bookingRepository.CheckFreeTimeFrame(new Booking()
+            {
+                PitchId = data.PitchId,
+                NameDetail = data.NameDetail,
+                TimeFrameInfoId = data.TimeFrameInfoId,
+                BookingDetails = new List<BookingDetail>() {
+                    new BookingDetail()
+                    {
+                        MatchDate = data.StartDate
+                    }
+                }
+            });
+            if (!checkFreeServiceResult)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
-                    ErrorCode = ErrorCodes.NO_INTEGRITY,
-                    Message = "Dữ liệu đầu vào không hợp lệ"
+                    ErrorCode = ErrorCodes.EXISTED,
+                    Message = "Khung giờ này đã được đặt trước"
                 };
             }
 
-            var checkFreeServiceResult = await CheckFreeTimeFrame(data);
-            if (!checkFreeServiceResult.Success)
+            var booking = new Booking();
+            booking.Id = data.Id.Equals(Guid.Empty) ? Guid.NewGuid() : data.Id;
+            booking.PhoneNumber = data.PhoneNumber;
+            booking.Email = data.Email;
+            booking.BookingDate = data.BookingDate;
+            booking.IsRecurring = false;
+            booking.Status = BookingStatusEnum.PENDING.ToString();
+            booking.AccountId = data.AccountId;
+            booking.TimeFrameInfoId = data.TimeFrameInfoId;
+            booking.PitchId = data.PitchId;
+            booking.Weekendays = (int)data.BookingDate.DayOfWeek;
+            booking.NameDetail = data.NameDetail;
+            booking.StartDate = data.StartDate;
+            booking.EndDate = data.EndDate;
+            booking.CreatedDate = DateTime.Now;
+            booking.CreatedBy = fakeContext.UserName;
+            booking.ModifiedBy = fakeContext.UserName;
+            booking.ModifiedDate = DateTime.Now;
+
+            booking.BookingDetails = new List<BookingDetail>()
             {
-                return checkFreeServiceResult;
-            }
+                new BookingDetail()
+                {
+                    Id = Guid.NewGuid(),
+                    CreatedDate = DateTime.Now,
+                    CreatedBy = fakeContext.UserName,
+                    ModifiedBy = fakeContext.UserName,
+                    ModifiedDate = DateTime.Now,
+                    BookingId = data.Id,
+                    Status = BookingStatusEnum.PENDING.ToString(),
+                    MatchDate = data.StartDate,
+                    Weekendays = (int)data.StartDate.DayOfWeek
+                }
+            };
 
-            data.Id = data.Id.Equals(Guid.Empty) ? Guid.NewGuid() : data.Id;
-            data.BookingDate = DateTime.Now;
-            data.Status = BookingStatusEnum.PENDING.ToString();
-            data.AccountId = data.AccountId;
-            data.CreatedDate = DateTime.Now;
-            data.CreatedBy = fakeContext.UserName;
-            data.ModifiedBy = fakeContext.UserName;
-            data.ModifiedDate = DateTime.Now;
-
-            data.BookingDetails = data.BookingDetails.Select(item =>
-            {
-                item.Id = item.Id.Equals(Guid.Empty) ? Guid.NewGuid() : item.Id;
-                item.CreatedDate = DateTime.Now;
-                item.CreatedBy = fakeContext.UserName;
-                item.ModifiedBy = fakeContext.UserName;
-                item.ModifiedDate = DateTime.Now;
-                item.BookingId = data.Id;
-                item.Status = BookingStatusEnum.PENDING.ToString();
-                return item;
-            }).ToList();
-
-            var insertResult = await _bookingRepository.Insert(data);
+            var insertResult = await _bookingRepository.Insert(booking);
             if (insertResult)
             {
-                _notificationService.Insert<Booking>(fakeContext, NotificationTypeEnum.ADD_BOOKING, data);
+                _notificationService.Insert<Booking>(fakeContext, NotificationTypeEnum.ADD_BOOKING, booking);
                 Thread thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();
@@ -540,7 +559,7 @@ namespace BPHN.BusinessLayer.ImpServices
                                 PitchId = lstPitch[i].Id,
                                 TimeFrameInfo = lstTimeFrameInfo[j],
                                 TimeFrameInfoId = lstTimeFrameInfo[j].Id,
-                                NameDetail = lstNameDetail[k]                     
+                                NameDetail = lstNameDetail[k]
                             });
                         }
                     }

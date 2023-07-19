@@ -1,12 +1,12 @@
 <script setup>
-import {  onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { Calendar } from "@fullcalendar/core";
 import resourceTimeGridPlugin from "@fullcalendar/resource-timegrid";
 import allLocales from "@fullcalendar/core/locales-all";
 import { useStore } from "vuex";
 import useCommonFn from "@/commonFn";
 import useToggleModal from "@/register-components/actionDialog";
-import { ArrowLeft, ArrowRight } from "@element-plus/icons-vue";
+import { ArrowLeft, ArrowRight, InfoFilled } from "@element-plus/icons-vue";
 import { useI18n } from "vue-i18n";
 
 const store = useStore();
@@ -43,13 +43,15 @@ onMounted(() => {
 });
 
 const getSelectedDate = () => {
-  return objCalendar.value ? dateToString(objCalendar.value.currentData.currentDate, formatDate.value) : "";
+  return objCalendar.value
+    ? dateToString(objCalendar.value.currentData.currentDate, formatDate.value)
+    : "";
 };
 
 const renderCalendar = async (lstResource) => {
   if (lstResource?.length > 0) {
     let calendarEl = document.getElementById("calendarTimeGrid");
-    if(!calendarEl) return;
+    if (!calendarEl) return;
     let calendar = new Calendar(calendarEl, {
       plugins: [resourceTimeGridPlugin],
       initialView: "resourceTimeGridDay",
@@ -118,15 +120,14 @@ const getEventByDate = async (date) => {
 
 const buildEventInfoHtml = (timeText, eventInfo) => {
   let eventContainer = document.createElement("div");
-  if(eventInfo?.teamB) {
+  if (eventInfo?.teamB) {
     eventContainer.className = "p-2 w-100 h-100 bg-danger";
-  }
-  else {
+  } else {
     eventContainer.className = "p-2 w-100 h-100 bg-primary";
   }
   let html = `<div class="fs-3 fw-bold">${eventInfo.stadium}</div>`;
-  if(eventInfo?.note) {
-    html += `<div class="fs-6 fst-italic">${eventInfo.note}</div>`
+  if (eventInfo?.note) {
+    html += `<div class="fs-6 fst-italic">${eventInfo.note}</div>`;
   }
 
   eventContainer.innerHTML = html;
@@ -197,7 +198,36 @@ const next = () => {
       <div class="d-flex flex-row align-items-center justify-content-between">
         <h3 class="fs-3 m-0">{{ selectedDate }}</h3>
         <div>
-          <el-button class="mx-1" type="primary" @click="today">{{ t("Today") }}</el-button>
+          <el-popover placement="top-start" :title="t('Note')" width="250" trigger="click">
+            <template #reference>
+              <el-button
+                class="mx-1"
+                type="warning"
+                :icon="InfoFilled"
+                circle
+              />
+            </template>
+            <div class="row mb-3 d-flex flex-row align-items-center">
+              <div class="col-3 square bg-danger"></div>
+              <div class="col-9">
+                <div class="mx-3">
+                  {{ t("HasCompetitor") }}
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3 d-flex flex-row align-items-center">
+              <div class="col-3 square bg-primary"></div>
+              <div class="col-9">
+                <div class="mx-3">
+                  {{ t("HasNotCompetitor") }}
+                </div>
+              </div>
+            </div>
+          </el-popover>
+          <el-button class="mx-1" type="primary" @click="today">{{
+            t("Today")
+          }}</el-button>
           <el-button-group class="mx-1">
             <el-button type="primary" @click="prev">
               <el-icon><ArrowLeft /></el-icon>
@@ -223,5 +253,11 @@ const next = () => {
 <style scoped>
 #calendarTimeGrid {
   height: calc(100vh - 170px);
+}
+
+.square {
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
 }
 </style>

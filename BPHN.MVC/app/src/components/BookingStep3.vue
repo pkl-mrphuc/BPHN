@@ -156,7 +156,6 @@ const matchDateReal = ref(props.data?.matchDateReal);
 const price = ref(props.data?.price);
 const timeFrameInfo = ref(props.data?.timeFrameInfo);
 const pitchId = ref(props.data?.pitchId);
-const weekdays = ref(props.data?.weekdays);
 const accountId = ref(props.data?.accountId);
 const nameDetail = ref(props.data?.nameDetail);
 const phoneNumber = ref(null);
@@ -183,10 +182,8 @@ const complete = () => {
       id: bookingId.value,
       phoneNumber: phoneNumber.value,
       email: email.value,
-      isRecurring: false,
       startDate: dateToString(matchDateReal.value, "yyyy-MM-dd"),
       endDate: dateToString(matchDateReal.value, "yyyy-MM-dd"),
-      weekendays: weekdays.value,
       timeFrameInfoId: timeFrameInfoId.value,
       pitchId: pitchId.value,
       nameDetail: nameDetail.value,
@@ -196,11 +193,12 @@ const complete = () => {
       bookingDate: dateToString(bookingDateReal.value, "yyyy-MM-dd"),
     })
     .then((res) => {
-      if (res.data?.success) {
+      if (res?.data?.success) {
         alert(t("BookingSuccessMesg"));
         emit("complete");
       } else {
-        alert(t("ErrorMesg"));
+        let msg = res?.data?.message;
+        alert(msg ?? t("ErrorMesg"));
       }
     });
 };

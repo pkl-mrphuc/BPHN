@@ -134,6 +134,10 @@ const en = {
     EDIT_USER: 'Edit user',
     VIEW_LIST_USER: 'View list user',
     VIEW_LIST_BOOKING_DETAIL: 'View list match',
-    Notification: 'Notification'
+    Notification: 'Notification',
+    HasCompetitor: 'Has competior',
+    HasNotCompetitor: 'Has no competior',
+    Approval: 'Approval',
+    Decline: 'Decline'
 }
 export default en;

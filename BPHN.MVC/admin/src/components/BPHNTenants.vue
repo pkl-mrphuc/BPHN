@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { Refresh, Search } from "@element-plus/icons-vue";
+import { Refresh, Search, Edit, CircleCheck } from "@element-plus/icons-vue";
 import { ref, onMounted, inject } from "vue";
 import { useStore } from "vuex";
 import useToggleModal from "@/register-components/actionDialog";
@@ -122,8 +122,12 @@ onMounted(() => {
 <template>
   <section>
     <div class="container">
-      <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
-        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("Accounts") }}</h3>
+      <div
+        class="row mb-3 d-flex flex-row align-items-center justify-content-between"
+      >
+        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">
+          {{ t("Accounts") }}
+        </h3>
         <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row">
           <el-input
             class="ml-2"
@@ -197,14 +201,25 @@ onMounted(() => {
               }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="" min-width="200" fixed="right">
+          <el-table-column label="" min-width="100" fixed="right">
             <template #default="scope">
-              <el-button size="small" @click="edit(scope.row.id)" type="primary">{{
-                t("Edit")
-              }}</el-button>
-              <el-button size="small" @click="permission(scope.row.id)" type="info">{{
-                t("Permission")
-              }}</el-button>
+              <div class="d-flex flex-row-reverse">
+                <el-button
+                  circle
+                  :icon="CircleCheck"
+                  size="small"
+                  @click="permission(scope.row.id)"
+                  type="info"
+                ></el-button>
+                <el-button
+                  circle
+                  :icon="Edit"
+                  size="small"
+                  class="mr-2"
+                  @click="edit(scope.row.id)"
+                  type="primary"
+                ></el-button>
+              </div>
             </template>
           </el-table-column>
         </el-table>
@@ -233,9 +248,9 @@ onMounted(() => {
   >
   </TenantDialog>
   <PermissionDialog
-  v-if="hasRole('PermissionDialog')"
-  :data="lstPermission"
-  :accountId="accountId"
+    v-if="hasRole('PermissionDialog')"
+    :data="lstPermission"
+    :accountId="accountId"
   >
   </PermissionDialog>
 </template>

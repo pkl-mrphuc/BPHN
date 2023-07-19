@@ -34,6 +34,38 @@
     <div class="d-flex flex-row justify-content-between align-items-center">
       <el-button @click="prevStep">{{ t("Back") }}</el-button>
       <div>
+        <el-popover
+          placement="top-start"
+          :title="t('Note')"
+          width="250"
+          trigger="click"
+        >
+          <template #reference>
+            <el-button class="mx-1" type="warning" :icon="InfoFilled" circle />
+          </template>
+          <div class="row mb-3 d-flex flex-row align-items-center">
+            <div class="col-3 square bg-danger"></div>
+            <div class="col-9">
+              <div class="mx-3">
+                {{ t("HasCompetitor") }}
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3 d-flex flex-row align-items-center">
+            <div class="col-3 square bg-primary"></div>
+            <div class="col-9">
+              <div class="mx-3">
+                {{ t("HasNotCompetitor") }}
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3 d-flex flex-row fst-italic">
+            {{ t("ClickTimeFrameToChooseBooking") }}
+          </div>
+
+        </el-popover>
         <el-button type="primary" @click="today" class="ml-2">{{
           t("Today")
         }}</el-button>
@@ -49,7 +81,7 @@
     </div>
     <div id="calendar" class="w-100"></div>
     <el-dialog v-model="showChooseNameDetail" :show-close="false">
-      <div class="mb-3 fs-5">{{ t('ChooseNameDetailMesg') }}</div>
+      <div class="mb-3 fs-5">{{ t("ChooseNameDetailMesg") }}</div>
       <el-radio-group v-model="nameDetail" size="large">
         <el-radio-button :label="item" v-for="item in options" :key="item" />
       </el-radio-group>
@@ -82,6 +114,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import allLocales from "@fullcalendar/core/locales-all";
 import { ElMessageBox } from "element-plus";
 import useCommonFn from "@/commonFn";
+import { InfoFilled } from "@element-plus/icons-vue";
 
 const nameDetail = ref("");
 const { dateToString, getLocalStorage, saveLocalStorage } = useCommonFn();
@@ -366,6 +399,15 @@ const buildEventInfoHtml = (timeText, eventInfo) => {
   } else {
     eventContainer.className = "p-2 w-100 h-100 bg-primary";
   }
+  eventContainer.title = t("ClickHereCopyPhoneNumber");
+  eventContainer.addEventListener("click", () => {
+    if(!eventInfo.teamB) {
+      alert(eventInfo.teamA);
+    }
+    else {
+      alert(t('HasCompetitor'));
+    }
+  });
   let html = `<div class="fs-3 fw-bold">${eventInfo.stadium}</div>`;
   if (eventInfo?.note) {
     html += `<div class="fs-6 fst-italic">${eventInfo.note}</div>`;
@@ -380,3 +422,11 @@ const prevStep = () => {
   emit("back");
 };
 </script>
+
+<style scoped>
+.square {
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+}
+</style>

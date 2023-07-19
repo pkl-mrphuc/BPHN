@@ -134,7 +134,11 @@ const vi = {
     EDIT_USER: 'Sửa thông tin người dùng',
     VIEW_LIST_USER: 'Xem danh sách người dùng',
     VIEW_LIST_BOOKING_DETAIL: 'Xem danh sách trận đấu',
-    Notification: 'Thông báo'
+    Notification: 'Thông báo',
+    HasCompetitor: 'Đã có đối',
+    HasNotCompetitor: 'Chưa có đối',
+    Approval: 'Phê duyệt',
+    Decline: 'Từ chối'
 }
 
 export default vi;

@@ -40,7 +40,11 @@ const vi = {
     All: 'Tất cả',
     Confirm: 'Xác nhận',
     BookingSuccessMesg: "Vui lòng kiểm tra mail để biết kết quả đặt sân.",
-    ErrorMesg: 'Đã có lỗi xảy ra. Vui lòng liên hệ đến nhà cung cấp'
+    ErrorMesg: 'Đã có lỗi xảy ra. Vui lòng liên hệ đến nhà cung cấp',
+    HasCompetitor: 'Đã có đối',
+    HasNotCompetitor: 'Chưa có đối',
+    ClickHereCopyPhoneNumber: 'Click để lấy số điện thoại người đặt sân',
+    ClickTimeFrameToChooseBooking: 'Click khung giờ trên lịch để chọn thông tin đặt sân'
 };
 
 export default vi;

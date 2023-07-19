@@ -40,7 +40,11 @@ const en = {
     All: 'All',
     Confirm: 'Confirm',
     BookingSuccessMesg: "Please check mail to check booking result.",
-    ErrorMesg: 'An error occurred. Please contract supplier'
+    ErrorMesg: 'An error occurred. Please contract supplier',
+    HasCompetitor: 'Has competior',
+    HasNotCompetitor: 'Has no competior',
+    ClickHereCopyPhoneNumber: 'Click here to get phone number',
+    ClickTimeFrameToChooseBooking: 'Click time frame on calendar to choose booking information'
 };
 
 export default en;

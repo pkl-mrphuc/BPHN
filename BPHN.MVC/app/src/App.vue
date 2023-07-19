@@ -16,19 +16,30 @@
             mode="horizontal"
             :ellipsis="false"
           >
-            <el-menu-item class="text-decoration-none text-uppercase">{{
-              t("Home")
-            }}</el-menu-item>
-            <el-menu-item class="text-decoration-none text-uppercase">{{
-              t("Booking")
-            }}</el-menu-item>
-            <el-sub-menu class="text-decoration-none text-uppercase">
+            <el-menu-item
+              index="1"
+              @click="goTo('')"
+              class="text-decoration-none text-uppercase"
+              >{{ t("Home") }}</el-menu-item
+            >
+            <el-menu-item
+              index="2"
+              @click="goTo('booking')"
+              class="text-decoration-none text-uppercase"
+              >{{ t("Booking") }}</el-menu-item
+            >
+            <el-sub-menu index="3" class="text-decoration-none text-uppercase">
               <template #title>{{ t("Service") }}</template>
-              <el-menu-item>{{ t("Partner") }}</el-menu-item>
+              <el-menu-item index="3_1" @click="goTo('partner-service')">{{
+                t("Partner")
+              }}</el-menu-item>
             </el-sub-menu>
-            <el-menu-item class="text-decoration-none text-uppercase">{{
-              t("Contact")
-            }}</el-menu-item>
+            <el-menu-item
+              index="4"
+              @click="goTo('contact-me')"
+              class="text-decoration-none text-uppercase"
+              >{{ t("Contact") }}</el-menu-item
+            >
             <el-switch
               v-model="darkMode"
               active-icon="Moon"
@@ -56,19 +67,33 @@
 
             <el-drawer v-model="draw" :direction="direction" class="w-75">
               <el-menu style="border: 0">
-                <el-menu-item class="text-decoration-none text-uppercase">{{
-                  t("Home")
-                }}</el-menu-item>
-                <el-menu-item class="text-decoration-none text-uppercase">{{
-                  t("Booking")
-                }}</el-menu-item>
-                <el-sub-menu class="text-decoration-none text-uppercase">
+                <el-menu-item
+                  index="1"
+                  @click="goTo('')"
+                  class="text-decoration-none text-uppercase"
+                  >{{ t("Home") }}</el-menu-item
+                >
+                <el-menu-item
+                  index="2"
+                  @click="goTo('booking')"
+                  class="text-decoration-none text-uppercase"
+                  >{{ t("Booking") }}</el-menu-item
+                >
+                <el-sub-menu
+                  index="3"
+                  class="text-decoration-none text-uppercase"
+                >
                   <template #title>{{ t("Service") }}</template>
-                  <el-menu-item>{{ t("Partner") }}</el-menu-item>
+                  <el-menu-item index="3_1" @click="goTo('partner-service')">{{
+                    t("Partner")
+                  }}</el-menu-item>
                 </el-sub-menu>
-                <el-menu-item class="text-decoration-none text-uppercase">{{
-                  t("Contact")
-                }}</el-menu-item>
+                <el-menu-item
+                  index="4"
+                  @click="goTo('contact-me')"
+                  class="text-decoration-none text-uppercase"
+                  >{{ t("Contact") }}</el-menu-item
+                >
                 <el-switch
                   v-model="darkMode"
                   active-icon="Moon"
@@ -114,6 +139,7 @@ import FlagIcon from "@/components/FlagIcon.vue";
 import { ref, computed, watch, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
+import router from "./routers";
 
 const { t } = useI18n();
 const i18n = useI18n();
@@ -163,6 +189,10 @@ const load = (language, darkMode) => {
 const toggleMenu = () => {
   toggle.value = !toggle.value;
   draw.value = !draw.value;
+};
+
+const goTo = (route) => {
+  router.push(route);
 };
 </script>
 

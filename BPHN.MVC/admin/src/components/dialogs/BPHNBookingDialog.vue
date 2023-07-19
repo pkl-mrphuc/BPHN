@@ -1,6 +1,13 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { ref, defineProps, onMounted, defineEmits, inject } from "vue";
+import {
+  ref,
+  defineProps,
+  onMounted,
+  defineEmits,
+  inject,
+  nextTick,
+} from "vue";
 import useToggleModal from "@/register-components/actionDialog";
 import useCommonFn from "@/commonFn";
 import { useStore } from "vuex";
@@ -9,13 +16,14 @@ import { NotificationTypeEnum } from "@/const";
 import connection from "@/ws";
 
 const { toggleModel, openModal, hasRole } = useToggleModal();
-const { sameDate, yearEndDay, time, dateToString } = useCommonFn();
+const { sameDate, yearEndDay, time, dateToString, equals } = useCommonFn();
 const { t } = useI18n();
 const store = useStore();
 const emits = defineEmits(["callback"]);
 const loadingOptions = inject("loadingOptions");
 const props = defineProps({
   data: Object,
+  mode: String,
 });
 
 const running = ref(0);
@@ -31,6 +39,7 @@ const nameDetail = ref(props.data?.nameDetail ?? null);
 const timeFrameInfoId = ref(props.data?.timeFrameInfoId ?? null);
 const phoneNumber = ref(props.data?.phoneNumber ?? null);
 const email = ref(props.data?.email ?? null);
+const inpPhoneNumber = ref(null);
 
 const showMakeRecurring = () => {
   if (isRecurring.value) {
@@ -163,7 +172,16 @@ const disabledDate = (time) => {
   return time.getTime() < Date.now() - 24 * 60 * 60 * 1000;
 };
 
+const decline = () => {
+  alert("decline");
+};
+
+const approval = () => {
+  alert("approval");
+};
+
 onMounted(() => {
+  const loading = ElLoading.service(loadingOptions);
   store
     .dispatch("pitch/getPaging", {
       accountId: store.getters["account/getAccountId"],
@@ -173,8 +191,16 @@ onMounted(() => {
     .then((res) => {
       if (res?.data?.data) {
         lstStadium.value = res.data.data;
+        changePitchId();
+        loading.close();
       }
     });
+
+  nextTick(() => {
+    if (inpPhoneNumber.value) {
+      inpPhoneNumber.value.focus();
+    }
+  });
 });
 </script>
 
@@ -189,6 +215,7 @@ onMounted(() => {
                 :placeholder="t('PhoneNumber')"
                 v-model="phoneNumber"
                 maxlength="225"
+                ref="inpPhoneNumber"
               />
             </div>
           </div>
@@ -313,21 +340,44 @@ onMounted(() => {
     </template>
     <template #foot>
       <div
-        class="row d-flex flex-row justify-content-between align-items-center"
+        class="row d-flex flex-row-reverse justify-content-between align-items-center"
       >
-        <div>
-          <el-button class="mb-2" @click="quickCheck">{{
-            t("QuickCheck")
-          }}</el-button>
-          <el-button class="mb-2" @click="finder">{{ t("Finder") }}</el-button>
-        </div>
-
-        <div>
-          <el-button class="mb-2" @click="toggleModel">{{
+        <div class="d-flex flex-row-reverse">
+          <el-button
+            class="mb-2"
+            v-if="!equals(props.mode, 'approval')"
+            type="primary"
+            @click="save"
+            >{{ t("Save") }}</el-button
+          >
+          <el-button
+            class="mb-2"
+            v-if="equals(props.mode, 'approval')"
+            type="primary"
+            @click="approval"
+            >{{ t("Approval") }}</el-button
+          >
+          <el-button
+            class="m-0 mb-2  mr-2"
+            v-if="equals(props.mode, 'approval')"
+            type="danger"
+            @click="decline"
+            >{{ t("Decline") }}</el-button
+          >
+          <el-button class="mb-2 mr-2" @click="toggleModel">{{
             t("Close")
           }}</el-button>
-          <el-button class="mb-2" type="primary" @click="save">{{
-            t("Save")
+        </div>
+
+        <div class="d-flex flex-row-reverse">
+          <el-button
+            v-if="!equals(props.mode, 'approval')"
+            class="mb-2"
+            @click="finder"
+            >{{ t("Finder") }}</el-button
+          >
+          <el-button class="mb-2 mr-2" @click="quickCheck">{{
+            t("QuickCheck")
           }}</el-button>
         </div>
       </div>

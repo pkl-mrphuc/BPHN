@@ -1,6 +1,12 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { Refresh, Search, User } from "@element-plus/icons-vue";
+import {
+  Refresh,
+  Search,
+  User,
+  Delete,
+  Checked,
+} from "@element-plus/icons-vue";
 import useToggleModal from "@/register-components/actionDialog";
 import { useStore } from "vuex";
 import { ElLoading } from "element-plus";
@@ -20,6 +26,7 @@ const txtSearch = ref("");
 const { dateToString, getWeekdays, equals } = useCommonFn();
 const lstBooking = ref([]);
 const running = ref(0);
+const mode = ref("");
 
 const formatDate = computed(() => {
   return store.getters["config/getFormatDate"];
@@ -29,6 +36,22 @@ const addNew = () => {
   const loading = ElLoading.service(loadingOptions);
   store.dispatch("booking/getInstance", "").then((res) => {
     if (res?.data?.data) {
+      mode.value = "add";
+      openModal("BookingDialog");
+      objBooking.value = res.data.data;
+    } else {
+      let msg = res?.data?.message;
+      alert(msg ?? t("ErrorMesg"));
+    }
+    loading.close();
+  });
+};
+
+const approval = (id) => {
+  const loading = ElLoading.service(loadingOptions);
+  store.dispatch("booking/getInstance", id).then((res) => {
+    if (res?.data?.data) {
+      mode.value = "approval";
       openModal("BookingDialog");
       objBooking.value = res.data.data;
     } else {
@@ -194,17 +217,25 @@ onMounted(() => {
                       <span v-else></span>
                     </template>
                   </el-table-column>
-                  <el-table-column label="" width="100">
+                  <el-table-column fixed="right" width="100">
                     <template #default="scope">
-                      <el-button
-                        :class="scope.row.id"
-                        @click="cancel(scope.row.id)"
-                        type="danger"
-                        v-if="
-                          !equals(scope.row.status, BookingStatusEnum.CANCEL)
-                        "
-                        >{{ t("Cancel") }}</el-button
-                      >
+                      <div class="d-flex flex-row-reverse">
+                        <el-button
+                          :class="scope.row.id"
+                          @click="cancel(scope.row.id)"
+                          type="danger"
+                          circle
+                          :icon="Delete"
+                          size="small"
+                          v-if="
+                            !equals(
+                              scope.row.status,
+                              BookingStatusEnum.CANCEL
+                            ) &&
+                            !equals(scope.row.status, BookingStatusEnum.PENDING)
+                          "
+                        ></el-button>
+                      </div>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -260,6 +291,20 @@ onMounted(() => {
               <span class="text-truncate">{{ scope.row.nameDetail }}</span>
             </template>
           </el-table-column>
+          <el-table-column fixed="right" min-width="50">
+            <template #default="scope">
+              <div class="d-flex flex-row-reverse">
+                <el-button
+                  @click="approval(scope.row.id)"
+                  type="warning"
+                  v-if="equals(scope.row.status, BookingStatusEnum.PENDING)"
+                  circle
+                  :icon="Checked"
+                  size="small"
+                ></el-button>
+              </div>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
       <div class="p-3 d-flex flex-row align-items-center justify-content-end">
@@ -281,6 +326,7 @@ onMounted(() => {
   <BookingDialog
     v-if="hasRole('BookingDialog')"
     :data="objBooking"
+    :mode="mode"
     @callback="loadData"
   ></BookingDialog>
 </template>

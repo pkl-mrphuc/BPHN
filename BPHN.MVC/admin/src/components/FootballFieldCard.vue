@@ -4,6 +4,7 @@ import StatusDot from "@/components/StatusDot.vue";
 import { useI18n } from "vue-i18n";
 import { useStore } from "vuex";
 import { StatusEnum } from "@/const";
+import { Edit, UploadFilled } from "@element-plus/icons-vue";
 
 const { t } = useI18n();
 const store = useStore();
@@ -78,14 +79,26 @@ const readImageFile = (file) => {
     <div style="padding: 14px">
       <h3 style="margin: 5px 0px">{{ props.name }}</h3>
       <div class="row">
-        <status-dot :status="props.status" :message="status" class="col-12 col-sm-6 col-md-12 col-lg-12 col-xl-6"></status-dot>
-        <div class="col-12 col-sm-6 col-md-12 col-lg-12 col-xl-6 d-flex flex-row align-items-center">
-          <el-button class="button" @click="upload">{{
-            t("UploadImage")
-          }}</el-button>
-          <el-button class="button" type="primary" @click="edit">{{
-            t("Edit")
-          }}</el-button>
+        <status-dot
+          :status="props.status"
+          :message="status"
+          class="col-9"
+        ></status-dot>
+        <div class="col-3 d-flex flex-row-reverse align-items-center">
+          <el-button
+            :icon="Edit"
+            circle
+            size="small"
+            type="primary"
+            @click="edit"
+          ></el-button>
+          <el-button
+            :icon="UploadFilled"
+            circle
+            size="small"
+            class="mr-2"
+            @click="upload"
+          ></el-button>
         </div>
         <!-- hdf = hidden field -->
         <input
@@ -102,7 +115,6 @@ const readImageFile = (file) => {
 </template>
 
 <style scoped>
-
 .image {
   width: 100%;
   display: block;
