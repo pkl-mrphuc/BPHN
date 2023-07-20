@@ -20,7 +20,7 @@ const { sameDate, yearEndDay, time, dateToString, equals } = useCommonFn();
 const { t } = useI18n();
 const store = useStore();
 const emits = defineEmits(["callback"]);
-const loadingOptions = inject("loadingOptions");
+const loadingOptions = inject("loadingOptionsDark");
 const props = defineProps({
   data: Object,
   mode: String,

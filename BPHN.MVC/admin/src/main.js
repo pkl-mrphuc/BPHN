@@ -31,6 +31,11 @@ createApp(App)
         text: "Loading",
         background: "rgba(0, 0, 0, 0.7)",
     })
+    .provide("loadingOptionsDark", {
+        lock: true,
+        text: "Loading",
+        background: "rgba(0, 0, 0, 0.9)",
+    })
     .component("Dialog", Dialog)
     .component("FootballFieldDialog", FootballFieldDialog)
     .component("BookingDialog", BookingDialog)

@@ -145,7 +145,7 @@ const save = () => {
               <span>{{ t(scope.row.name) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="">
+          <el-table-column label="" min-width="300">
             <template #default="scope">
               <el-switch
                 v-if="equals(scope.row.key, ConfigKeyEnum.DARKMODE)"

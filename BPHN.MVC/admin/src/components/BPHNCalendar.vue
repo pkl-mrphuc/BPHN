@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, inject } from "vue";
 import { Calendar } from "@fullcalendar/core";
 import resourceTimeGridPlugin from "@fullcalendar/resource-timegrid";
 import allLocales from "@fullcalendar/core/locales-all";
@@ -8,6 +8,7 @@ import useCommonFn from "@/commonFn";
 import useToggleModal from "@/register-components/actionDialog";
 import { ArrowLeft, ArrowRight, InfoFilled } from "@element-plus/icons-vue";
 import { useI18n } from "vue-i18n";
+import { ElLoading } from "element-plus";
 
 const store = useStore();
 const lstResource = ref([]);
@@ -20,8 +21,10 @@ const { t } = useI18n();
 const running = ref(0);
 const formatDate = ref(store.getters["config/getFormatDate"]);
 const selectedDate = ref(null);
+const loadingOptions = inject("loadingOptions");
 
 onMounted(() => {
+  const loading = ElLoading.service(loadingOptions);
   store
     .dispatch("pitch/getPaging", {
       accountId: store.getters["account/getAccountId"],
@@ -39,6 +42,7 @@ onMounted(() => {
         });
       }
       await renderCalendar(lstResource.value);
+      loading.close();
     });
 });
 
@@ -195,10 +199,26 @@ const next = () => {
 <template>
   <section>
     <div class="container">
-      <div class="d-flex flex-row align-items-center justify-content-between">
-        <h3 class="fs-3 m-0">{{ selectedDate }}</h3>
-        <div>
-          <el-popover placement="top-start" :title="t('Note')" width="250" trigger="click">
+      <div class="row d-flex flex-row align-items-center">
+        <h3 class="col-12 col-sm-6 fs-3 m-0">{{ selectedDate }}</h3>
+        <div class="col-12 col-sm-6 d-flex flex-row-reverse">
+          <el-button-group class="mx-1">
+            <el-button type="primary" @click="prev">
+              <el-icon><ArrowLeft /></el-icon>
+            </el-button>
+            <el-button type="primary" @click="next">
+              <el-icon><ArrowRight /></el-icon>
+            </el-button>
+          </el-button-group>
+          <el-button class="mx-1" type="primary" @click="today">{{
+            t("Today")
+          }}</el-button>
+          <el-popover
+            placement="top-start"
+            :title="t('Note')"
+            width="250"
+            trigger="click"
+          >
             <template #reference>
               <el-button
                 class="mx-1"
@@ -225,17 +245,6 @@ const next = () => {
               </div>
             </div>
           </el-popover>
-          <el-button class="mx-1" type="primary" @click="today">{{
-            t("Today")
-          }}</el-button>
-          <el-button-group class="mx-1">
-            <el-button type="primary" @click="prev">
-              <el-icon><ArrowLeft /></el-icon>
-            </el-button>
-            <el-button type="primary" @click="next">
-              <el-icon><ArrowRight /></el-icon>
-            </el-button>
-          </el-button-group>
         </div>
       </div>
 

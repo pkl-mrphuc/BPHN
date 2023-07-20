@@ -274,16 +274,29 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var resultPaging = await _pitchRepository.GetPaging(pageIndex, pageSize, lstWhere);
+            var lstFrameInfo = await _timeFrameInfoRepository.GetByListPitchId(resultPaging.Select(item => item.Id).ToList());
+            var dicFrame = new Dictionary<Guid, List<TimeFrameInfo>>();
             var now = DateTime.Now;
+            foreach (var frame in lstFrameInfo)
+            {
+                frame.TimeBegin = new DateTime(now.Year, now.Month, now.Day, frame.TimeBegin.Hour, frame.TimeBegin.Minute, 0);
+                frame.TimeEnd = new DateTime(now.Year, now.Month, now.Day, frame.TimeEnd.Hour, frame.TimeEnd.Minute, 0);
+                if (dicFrame.ContainsKey(frame.PitchId))
+                {
+                    var currentFrame = dicFrame[frame.PitchId];
+                    currentFrame.Add(frame);
+                    dicFrame[frame.PitchId] = currentFrame;
+                }
+                else
+                {
+                    dicFrame.Add(frame.PitchId, new List<TimeFrameInfo>() { frame });
+                }
+            }
+            
             resultPaging = resultPaging.Select(item =>
             {
                 item.AvatarUrl = (string)(_fileService.GetLinkFile(item.Id.ToString()).Data ?? "");
-                item.TimeFrameInfos = hasDetail ? _timeFrameInfoRepository.GetByPitchId(item.Id).Result.Select(item =>
-                {
-                    item.TimeBegin = new DateTime(now.Year, now.Month, now.Day, item.TimeBegin.Hour, item.TimeBegin.Minute, 0);
-                    item.TimeEnd = new DateTime(now.Year, now.Month, now.Day, item.TimeEnd.Hour, item.TimeEnd.Minute, 0);
-                    return item;
-                }).ToList() : new List<TimeFrameInfo>();
+                item.TimeFrameInfos = hasDetail && dicFrame.ContainsKey(item.Id) ? dicFrame[item.Id] : new List<TimeFrameInfo>();
                 return item;
             }).ToList();
 

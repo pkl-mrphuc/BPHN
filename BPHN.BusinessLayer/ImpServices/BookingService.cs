@@ -548,14 +548,26 @@ namespace BPHN.BusinessLayer.ImpServices
                 }
             });
             var now = DateTime.Now;
+            var lstFrameInfo = await _timeFrameInfoRepository.GetByListPitchId(lstPitch.Select(item => item.Id).ToList());
+            var dicFrame = new Dictionary<Guid, List<TimeFrameInfo>>();
+            foreach (var frame in lstFrameInfo)
+            {
+                frame.TimeBegin = new DateTime(now.Year, now.Month, now.Day, frame.TimeBegin.Hour, frame.TimeBegin.Minute, 0);
+                frame.TimeEnd = new DateTime(now.Year, now.Month, now.Day, frame.TimeEnd.Hour, frame.TimeEnd.Minute, 0);
+                if (dicFrame.ContainsKey(frame.PitchId))
+                {
+                    var currentFrame = dicFrame[frame.PitchId];
+                    currentFrame.Add(frame);
+                    dicFrame[frame.PitchId] = currentFrame;
+                }
+                else
+                {
+                    dicFrame.Add(frame.PitchId, new List<TimeFrameInfo>() { frame });
+                }
+            }
             lstPitch = lstPitch.Select(item =>
             {
-                item.TimeFrameInfos = _timeFrameInfoRepository.GetByPitchId(item.Id).Result.Select(item =>
-                {
-                    item.TimeBegin = new DateTime(now.Year, now.Month, now.Day, item.TimeBegin.Hour, item.TimeBegin.Minute, 0);
-                    item.TimeEnd = new DateTime(now.Year, now.Month, now.Day, item.TimeEnd.Hour, item.TimeEnd.Minute, 0);
-                    return item;
-                }).ToList();
+                item.TimeFrameInfos = dicFrame.ContainsKey(item.Id) ? dicFrame[item.Id] : new List<TimeFrameInfo>();
                 return item;
             }).ToList();
             if (lstPitch != null)

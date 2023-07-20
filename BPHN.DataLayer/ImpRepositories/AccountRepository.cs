@@ -242,7 +242,7 @@ namespace BPHN.DataLayer.ImpRepositories
                                                                 select ParentId as Id from accounts where Id = @id
                                                                 union                                    
                                                                 (select b.Id as Id from accounts a inner join accounts b on a.ParentId = b.ParentId where a.Id = @id)
-                                                            ) ids";
+                                                            ) ids where Id is not null";
                 var dic = new Dictionary<string, object>();
                 dic.Add("@id", id);
                 var result = await connection.QueryAsync<Guid>(query, dic);
