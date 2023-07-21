@@ -88,7 +88,7 @@ const actions = {
     forgot: ((commit, email) => {
         AccountAPI.forgot(email).then((res) => {
             if (res?.data?.success) {
-                alert(i18n.global.t("ResetPasswordMesg"));
+                alert(i18n.global.t("SetPasswordMesg"));
                 router.push("login");
             }
             else {

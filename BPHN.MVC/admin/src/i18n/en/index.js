@@ -21,7 +21,7 @@ const en = {
     PasswordEmptyMesg: "Password is not empty.",
     BPHNHaNoi: "BPHN HA NOI",
     ErrorMesg: "An error occurred. Please contract supplier",
-    ResetPasswordMesg: "Please check email to reset password",
+    SetPasswordMesg: "Please check email to reset password",
     SaveSuccess: "Save success",
     Save: "Save",
     Title: "Title",

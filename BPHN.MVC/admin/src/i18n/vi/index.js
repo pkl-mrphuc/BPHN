@@ -21,7 +21,7 @@ const vi = {
     PasswordEmptyMesg: "Mật khẩu không được để trống.",
     BPHNHaNoi: "BPHN HÀ NỘI",
     ErrorMesg: "Đã có lỗi xảy ra. Vui lòng liên hệ đến nhà cung cấp",
-    ResetPasswordMesg: "Vui lòng kiểm tra email để lấy lại mật khẩu",
+    SetPasswordMesg: "Vui lòng kiểm tra email để lấy lại mật khẩu",
     SaveSuccess: "Lưu thành công",
     Save: "Lưu",
     Title: "Tiêu đề",

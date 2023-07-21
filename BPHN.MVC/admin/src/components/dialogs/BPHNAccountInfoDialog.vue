@@ -13,7 +13,7 @@ const router = useRouter();
 const store = useStore();
 const { t } = useI18n();
 const { toggleModel } = useToggleModal();
-const showResetPassword = ref(false);
+const showSetPassword = ref(false);
 const password = ref("");
 const passwordAgain = ref("");
 
@@ -150,13 +150,13 @@ const changePassword = () => {
               <div class="col-6">
                 <div class="mx-3">
                   <el-checkbox
-                    v-model="showResetPassword"
+                    v-model="showSetPassword"
                     :label="t('SetPasswordTitle')"
                   />
                 </div>
               </div>
             </div>
-            <div class="row mb-3" v-if="showResetPassword">
+            <div class="row mb-3" v-if="showSetPassword">
               <div
                 class="col-6 fw-bold d-flex flex-row align-items-center justify-content-end"
               >
@@ -174,7 +174,7 @@ const changePassword = () => {
                 </div>
               </div>
             </div>
-            <div class="row mb-3" v-if="showResetPassword">
+            <div class="row mb-3" v-if="showSetPassword">
               <div
                 class="col-6 fw-bold d-flex flex-row align-items-center justify-content-end"
               >
@@ -200,7 +200,7 @@ const changePassword = () => {
       <el-button
         type="primary"
         @click="changePassword"
-        v-if="showResetPassword"
+        v-if="showSetPassword"
         >{{ t("Submit") }}</el-button
       >
       <el-button @click="toggleModel">{{ t("Close") }}</el-button>
