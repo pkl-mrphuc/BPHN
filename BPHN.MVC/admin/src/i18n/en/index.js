@@ -27,7 +27,7 @@ const en = {
     Title: "Title",
     Language: "Language",
     DarkMode: "Dark mode",
-    ResetPasswordTitle: "Reset password",
+    SetPasswordTitle: "Reset password",
     PasswordAgain: "Password again",
     NoMatchPasswordMesg: "Password is incorrect",
     MyFootballFields: "My stadiums",

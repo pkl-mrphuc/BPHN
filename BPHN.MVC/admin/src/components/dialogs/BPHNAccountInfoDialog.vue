@@ -151,7 +151,7 @@ const changePassword = () => {
                 <div class="mx-3">
                   <el-checkbox
                     v-model="showResetPassword"
-                    :label="t('ResetPasswordTitle')"
+                    :label="t('SetPasswordTitle')"
                   />
                 </div>
               </div>

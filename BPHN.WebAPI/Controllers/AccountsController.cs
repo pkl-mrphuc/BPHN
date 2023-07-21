@@ -56,12 +56,12 @@ namespace BPHN.WebAPI.Controllers
         }
 
         [AllowAnonymous]
-        [Route("submit-reset-password")]
+        [Route("submit-set-password")]
         [HttpPost]
-        public async Task<IActionResult> SubmitResetPassword([FromBody] ResetPasswordVm request)
+        public async Task<IActionResult> SubmitSetPassword([FromBody] SetPasswordVm request)
         {
-            Log.Debug($"Account/SubmitResetPassword start: {JsonConvert.SerializeObject(request)}");
-            return Ok(await _accountService.SubmitResetPassword(request.Code, request.Password, request.UserName));
+            Log.Debug($"Account/SubmitSetPassword start: {JsonConvert.SerializeObject(request)}");
+            return Ok(await _accountService.SubmitSetPassword(request.Code, request.Password, request.UserName));
         }
 
         [ApiAuthorize]

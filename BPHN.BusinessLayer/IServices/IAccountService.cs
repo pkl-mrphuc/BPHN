@@ -10,7 +10,7 @@ namespace BPHN.BusinessLayer.IServices
         Task<ServiceResultModel> ResetPassword(string userName);
         Task<ServiceResultModel> GetPaging(int pageIndex, int pageSize, string txtSearch);
         Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch);
-        Task<ServiceResultModel> SubmitResetPassword(string code, string password, string userName);
+        Task<ServiceResultModel> SubmitSetPassword(string code, string password, string userName);
         ServiceResultModel ValidateToken(string token);
         ServiceResultModel GetTokenInfo(string token);
         Task<ServiceResultModel> ChangePassword(Account account);

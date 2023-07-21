@@ -16,7 +16,8 @@
 
     public enum MailTypeEnum
     {
-        SET_PASSWORD = 0
+        SET_PASSWORD = 0,
+        FORTGOT_PASSWORD = 1
     }
 
     public enum QueueJobTypeEnum
@@ -73,5 +74,13 @@
         EDIT_BOOKING = 3,
         ADD_USER = 4,
         EDIT_USER = 5
+    }
+
+    public enum EntityEnum
+    {
+        CONFIG = 0,
+        PERMISSION = 1,
+        PITCH = 2,
+        ACCOUNT = 3
     }
 }

@@ -34,14 +34,14 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(key ?? "All", "Config"));
+            var cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.CONFIG, key ?? ""));
 
             if(string.IsNullOrEmpty(cacheResult))
             {
                 var result = await _configRepository.GetConfigs(context.Id, key);
                 if(string.IsNullOrEmpty(key) && result != null && result.Count > 0)
                 {
-                    await _cacheService.SetAsync(_cacheService.GetKeyCache("All", "Config"), JsonConvert.SerializeObject(result));
+                    await _cacheService.SetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.CONFIG), JsonConvert.SerializeObject(result));
                 }
 
                 return new ServiceResultModel()
@@ -99,7 +99,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var saveResult = await _configRepository.Save(configs);
             if(saveResult)
             {
-                var key = _cacheService.GetKeyCache("All", "Config");
+                var key = _cacheService.GetKeyCache(context.Id, EntityEnum.CONFIG);
                 await _cacheService.RemoveAsync(key);
                 var thread = new Thread(delegate ()
                 {

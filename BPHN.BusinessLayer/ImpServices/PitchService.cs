@@ -115,9 +115,10 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> GetInstance(string id)
         {
-            var data = new Pitch();
+            Pitch? data = null;
             if (string.IsNullOrEmpty(id))
             {
+                data = new Pitch();
                 data.Id = Guid.NewGuid();
                 var timeFrameInfos = new List<TimeFrameInfo>();
                 for (int i = 0; i < data.TimeSlotPerDay; i++)
@@ -153,9 +154,23 @@ namespace BPHN.BusinessLayer.ImpServices
             }
             else
             {
-                data = await _pitchRepository.GetById(id);
+                var key = _cacheService.GetKeyCache(id, EntityEnum.PITCH);
+                var cacheResult = await _cacheService.GetAsync(key);
+                if(!string.IsNullOrWhiteSpace(cacheResult))
+                {
+                    data = JsonConvert.DeserializeObject<Pitch>(cacheResult);
+                }
+                else
+                {
+                    data = await _pitchRepository.GetById(id);
+                    if(data != null)
+                    {
+                        data.TimeFrameInfos = await _timeFrameInfoRepository.GetByPitchId(data.Id);
+                        await _cacheService.SetAsync(key, JsonConvert.SerializeObject(data));
+                    }
+                }
 
-                if(data == null)
+                if (data == null)
                 {
                     return new ServiceResultModel()
                     {
@@ -165,8 +180,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     };
                 }
 
-                data.TimeFrameInfos = await _timeFrameInfoRepository.GetByPitchId(data.Id);
-                if(!string.IsNullOrEmpty(data.NameDetails))
+                if (!string.IsNullOrEmpty(data.NameDetails))
                 {
                     var lstNameDetails = data.NameDetails.Split(";").ToList();
                     data.ListNameDetails = lstNameDetails;
@@ -456,6 +470,9 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (updateResult)
             {
+                var key = _cacheService.GetKeyCache(pitch.Id.ToString(), EntityEnum.PITCH);
+                await _cacheService.RemoveAsync(key);
+
                 var notification = _notificationService.Insert<Pitch>(context, NotificationTypeEnum.EDIT_PITCH, pitch);
                 Thread thread = new Thread(delegate ()
                 {

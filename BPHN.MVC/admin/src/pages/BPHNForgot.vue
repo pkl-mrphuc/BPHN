@@ -59,7 +59,6 @@ const forgot = () => {
               <el-button
                 class="w-100"
                 type="primary"
-                @keyup.enter="forgot"
                 @click="forgot"
                 tabindex="2"
                 >{{ t("SendRequest") }}</el-button

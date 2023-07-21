@@ -27,7 +27,7 @@ const vi = {
     Title: "Tiêu đề",
     Language: "Ngôn ngữ",
     DarkMode: "Nền tối",
-    ResetPasswordTitle: "Đổi mật khẩu",
+    SetPasswordTitle: "Đổi mật khẩu",
     PasswordAgain: "Nhập lại mật khẩu",
     NoMatchPasswordMesg: "Mật khẩu không đúng",
     MyFootballFields: "Sân bóng của tôi",

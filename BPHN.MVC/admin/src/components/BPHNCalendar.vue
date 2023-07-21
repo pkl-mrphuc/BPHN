@@ -22,14 +22,31 @@ const running = ref(0);
 const formatDate = ref(store.getters["config/getFormatDate"]);
 const selectedDate = ref(null);
 const loadingOptions = inject("loadingOptions");
+const pageSize = ref(2);
+const pageIndex = ref(1);
 
 onMounted(() => {
+
+  const { offsetWidth } = document.getElementById("app");
+  if (offsetWidth >= 768) {
+    pageSize.value = -1;
+  }
+  if (offsetWidth >= 992) {
+    pageSize.value = -1;
+  }
+  if (offsetWidth >= 1200) {
+    pageSize.value = -1;
+  }
+
+
   const loading = ElLoading.service(loadingOptions);
   store
     .dispatch("pitch/getPaging", {
       accountId: store.getters["account/getAccountId"],
       hasDetail: false,
       hasInactive: false,
+      pageSize: pageSize.value,
+      pageIndex: pageIndex.value
     })
     .then(async (res) => {
       let lstPitch = res?.data?.data ?? [];

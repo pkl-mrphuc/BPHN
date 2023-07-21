@@ -110,7 +110,7 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<bool> IsValidPermission(Guid accountId, FunctionTypeEnum functionType)
         {
             var permissions = new List<Permission>();
-            var key = _cacheService.GetKeyCache(accountId.ToString(), "Permission");
+            var key = _cacheService.GetKeyCache(accountId, EntityEnum.PERMISSION);
             var cacheResult = await _cacheService.GetAsync(key);
             if(!string.IsNullOrEmpty(cacheResult))
             {
@@ -119,6 +119,7 @@ namespace BPHN.BusinessLayer.ImpServices
             else
             {
                 permissions = await _permissionRepository.GetPermissions(accountId);
+                await _cacheService.SetAsync(key, JsonConvert.SerializeObject(permissions));
             }
 
             var result = permissions.Where(item => item.FunctionType == (int)functionType && item.Allow)

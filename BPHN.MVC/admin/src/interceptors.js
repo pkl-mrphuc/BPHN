@@ -8,7 +8,7 @@ export const jwtInterceptor = (() => {
                 request.url.includes("/login") ||
                 request.url.includes("/forgot") ||
                 request.url.includes("/send-reset-password") ||
-                request.url.includes("/submit-reset-password")
+                request.url.includes("/submit-set-password")
             )) {
             return request
         }

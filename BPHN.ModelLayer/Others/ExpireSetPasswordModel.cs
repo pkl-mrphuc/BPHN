@@ -1,6 +1,6 @@
 ﻿namespace BPHN.ModelLayer.Others
 {
-    public class ExpireResetPasswordModel
+    public class ExpireSetPasswordModel
     {
         public DateTime ExpireTime { get; set; }
         public string AccountId { get; set; }

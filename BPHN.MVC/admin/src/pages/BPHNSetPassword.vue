@@ -44,7 +44,7 @@ const submit = () => {
     code: getQueryStringByKey("code"),
     password: password.value,
   };
-  store.dispatch("account/resetPassword", data);
+  store.dispatch("account/setPassword", data);
 };
 </script>
 
@@ -64,7 +64,7 @@ const submit = () => {
       <div
         class="col-12 col-sm-12 col-md-7 col-lg-6 d-flex flex-column align-items-center justify-content-center"
       >
-        <h2 style="margin-bottom: 0">{{ t("ResetPasswordTitle") }}</h2>
+        <h2 style="margin-bottom: 0">{{ t("SetPasswordTitle") }}</h2>
         <h3>
           <i>{{ userName }}</i>
         </h3>
@@ -98,7 +98,6 @@ const submit = () => {
                 type="primary"
                 @click="submit"
                 tabindex="3"
-                @keyup.enter="submit"
                 >{{ t("Submit") }}</el-button
               >
             </el-form-item>

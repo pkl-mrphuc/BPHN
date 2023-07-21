@@ -30,13 +30,23 @@ namespace BPHN.WebAPI.Controllers
             _folderDir = Path.Combine("Views", "MailTemplates");
         }
 
-        [Route("reset-password")]
+        [Route("forgot-password")]
         [HttpPost]
-        public async Task<IActionResult> GetResetPasswordBody([FromBody] MailVm<MailResetPasswordVm> request)
+        public async Task<IActionResult> GetForgotPasswordBody([FromBody] MailVm<MailForgotPasswordVm> request)
         {
-            Log.Debug($"MailTemplate/GetResetPasswordBody start: {JsonConvert.SerializeObject(request)}");
-            var pathView = Path.Combine(_folderDir, "ResetPassword.cshtml");
-            var source = await RenderAsync<MailResetPasswordVm>(pathView, request.Model, request.ViewBag);
+            Log.Debug($"MailTemplate/GetForgotPasswordBody start: {JsonConvert.SerializeObject(request)}");
+            var pathView = Path.Combine(_folderDir, "ForgotPassword.cshtml");
+            var source = await RenderAsync<MailForgotPasswordVm>(pathView, request.Model, request.ViewBag);
+            return Ok(source);
+        }
+
+        [Route("set-password")]
+        [HttpPost]
+        public async Task<IActionResult> GetSetPasswordBody([FromBody] MailVm<MailSetPasswordVm> request)
+        {
+            Log.Debug($"MailTemplate/GetSetPasswordBody start: {JsonConvert.SerializeObject(request)}");
+            var pathView = Path.Combine(_folderDir, "SetPassword.cshtml");
+            var source = await RenderAsync<MailSetPasswordVm>(pathView, request.Model, request.ViewBag);
             return Ok(source);
         }
 

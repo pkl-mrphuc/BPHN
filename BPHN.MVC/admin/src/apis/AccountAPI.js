@@ -36,9 +36,9 @@ class AccountAPI {
         }
     }
 
-    async resetPassword(data) {
+    async setPassword(data) {
         try {
-            let requestUrl = `${process.env.VUE_APP_API_URL}/accounts/submit-reset-password`;
+            let requestUrl = `${process.env.VUE_APP_API_URL}/accounts/submit-set-password`;
             let requestParam = data;
             return await axios.post(requestUrl, requestParam);
         } catch (error) {

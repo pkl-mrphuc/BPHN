@@ -102,10 +102,11 @@ const actions = {
             })
     }),
 
-    resetPassword: ((commit, data) => {
-        AccountAPI.resetPassword(data).then((res) => {
+    setPassword: ((commit, data) => {
+        AccountAPI.setPassword(data).then((res) => {
             if (res?.data?.success) {
                 alert(i18n.global.t("SaveSuccess"));
+                router.push("login");
             }
             else {
                 let msg = res?.data?.message

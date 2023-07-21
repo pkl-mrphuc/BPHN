@@ -10,11 +10,11 @@ using System.Text;
 
 namespace BPHN.BusinessLayer.ImpServices.MailBuilders
 {
-    public class ResetPasswordMailBuilder : IMailBuilder
+    public class ForgotPasswordMailBuilder : IMailBuilder
     {
         private readonly AppSettings _appSettings;
         private readonly IKeyGenerator _keyGenerator;
-        public ResetPasswordMailBuilder(IOptions<AppSettings> appSettings, IKeyGenerator keyGenerator)
+        public ForgotPasswordMailBuilder(IOptions<AppSettings> appSettings, IKeyGenerator keyGenerator)
         {
             _appSettings = appSettings.Value;
             _keyGenerator = keyGenerator;
@@ -31,29 +31,29 @@ namespace BPHN.BusinessLayer.ImpServices.MailBuilders
             {
                 using (var client = new HttpClient())
                 {
-                    var resetPasswordParam = (ResetPasswordParameter)data;
+                    var setPasswordParam = (SetPasswordParameter)data;
                     string key = _keyGenerator.Encryption(JsonConvert.SerializeObject(
-                                new ExpireResetPasswordModel()
+                                new ExpireSetPasswordModel()
                                 {
                                     ExpireTime = DateTime.Now.AddMinutes(30),
-                                    AccountId = resetPasswordParam.AccountId.ToString()
+                                    AccountId = setPasswordParam.AccountId.ToString()
                                 }
                             ));
 
-                    string link = string.Format("{0}/reset-password?code={1}&userName={2}", _appSettings.ClientHost, key, resetPasswordParam.UserName);
-                    var vm = new MailVm<MailResetPasswordVm>()
+                    string link = string.Format("{0}/set-password?code={1}&userName={2}", _appSettings.ClientHost, key, setPasswordParam.UserName);
+                    var vm = new MailVm<MailForgotPasswordVm>()
                     {
-                        Model = new MailResetPasswordVm()
+                        Model = new MailForgotPasswordVm()
                         {
-                            AccountId = resetPasswordParam.AccountId,
-                            FullName = resetPasswordParam.FullName,
-                            UserName = resetPasswordParam.UserName,
+                            AccountId = setPasswordParam.AccountId,
+                            FullName = setPasswordParam.FullName,
+                            UserName = setPasswordParam.UserName,
                             Key = key,
                             Link = link
                         }
                     };
                     var stringContent = new StringContent(JsonConvert.SerializeObject(vm), UnicodeEncoding.UTF8, "application/json");
-                    var response = await client.PostAsync(string.Format("{0}{1}", _appSettings.MailTemplateAPI, "reset-password"), stringContent);
+                    var response = await client.PostAsync(string.Format("{0}{1}", _appSettings.MailTemplateAPI, "forgot-password"), stringContent);
                     if(response.IsSuccessStatusCode)
                     {
                         var responseString = await response.Content.ReadAsStringAsync();
@@ -66,7 +66,7 @@ namespace BPHN.BusinessLayer.ImpServices.MailBuilders
 
         public string BuildSubject(object? data)
         {
-            return "[BPHN] Reset Your Password";
+            return "[BPHN] QUÊN MẬT KHẨU";
         }
     }
 }

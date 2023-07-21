@@ -49,9 +49,14 @@ namespace BPHN.BusinessLayer.ImpServices
             
         }
 
-        public string GetKeyCache(string key, string model)
+        public string GetKeyCache(Guid id, EntityEnum model, string key = "")
         {
-            return string.Format("{0}_{1}_Cache", key, model);
+            return $"{key}{id}_{model}";
+        }
+
+        public string GetKeyCache(string id, EntityEnum model, string key = "")
+        {
+            return $"{key}{id}_{model}";
         }
 
         public void Remove(string key)

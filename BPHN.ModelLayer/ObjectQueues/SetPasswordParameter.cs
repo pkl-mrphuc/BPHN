@@ -1,6 +1,6 @@
 ﻿namespace BPHN.ModelLayer.ObjectQueues
 {
-    public class ResetPasswordParameter : SendMailParameter
+    public class SetPasswordParameter : SendMailParameter
     {
         public Guid AccountId { get; set; }
         public string FullName { get; set; }

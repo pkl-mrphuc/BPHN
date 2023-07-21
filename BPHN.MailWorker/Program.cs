@@ -17,8 +17,10 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<IKeyGenerator, KeyGenerator>();
         services.AddSingleton<IEmailWorker, EmailWorker>();
         services.AddSingleton<IMailBuilderFactory, MailBuilderFactory>();
-        services.AddSingleton<ResetPasswordMailBuilder>();
-        services.AddSingleton<IMailBuilder, ResetPasswordMailBuilder>(item => item.GetService<ResetPasswordMailBuilder>());
+        services.AddSingleton<ForgotPasswordMailBuilder>();
+        services.AddSingleton<IMailBuilder, ForgotPasswordMailBuilder>(item => item.GetService<ForgotPasswordMailBuilder>());
+        services.AddSingleton<SetPasswordMailBuilder>();
+        services.AddSingleton<IMailBuilder, SetPasswordMailBuilder>(item => item.GetService<SetPasswordMailBuilder>());
         services.AddHostedService<Worker>();
 
         Log.Logger = new LoggerConfiguration()

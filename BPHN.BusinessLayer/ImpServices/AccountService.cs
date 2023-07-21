@@ -193,9 +193,21 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> GetInstance(string id)
         {
-            var data = new Account();
+            var context = _contextService.GetContext();
+            if (context == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = "Token đã hết hạn"
+                };
+            }
+
+            Account? data = null;
             if (string.IsNullOrEmpty(id))
             {
+                data = new Account();
                 data.Id = Guid.NewGuid();
                 data.Gender = GenderEnum.MALE.ToString();
                 data.Status = ActiveStatusEnum.ACTIVE.ToString();
@@ -206,7 +218,20 @@ namespace BPHN.BusinessLayer.ImpServices
                 var success = Guid.TryParse(id, out accountId);
                 if(success)
                 {
-                    data = await _accountRepository.GetAccountById(accountId);
+                    var key = _cacheService.GetKeyCache(context.Id, EntityEnum.ACCOUNT, accountId.ToString());
+                    var cacheResult = await _cacheService.GetAsync(key);
+                    if(!string.IsNullOrWhiteSpace(cacheResult))
+                    {
+                        data = JsonConvert.DeserializeObject<Account>(cacheResult);
+                    }
+                    else
+                    {
+                        data = await _accountRepository.GetAccountById(accountId);
+                        if(data != null)
+                        {
+                            await _cacheService.SetAsync(key, JsonConvert.SerializeObject(data));
+                        }
+                    }
                 }
                 else
                 {
@@ -523,14 +548,14 @@ namespace BPHN.BusinessLayer.ImpServices
                         _mailService.SendMail(new ObjectQueue()
                         {
                             QueueJobType = QueueJobTypeEnum.SEND_MAIL,
-                            DataJson = JsonConvert.SerializeObject(new ResetPasswordParameter()
+                            DataJson = JsonConvert.SerializeObject(new SetPasswordParameter()
                             {
                                 ReceiverAddress = account.Email,
                                 AccountId = account.Id,
                                 FullName = account.FullName,
                                 UserName = account.UserName,
                                 MailType = MailTypeEnum.SET_PASSWORD,
-                                ParameterType = typeof(ResetPasswordParameter)
+                                ParameterType = typeof(SetPasswordParameter)
                             })
                         });
                     });
@@ -595,14 +620,14 @@ namespace BPHN.BusinessLayer.ImpServices
             var resultSendMail = _mailService.SendMail(new ObjectQueue()
             {
                 QueueJobType = QueueJobTypeEnum.SEND_MAIL,
-                DataJson = JsonConvert.SerializeObject(new ResetPasswordParameter()
+                DataJson = JsonConvert.SerializeObject(new SetPasswordParameter()
                 {
                     ReceiverAddress = realAccount.Email,
                     AccountId = realAccount.Id,
                     FullName = realAccount.FullName,
                     UserName = realAccount.UserName,
-                    MailType = MailTypeEnum.SET_PASSWORD,
-                    ParameterType = typeof(ResetPasswordParameter)
+                    MailType = MailTypeEnum.FORTGOT_PASSWORD,
+                    ParameterType = typeof(SetPasswordParameter)
                 })
             });
 
@@ -636,10 +661,10 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task<ServiceResultModel> SubmitResetPassword(string code, string password, string userName)
+        public async Task<ServiceResultModel> SubmitSetPassword(string code, string password, string userName)
         {
             var param = _keyGenerator.Decryption(code);
-            var expireResetPasswordModel = JsonConvert.DeserializeObject<ExpireResetPasswordModel>(param);
+            var expireResetPasswordModel = JsonConvert.DeserializeObject<ExpireSetPasswordModel>(param);
             if (expireResetPasswordModel.ExpireTime < DateTime.Now)
             {
                 return new ServiceResultModel()

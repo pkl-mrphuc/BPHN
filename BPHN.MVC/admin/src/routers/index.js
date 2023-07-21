@@ -3,7 +3,7 @@ import Layout from "@/layouts/BPHNLayout.vue";
 import Calendar from "@/components/BPHNCalendar.vue";
 import LoginPage from "@/pages/BPHNLogin.vue";
 import ForgotPage from "@/pages/BPHNForgot.vue";
-import ResetPasswordPage from "@/pages/BPHNResetPassword.vue";
+import SetPasswordPage from "@/pages/BPHNSetPassword.vue";
 import MyFootballFields from "@/components/BPHNMyFootballFields.vue";
 import Configurations from "@/components/BPHNConfigurations.vue";
 import BookingManager from "@/components/BPHNBookingManager.vue";
@@ -76,11 +76,11 @@ const routes = [
     }
   },
   {
-    path: "/reset-password",
-    name: "reset-password",
-    component: ResetPasswordPage,
+    path: "/set-password",
+    name: "set-password",
+    component: SetPasswordPage,
     meta: {
-      title: "ResetPasswordTitle"
+      title: "SetPasswordTitle"
     }
   },
 ];
@@ -92,7 +92,7 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
 
-  const publicPages = ["/login", "/forgot", "/reset-password"]
+  const publicPages = ["/login", "/forgot", "/set-password"]
 
   const authRequired = !publicPages.includes(to.path)
 

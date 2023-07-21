@@ -205,7 +205,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if(saveResult)
             {
                 var notification = _notificationService.Insert<List<Permission>>(context, NotificationTypeEnum.EDIT_USER, permissions);
-                var key = _cacheService.GetKeyCache(accountId.ToString(), "Permission");
+                var key = _cacheService.GetKeyCache(accountId, EntityEnum.PERMISSION);
                 await _cacheService.RemoveAsync(key);
                 var thread = new Thread(delegate ()
                 {

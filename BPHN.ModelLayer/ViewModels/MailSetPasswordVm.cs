@@ -1,6 +1,6 @@
 ﻿namespace BPHN.ModelLayer.ViewModels
 {
-    public class MailResetPasswordVm
+    public class MailSetPasswordVm
     {
         public Guid AccountId { get; set; }
         public string UserName { get; set; }
