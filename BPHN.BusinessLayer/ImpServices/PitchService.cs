@@ -49,7 +49,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.OUT_TIME,
-                        Message = "Token đã hết hạn"
+                        Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                     };
                 }
 
@@ -59,18 +59,18 @@ namespace BPHN.BusinessLayer.ImpServices
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.NO_INTEGRITY,
-                        Message = "Dữ liệu đầu vào không hợp lệ"
+                        Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
                     };
                 }
 
-                var hasPermission = await IsValidPermission(id, FunctionTypeEnum.VIEW_LIST_PITCH);
+                var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
                 if (!hasPermission)
                 {
                     return new ServiceResultModel()
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.INVALID_ROLE,
-                        Message = "Bạn không có quyền thực hiện chức năng này"
+                        Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
                     };
                 }
 
@@ -115,6 +115,17 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> GetInstance(string id)
         {
+            var context = _contextService.GetContext();
+            if (context == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
+                };
+            }
+
             Pitch? data = null;
             if (string.IsNullOrWhiteSpace(id))
             {
@@ -154,19 +165,19 @@ namespace BPHN.BusinessLayer.ImpServices
             }
             else
             {
-                var key = _cacheService.GetKeyCache(id, EntityEnum.PITCH);
-                var cacheResult = await _cacheService.GetAsync(key);
+                var cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.PITCH, id));
                 if(!string.IsNullOrWhiteSpace(cacheResult))
                 {
                     data = JsonConvert.DeserializeObject<Pitch>(cacheResult);
                 }
-                else
+                
+                if(data == null)
                 {
                     data = await _pitchRepository.GetById(id);
                     if(data != null)
                     {
                         data.TimeFrameInfos = await _timeFrameInfoRepository.GetByPitchId(data.Id);
-                        await _cacheService.SetAsync(key, JsonConvert.SerializeObject(data));
+                        await _cacheService.SetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.PITCH, id), JsonConvert.SerializeObject(data));
                     }
                 }
 
@@ -176,7 +187,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.NOT_EXISTS,
-                        Message = "Không lấy được thông tin sân bóng. Vui lòng kiểm tra lại"
+                        Message = _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig)
                     };
                 }
 
@@ -193,7 +204,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.NO_INTEGRITY,
-                        Message = "Dữ liệu không toàn vẹn. Vui lòng kiểm tra lại"
+                        Message = _resourceService.Get(SharedResourceKey.INVALIDDATA, context.LanguageConfig)
                     };
                 }
 
@@ -233,7 +244,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.OUT_TIME,
-                        Message = "Token đã hết hạn"
+                        Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                     };
                 }
 
@@ -243,18 +254,18 @@ namespace BPHN.BusinessLayer.ImpServices
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.NO_INTEGRITY,
-                        Message = "Dữ liệu đầu vào không hợp lệ"
+                        Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
                     };
                 }
 
-                var hasPermission = await IsValidPermission(id, FunctionTypeEnum.VIEW_LIST_PITCH);
+                var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
                 if (!hasPermission)
                 {
                     return new ServiceResultModel()
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.INVALID_ROLE,
-                        Message = "Bạn không có quyền thực hiện chức năng này"
+                        Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
                     };
                 }
 
@@ -330,18 +341,18 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.ADD_PITCH);
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.ADDPITCH);
             if(!hasPermission)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = "Bạn không có quyền thực hiện chức năng này"
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
                 };
             }
 
@@ -353,7 +364,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = "Dữ liệu đầu vào không được để trống"
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
                 };
             }
 
@@ -381,7 +392,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if(insertResult)
             {
-                var notification = _notificationService.Insert<Pitch>(context, NotificationTypeEnum.ADD_PITCH, pitch);
+                var notification = _notificationService.Insert<Pitch>(context, NotificationTypeEnum.INSERTPITCH, pitch);
                 Thread thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();
@@ -393,7 +404,7 @@ namespace BPHN.BusinessLayer.ImpServices
                         ActorId = context.Id,
                         ActionType = ActionEnum.INSERT,
                         ActionName = string.Empty,
-                        Entity = "Sân bóng",
+                        Entity = EntityEnum.PITCH.ToString(),
                         Description = BuildLinkDescription(historyLogId),
                         Data = new HistoryLogDescription()
                         {
@@ -421,18 +432,18 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDIT_PITCH);
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDITPITCH);
             if (!hasPermission)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = "Bạn không có quyền thực hiện chức năng này"
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
                 };
             }
 
@@ -444,7 +455,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = "Dữ liệu đầu vào không được để trống"
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
                 };
             }
 
@@ -470,10 +481,9 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (updateResult)
             {
-                var key = _cacheService.GetKeyCache(pitch.Id.ToString(), EntityEnum.PITCH);
-                await _cacheService.RemoveAsync(key);
+                await _cacheService.RemoveAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.PITCH, pitch.Id.ToString()));
 
-                var notification = _notificationService.Insert<Pitch>(context, NotificationTypeEnum.EDIT_PITCH, pitch);
+                var notification = _notificationService.Insert<Pitch>(context, NotificationTypeEnum.UPDATEPITCH, pitch);
                 Thread thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();
@@ -485,7 +495,7 @@ namespace BPHN.BusinessLayer.ImpServices
                         ActorId = context.Id,
                         ActionType = ActionEnum.UPDATE,
                         ActionName = string.Empty,
-                        Entity = "Sân bóng",
+                        Entity = EntityEnum.PITCH.ToString(),
                         Description = BuildLinkDescription(historyLogId),
                         Data = new HistoryLogDescription()
                         {

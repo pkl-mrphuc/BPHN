@@ -117,7 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Demo" xml:space="preserve">
-    <value>Thu nghiem</value>
+  <data name="EMPTYINPUT" xml:space="preserve">
+    <value>Dữ liệu đầu vào không hợp lệ</value>
+  </data>
+  <data name="EXISTED" xml:space="preserve">
+    <value>Dữ liệu đã tồn tại</value>
+  </data>
+  <data name="INACTIVESTATUS" xml:space="preserve">
+    <value>Trạng thái không hoạt động</value>
+  </data>
+  <data name="INVALIDDATA" xml:space="preserve">
+    <value>Dữ liệu không đúng</value>
+  </data>
+  <data name="INVALIDROLE" xml:space="preserve">
+    <value>Bạn không có quyền thực hiện chức năng này</value>
+  </data>
+  <data name="LOGINFAILD" xml:space="preserve">
+    <value>Tài khoản hoặc mật khẩu không đúng</value>
+  </data>
+  <data name="NOTEXIST" xml:space="preserve">
+    <value>Dữ liệu không tồn tại</value>
+  </data>
+  <data name="OUTTIME" xml:space="preserve">
+    <value>Token đã hết hạn</value>
   </data>
 </root>

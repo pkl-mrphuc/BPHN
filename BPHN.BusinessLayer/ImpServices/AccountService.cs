@@ -19,7 +19,7 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IHistoryLogService _historyLogService;
         private readonly IConfigRepository _configRepository;
         private readonly IPermissionService _permissionService;
-        
+        private readonly INotificationService _notificationService;
         public AccountService(
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
@@ -28,7 +28,8 @@ namespace BPHN.BusinessLayer.ImpServices
             IKeyGenerator keyGenerator,
             IHistoryLogService historyLogService,
             IConfigRepository configRepository,
-            IPermissionService permissionService) : base(serviceProvider, appSettings)
+            IPermissionService permissionService,
+            INotificationService notificationService) : base(serviceProvider, appSettings)
         {
             _accountRepository = accountRepository;
             _mailService = mailService;
@@ -36,6 +37,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _historyLogService = historyLogService;
             _configRepository = configRepository;
             _permissionService = permissionService;
+            _notificationService = notificationService;
         }
 
         public async Task<ServiceResultModel> ChangePassword(Account account)
@@ -47,7 +49,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
@@ -58,7 +60,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = "Dữ liệu đầu vào không hợp lệ"
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
                 };
             }
 
@@ -68,7 +70,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.NOT_EXISTS,
-                    Message = "Tài khoản không tồn tại"
+                    Message = _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig)
                 };
             }
 
@@ -84,9 +86,10 @@ namespace BPHN.BusinessLayer.ImpServices
                         IPAddress = context.IPAddress,
                         Actor = context.UserName,
                         ActorId = context.Id,
-                        ActionType = ActionEnum.SUBMIT_RESET_PASSWORD,
+                        ActionType = ActionEnum.SUBMITRESETPASSWORD,
                         ActionName = string.Empty,
                         Description = string.Empty,
+                        Entity = EntityEnum.ACCOUNT.ToString()
                     }, context);
                 });
                 thread.Start();
@@ -101,18 +104,52 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> GetById(Guid id)
         {
-            var account = await _accountRepository.GetAccountById(id);
-            if(account != null)
+            Account? account = null;
+            var cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(id, EntityEnum.ACCOUNT));
+            if(!string.IsNullOrWhiteSpace(cacheResult))
             {
-                account.Permissions = await _permissionRepository.GetPermissions(id);
-                account.RelationIds = await _accountRepository.GetRelationIds   (
-                                                                                    account.ParentId.HasValue &&
-                                                                                    !account.ParentId.Value.Equals(Guid.Empty)
-                                                                                    ?
-                                                                                    account.ParentId.Value
-                                                                                    :
-                                                                                    id
-                                                                                );
+                account = JsonConvert.DeserializeObject<Account>(cacheResult);
+            }
+            if(account == null)
+            {
+                account = await _accountRepository.GetAccountById(id);
+                if(account != null)
+                {
+                    await _cacheService.SetAsync(_cacheService.GetKeyCache(id, EntityEnum.ACCOUNT), JsonConvert.SerializeObject(account));
+                }
+            }
+            
+            if (account != null)
+            {
+                List<Guid>? lstRelationId = null;
+                cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(id, EntityEnum.ACCOUNT, "RelationId"));
+                if(!string.IsNullOrWhiteSpace(cacheResult))
+                {
+                    lstRelationId = JsonConvert.DeserializeObject<List<Guid>>(cacheResult);
+                }
+
+                if(lstRelationId == null)
+                {
+                    lstRelationId = await _accountRepository.GetRelationIds(id);
+                    if(lstRelationId != null)
+                    {
+                        await _cacheService.SetAsync(_cacheService.GetKeyCache(id, EntityEnum.ACCOUNT, "RelationId"), JsonConvert.SerializeObject(lstRelationId));
+                    }
+                }
+                account.RelationIds = lstRelationId == null ||  lstRelationId.Count == 0 ? new List<Guid>() { id } :  lstRelationId;
+
+                List<Config>? lstConfig = null;
+                cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(id, EntityEnum.CONFIG));
+                if(!string.IsNullOrWhiteSpace(cacheResult))
+                {
+                    lstConfig = JsonConvert.DeserializeObject<List<Config>>(cacheResult);
+                }
+
+                if(lstConfig == null)
+                {
+                    lstConfig = await _configRepository.GetConfigs(id, "Language");
+                }
+                account.LanguageConfig = lstConfig?.Where(item => item.Key == "Language").FirstOrDefault()?.Value ?? string.Empty;
             }
             return new ServiceResultModel()
             {
@@ -130,19 +167,19 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEW_LIST_USER);
-            if( !hasPermission ||
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTUSER);
+            if (!hasPermission ||
                 (context.Role != RoleEnum.ADMIN && !await AllowMultiUser(context.Id)))
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = "Bạn không có quyền thực hiện chức năng này"
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
                 };
             }
 
@@ -200,7 +237,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
@@ -216,20 +253,20 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 Guid accountId;
                 var success = Guid.TryParse(id, out accountId);
-                if(success)
+                if (success)
                 {
-                    var key = _cacheService.GetKeyCache(context.Id, EntityEnum.ACCOUNT, accountId.ToString());
-                    var cacheResult = await _cacheService.GetAsync(key);
-                    if(!string.IsNullOrWhiteSpace(cacheResult))
+                    var cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.ACCOUNT, accountId.ToString()));
+                    if (!string.IsNullOrWhiteSpace(cacheResult))
                     {
                         data = JsonConvert.DeserializeObject<Account>(cacheResult);
                     }
-                    else
+
+                    if (data == null)
                     {
                         data = await _accountRepository.GetAccountById(accountId);
-                        if(data != null)
+                        if (data != null)
                         {
-                            await _cacheService.SetAsync(key, JsonConvert.SerializeObject(data));
+                            await _cacheService.SetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.ACCOUNT, accountId.ToString()), JsonConvert.SerializeObject(data));
                         }
                     }
                 }
@@ -239,7 +276,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.EMPTY_INPUT,
-                        Message = "Dữ liệu đầu vào không hợp lệ"
+                        Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
                     };
                 }
 
@@ -249,7 +286,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.NOT_EXISTS,
-                        Message = "Không lấy được thông tin tài khoản. Vui lòng kiểm tra lại"
+                        Message = _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig)
                     };
                 }
             }
@@ -264,25 +301,25 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> GetPaging(int pageIndex, int pageSize, string txtSearch)
         {
             var context = _contextService.GetContext();
-            if(context == null)
+            if (context == null)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEW_LIST_USER);
-            if(!hasPermission ||
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTUSER);
+            if (!hasPermission ||
                 (context.Role != RoleEnum.ADMIN && !await AllowMultiUser(context.Id)))
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = "Bạn không có quyền thực hiện chức năng này"
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
                 };
             }
 
@@ -290,7 +327,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
 
             var where = new List<WhereCondition>();
-            switch(context.Role)
+            switch (context.Role)
             {
                 case RoleEnum.ADMIN:
                     where.Add(new WhereCondition()
@@ -321,7 +358,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     });
                     break;
             }
-            
+
             var lstTenants = await _accountRepository.GetPaging(pageIndex, pageSize, txtSearch, where);
 
             return new ServiceResultModel()
@@ -339,7 +376,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = "Dữ liệu đầu vào không được để trống"
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
                 };
             }
 
@@ -362,7 +399,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
@@ -376,13 +413,13 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> Login(Account account)
         {
             var isValid = ValidateModelByAttribute(account, new List<string>() { "Id", "PhoneNumber", "FullName", "Email" });
-            if(!isValid)
+            if (!isValid)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = "Dữ liệu đầu vào không hợp lệ"
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
                 };
             }
 
@@ -394,7 +431,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.NOT_EXISTS,
-                    Message = "Tài khoản hoặc mật khẩu không đúng"
+                    Message = _resourceService.Get(SharedResourceKey.LOGINFAIL)
                 };
             }
 
@@ -404,7 +441,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INACTIVE_DATA,
-                    Message = "Tài khoản chưa được kích hoạt"
+                    Message = _resourceService.Get(SharedResourceKey.INACTIVESTATUS)
                 };
             }
 
@@ -416,7 +453,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.NOT_EXISTS,
-                        Message = "Tài khoản hoặc mật khẩu không đúng"
+                        Message = _resourceService.Get(SharedResourceKey.LOGINFAIL)
                     };
                 }
             }
@@ -427,10 +464,10 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.NOT_EXISTS,
-                    Message = "Tài khoản hoặc mật khẩu không đúng"
+                    Message = _resourceService.Get(SharedResourceKey.LOGINFAIL)
                 };
             }
-            
+
 
             string token = _accountRepository.GetToken(realAccount.Id.ToString());
 
@@ -440,7 +477,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 IPAddress = _contextService.GetIPAddress()
             };
 
-            var thread = new Thread(delegate()
+            var thread = new Thread(delegate ()
             {
                 _historyLogService.Write(new HistoryLog()
                 {
@@ -448,7 +485,8 @@ namespace BPHN.BusinessLayer.ImpServices
                     Actor = realAccount.UserName,
                     ActorId = realAccount.Id,
                     ActionType = ActionEnum.LOGIN,
-                    ActionName = string.Empty
+                    ActionName = string.Empty,
+                    Entity = EntityEnum.ACCOUNT.ToString()
                 }, fakeContext);
             });
             thread.Start();
@@ -472,6 +510,34 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
+        public async Task<ServiceResultModel> Refresh()
+        {
+            var context = _contextService.GetContext();
+            if (context == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
+                };
+            }
+
+            await _cacheService.RemoveAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.ACCOUNT));
+            await _cacheService.RemoveAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.ACCOUNT, "RelationId"));
+            await _cacheService.RemoveAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.CONFIG));
+            await _cacheService.RemoveAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.PERMISSION));
+            for (int i = 0; i < context.RelationIds.Count; i++)
+            {
+                await _cacheService.RemoveAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.ACCOUNT, context.RelationIds[i].ToString()));
+            }
+
+            return new ServiceResultModel()
+            {
+                Success = true
+            };
+        }
+
         public async Task<ServiceResultModel> RegisterForTenant(Account account)
         {
             var context = _contextService.GetContext();
@@ -481,11 +547,11 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.ADD_USER);
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.ADDUSER);
             if (!hasPermission ||
                 (context.Role != RoleEnum.ADMIN && !await AllowMultiUser(context.Id)))
             {
@@ -493,29 +559,29 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = "Bạn không có quyền thực hiện chức năng này"
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
                 };
             }
 
             var isValid = ValidateModelByAttribute(account, new List<string>() { "Id", "Password" });
-            if(!isValid)
+            if (!isValid)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = "Dữ liệu đầu vào không hợp lệ"
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
                 };
             }
 
             var existUserName = await _accountRepository.CheckExistUserName(account.UserName);
-            if(existUserName)
+            if (existUserName)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EXISTED,
-                    Message = "Tên tài khoản đã được đăng ký"
+                    Message = _resourceService.Get(SharedResourceKey.EXISTED)
                 };
             }
 
@@ -525,7 +591,7 @@ namespace BPHN.BusinessLayer.ImpServices
             account.ModifiedBy = context.FullName;
             account.ModifiedDate = DateTime.Now;
             account.Role = RoleEnum.TENANT;
-            if(context.Role == RoleEnum.TENANT)
+            if (context.Role == RoleEnum.TENANT)
             {
                 account.ParentId = context.Id;
                 account.Role = RoleEnum.USER;
@@ -539,22 +605,27 @@ namespace BPHN.BusinessLayer.ImpServices
             var resultRegister = await _accountRepository.RegisterForTenant(account);
             var permissions = _permissionService.GetDefaultPermissions(account.Id, context);
             var resultPermission = await _permissionRepository.Save(permissions);
-            if(resultRegister)
+            if (resultRegister)
             {
-                if(account.Status.Equals(ActiveStatusEnum.ACTIVE.ToString()))
+                _notificationService.Insert<Account>(context, NotificationTypeEnum.INSERTACCOUNT, account);
+                for (int i = 0; i < context.RelationIds.Count; i++)
+                {
+                     await _cacheService.RemoveAsync(_cacheService.GetKeyCache(context.RelationIds[i], EntityEnum.ACCOUNT, "RelationId"));
+                }
+                if (account.Status.Equals(ActiveStatusEnum.ACTIVE.ToString()))
                 {
                     var thread = new Thread(() =>
                     {
                         _mailService.SendMail(new ObjectQueue()
                         {
-                            QueueJobType = QueueJobTypeEnum.SEND_MAIL,
+                            QueueJobType = QueueJobTypeEnum.SENDMAIL,
                             DataJson = JsonConvert.SerializeObject(new SetPasswordParameter()
                             {
                                 ReceiverAddress = account.Email,
                                 AccountId = account.Id,
                                 FullName = account.FullName,
                                 UserName = account.UserName,
-                                MailType = MailTypeEnum.SET_PASSWORD,
+                                MailType = MailTypeEnum.SETPASSWORD,
                                 ParameterType = typeof(SetPasswordParameter)
                             })
                         });
@@ -569,9 +640,10 @@ namespace BPHN.BusinessLayer.ImpServices
                         IPAddress = context.IPAddress,
                         Actor = context.UserName,
                         ActorId = context.Id,
-                        ActionType = ActionEnum.REGISTER_ACCOUNT,
+                        ActionType = ActionEnum.REGISTERACCOUNT,
                         ActionName = string.Empty,
                         Description = account.UserName,
+                        Entity = EntityEnum.ACCOUNT.ToString()
                     }, context);
                 });
                 threadLog.Start();
@@ -586,24 +658,24 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> ResetPassword(string userName)
         {
-            if(string.IsNullOrWhiteSpace(userName))
+            if (string.IsNullOrWhiteSpace(userName))
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = "Dữ liệu đầu vào không hợp lệ"
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
                 };
             }
 
             var realAccount = await _accountRepository.GetAccountByUserName(userName);
-            if(realAccount == null) 
+            if (realAccount == null)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.NOT_EXISTS,
-                    Message = "Tài khoản không tồn tại"
+                    Message = _resourceService.Get(SharedResourceKey.NOTEXIST)
                 };
             }
 
@@ -613,25 +685,25 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INACTIVE_DATA,
-                    Message = "Tài khoản chưa được kích hoạt"
+                    Message = _resourceService.Get(SharedResourceKey.INACTIVESTATUS)
                 };
             }
 
             var resultSendMail = _mailService.SendMail(new ObjectQueue()
             {
-                QueueJobType = QueueJobTypeEnum.SEND_MAIL,
+                QueueJobType = QueueJobTypeEnum.SENDMAIL,
                 DataJson = JsonConvert.SerializeObject(new SetPasswordParameter()
                 {
                     ReceiverAddress = realAccount.Email,
                     AccountId = realAccount.Id,
                     FullName = realAccount.FullName,
                     UserName = realAccount.UserName,
-                    MailType = MailTypeEnum.FORTGOT_PASSWORD,
+                    MailType = MailTypeEnum.FORTGOTPASSWORD,
                     ParameterType = typeof(SetPasswordParameter)
                 })
             });
 
-            if(resultSendMail)
+            if (resultSendMail)
             {
                 var fakeContext = new Account()
                 {
@@ -639,21 +711,22 @@ namespace BPHN.BusinessLayer.ImpServices
                     IPAddress = _contextService.GetIPAddress()
                 };
 
-                var thread = new Thread(delegate()
+                var thread = new Thread(delegate ()
                 {
                     _historyLogService.Write(new HistoryLog()
                     {
                         IPAddress = fakeContext.IPAddress,
                         Actor = realAccount.UserName,
                         ActorId = realAccount.Id,
-                        ActionType = ActionEnum.SEND_RESET_PASSWORD,
+                        ActionType = ActionEnum.SENDRESETPASSWORD,
                         ActionName = string.Empty,
                         Description = string.Empty,
+                        Entity = EntityEnum.ACCOUNT.ToString()
                     }, fakeContext);
                 });
                 thread.Start();
             }
-            
+
             return new ServiceResultModel()
             {
                 Success = true,
@@ -663,26 +736,26 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> SubmitSetPassword(string code, string password, string userName)
         {
-            if(string.IsNullOrWhiteSpace(code) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(userName))
+            if (string.IsNullOrWhiteSpace(code) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(userName))
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = "Dữ liệu đầu vào không được để trống"
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
                 };
             }
 
             var param = _keyGenerator.Decryption(code);
             var expireResetPasswordModel = JsonConvert.DeserializeObject<ExpireSetPasswordModel>(param);
 
-            if(expireResetPasswordModel == null)
+            if (expireResetPasswordModel == null)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = "Dữ liệu đầu vào không được để trống"
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
                 };
             }
 
@@ -692,7 +765,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Quá hạn thiết lập mật khẩu"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
@@ -703,13 +776,13 @@ namespace BPHN.BusinessLayer.ImpServices
             };
 
             var isValid = ValidateModelByAttribute(account, new List<string>() { "UserName", "PhoneNumber", "FullName", "Email" });
-            if(!isValid)
+            if (!isValid)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = "Dữ liệu đầu vào không hợp lệ"
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
                 };
             }
 
@@ -720,24 +793,24 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.NOT_EXISTS,
-                    Message = "Tài khoản không tồn tại"
+                    Message = _resourceService.Get(SharedResourceKey.NOTEXIST)
                 };
             }
 
-            if(realAccount.UserName != userName)
+            if (realAccount.UserName != userName)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.NO_INTEGRITY,
-                    Message = "Yêu cầu không toàn vẹn"
+                    Message = _resourceService.Get(SharedResourceKey.NOTEXIST)
                 };
             }
 
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(account.Password);
             var resultResetPassword = await _accountRepository.SavePassword(account.Id, passwordHash);
 
-            if(resultResetPassword)
+            if (resultResetPassword)
             {
                 var fakeContext = new Account()
                 {
@@ -745,22 +818,23 @@ namespace BPHN.BusinessLayer.ImpServices
                     IPAddress = _contextService.GetIPAddress()
                 };
 
-                var thread = new Thread(delegate()
+                var thread = new Thread(delegate ()
                 {
                     _historyLogService.Write(new HistoryLog()
                     {
                         IPAddress = fakeContext.IPAddress,
                         Actor = realAccount.UserName,
                         ActorId = realAccount.Id,
-                        ActionType = ActionEnum.SUBMIT_RESET_PASSWORD,
+                        ActionType = ActionEnum.SUBMITRESETPASSWORD,
                         ActionName = string.Empty,
                         Description = string.Empty,
+                        Entity = EntityEnum.ACCOUNT.ToString()
                     }, fakeContext);
                 });
                 thread.Start();
             }
 
-            return new ServiceResultModel() 
+            return new ServiceResultModel()
             {
                 Success = true,
                 Data = resultResetPassword

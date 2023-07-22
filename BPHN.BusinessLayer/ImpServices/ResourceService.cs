@@ -17,7 +17,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
         }
 
-        public string Get(string key, string lang)
+        public string Get(string key, string lang = "")
         {
             var _currentResource =  string.IsNullOrWhiteSpace(lang) || 
                                     !_resourceManager.ContainsKey(lang) ? _resourceManager["vi"] : _resourceManager[lang];

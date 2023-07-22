@@ -9,11 +9,13 @@ namespace BPHN.BusinessLayer.ImpServices
     public class FileService : IFileService
     {
         private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IResourceService _resourceService;
         private AppSettings _appSettings;
-        public FileService(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSettings)
+        public FileService(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSettings, IResourceService resourceService)
         {
             _hostingEnvironment = hostingEnvironment;
             _appSettings = appSettings.Value;
+            _resourceService = resourceService;
         }
 
         public ServiceResultModel GetLinkFile(string id)
@@ -25,7 +27,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = "Dữ liệu đầu vào không được để trống"
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
                 };
             }
 
@@ -51,7 +53,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.NOT_EXISTS,
-                        Message = "File không tồn tại"
+                        Message = _resourceService.Get(SharedResourceKey.NOTEXIST)
                     };
                 }
 
@@ -77,7 +79,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.NOT_EXISTS,
-                        Message = "File không tồn tại"
+                        Message = _resourceService.Get(SharedResourceKey.NOTEXIST)
                     };
                 }
 
@@ -87,7 +89,7 @@ namespace BPHN.BusinessLayer.ImpServices
             return new ServiceResultModel()
             {
                 Success = true,
-                Data = string.Format("{0}{1}", _appSettings.FileUrl, fullName)
+                Data = $"{_appSettings.FileUrl}{fullName}"
             };
         }
 
@@ -99,7 +101,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = "Dữ liệu đầu vào không được để trống"
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
                 };
             }
 
@@ -112,7 +114,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.NOT_EXISTS,
-                    Message = "File định dạng không hợp lệ"
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDDATA)
                 };
             }
 
@@ -123,7 +125,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EXISTED,
-                    Message = "File đã tồn tại"
+                    Message = _resourceService.Get(SharedResourceKey.EXISTED)
                 };
             }
 

@@ -13,6 +13,7 @@ namespace BPHN.BusinessLayer.ImpServices
         protected readonly IContextService _contextService;
         protected readonly IPermissionRepository _permissionRepository;
         protected readonly ICacheService _cacheService;
+        protected readonly IResourceService _resourceService;
         protected readonly AppSettings _appSettings;
 
         public BaseService(IServiceProvider provider, IOptions<AppSettings> appSettings)
@@ -20,6 +21,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _contextService = provider.GetRequiredService<IContextService>();
             _permissionRepository = provider.GetRequiredService<IPermissionRepository>();
             _cacheService = provider.GetRequiredService<ICacheService>();
+            _resourceService = provider.GetRequiredService<IResourceService>();
             _appSettings = appSettings.Value;
         }
         public virtual bool ValidateModelByAttribute(object model, List<string> ignoreProperties)
@@ -109,17 +111,20 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<bool> IsValidPermission(Guid accountId, FunctionTypeEnum functionType)
         {
-            var permissions = new List<Permission>();
-            var key = _cacheService.GetKeyCache(accountId, EntityEnum.PERMISSION);
-            var cacheResult = await _cacheService.GetAsync(key);
+            List<Permission>? permissions = null;
+            var cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(accountId, EntityEnum.PERMISSION));
             if(!string.IsNullOrWhiteSpace(cacheResult))
             {
                 permissions = JsonConvert.DeserializeObject<List<Permission>>(cacheResult);
             }
-            else
+            
+            if(permissions == null)
             {
                 permissions = await _permissionRepository.GetPermissions(accountId);
-                await _cacheService.SetAsync(key, JsonConvert.SerializeObject(permissions));
+                if(permissions != null)
+                {
+                    await _cacheService.SetAsync(_cacheService.GetKeyCache(accountId, EntityEnum.PERMISSION), JsonConvert.SerializeObject(permissions));
+                }
             }
 
             if (permissions == null)
@@ -135,9 +140,9 @@ namespace BPHN.BusinessLayer.ImpServices
                 if(context?.Id == accountId && 
                     context?.Role == RoleEnum.ADMIN &&
                     (
-                        functionType == FunctionTypeEnum.VIEW_LIST_USER || 
-                        functionType == FunctionTypeEnum.ADD_USER ||
-                        functionType == FunctionTypeEnum.EDIT_USER
+                        functionType == FunctionTypeEnum.VIEWLISTUSER || 
+                        functionType == FunctionTypeEnum.ADDUSER ||
+                        functionType == FunctionTypeEnum.EDITUSER
                     ))
                 {
                     return true;

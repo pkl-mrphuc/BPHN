@@ -2,6 +2,6 @@
 {
     public interface IResourceService
     {
-        string Get(string key, string lang);
+        string Get(string key, string lang = "");
     }
 }

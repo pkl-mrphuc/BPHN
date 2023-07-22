@@ -30,7 +30,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
-                    FunctionType = (int)FunctionTypeEnum.ADD_PITCH,
+                    FunctionType = (int)FunctionTypeEnum.ADDPITCH,
                     Allow = false,
                     CreatedBy = context.FullName,
                     CreatedDate = DateTime.Now,
@@ -41,7 +41,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
-                    FunctionType = (int)FunctionTypeEnum.EDIT_PITCH,
+                    FunctionType = (int)FunctionTypeEnum.EDITPITCH,
                     Allow = false,
                     CreatedBy = context.FullName,
                     CreatedDate = DateTime.Now,
@@ -52,7 +52,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
-                    FunctionType = (int)FunctionTypeEnum.VIEW_LIST_PITCH,
+                    FunctionType = (int)FunctionTypeEnum.VIEWLISTPITCH,
                     Allow = false,
                     CreatedBy = context.FullName,
                     CreatedDate = DateTime.Now,
@@ -63,7 +63,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
-                    FunctionType = (int)FunctionTypeEnum.ADD_BOOKING,
+                    FunctionType = (int)FunctionTypeEnum.ADDBOOKING,
                     Allow = false,
                     CreatedBy = context.FullName,
                     CreatedDate = DateTime.Now,
@@ -74,7 +74,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
-                    FunctionType = (int)FunctionTypeEnum.EDIT_BOOKING,
+                    FunctionType = (int)FunctionTypeEnum.EDITBOOKING,
                     Allow = false,
                     CreatedBy = context.FullName,
                     CreatedDate = DateTime.Now,
@@ -85,7 +85,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
-                    FunctionType = (int)FunctionTypeEnum.VIEW_LIST_BOOKING,
+                    FunctionType = (int)FunctionTypeEnum.VIEWLISTBOOKING,
                     Allow = false,
                     CreatedBy = context.FullName,
                     CreatedDate = DateTime.Now,
@@ -96,7 +96,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
-                    FunctionType = (int)FunctionTypeEnum.ADD_USER,
+                    FunctionType = (int)FunctionTypeEnum.ADDUSER,
                     Allow = false,
                     CreatedBy = context.FullName,
                     CreatedDate = DateTime.Now,
@@ -107,7 +107,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
-                    FunctionType = (int)FunctionTypeEnum.EDIT_USER,
+                    FunctionType = (int)FunctionTypeEnum.EDITUSER,
                     Allow = false,
                     CreatedBy = context.FullName,
                     CreatedDate = DateTime.Now,
@@ -118,7 +118,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
-                    FunctionType = (int)FunctionTypeEnum.VIEW_LIST_USER,
+                    FunctionType = (int)FunctionTypeEnum.VIEWLISTUSER,
                     Allow = false,
                     CreatedBy = context.FullName,
                     CreatedDate = DateTime.Now,
@@ -129,7 +129,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
-                    FunctionType = (int)FunctionTypeEnum.VIEW_LIST_BOOKING_DETAIL,
+                    FunctionType = (int)FunctionTypeEnum.VIEWLISTBOOKINGDETAIL,
                     Allow = false,
                     CreatedBy = context.FullName,
                     CreatedDate = DateTime.Now,
@@ -148,7 +148,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
@@ -174,18 +174,18 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDIT_USER);
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDITUSER);
             if(!hasPermission)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = "Bạn không có quyền thực hiện chức năng này"
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
                 };
             }
 
@@ -204,7 +204,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var saveResult = await _permissionRepository.Save(permissions);
             if(saveResult)
             {
-                var notification = _notificationService.Insert<List<Permission>>(context, NotificationTypeEnum.EDIT_USER, permissions);
+                var notification = _notificationService.Insert<List<Permission>>(context, NotificationTypeEnum.CHANGEPERMISSION, permissions);
                 var key = _cacheService.GetKeyCache(accountId, EntityEnum.PERMISSION);
                 await _cacheService.RemoveAsync(key);
                 var thread = new Thread(delegate ()
@@ -217,7 +217,7 @@ namespace BPHN.BusinessLayer.ImpServices
                         Actor = context.UserName,
                         ActorId = context.Id,
                         ActionType = ActionEnum.SAVE,
-                        Entity = "Phân quyền",
+                        Entity = EntityEnum.PERMISSION.ToString(),
                         ActionName = string.Empty,
                         Description = BuildLinkDescription(historyLogId),
                         Data = new HistoryLogDescription()

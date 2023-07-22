@@ -16,23 +16,23 @@
 
     public enum MailTypeEnum
     {
-        SET_PASSWORD = 0,
-        FORTGOT_PASSWORD = 1,
-        APPROVAL_BOOKING = 2,
-        DECLINE_BOOKING = 3
+        SETPASSWORD = 0,
+        FORTGOTPASSWORD = 1,
+        APPROVALBOOKING = 2,
+        DECLINEBOOKING = 3
     }
 
     public enum QueueJobTypeEnum
     {
-        SEND_MAIL = 0
+        SENDMAIL = 0
     }
 
     public enum ActionEnum
     {
         LOGIN = 0,
-        REGISTER_ACCOUNT = 1,
-        SEND_RESET_PASSWORD = 2,
-        SUBMIT_RESET_PASSWORD = 3,
+        REGISTERACCOUNT = 1,
+        SENDRESETPASSWORD = 2,
+        SUBMITRESETPASSWORD = 3,
         SAVE = 4,
         INSERT = 5,
         UPDATE = 6,
@@ -53,29 +53,30 @@
 
     public enum FunctionTypeEnum
     {
-        ADD_PITCH = 0,
-        EDIT_PITCH = 1,
-        VIEW_LIST_PITCH = 2,
-
-        ADD_BOOKING = 3,
-        EDIT_BOOKING = 4,
-        VIEW_LIST_BOOKING = 5,
-
-        ADD_USER = 6,
-        EDIT_USER = 7,
-        VIEW_LIST_USER = 8,
-
-        VIEW_LIST_BOOKING_DETAIL = 9
+        ADDPITCH = 0,
+        EDITPITCH = 1,
+        VIEWLISTPITCH = 2,
+        ADDBOOKING = 3,
+        EDITBOOKING = 4,
+        VIEWLISTBOOKING = 5,
+        ADDUSER = 6,
+        EDITUSER = 7,
+        VIEWLISTUSER = 8,
+        VIEWLISTBOOKINGDETAIL = 9
     }
 
     public enum NotificationTypeEnum
     {
-        ADD_PITCH = 0,
-        EDIT_PITCH = 1,
-        ADD_BOOKING = 2,
-        EDIT_BOOKING = 3,
-        ADD_USER = 4,
-        EDIT_USER = 5
+        CANCELBOOKINGDETAIL = 0,
+        UPDATEMATCH = 1,
+        INSERTBOOKING = 2,
+        DECLINEBOOKING = 3,
+        APPROVALBOOKING = 4,
+        CHANGEPERMISSION = 5,
+        INSERTPITCH = 6,
+        UPDATEPITCH = 7,
+        INSERTACCOUNT = 8,
+        UPDATEACCOUNT = 9
     }
 
     public enum EntityEnum
@@ -83,6 +84,7 @@
         CONFIG = 0,
         PERMISSION = 1,
         PITCH = 2,
-        ACCOUNT = 3
+        ACCOUNT = 3,
+        BOOKING = 4
     }
 }

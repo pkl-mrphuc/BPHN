@@ -137,6 +137,10 @@ const actions = {
 
     getInstance: ((commit, id) => {
         return AccountAPI.getInstance(id);
+    }),
+
+    refresh: ((commit, id) => {
+        return AccountAPI.refresh(id);
     })
 };
 

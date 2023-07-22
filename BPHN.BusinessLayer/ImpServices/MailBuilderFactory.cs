@@ -21,13 +21,13 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             switch(mailType)
             {
-                case MailTypeEnum.FORTGOT_PASSWORD:
+                case MailTypeEnum.FORTGOTPASSWORD:
                     return _forgotPasswordMail;
-                case MailTypeEnum.SET_PASSWORD:
+                case MailTypeEnum.SETPASSWORD:
                     return _setPasswordMail;
-                case MailTypeEnum.APPROVAL_BOOKING:
+                case MailTypeEnum.APPROVALBOOKING:
                     return _approvalBookingMail;
-                case MailTypeEnum.DECLINE_BOOKING:
+                case MailTypeEnum.DECLINEBOOKING:
                     return _declineBookingMail;
             }
 

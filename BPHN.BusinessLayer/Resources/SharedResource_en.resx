@@ -117,7 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Demo" xml:space="preserve">
-    <value>Demo</value>
+  <data name="EMPTYINPUT" xml:space="preserve">
+    <value>Invalid input</value>
+  </data>
+  <data name="EXISTED" xml:space="preserve">
+    <value>Data existed</value>
+  </data>
+  <data name="INACTIVESTATUS" xml:space="preserve">
+    <value>Status is inactive</value>
+  </data>
+  <data name="INVALIDDATA" xml:space="preserve">
+    <value>Invalid data </value>
+  </data>
+  <data name="INVALIDROLE" xml:space="preserve">
+    <value>Your account does not have permission to perform this function</value>
+  </data>
+  <data name="LOGINFAILD" xml:space="preserve">
+    <value>Username or password is incorrect</value>
+  </data>
+  <data name="NOTEXIST" xml:space="preserve">
+    <value>Data not found</value>
+  </data>
+  <data name="OUTTIME" xml:space="preserve">
+    <value>Token expired time</value>
   </data>
 </root>

@@ -61,11 +61,74 @@ namespace BPHN.BusinessLayer.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Thu nghiem.
+        ///   Looks up a localized string similar to Dữ liệu đầu vào không hợp lệ.
         /// </summary>
-        public static string Demo {
+        public static string EMPTYINPUT {
             get {
-                return ResourceManager.GetString("Demo", resourceCulture);
+                return ResourceManager.GetString("EMPTYINPUT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dữ liệu đã tồn tại.
+        /// </summary>
+        public static string EXISTED {
+            get {
+                return ResourceManager.GetString("EXISTED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trạng thái không hoạt động.
+        /// </summary>
+        public static string INACTIVESTATUS {
+            get {
+                return ResourceManager.GetString("INACTIVESTATUS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dữ liệu không đúng.
+        /// </summary>
+        public static string INVALIDDATA {
+            get {
+                return ResourceManager.GetString("INVALIDDATA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bạn không có quyền thực hiện chức năng này.
+        /// </summary>
+        public static string INVALIDROLE {
+            get {
+                return ResourceManager.GetString("INVALIDROLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tài khoản hoặc mật khẩu không đúng.
+        /// </summary>
+        public static string LOGINFAILD {
+            get {
+                return ResourceManager.GetString("LOGINFAILD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dữ liệu không tồn tại.
+        /// </summary>
+        public static string NOTEXIST {
+            get {
+                return ResourceManager.GetString("NOTEXIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Token đã hết hạn.
+        /// </summary>
+        public static string OUTTIME {
+            get {
+                return ResourceManager.GetString("OUTTIME", resourceCulture);
             }
         }
     }

@@ -27,7 +27,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _bookingService.GetInstance(id));
         }
 
-        [Permission(new[] { FunctionTypeEnum.ADD_BOOKING })]
+        [Permission(new[] { FunctionTypeEnum.ADDBOOKING })]
         [ApiAuthorize]
         [HttpPost]
         [Route("insert")]
@@ -46,7 +46,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _bookingService.InsertBookingRequest(request));
         }
 
-        [Permission(new[] { FunctionTypeEnum.ADD_BOOKING, FunctionTypeEnum.EDIT_BOOKING })]
+        [Permission(new[] { FunctionTypeEnum.ADDBOOKING, FunctionTypeEnum.EDITBOOKING })]
         [ApiAuthorize]
         [HttpPost]
         [Route("check-time-frame")]
@@ -56,7 +56,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _bookingService.CheckFreeTimeFrame(request));
         }
 
-        [Permission(new[] { FunctionTypeEnum.VIEW_LIST_BOOKING })]
+        [Permission(new[] { FunctionTypeEnum.VIEWLISTBOOKING })]
         [ApiAuthorize]
         [HttpGet]
         [Route("paging")]
@@ -66,7 +66,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _bookingService.GetPaging(pageIndex, pageSize, txtSearch, hasBookingDetail));
         }
 
-        [Permission(new[] { FunctionTypeEnum.VIEW_LIST_BOOKING })]
+        [Permission(new[] { FunctionTypeEnum.VIEWLISTBOOKING })]
         [ApiAuthorize]
         [HttpGet]
         [Route("count-paging")]
@@ -76,7 +76,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _bookingService.GetCountPaging(pageIndex, pageSize, txtSearch));
         }
 
-        [Permission(new[] { FunctionTypeEnum.ADD_BOOKING, FunctionTypeEnum.EDIT_BOOKING })]
+        [Permission(new[] { FunctionTypeEnum.ADDBOOKING, FunctionTypeEnum.EDITBOOKING })]
         [ApiAuthorize]
         [HttpPost]
         [Route("find-blank")]
@@ -86,7 +86,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _bookingService.FindBlank(request));
         }
 
-        [Permission(new[] { FunctionTypeEnum.EDIT_BOOKING })]
+        [Permission(new[] { FunctionTypeEnum.EDITBOOKING })]
         [ApiAuthorize]
         [HttpPost]
         [Route("approval/{id}")]
@@ -96,7 +96,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _bookingService.Update(id, BookingStatusEnum.SUCCESS));
         }
 
-        [Permission(new[] { FunctionTypeEnum.EDIT_BOOKING })]
+        [Permission(new[] { FunctionTypeEnum.EDITBOOKING })]
         [ApiAuthorize]
         [HttpPost]
         [Route("decline/{id}")]

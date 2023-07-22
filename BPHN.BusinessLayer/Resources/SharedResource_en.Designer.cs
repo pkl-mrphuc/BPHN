@@ -61,11 +61,74 @@ namespace BPHN.BusinessLayer.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Demo.
+        ///   Looks up a localized string similar to Invalid input.
         /// </summary>
-        public static string Demo {
+        public static string EMPTYINPUT {
             get {
-                return ResourceManager.GetString("Demo", resourceCulture);
+                return ResourceManager.GetString("EMPTYINPUT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Data existed.
+        /// </summary>
+        public static string EXISTED {
+            get {
+                return ResourceManager.GetString("EXISTED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Status is inactive.
+        /// </summary>
+        public static string INACTIVESTATUS {
+            get {
+                return ResourceManager.GetString("INACTIVESTATUS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid data .
+        /// </summary>
+        public static string INVALIDDATA {
+            get {
+                return ResourceManager.GetString("INVALIDDATA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your account does not have permission to perform this function.
+        /// </summary>
+        public static string INVALIDROLE {
+            get {
+                return ResourceManager.GetString("INVALIDROLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Username or password is incorrect.
+        /// </summary>
+        public static string LOGINFAILD {
+            get {
+                return ResourceManager.GetString("LOGINFAILD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Data not found.
+        /// </summary>
+        public static string NOTEXIST {
+            get {
+                return ResourceManager.GetString("NOTEXIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Token expired time.
+        /// </summary>
+        public static string OUTTIME {
+            get {
+                return ResourceManager.GetString("OUTTIME", resourceCulture);
             }
         }
     }

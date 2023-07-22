@@ -124,8 +124,8 @@ const save = () => {
             store.getters["account/getRelationIds"],
             store.getters["account/getAccountId"],
             props.mode == "edit"
-              ? NotificationTypeEnum.EDIT_PITCH
-              : NotificationTypeEnum.ADD_PITCH
+              ? NotificationTypeEnum.UPDATEPITCH
+              : NotificationTypeEnum.INSERTPITCH
           );
         }
       } else {

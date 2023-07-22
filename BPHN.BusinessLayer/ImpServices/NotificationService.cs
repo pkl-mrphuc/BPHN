@@ -3,6 +3,7 @@ using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
@@ -26,7 +27,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
@@ -79,39 +80,26 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             switch(type)
             {
-                case NotificationTypeEnum.ADD_PITCH:
-                case NotificationTypeEnum.EDIT_PITCH:
-                    return "Sân bóng";
-                case NotificationTypeEnum.ADD_BOOKING:
-                case NotificationTypeEnum.EDIT_BOOKING:
-                    return "Đặt sân";
-                case NotificationTypeEnum.ADD_USER:
-                case NotificationTypeEnum.EDIT_USER:
-                    return "Tài khoản";
+                case NotificationTypeEnum.INSERTPITCH:
+                case NotificationTypeEnum.UPDATEPITCH:
+                    return EntityEnum.PITCH.ToString();
+                case NotificationTypeEnum.INSERTBOOKING:
+                case NotificationTypeEnum.UPDATEMATCH:
+                case NotificationTypeEnum.CANCELBOOKINGDETAIL:
+                case NotificationTypeEnum.DECLINEBOOKING:
+                case NotificationTypeEnum.APPROVALBOOKING:
+                    return EntityEnum.BOOKING.ToString();
+                case NotificationTypeEnum.CHANGEPERMISSION:
+                case NotificationTypeEnum.INSERTACCOUNT:
+                    return EntityEnum.ACCOUNT.ToString();
                 default:
-                    return "";
+                    return string.Empty;
             }
         }
 
         private string BuildContent<T>(NotificationTypeEnum type, T model)
         {
-            switch (type)
-            {
-                case NotificationTypeEnum.ADD_PITCH:
-                    return $"Thêm mới sân bóng";
-                case NotificationTypeEnum.EDIT_PITCH:
-                    return $"Sửa thông tin sân bóng";
-                case NotificationTypeEnum.ADD_BOOKING:
-                    return $"Thêm mới thông tin đặt sân";
-                case NotificationTypeEnum.EDIT_BOOKING:
-                    return $"Sửa thông tin đặt sân";
-                case NotificationTypeEnum.ADD_USER:
-                    return $"Thêm mới tài khoản";
-                case NotificationTypeEnum.EDIT_USER:
-                    return $"Sửa thông tin tài khoản";
-                default:
-                    return "";
-            }
+            return JsonConvert.SerializeObject(model);
         }
     }
 }

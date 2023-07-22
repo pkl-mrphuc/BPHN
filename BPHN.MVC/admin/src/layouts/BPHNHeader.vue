@@ -32,20 +32,7 @@ onMounted(() => {
 });
 
 const getMessage = (type) => {
-  switch (type) {
-    case 0:
-      return "Thêm mới sân bóng";
-    case 1:
-      return "Sửa thông tin sân bóng";
-    case 2:
-      return "Thêm mới thông tin đặt sân";
-    case 3:
-      return "Cập nhật thông tin đặt sân";
-    case 4:
-      return "Thêm mới tài khoản";
-    default:
-      return "Sửa thông tin tài khoản";
-  }
+  console.log(type);
 };
 
 const fullname = computed(() => {
@@ -67,7 +54,10 @@ const goToHome = () => {
 
 const refresh = () => {
   localStorage.removeItem("config-key");
-  router.go();
+  store.dispatch("account/refresh").then((res) => {
+    console.log(res);
+    router.go();
+  })
 };
 
 const markRead = () => {

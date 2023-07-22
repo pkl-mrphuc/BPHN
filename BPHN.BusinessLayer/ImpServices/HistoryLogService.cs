@@ -9,10 +9,12 @@ namespace BPHN.BusinessLayer.ImpServices
     {
         private readonly IHistoryLogRepository _historyLogRepository;
         private readonly IContextService _contextService;
-        public HistoryLogService(IHistoryLogRepository historyLogRepository, IContextService contextService)
+        private readonly IResourceService _resourceService;
+        public HistoryLogService(IHistoryLogRepository historyLogRepository, IContextService contextService, IResourceService resourceService)
         {
             _historyLogRepository = historyLogRepository;
             _contextService = contextService;
+            _resourceService = resourceService;
         }
         public async Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
         {
@@ -26,7 +28,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
@@ -77,7 +79,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
@@ -115,32 +117,32 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
             switch (history.ActionType)
             {
                 case ActionEnum.LOGIN:
-                    history.ActionName = "Đăng nhập";
+                    history.ActionName = ActionEnum.LOGIN.ToString();
                     break;
-                case ActionEnum.REGISTER_ACCOUNT:
-                    history.ActionName = "Đăng ký tài khoản";
+                case ActionEnum.REGISTERACCOUNT:
+                    history.ActionName = ActionEnum.REGISTERACCOUNT.ToString();
                     break;
-                case ActionEnum.SEND_RESET_PASSWORD:
-                    history.ActionName = "Gửi yêu cầu quên mật khẩu";
+                case ActionEnum.SENDRESETPASSWORD:
+                    history.ActionName = ActionEnum.SENDRESETPASSWORD.ToString();
                     break;
-                case ActionEnum.SUBMIT_RESET_PASSWORD:
-                    history.ActionName = "Đổi mật khẩu mới";
+                case ActionEnum.SUBMITRESETPASSWORD:
+                    history.ActionName = ActionEnum.SUBMITRESETPASSWORD.ToString();
                     break;
                 case ActionEnum.SAVE:
-                    history.ActionName = "Lưu";
+                    history.ActionName = ActionEnum.SAVE.ToString();
                     break;
                 case ActionEnum.INSERT:
-                    history.ActionName = "Thêm mới";
+                    history.ActionName = ActionEnum.INSERT.ToString();
                     break;
                 case ActionEnum.UPDATE:
-                    history.ActionName = "Cập nhật";
+                    history.ActionName = ActionEnum.UPDATE.ToString();
                     break;
             }
 

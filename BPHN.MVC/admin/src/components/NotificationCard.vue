@@ -6,8 +6,8 @@
       </div>
     </div>
     <div class="col-10">
-      <div class="fw-bold">
-        <span class="text-truncate">{{ subject }}</span>
+      <div class="fw-bold mb-2">
+        <span class="text-truncate">{{ t(subject) }}</span>
       </div>
       <div class="text-truncate">{{ content }}</div>
       <div class="fst-italic">{{ author }}</div>
@@ -21,6 +21,7 @@ import { defineProps, ref, computed } from "vue";
 import useCommonFn from "@/commonFn";
 import { useStore } from "vuex";
 import { Check } from "@element-plus/icons-vue";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps({
   data: Object,
@@ -28,13 +29,15 @@ const props = defineProps({
 const { dateToString } = useCommonFn();
 const store = useStore();
 const formatDate = ref(store.getters["config/getFormatDate"]);
+const { t } = useI18n();
 
 const subject = ref(props.data?.subject);
 const content = ref(props.data?.content);
 const author = computed(() => {
   return `${props.data?.createdBy} - ${dateToString(
     props.data?.createdDate,
-    formatDate.value
+    formatDate.value,
+    true
   )}`;
 });
 </script>

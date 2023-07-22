@@ -27,7 +27,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _accountService.Login(request));
         }
 
-        [Permission(new[] { FunctionTypeEnum.ADD_USER })]
+        [Permission(new[] { FunctionTypeEnum.ADDUSER })]
         [ApiAuthorize]
         [Route("register")]
         [HttpPost]
@@ -73,7 +73,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _accountService.ChangePassword(request));
         }
 
-        [Permission(new[] { FunctionTypeEnum.VIEW_LIST_USER })]
+        [Permission(new[] { FunctionTypeEnum.VIEWLISTUSER })]
         [ApiAuthorize]
         [HttpGet]
         [Route("paging")]
@@ -83,7 +83,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _accountService.GetPaging(pageIndex, pageSize, txtSearch));
         }
 
-        [Permission(new[] { FunctionTypeEnum.VIEW_LIST_USER })]
+        [Permission(new[] { FunctionTypeEnum.VIEWLISTUSER })]
         [ApiAuthorize]
         [HttpGet]
         [Route("count-paging")]
@@ -100,6 +100,15 @@ namespace BPHN.WebAPI.Controllers
         {
             Log.Debug($"Account/ValidateToken start: {token}");
             return Ok(_accountService.ValidateToken(token));
+        }
+
+        [ApiAuthorize]
+        [HttpGet]
+        [Route("refresh")]
+        public async Task<IActionResult> Refresh()
+        {
+            Log.Debug($"Account/Refresh start");
+            return Ok(await _accountService.Refresh());
         }
     }
 }

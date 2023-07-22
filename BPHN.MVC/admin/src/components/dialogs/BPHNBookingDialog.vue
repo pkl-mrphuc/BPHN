@@ -141,7 +141,7 @@ const save = () => {
             "PushNotification",
             store.getters["account/getRelationIds"],
             store.getters["account/getAccountId"],
-            NotificationTypeEnum.ADD_BOOKING
+            NotificationTypeEnum.INSERTBOOKING
           );
         }
       } else {
@@ -186,7 +186,7 @@ const decline = () => {
           "PushNotification",
           store.getters["account/getRelationIds"],
           store.getters["account/getAccountId"],
-          NotificationTypeEnum.EDIT_BOOKING
+          NotificationTypeEnum.DECLINEBOOKING
         );
       }
     } else {
@@ -214,7 +214,7 @@ const approval = () => {
           "PushNotification",
           store.getters["account/getRelationIds"],
           store.getters["account/getAccountId"],
-          NotificationTypeEnum.EDIT_BOOKING
+          NotificationTypeEnum.APPROVALBOOKING
         );
       }
     } else {

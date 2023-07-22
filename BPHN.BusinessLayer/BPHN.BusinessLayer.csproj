@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <None Remove="ImpServices\BaseService.cs~RF1ba8df2.TMP" />
+    <None Remove="ImpServices\BookingService.cs~RF1595c99.TMP" />
   </ItemGroup>
 
   <ItemGroup>

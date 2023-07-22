@@ -96,6 +96,11 @@ class AccountAPI {
         let requestUrl = `${process.env.VUE_APP_API_URL}/accounts/get-instance?id=${id}`;
         return await axios.get(requestUrl);
     }
+
+    async refresh() {
+        let requestUrl = `${process.env.VUE_APP_API_URL}/accounts/refresh`;
+        return await axios.get(requestUrl);
+    }
 }
 
 export default new AccountAPI();

@@ -30,36 +30,36 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
-            var cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.CONFIG, key ?? ""));
-
-            if(string.IsNullOrWhiteSpace(cacheResult))
+            List<Config>? lstConfig = null;
+            var cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.CONFIG));
+            if(!string.IsNullOrWhiteSpace(cacheResult))
             {
-                var result = await _configRepository.GetConfigs(context.Id, key);
-                if(string.IsNullOrWhiteSpace(key) && result != null && result.Count > 0)
+                lstConfig = JsonConvert.DeserializeObject<List<Config>>(cacheResult);
+            }
+
+            if(lstConfig == null)
+            {
+                lstConfig = await _configRepository.GetConfigs(context.Id, key);
+                if(string.IsNullOrWhiteSpace(key) && lstConfig != null)
                 {
-                    await _cacheService.SetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.CONFIG), JsonConvert.SerializeObject(result));
+                    await _cacheService.SetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.CONFIG), JsonConvert.SerializeObject(lstConfig));
                 }
-
-                return new ServiceResultModel()
-                {
-                    Success = true,
-                    Data = result
-                };
             }
-            else
+
+            if(!string.IsNullOrWhiteSpace(key))
             {
-                var result = JsonConvert.DeserializeObject<List<Config>>(cacheResult);
-
-                return new ServiceResultModel()
-                {
-                    Success = true,
-                    Data = result
-                };
+                lstConfig = lstConfig?.Where(item => item.Key == key).ToList();
             }
+
+            return new ServiceResultModel()
+            {
+                Success = true,
+                Data = lstConfig
+            };
         }
 
         public async Task<ServiceResultModel> Save(List<Config> configs)
@@ -71,7 +71,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
@@ -111,7 +111,7 @@ namespace BPHN.BusinessLayer.ImpServices
                         Actor = context.UserName,
                         ActorId = context.Id,
                         ActionType = ActionEnum.SAVE,
-                        Entity = "Cấu hình",
+                        Entity = EntityEnum.CONFIG.ToString(),
                         ActionName = string.Empty,
                         Description = BuildLinkDescription(historyLogId),
                         Data = new HistoryLogDescription()

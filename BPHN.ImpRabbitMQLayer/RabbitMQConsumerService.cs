@@ -44,7 +44,7 @@ namespace BPHN.ImpRabbitMQLayer
                     ObjectQueue parameter = JsonConvert.DeserializeObject<ObjectQueue>(text);
                     switch (parameter.QueueJobType)
                     {
-                        case QueueJobTypeEnum.SEND_MAIL:
+                        case QueueJobTypeEnum.SENDMAIL:
                             await _mailWorker.Handle(parameter.DataJson);
                             break;
                     }

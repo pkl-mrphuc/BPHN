@@ -22,26 +22,26 @@ const loadingOptions = inject("loadingOptions");
 
 const functionName = (functionType) => {
   switch (functionType) {
-    case FunctionTypeEnum.ADD_PITCH:
-      return t("ADD_PITCH");
-    case FunctionTypeEnum.EDIT_PITCH:
-      return t("EDIT_PITCH");
-    case FunctionTypeEnum.VIEW_LIST_PITCH:
-      return t("VIEW_LIST_PITCH");
-    case FunctionTypeEnum.ADD_BOOKING:
-      return t("ADD_BOOKING");
-    case FunctionTypeEnum.EDIT_BOOKING:
-      return t("EDIT_BOOKING");
-    case FunctionTypeEnum.VIEW_LIST_BOOKING:
-      return t("VIEW_LIST_BOOKING");
-    case FunctionTypeEnum.ADD_USER:
-      return t("ADD_USER");
-    case FunctionTypeEnum.EDIT_USER:
-      return t("EDIT_USER");
-    case FunctionTypeEnum.VIEW_LIST_USER:
-      return t("VIEW_LIST_USER");
-    case FunctionTypeEnum.VIEW_LIST_BOOKING_DETAIL:
-      return t("VIEW_LIST_BOOKING_DETAIL");
+    case FunctionTypeEnum.ADDPITCH:
+      return t("ADDPITCH");
+    case FunctionTypeEnum.EDITPITCH:
+      return t("EDITPITCH");
+    case FunctionTypeEnum.VIEWLISTPITCH:
+      return t("VIEWLISTPITCH");
+    case FunctionTypeEnum.ADDBOOKING:
+      return t("ADDBOOKING");
+    case FunctionTypeEnum.EDITBOOKING:
+      return t("EDITBOOKING");
+    case FunctionTypeEnum.VIEWLISTBOOKING:
+      return t("VIEWLISTBOOKING");
+    case FunctionTypeEnum.ADDUSER:
+      return t("ADDUSER");
+    case FunctionTypeEnum.EDITUSER:
+      return t("EDITUSER");
+    case FunctionTypeEnum.VIEWLISTUSER:
+      return t("VIEWLISTUSER");
+    case FunctionTypeEnum.VIEWLISTBOOKINGDETAIL:
+      return t("VIEWLISTBOOKINGDETAIL");
     default:
       return "";
   }
@@ -65,7 +65,7 @@ const save = () => {
             "PushNotification",
             store.getters["account/getRelationIds"],
             store.getters["account/getAccountId"],
-            NotificationTypeEnum.EDIT_USER
+            NotificationTypeEnum.CHANGEPERMISSION
           );
         }
       } else {

@@ -97,8 +97,8 @@ const save = () => {
             store.getters["account/getRelationIds"],
             store.getters["account/getAccountId"],
             props.mode == "edit"
-              ? NotificationTypeEnum.EDIT_USER
-              : NotificationTypeEnum.ADD_USER
+              ? NotificationTypeEnum.UPDATEACCOUNT
+              : NotificationTypeEnum.INSERTACCOUNT
           );
         }
       } else {

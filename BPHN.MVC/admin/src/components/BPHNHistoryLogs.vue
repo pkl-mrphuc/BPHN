@@ -124,12 +124,12 @@ onMounted(() => {
           </el-table-column>
           <el-table-column :label="t('ActionName')" min-width="150">
             <template #default="scope">
-              <span class="text-truncate">{{ scope.row.actionName }}</span>
+              <span class="text-truncate">{{ t(scope.row.actionName) }}</span>
             </template>
           </el-table-column>
           <el-table-column :label="t('Entity')" min-width="150">
             <template #default="scope">
-              <span class="text-truncate">{{ scope.row.entity }}</span>
+              <span class="text-truncate">{{ t(scope.row.entity) }}</span>
             </template>
           </el-table-column>
           <el-table-column :label="t('Description')" min-width="150">

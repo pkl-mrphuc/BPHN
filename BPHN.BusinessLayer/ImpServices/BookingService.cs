@@ -53,19 +53,19 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
-            var hasPermissionAdd = await IsValidPermission(context.Id, FunctionTypeEnum.ADD_BOOKING);
-            var hasPermissionEdit = await IsValidPermission(context.Id, FunctionTypeEnum.EDIT_BOOKING);
+            var hasPermissionAdd = await IsValidPermission(context.Id, FunctionTypeEnum.ADDBOOKING);
+            var hasPermissionEdit = await IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
             if (!hasPermissionAdd && !hasPermissionEdit)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = "Bạn không có quyền thực hiện chức năng này"
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
                 };
             }
 
@@ -87,7 +87,7 @@ namespace BPHN.BusinessLayer.ImpServices
             return new ServiceResultModel()
             {
                 Success = result,
-                Message = !result ? "Khung giờ này đã được đặt trước" : string.Empty
+                Message = !result ? _resourceService.Get(SharedResourceKey.EXISTED, context.LanguageConfig) : string.Empty
             };
 
         }
@@ -101,19 +101,19 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
-            var hasPermissionAdd = await IsValidPermission(context.Id, FunctionTypeEnum.ADD_BOOKING);
-            var hasPermissionEdit = await IsValidPermission(context.Id, FunctionTypeEnum.EDIT_BOOKING);
+            var hasPermissionAdd = await IsValidPermission(context.Id, FunctionTypeEnum.ADDBOOKING);
+            var hasPermissionEdit = await IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
             if (!hasPermissionAdd && !hasPermissionEdit)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = "Bạn không có quyền thực hiện chức năng này"
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
                 };
             }
 
@@ -210,18 +210,18 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEW_LIST_BOOKING);
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
             if (!hasPermission)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = "Bạn không có quyền thực hiện chức năng này"
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
                 };
             }
 
@@ -238,6 +238,17 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> GetInstance(string id)
         {
+            var context = _contextService.GetContext();
+            if (context == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
+                };
+            }
+
             Booking? data = null;
 
             if (string.IsNullOrWhiteSpace(id))
@@ -260,7 +271,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.NOT_EXISTS,
-                        Message = "Không lấy được thông tin booking. Vui lòng kiểm tra lại"
+                        Message = _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig)
                     };
                 }
 
@@ -282,18 +293,18 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEW_LIST_BOOKING);
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
             if (!hasPermission)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = "Bạn không có quyền thực hiện chức năng này"
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
                 };
             }
 
@@ -317,18 +328,18 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.ADD_BOOKING);
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.ADDBOOKING);
             if (!hasPermission)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = "Bạn không có quyền thực hiện chức năng này"
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
                 };
             }
 
@@ -339,7 +350,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = "Dữ liệu đầu vào không được để trống"
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
                 };
             }
 
@@ -351,7 +362,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.NO_INTEGRITY,
-                    Message = "Dữ liệu đầu vào không hợp lệ"
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
                 };
             }
 
@@ -385,7 +396,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var insertResult = await _bookingRepository.Insert(data);
             if (insertResult)
             {
-                var notification = _notificationService.Insert<Booking>(context, NotificationTypeEnum.ADD_BOOKING, data);
+                var notification = _notificationService.Insert<Booking>(context, NotificationTypeEnum.INSERTBOOKING, data);
                 Thread thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();
@@ -396,7 +407,7 @@ namespace BPHN.BusinessLayer.ImpServices
                         Actor = context.UserName,
                         ActorId = context.Id,
                         ActionType = ActionEnum.INSERT,
-                        Entity = "Thông tin đặt sân bóng",
+                        Entity = EntityEnum.BOOKING.ToString(),
                         Description = BuildLinkDescription(historyLogId),
                         Data = new HistoryLogDescription()
                         {
@@ -432,7 +443,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = "Dữ liệu đầu vào không được để trống"
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
                 };
             }
 
@@ -455,7 +466,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EXISTED,
-                    Message = "Khung giờ này đã được đặt trước"
+                    Message = _resourceService.Get(SharedResourceKey.EXISTED)
                 };
             }
 
@@ -497,7 +508,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var insertResult = await _bookingRepository.Insert(booking);
             if (insertResult)
             {
-                _notificationService.Insert<Booking>(fakeContext, NotificationTypeEnum.ADD_BOOKING, booking);
+                _notificationService.Insert<Booking>(fakeContext, NotificationTypeEnum.INSERTBOOKING, booking);
 
                 if(!string.IsNullOrWhiteSpace(_appSettings.SignalrUrl))
                 {
@@ -508,7 +519,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     }
                     var connection = new HubConnectionBuilder().WithUrl(new Uri(_appSettings.SignalrUrl)).Build();
                     await connection.StartAsync();
-                    await connection.InvokeAsync("PushNotification", lstRelationId.Select(item => item.ToString()).ToList(), Guid.NewGuid().ToString(), NotificationTypeEnum.ADD_BOOKING);
+                    await connection.InvokeAsync("PushNotification", lstRelationId.Select(item => item.ToString()).ToList(), Guid.NewGuid().ToString(), NotificationTypeEnum.INSERTBOOKING);
                 }
 
                 Thread thread = new Thread(delegate ()
@@ -521,7 +532,7 @@ namespace BPHN.BusinessLayer.ImpServices
                         Actor = fakeContext.FullName,
                         ActorId = data.AccountId,
                         ActionType = ActionEnum.INSERT,
-                        Entity = "Thông tin đặt sân bóng",
+                        Entity = EntityEnum.BOOKING.ToString(),
                         Description = BuildLinkDescription(historyLogId),
                         Data = new HistoryLogDescription()
                         {
@@ -549,18 +560,18 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = "Token đã hết hạn"
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDIT_BOOKING);
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
             if (!hasPermission)
             {
                 return new ServiceResultModel()
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = "Bạn không có quyền thực hiện chức năng này"
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
                 };
             }
 
@@ -572,7 +583,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.NOT_EXISTS,
-                    Message = "Không lấy được thông tin booking. Vui lòng kiểm tra lại"
+                    Message = _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig)
                 };
             }
             var lstBookingDetail = await _bookingDetailRepository.GetByBookingId(oldData.Id);
@@ -605,14 +616,14 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     _mailService.SendMail(new ObjectQueue()
                     {
-                        QueueJobType = QueueJobTypeEnum.SEND_MAIL,
+                        QueueJobType = QueueJobTypeEnum.SENDMAIL,
                         DataJson = JsonConvert.SerializeObject(new DeclineBookingParameter()
                         {
                             ReceiverAddress = data.Email,
-                            MailType = MailTypeEnum.DECLINE_BOOKING,
+                            MailType = MailTypeEnum.DECLINEBOOKING,
                             ParameterType = typeof(DeclineBookingParameter),
                             PhoneNumber = data.PhoneNumber,
-                            Reason = "Sân đã được đặt trước đó"
+                            Reason = ""
                         })
                     });
                 }
@@ -628,11 +639,11 @@ namespace BPHN.BusinessLayer.ImpServices
                         {
                             _mailService.SendMail(new ObjectQueue()
                             {
-                                QueueJobType = QueueJobTypeEnum.SEND_MAIL,
+                                QueueJobType = QueueJobTypeEnum.SENDMAIL,
                                 DataJson = JsonConvert.SerializeObject(new ApprovalBookingParameter()
                                 {
                                     ReceiverAddress = data.Email,
-                                    MailType = MailTypeEnum.APPROVAL_BOOKING,
+                                    MailType = MailTypeEnum.APPROVALBOOKING,
                                     ParameterType = typeof(ApprovalBookingParameter),
                                     BookingDate = data.BookingDate.ToString("dd/MM/yyyy"),
                                     NameDetail = data.NameDetail,
@@ -648,7 +659,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     
                 }
                 
-                var notification = _notificationService.Insert<Booking>(context, NotificationTypeEnum.EDIT_BOOKING, data);
+                var notification = _notificationService.Insert<Booking>(context, status == BookingStatusEnum.CANCEL ? NotificationTypeEnum.DECLINEBOOKING : NotificationTypeEnum.APPROVALBOOKING, data);
                 Thread thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();
@@ -659,7 +670,7 @@ namespace BPHN.BusinessLayer.ImpServices
                         Actor = context.UserName,
                         ActorId = context.Id,
                         ActionType = ActionEnum.UPDATE,
-                        Entity = "Thông tin đặt sân bóng",
+                        Entity = EntityEnum.BOOKING.ToString(),
                         Description = BuildLinkDescription(historyLogId),
                         Data = new HistoryLogDescription()
                         {

@@ -38,7 +38,7 @@ const save = () => {
       "PushNotification",
       store.getters["account/getRelationIds"],
       store.getters["account/getAccountId"],
-      NotificationTypeEnum.EDIT_BOOKING
+      NotificationTypeEnum.UPDATEMATCH
     );
   }
 };
