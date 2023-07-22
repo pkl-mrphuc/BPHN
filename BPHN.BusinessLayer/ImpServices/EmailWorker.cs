@@ -33,7 +33,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var body = await builder.BuildBody(data);
 
-            if(string.IsNullOrEmpty(body))
+            if(string.IsNullOrWhiteSpace(body))
             {
                 throw new Exception("Build Body Fail");
             }

@@ -26,6 +26,19 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
+        public async Task<List<BookingDetail>> GetByBookingId(Guid bookingId)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var dic = new Dictionary<string, object>();
+                dic.Add("@bookingId", bookingId);
+                var query = @"select * from booking_details where BookingId = @bookingId";
+                var data = await connection.QueryAsync<BookingDetail>(query, dic);
+                return data.ToList();
+            }
+        }
+
         public async Task<List<CalendarEvent>> GetByDate(string date, Guid[] relationIds)
         {
             using (var connection = ConnectDB(GetConnectionString()))

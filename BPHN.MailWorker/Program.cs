@@ -21,6 +21,10 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<IMailBuilder, ForgotPasswordMailBuilder>(item => item.GetService<ForgotPasswordMailBuilder>());
         services.AddSingleton<SetPasswordMailBuilder>();
         services.AddSingleton<IMailBuilder, SetPasswordMailBuilder>(item => item.GetService<SetPasswordMailBuilder>());
+        services.AddSingleton<DeclineBookingMailBuilder>();
+        services.AddSingleton<IMailBuilder, DeclineBookingMailBuilder>(item => item.GetService<DeclineBookingMailBuilder>());
+        services.AddSingleton<ApprovalBookingMailBuilder>();
+        services.AddSingleton<IMailBuilder, ApprovalBookingMailBuilder>(item => item.GetService<ApprovalBookingMailBuilder>());
         services.AddHostedService<Worker>();
 
         Log.Logger = new LoggerConfiguration()

@@ -50,6 +50,26 @@ namespace BPHN.WebAPI.Controllers
             return Ok(source);
         }
 
+        [Route("approval-booking")]
+        [HttpPost]
+        public async Task<IActionResult> GetApprovalBookingBody([FromBody] MailVm<MailApprovalBookingVm> request)
+        {
+            Log.Debug($"MailTemplate/GetApprovalBookingBody start: {JsonConvert.SerializeObject(request)}");
+            var pathView = Path.Combine(_folderDir, "ApprovalBooking.cshtml");
+            var source = await RenderAsync<MailApprovalBookingVm>(pathView, request.Model, request.ViewBag);
+            return Ok(source);
+        }
+
+        [Route("decline-booking")]
+        [HttpPost]
+        public async Task<IActionResult> GetDeclineBookingBody([FromBody] MailVm<MailDeclineBookingVm> request)
+        {
+            Log.Debug($"MailTemplate/GetDeclineBookingBody start: {JsonConvert.SerializeObject(request)}");
+            var pathView = Path.Combine(_folderDir, "DeclineBooking.cshtml");
+            var source = await RenderAsync<MailDeclineBookingVm>(pathView, request.Model, request.ViewBag);
+            return Ok(source);
+        }
+
         private async Task<string> RenderAsync<T>(string pathView, T model, dynamic viewBag)
         {
             if (string.IsNullOrEmpty(pathView) || !System.IO.File.Exists(pathView))

@@ -17,7 +17,9 @@
     public enum MailTypeEnum
     {
         SET_PASSWORD = 0,
-        FORTGOT_PASSWORD = 1
+        FORTGOT_PASSWORD = 1,
+        APPROVAL_BOOKING = 2,
+        DECLINE_BOOKING = 3
     }
 
     public enum QueueJobTypeEnum

@@ -1,6 +1,7 @@
 ﻿using BPHN.BusinessLayer.IServices;
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
+using BPHN.ModelLayer.ObjectQueues;
 using BPHN.ModelLayer.Others;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Options;
@@ -18,6 +19,7 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly ITimeFrameInfoRepository _timeFrameInfoRepository;
         private readonly INotificationService _notificationService;
         private readonly IAccountRepository _accountRepository;
+        private readonly IEmailService _mailService;
         public BookingService(
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
@@ -28,7 +30,8 @@ namespace BPHN.BusinessLayer.ImpServices
             IBookingDetailService bookingDetailService,
             INotificationService notificationService,
             ITimeFrameInfoRepository timeFrameInfoRepository,
-            IAccountRepository accountRepository) : base(serviceProvider, appSettings)
+            IAccountRepository accountRepository,
+            IEmailService mailService) : base(serviceProvider, appSettings)
         {
             _bookingRepository = bookingRepository;
             _historyLogService = historyLogService;
@@ -38,6 +41,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _timeFrameInfoRepository = timeFrameInfoRepository;
             _notificationService = notificationService;
             _accountRepository = accountRepository;
+            _mailService = mailService;
         }
 
         public async Task<ServiceResultModel> CheckFreeTimeFrame(Booking data)
@@ -79,10 +83,13 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
+            var result = await _bookingRepository.CheckFreeTimeFrame(data);
             return new ServiceResultModel()
             {
-                Success = await _bookingRepository.CheckFreeTimeFrame(data)
+                Success = result,
+                Message = !result ? "Khung giờ này đã được đặt trước" : string.Empty
             };
+
         }
 
         public async Task<ServiceResultModel> FindBlank(Booking data)
@@ -231,10 +238,11 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> GetInstance(string id)
         {
-            var data = new Booking();
+            Booking? data = null;
 
             if (string.IsNullOrEmpty(id))
             {
+                data = new Booking();
                 data.Id = Guid.NewGuid();
                 data.BookingDate = DateTime.Now;
                 data.StartDate = DateTime.Now;
@@ -244,7 +252,8 @@ namespace BPHN.BusinessLayer.ImpServices
             }
             else
             {
-                data = (await _bookingRepository.GetById(id)).FirstOrDefault();
+                var lstBook = await _bookingRepository.GetById(id);
+                data = lstBook.FirstOrDefault();
                 if (data == null)
                 {
                     return new ServiceResultModel()
@@ -254,6 +263,8 @@ namespace BPHN.BusinessLayer.ImpServices
                         Message = "Không lấy được thông tin booking. Vui lòng kiểm tra lại"
                     };
                 }
+
+                
             }
             return new ServiceResultModel()
             {
@@ -526,6 +537,137 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 Success = true,
                 Data = insertResult
+            };
+        }
+
+        public async Task<ServiceResultModel> Update(string id, BookingStatusEnum status)
+        {
+            var context = _contextService.GetContext();
+            if (context == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = "Token đã hết hạn"
+                };
+            }
+
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDIT_BOOKING);
+            if (!hasPermission)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = "Bạn không có quyền thực hiện chức năng này"
+                };
+            }
+
+            var lstBook = await _bookingRepository.GetById(id);
+            var oldData = lstBook.FirstOrDefault();
+            if (oldData == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.NOT_EXISTS,
+                    Message = "Không lấy được thông tin booking. Vui lòng kiểm tra lại"
+                };
+            }
+            var lstBookingDetail = await _bookingDetailRepository.GetByBookingId(oldData.Id);
+
+            if(status != BookingStatusEnum.CANCEL)
+            {
+                var checkFreeServiceResult = await CheckFreeTimeFrame(oldData);
+                if (!checkFreeServiceResult.Success)
+                {
+                    return checkFreeServiceResult;
+                }
+            }
+
+            var data = oldData;
+            data.Status = status.ToString();
+            data.ModifiedBy = context.FullName;
+            data.ModifiedDate = DateTime.Now;
+            data.BookingDetails = lstBookingDetail.Select(item =>
+            {
+                item.Status = status.ToString();
+                item.ModifiedBy = context.FullName;
+                item.ModifiedDate = DateTime.Now;
+                return item;
+            }).ToList();
+
+            var updateResult = await _bookingRepository.Update(data);
+            if (updateResult)
+            {
+                if(status == BookingStatusEnum.CANCEL)
+                {
+                    _mailService.SendMail(new ObjectQueue()
+                    {
+                        QueueJobType = QueueJobTypeEnum.SEND_MAIL,
+                        DataJson = JsonConvert.SerializeObject(new DeclineBookingParameter()
+                        {
+                            ReceiverAddress = data.Email,
+                            MailType = MailTypeEnum.DECLINE_BOOKING,
+                            ParameterType = typeof(DeclineBookingParameter),
+                            PhoneNumber = data.PhoneNumber,
+                            Reason = "Sân đã được đặt trước đó"
+                        })
+                    });
+                }
+                else
+                {
+                    var pitch = await _pitchRepository.GetById(data.PitchId.ToString());
+                    var lstFrame = await _timeFrameInfoRepository.GetByPitchId(data.PitchId.Value);
+                    var frame = lstFrame.Where(item => item.Id == data.TimeFrameInfoId).FirstOrDefault();
+                    _mailService.SendMail(new ObjectQueue()
+                    {
+                        QueueJobType = QueueJobTypeEnum.SEND_MAIL,
+                        DataJson = JsonConvert.SerializeObject(new ApprovalBookingParameter()
+                        {
+                            ReceiverAddress = data.Email,
+                            MailType = MailTypeEnum.APPROVAL_BOOKING,
+                            ParameterType = typeof(ApprovalBookingParameter),
+                            BookingDate = data.BookingDate.ToString("dd/MM/yyyy"),
+                            NameDetail = data.NameDetail,
+                            PhoneNumber = data.PhoneNumber,
+                            StadiumName = pitch.Name,
+                            TimeFrameInfo = $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}",
+                            Price = frame.Price.ToString(),
+                            MatchDate = data.BookingDetails.Select(item => item.MatchDate.ToString("dd/MM/yyyy")).FirstOrDefault()
+                        })
+                    });
+                }
+                
+                var notification = _notificationService.Insert<Booking>(context, NotificationTypeEnum.EDIT_BOOKING, data);
+                Thread thread = new Thread(delegate ()
+                {
+                    var historyLogId = Guid.NewGuid();
+                    _historyLogService.Write(new HistoryLog()
+                    {
+                        Id = historyLogId,
+                        IPAddress = context.IPAddress,
+                        Actor = context.UserName,
+                        ActorId = context.Id,
+                        ActionType = ActionEnum.UPDATE,
+                        Entity = "Thông tin đặt sân bóng",
+                        Description = BuildLinkDescription(historyLogId),
+                        Data = new HistoryLogDescription()
+                        {
+                            ModelId = oldData.Id,
+                            OldData = JsonConvert.SerializeObject(oldData),
+                            NewData = JsonConvert.SerializeObject(data)
+                        }
+                    }, context);
+                });
+                thread.Start();
+            }
+
+            return new ServiceResultModel()
+            {
+                Success = true,
+                Data = updateResult
             };
         }
 

@@ -7,6 +7,7 @@ namespace BPHN.BusinessLayer.IServices
     {
         Task<ServiceResultModel> GetInstance(string id);
         Task<ServiceResultModel> Insert(Booking data);
+        Task<ServiceResultModel> Update(string id, BookingStatusEnum status);
         Task<ServiceResultModel> InsertBookingRequest(BookingRequest data);
         Task<ServiceResultModel> CheckFreeTimeFrame(Booking data);
         Task<ServiceResultModel> GetPaging(int pageIndex, int pageSize, string txtSearch, bool hasBookingDetail = false);

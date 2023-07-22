@@ -5,6 +5,7 @@ using BPHN.ModelLayer.Others;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Asn1.Ocsp;
 using Serilog;
 
 namespace BPHN.WebAPI.Controllers
@@ -41,7 +42,7 @@ namespace BPHN.WebAPI.Controllers
         [Route("insert-booking-request")]
         public async Task<IActionResult> InsertBookingRequest([FromBody] BookingRequest request)
         {
-            Log.Debug($"Booking/BookingRequest start: {JsonConvert.SerializeObject(request)}");
+            Log.Debug($"Booking/InsertBookingRequest start: {JsonConvert.SerializeObject(request)}");
             return Ok(await _bookingService.InsertBookingRequest(request));
         }
 
@@ -83,6 +84,26 @@ namespace BPHN.WebAPI.Controllers
         {
             Log.Debug($"Booking/FindBlank start: {JsonConvert.SerializeObject(request)}");
             return Ok(await _bookingService.FindBlank(request));
+        }
+
+        [Permission(new[] { FunctionTypeEnum.EDIT_BOOKING })]
+        [ApiAuthorize]
+        [HttpPost]
+        [Route("approval/{id}")]
+        public async Task<IActionResult> Accept(string id)
+        {
+            Log.Debug($"Booking/Accept start: {id}");
+            return Ok(await _bookingService.Update(id, BookingStatusEnum.SUCCESS));
+        }
+
+        [Permission(new[] { FunctionTypeEnum.EDIT_BOOKING })]
+        [ApiAuthorize]
+        [HttpPost]
+        [Route("decline/{id}")]
+        public async Task<IActionResult> Decline(string id)
+        {
+            Log.Debug($"Booking/Decline start: {id}");
+            return Ok(await _bookingService.Update(id, BookingStatusEnum.CANCEL));
         }
     }
 }

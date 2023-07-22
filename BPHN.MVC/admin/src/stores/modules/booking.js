@@ -35,6 +35,14 @@ const actions = {
 
     findBlank: ((commit, data) => {
         return BookingAPI.findBlank(data);
+    }),
+
+    approval: ((commit, data) => {
+        return BookingAPI.approval(data);
+    }),
+
+    decline: ((commit, data) => {
+        return BookingAPI.decline(data);
     })
 };
 

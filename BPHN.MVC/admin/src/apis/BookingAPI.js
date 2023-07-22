@@ -37,6 +37,16 @@ class BookingAPI {
         let requestParam = data;
         return axios.post(requestUrl, requestParam);
     }
+
+    async approval(id) {
+        let requestUrl = `${process.env.VUE_APP_API_URL}/bookings/approval/${id}`;
+        return axios.post(requestUrl);
+    }
+
+    async decline(id) {
+        let requestUrl = `${process.env.VUE_APP_API_URL}/bookings/decline/${id}`;
+        return axios.post(requestUrl);
+    }
 }
 
 export default new BookingAPI();

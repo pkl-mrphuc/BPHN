@@ -55,8 +55,8 @@ namespace BPHN.DataLayer.ImpRepositories
                     lstParam.Add(param);
                 }
                 var where = string.Join(",", lstParam.ToArray());
-                var lstBooking = (await connection.QueryAsync<Booking>($"select * from bookings where Id in ({where})", dic)).ToList();
-                return lstBooking;
+                var lstBooking = await connection.QueryAsync<Booking>($"select * from bookings where Id in ({where})", dic);
+                return lstBooking.ToList();
             }
         }
 
@@ -102,7 +102,10 @@ namespace BPHN.DataLayer.ImpRepositories
             {
                 connection.Open();
                 var dic = new Dictionary<string, object>();
-                var query = @"select distinct bs.*, p.Name as PitchName, tfi.Name as TimeFrameInfoName from (
+                var query = @"select distinct   bs.*, 
+                                                p.Name as PitchName, 
+                                                concat('Khung ', date_format(TimeBegin,'%H:%i'), ' - ', date_format(TimeEnd,'%H:%i')) as TimeFrameInfoName 
+                                                from (
 						                                    select * from bookings where AccountId in @accountId and PhoneNumber like @txtSearch
                                                             union 
                                                             select * from bookings where AccountId in @accountId and Email like @txtSearch 
@@ -219,6 +222,46 @@ namespace BPHN.DataLayer.ImpRepositories
                         dic.Add("@modifiedDate", item.ModifiedDate);
                         affect = await connection.ExecuteAsync(query, dic, transaction);
                         if(affect <= 0)
+                        {
+                            transaction.Rollback();
+                            return false;
+                        }
+                    }
+
+                    transaction.Commit();
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        public async Task<bool> Update(Booking data)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var dic = new Dictionary<string, object?>();
+                dic.Add("@id", data.Id);
+                dic.Add("@status", data.Status);
+                dic.Add("@modifiedBy", data.ModifiedBy);
+                dic.Add("@modifiedDate", data.ModifiedDate);
+                var transaction = connection.BeginTransaction();
+                var query = @"update bookings set Status = @status, ModifiedDate = @modifiedDate, ModifiedBy = @modifiedBy where Id = @id";
+                int affect = await connection.ExecuteAsync(query, dic, transaction);
+                if (affect > 0)
+                {
+                    for (int i = 0; i < data.BookingDetails.Count; i++)
+                    {
+                        var item = data.BookingDetails[i];
+                        query = @"update booking_details set Status = @status, ModifiedDate = @modifiedDate, ModifiedBy = @modifiedBy where Id = @id";
+                        dic = new Dictionary<string, object?>();
+                        dic.Add("@id", item.Id);
+                        dic.Add("@status", item.Status);
+                        dic.Add("@modifiedBy", item.ModifiedBy);
+                        dic.Add("@modifiedDate", item.ModifiedDate);
+                        affect = await connection.ExecuteAsync(query, dic, transaction);
+                        if (affect <= 0)
                         {
                             transaction.Rollback();
                             return false;

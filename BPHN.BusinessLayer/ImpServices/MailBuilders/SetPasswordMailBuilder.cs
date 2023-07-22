@@ -27,12 +27,14 @@ namespace BPHN.BusinessLayer.ImpServices.MailBuilders
 
         public async Task<string> BuildBody(object? data)
         {
-            if (data != null)
+            if (data != null && _appSettings != null && !string.IsNullOrWhiteSpace(_appSettings.MailTemplateAPI))
             {
                 using (var client = new HttpClient())
                 {
                     var setPasswordParam = (SetPasswordParameter)data;
-                    string key = _keyGenerator.Encryption(JsonConvert.SerializeObject(
+                    if(setPasswordParam != null)
+                    {
+                        string key = _keyGenerator.Encryption(JsonConvert.SerializeObject(
                                 new ExpireSetPasswordModel()
                                 {
                                     ExpireTime = DateTime.Now.AddMinutes(30),
@@ -40,28 +42,29 @@ namespace BPHN.BusinessLayer.ImpServices.MailBuilders
                                 }
                             ));
 
-                    string link = string.Format("{0}/set-password?code={1}&userName={2}", _appSettings.ClientHost, key, setPasswordParam.UserName);
-                    var vm = new MailVm<MailForgotPasswordVm>()
-                    {
-                        Model = new MailForgotPasswordVm()
+                        string link = $"{_appSettings.ClientHost}/set-password?code={key}&userName={setPasswordParam.UserName}";
+                        var vm = new MailVm<MailForgotPasswordVm>()
                         {
-                            AccountId = setPasswordParam.AccountId,
-                            FullName = setPasswordParam.FullName,
-                            UserName = setPasswordParam.UserName,
-                            Key = key,
-                            Link = link
+                            Model = new MailForgotPasswordVm()
+                            {
+                                AccountId = setPasswordParam.AccountId,
+                                FullName = setPasswordParam.FullName,
+                                UserName = setPasswordParam.UserName,
+                                Key = key,
+                                Link = link
+                            }
+                        };
+                        var stringContent = new StringContent(JsonConvert.SerializeObject(vm), UnicodeEncoding.UTF8, "application/json");
+                        var response = await client.PostAsync(string.Format($"{_appSettings.MailTemplateAPI}/set-password"), stringContent);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var responseString = await response.Content.ReadAsStringAsync();
+                            return responseString;
                         }
-                    };
-                    var stringContent = new StringContent(JsonConvert.SerializeObject(vm), UnicodeEncoding.UTF8, "application/json");
-                    var response = await client.PostAsync(string.Format("{0}{1}", _appSettings.MailTemplateAPI, "set-password"), stringContent);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var responseString = await response.Content.ReadAsStringAsync();
-                        return responseString;
                     }
                 }
             }
-            return "";
+            return string.Empty;
         }
 
         public string BuildSubject(object? data)

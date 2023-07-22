@@ -30,7 +30,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 connection.Open();
                 var dic = new Dictionary<string, object>();
                 dic.Add("@pitchId", lstPitchId.ToArray());
-                var lstTimeFrameInfo = await connection.QueryAsync<TimeFrameInfo>("select Id, SortOrder, Name, TimeBegin, TimeEnd, Price from time_frame_infos where PitchId in @pitchId order by SortOrder", dic);
+                var lstTimeFrameInfo = await connection.QueryAsync<TimeFrameInfo>("select Id, SortOrder, Name, TimeBegin, TimeEnd, Price, PitchId from time_frame_infos where PitchId in @pitchId order by SortOrder", dic);
                 return lstTimeFrameInfo.ToList();
             }
         }

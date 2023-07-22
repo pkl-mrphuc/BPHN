@@ -29,8 +29,8 @@ const props = defineProps({
 const running = ref(0);
 const isRecurring = ref(props.data?.isRecurring ?? false);
 const weekdays = ref(props.data?.weekendays + "");
-const fromDate = ref(props.data?.fromDate ?? new Date());
-const toDate = ref(props.data?.toDate ?? new Date());
+const fromDate = ref(props.data?.startDate ?? new Date());
+const toDate = ref(props.data?.endDate ?? new Date());
 const lstStadium = ref([]);
 const lstTimeFrame = ref([]);
 const lstDetail = ref([]);
@@ -173,11 +173,59 @@ const disabledDate = (time) => {
 };
 
 const decline = () => {
-  alert("decline");
+  if (running.value > 0) return;
+  ++running.value;
+  const loading = ElLoading.service(loadingOptions);
+  store.dispatch("booking/decline", props?.data?.id).then((res) => {
+    loading.close();
+    if (res?.data?.success) {
+      emits("callback");
+      toggleModel();
+      if (connection && connection.state === "Connected") {
+        connection.invoke(
+          "PushNotification",
+          store.getters["account/getRelationIds"],
+          store.getters["account/getAccountId"],
+          NotificationTypeEnum.EDIT_BOOKING
+        );
+      }
+    } else {
+      let msg = res?.data?.message;
+      alert(msg ?? t("ErrorMesg"));
+    }
+
+    setTimeout(() => {
+      running.value = 0;
+    }, 1000);
+  });
 };
 
 const approval = () => {
-  alert("approval");
+  if (running.value > 0) return;
+  ++running.value;
+  const loading = ElLoading.service(loadingOptions);
+  store.dispatch("booking/approval", props?.data?.id).then((res) => {
+    loading.close();
+    if (res?.data?.success) {
+      emits("callback");
+      toggleModel();
+      if (connection && connection.state === "Connected") {
+        connection.invoke(
+          "PushNotification",
+          store.getters["account/getRelationIds"],
+          store.getters["account/getAccountId"],
+          NotificationTypeEnum.EDIT_BOOKING
+        );
+      }
+    } else {
+      let msg = res?.data?.message;
+      alert(msg ?? t("ErrorMesg"));
+    }
+
+    setTimeout(() => {
+      running.value = 0;
+    }, 1000);
+  });
 };
 
 onMounted(() => {
@@ -358,7 +406,7 @@ onMounted(() => {
             >{{ t("Approval") }}</el-button
           >
           <el-button
-            class="m-0 mb-2  mr-2"
+            class="m-0 mb-2 mr-2"
             v-if="equals(props.mode, 'approval')"
             type="danger"
             @click="decline"
