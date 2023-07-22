@@ -19,7 +19,7 @@ namespace BPHN.BusinessLayer.ImpServices
         public ServiceResultModel GetLinkFile(string id)
         {
 
-            if (string.IsNullOrEmpty(id))
+            if (string.IsNullOrWhiteSpace(id))
             {
                 return new ServiceResultModel()
                 {
@@ -93,7 +93,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> UploadFile(IFormFile file, string id)
         {
-            if (string.IsNullOrEmpty(id) || file == null)
+            if (string.IsNullOrWhiteSpace(id) || file == null)
             {
                 return new ServiceResultModel()
                 {

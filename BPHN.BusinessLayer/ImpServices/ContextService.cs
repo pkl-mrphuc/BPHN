@@ -14,7 +14,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public Account? GetContext()
         {
-            var user = _httpContextAccessor.HttpContext.Items["User"];
+            var user = _httpContextAccessor.HttpContext?.Items["User"];
             if(user != null)
             {
                 var result = (Account)user;

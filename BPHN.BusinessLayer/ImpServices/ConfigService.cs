@@ -36,10 +36,10 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.CONFIG, key ?? ""));
 
-            if(string.IsNullOrEmpty(cacheResult))
+            if(string.IsNullOrWhiteSpace(cacheResult))
             {
                 var result = await _configRepository.GetConfigs(context.Id, key);
-                if(string.IsNullOrEmpty(key) && result != null && result.Count > 0)
+                if(string.IsNullOrWhiteSpace(key) && result != null && result.Count > 0)
                 {
                     await _cacheService.SetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.CONFIG), JsonConvert.SerializeObject(result));
                 }

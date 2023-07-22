@@ -20,7 +20,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 Dictionary<string, object> dic = new Dictionary<string, object>();
                 dic.Add("@accountId", accountId);
                 var query = $"select c.Key, c.Value from configs c where c.AccountId = @accountId";
-                if (!string.IsNullOrEmpty(key))
+                if (!string.IsNullOrWhiteSpace(key))
                 {
                     dic.Add("@key", key);
                     query = $"select c.Key, c.Value from configs c where c.AccountId = @accountId and c.Key in (@key)";

@@ -78,7 +78,7 @@ namespace BPHN.DataLayer.ImpRepositories
                                                 where   bd.Status in (@status0) and
                                                         bd.MatchDate between @startDate and @endDate";
 
-                if (!string.IsNullOrEmpty(nameDetail))
+                if (!string.IsNullOrWhiteSpace(nameDetail))
                 {
                     dic.Add("@nameDetail", nameDetail);
 

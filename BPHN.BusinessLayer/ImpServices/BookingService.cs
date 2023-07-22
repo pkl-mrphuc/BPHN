@@ -240,7 +240,7 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             Booking? data = null;
 
-            if (string.IsNullOrEmpty(id))
+            if (string.IsNullOrWhiteSpace(id))
             {
                 data = new Booking();
                 data.Id = Guid.NewGuid();
@@ -618,26 +618,34 @@ namespace BPHN.BusinessLayer.ImpServices
                 }
                 else
                 {
-                    var pitch = await _pitchRepository.GetById(data.PitchId.ToString());
-                    var lstFrame = await _timeFrameInfoRepository.GetByPitchId(data.PitchId.Value);
-                    var frame = lstFrame.Where(item => item.Id == data.TimeFrameInfoId).FirstOrDefault();
-                    _mailService.SendMail(new ObjectQueue()
+                    if(data.PitchId.HasValue)
                     {
-                        QueueJobType = QueueJobTypeEnum.SEND_MAIL,
-                        DataJson = JsonConvert.SerializeObject(new ApprovalBookingParameter()
+                        var pitch = await _pitchRepository.GetById(data.PitchId.Value.ToString());
+                        var lstFrame = await _timeFrameInfoRepository.GetByPitchId(data.PitchId.Value);
+                        var frame = lstFrame.Where(item => item.Id == data.TimeFrameInfoId).FirstOrDefault();
+                        var matchDate = data.BookingDetails.Select(item => item.MatchDate.ToString("dd/MM/yyyy")).FirstOrDefault();
+                        if (pitch != null && frame != null && matchDate != null)
                         {
-                            ReceiverAddress = data.Email,
-                            MailType = MailTypeEnum.APPROVAL_BOOKING,
-                            ParameterType = typeof(ApprovalBookingParameter),
-                            BookingDate = data.BookingDate.ToString("dd/MM/yyyy"),
-                            NameDetail = data.NameDetail,
-                            PhoneNumber = data.PhoneNumber,
-                            StadiumName = pitch.Name,
-                            TimeFrameInfo = $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}",
-                            Price = frame.Price.ToString(),
-                            MatchDate = data.BookingDetails.Select(item => item.MatchDate.ToString("dd/MM/yyyy")).FirstOrDefault()
-                        })
-                    });
+                            _mailService.SendMail(new ObjectQueue()
+                            {
+                                QueueJobType = QueueJobTypeEnum.SEND_MAIL,
+                                DataJson = JsonConvert.SerializeObject(new ApprovalBookingParameter()
+                                {
+                                    ReceiverAddress = data.Email,
+                                    MailType = MailTypeEnum.APPROVAL_BOOKING,
+                                    ParameterType = typeof(ApprovalBookingParameter),
+                                    BookingDate = data.BookingDate.ToString("dd/MM/yyyy"),
+                                    NameDetail = data.NameDetail,
+                                    PhoneNumber = data.PhoneNumber,
+                                    StadiumName = pitch.Name,
+                                    TimeFrameInfo = $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}",
+                                    Price = frame.Price.ToString(),
+                                    MatchDate = matchDate
+                                })
+                            });
+                        }
+                    }
+                    
                 }
                 
                 var notification = _notificationService.Insert<Booking>(context, NotificationTypeEnum.EDIT_BOOKING, data);
@@ -686,7 +694,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Column = "Status",
                     Operator = "=",
-                    Value = "ACTIVE"
+                    Value = ActiveStatusEnum.ACTIVE.ToString()
                 }
             });
             var now = DateTime.Now;

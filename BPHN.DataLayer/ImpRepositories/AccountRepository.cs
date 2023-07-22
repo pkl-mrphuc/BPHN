@@ -114,7 +114,7 @@ namespace BPHN.DataLayer.ImpRepositories
             var countQuery = string.Empty;
             var dic = new Dictionary<string, object>();
             var whereQuery = BuildWhereQuery(where);
-            if (!string.IsNullOrEmpty(txtSearch))
+            if (!string.IsNullOrWhiteSpace(txtSearch))
             {
                 query = $@"  select distinct ac.UserName, ac.FullName, ac.Gender, ac.PhoneNumber, ac.Email, ac.Id, ac.Role, ac.Status, ac.ModifiedDate from  (
                                                     select * from accounts where {whereQuery} and UserName like @where
@@ -172,7 +172,7 @@ namespace BPHN.DataLayer.ImpRepositories
             var countQuery = string.Empty;
             var dic = new Dictionary<string, object>();
             var whereQuery = BuildWhereQuery(where);
-            if (!string.IsNullOrEmpty(txtSearch))
+            if (!string.IsNullOrWhiteSpace(txtSearch))
             {
                 countQuery = $@" select distinct count(*) from   (
                                                                 select * from accounts where {whereQuery} and UserName like @where

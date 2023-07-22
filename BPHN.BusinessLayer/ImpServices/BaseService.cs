@@ -71,7 +71,7 @@ namespace BPHN.BusinessLayer.ImpServices
         private bool ValidateRequiredValue(object? value, PropertyInfo property, Attribute attribute)
         {
             if (value == null) return false;
-            if (property.PropertyType == typeof(string) && string.IsNullOrEmpty(value.ToString())) return false;
+            if (property.PropertyType == typeof(string) && string.IsNullOrWhiteSpace(value.ToString())) return false;
             return true;
         }
 
@@ -112,7 +112,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var permissions = new List<Permission>();
             var key = _cacheService.GetKeyCache(accountId, EntityEnum.PERMISSION);
             var cacheResult = await _cacheService.GetAsync(key);
-            if(!string.IsNullOrEmpty(cacheResult))
+            if(!string.IsNullOrWhiteSpace(cacheResult))
             {
                 permissions = JsonConvert.DeserializeObject<List<Permission>>(cacheResult);
             }
@@ -120,6 +120,11 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 permissions = await _permissionRepository.GetPermissions(accountId);
                 await _cacheService.SetAsync(key, JsonConvert.SerializeObject(permissions));
+            }
+
+            if (permissions == null)
+            {
+                return false;
             }
 
             var result = permissions.Where(item => item.FunctionType == (int)functionType && item.Allow)

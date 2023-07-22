@@ -5,8 +5,7 @@ namespace BPHN.BusinessLayer.ImpServices
 {
     public class WsReceiveService : Hub<IWsSendService>
     {
-        private readonly static ConnectionMapping<string> _connections =
-            new ConnectionMapping<string>();
+        private readonly static ConnectionMapping _connections = new ConnectionMapping();
 
         public void AddConnection(string accountId)
         {
@@ -38,10 +37,10 @@ namespace BPHN.BusinessLayer.ImpServices
         }
     }
 
-    public class ConnectionMapping<T>
+    public class ConnectionMapping
     {
-        private readonly Dictionary<T, HashSet<string>> _connections =
-            new Dictionary<T, HashSet<string>>();
+        private readonly Dictionary<string, HashSet<string>> _connections =
+            new Dictionary<string, HashSet<string>>();
 
         public int Count
         {
@@ -51,11 +50,11 @@ namespace BPHN.BusinessLayer.ImpServices
             }
         }
 
-        public void Add(T key, string connectionId)
+        public void Add(string key, string connectionId)
         {
             lock (_connections)
             {
-                HashSet<string> connections;
+                HashSet<string>? connections;
                 if (!_connections.TryGetValue(key, out connections))
                 {
                     connections = new HashSet<string>();
@@ -69,9 +68,9 @@ namespace BPHN.BusinessLayer.ImpServices
             }
         }
 
-        public IEnumerable<string> GetConnections(T key)
+        public IEnumerable<string> GetConnections(string key)
         {
-            HashSet<string> connections;
+            HashSet<string>? connections;
             if (_connections.TryGetValue(key, out connections))
             {
                 return connections;
@@ -80,11 +79,11 @@ namespace BPHN.BusinessLayer.ImpServices
             return Enumerable.Empty<string>();
         }
 
-        public void Remove(T key, string connectionId)
+        public void Remove(string key, string connectionId)
         {
             lock (_connections)
             {
-                HashSet<string> connections;
+                HashSet<string>? connections;
                 if (!_connections.TryGetValue(key, out connections))
                 {
                     return;

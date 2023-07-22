@@ -176,7 +176,7 @@ onMounted(() => {
                         v-if="
                           equals(scope.row.status, BookingStatusEnum.SUCCESS)
                         "
-                        >{{ scope.row.status }}</el-tag
+                        >{{ t(scope.row.status) }}</el-tag
                       >
                       <el-tag
                         type="info"
@@ -184,10 +184,10 @@ onMounted(() => {
                         v-else-if="
                           equals(scope.row.status, BookingStatusEnum.PENDING)
                         "
-                        >{{ scope.row.status }}</el-tag
+                        >{{ t(scope.row.status) }}</el-tag
                       >
                       <el-tag type="danger" v-else size="small">{{
-                        scope.row.status
+                        t(scope.row.status)
                       }}</el-tag>
                     </template>
                   </el-table-column>
@@ -242,22 +242,22 @@ onMounted(() => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column :label="t('Status')" width="100">
+          <el-table-column :label="t('Status')" width="120">
             <template #default="scope">
               <el-tag
                 type="success"
                 size="small"
                 v-if="equals(scope.row.status, BookingStatusEnum.SUCCESS)"
-                >{{ scope.row.status }}</el-tag
+                >{{ t(scope.row.status) }}</el-tag
               >
               <el-tag
                 type="info"
                 size="small"
                 v-else-if="equals(scope.row.status, BookingStatusEnum.PENDING)"
-                >{{ scope.row.status }}</el-tag
+                >{{ t(scope.row.status) }}</el-tag
               >
               <el-tag type="danger" size="small" v-else>{{
-                scope.row.status
+                t(scope.row.status)
               }}</el-tag>
             </template>
           </el-table-column>

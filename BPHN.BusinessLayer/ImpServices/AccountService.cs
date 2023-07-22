@@ -106,11 +106,11 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 account.Permissions = await _permissionRepository.GetPermissions(id);
                 account.RelationIds = await _accountRepository.GetRelationIds   (
-                                                                                    account.ParentId.HasValue && 
-                                                                                    !account.ParentId.Value.Equals(Guid.Empty) 
-                                                                                    ? 
-                                                                                    account.ParentId.Value 
-                                                                                    : 
+                                                                                    account.ParentId.HasValue &&
+                                                                                    !account.ParentId.Value.Equals(Guid.Empty)
+                                                                                    ?
+                                                                                    account.ParentId.Value
+                                                                                    :
                                                                                     id
                                                                                 );
             }
@@ -205,7 +205,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             Account? data = null;
-            if (string.IsNullOrEmpty(id))
+            if (string.IsNullOrWhiteSpace(id))
             {
                 data = new Account();
                 data.Id = Guid.NewGuid();
@@ -333,7 +333,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public ServiceResultModel GetTokenInfo(string token)
         {
-            if (string.IsNullOrEmpty(token))
+            if (string.IsNullOrWhiteSpace(token))
             {
                 return new ServiceResultModel()
                 {
@@ -586,7 +586,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> ResetPassword(string userName)
         {
-            if(string.IsNullOrEmpty(userName))
+            if(string.IsNullOrWhiteSpace(userName))
             {
                 return new ServiceResultModel()
                 {
@@ -663,8 +663,29 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> SubmitSetPassword(string code, string password, string userName)
         {
+            if(string.IsNullOrWhiteSpace(code) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(userName))
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.EMPTY_INPUT,
+                    Message = "Dữ liệu đầu vào không được để trống"
+                };
+            }
+
             var param = _keyGenerator.Decryption(code);
             var expireResetPasswordModel = JsonConvert.DeserializeObject<ExpireSetPasswordModel>(param);
+
+            if(expireResetPasswordModel == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.EMPTY_INPUT,
+                    Message = "Dữ liệu đầu vào không được để trống"
+                };
+            }
+
             if (expireResetPasswordModel.ExpireTime < DateTime.Now)
             {
                 return new ServiceResultModel()

@@ -38,7 +38,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 Operator = "=",
                 Value = context.Id.ToString()
             });
-            if (!string.IsNullOrEmpty(txtSearch))
+            if (!string.IsNullOrWhiteSpace(txtSearch))
             {
                 where.Add(new WhereCondition()
                 {
@@ -89,7 +89,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 Operator = "=",
                 Value = context.Id.ToString()
             });
-            if(!string.IsNullOrEmpty(txtSearch))
+            if(!string.IsNullOrWhiteSpace(txtSearch))
             {
                 where.Add(new WhereCondition()
                 {

@@ -138,7 +138,10 @@ const vi = {
     HasCompetitor: 'Đã có đối',
     HasNotCompetitor: 'Chưa có đối',
     Approval: 'Phê duyệt',
-    Decline: 'Từ chối'
+    Decline: 'Từ chối',
+    SUCCESS: 'Đã đặt',
+    PENDING: 'Chờ duyệt',
+    CANCEL: 'Đã hủy',
 }
 
 export default vi;

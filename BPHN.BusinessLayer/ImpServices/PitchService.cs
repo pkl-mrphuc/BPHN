@@ -37,7 +37,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
             var lstWhere = new List<WhereCondition>();
 
-            if (!string.IsNullOrEmpty(accountId))
+            if (!string.IsNullOrWhiteSpace(accountId))
             {
                 Guid id;
                 Guid.TryParse(accountId, out id);
@@ -85,7 +85,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 });
             }
 
-            if (!hasInactive || string.IsNullOrEmpty(accountId))
+            if (!hasInactive || string.IsNullOrWhiteSpace(accountId))
             {
                 lstWhere.Add(new WhereCondition()
                 {
@@ -95,7 +95,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 });
             }
 
-            if (!string.IsNullOrEmpty(txtSearch))
+            if (!string.IsNullOrWhiteSpace(txtSearch))
             {
                 lstWhere.Add(new WhereCondition()
                 {
@@ -116,7 +116,7 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> GetInstance(string id)
         {
             Pitch? data = null;
-            if (string.IsNullOrEmpty(id))
+            if (string.IsNullOrWhiteSpace(id))
             {
                 data = new Pitch();
                 data.Id = Guid.NewGuid();
@@ -180,7 +180,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     };
                 }
 
-                if (!string.IsNullOrEmpty(data.NameDetails))
+                if (!string.IsNullOrWhiteSpace(data.NameDetails))
                 {
                     var lstNameDetails = data.NameDetails.Split(";").ToList();
                     data.ListNameDetails = lstNameDetails;
@@ -221,7 +221,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
             var lstWhere = new List<WhereCondition>();
 
-            if(!string.IsNullOrEmpty(accountId))
+            if(!string.IsNullOrWhiteSpace(accountId))
             {
                 Guid id;
                 Guid.TryParse(accountId, out id);
@@ -267,7 +267,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 });
             }
             
-            if(!hasInactive || string.IsNullOrEmpty(accountId))
+            if(!hasInactive || string.IsNullOrWhiteSpace(accountId))
             {
                 lstWhere.Add(new WhereCondition()
                 {
@@ -277,7 +277,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 });
             }
 
-            if(!string.IsNullOrEmpty(txtSearch))
+            if(!string.IsNullOrWhiteSpace(txtSearch))
             {
                 lstWhere.Add(new WhereCondition()
                 {

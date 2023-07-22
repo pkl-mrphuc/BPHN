@@ -28,5 +28,6 @@ namespace BPHN.ModelLayer
         public string IPAddress { get; set; }
         public List<Permission>? Permissions { get; set; }
         public List<Guid> RelationIds { get; set; }
+        public string LanguageConfig { get; set; }
     }
 }

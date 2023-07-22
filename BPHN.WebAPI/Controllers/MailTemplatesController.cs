@@ -72,7 +72,7 @@ namespace BPHN.WebAPI.Controllers
 
         private async Task<string> RenderAsync<T>(string pathView, T model, dynamic viewBag)
         {
-            if (string.IsNullOrEmpty(pathView) || !System.IO.File.Exists(pathView))
+            if (string.IsNullOrWhiteSpace(pathView) || !System.IO.File.Exists(pathView))
             {
                 return "";
             }

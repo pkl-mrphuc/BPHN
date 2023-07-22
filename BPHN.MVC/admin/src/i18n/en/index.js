@@ -138,6 +138,9 @@ const en = {
     HasCompetitor: 'Has competior',
     HasNotCompetitor: 'Has no competior',
     Approval: 'Approval',
-    Decline: 'Decline'
+    Decline: 'Decline',
+    SUCCESS: 'SUCCESS',
+    PENDING: 'PENDING',
+    CANCEL: 'CANCEL',
 }
 export default en;

@@ -44,6 +44,7 @@ builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddSingleton<IRabbitMQProducerService, RabbitMQProducerService>();
+builder.Services.AddSingleton<IResourceService, ResourceService>();
 builder.Services.AddMvc(options => options.ModelValidatorProviders.Clear());
 builder.Services.AddControllers();
 

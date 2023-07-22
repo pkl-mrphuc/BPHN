@@ -21,12 +21,18 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task Handle(string dataJson)
         {
-            if (string.IsNullOrEmpty(dataJson))
+            if (string.IsNullOrWhiteSpace(dataJson))
             {
                 throw new Exception("Input Empty");
             }
 
             var sendMail = JsonConvert.DeserializeObject<SendMailParameter>(dataJson);
+
+            if (sendMail == null)
+            {
+                throw new Exception("Input Empty");
+            }
+
             var parameterType = sendMail.ParameterType;
             var data = JsonConvert.DeserializeObject(dataJson, parameterType);
             var builder = _mailFactory.GetInstance(sendMail.MailType);
