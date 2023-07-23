@@ -1,7 +1,9 @@
 ﻿using BPHN.BusinessLayer.IServices;
+using BPHN.DataLayer.ImpRepositories;
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -48,7 +50,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel Insert<T>(Account context, NotificationTypeEnum type, T model)
+        public async Task<ServiceResultModel> Insert<T>(Account context, NotificationTypeEnum type, T model)
         {
             var notification = new Notification()
             {
@@ -62,6 +64,19 @@ namespace BPHN.BusinessLayer.ImpServices
                 ModifiedBy = context.FullName,
                 ModifiedDate = DateTime.Now,
             };
+
+            if (_appSettings != null && !string.IsNullOrWhiteSpace(_appSettings.SignalrUrl))
+            {
+                var connection = new HubConnectionBuilder().WithUrl(new Uri(_appSettings.SignalrUrl)).Build();
+                await connection.StartAsync();
+                await connection.InvokeAsync(
+                                                "PushNotification", 
+                                                context.RelationIds.Select(item => item.ToString()).ToList(), 
+                                                context.Id.ToString(), 
+                                                (int)type, 
+                                                JsonConvert.SerializeObject(model)
+                                            );
+            }
 
             var thread = new Thread(async delegate ()
             {

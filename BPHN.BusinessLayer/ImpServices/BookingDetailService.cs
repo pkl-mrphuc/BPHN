@@ -47,7 +47,10 @@ namespace BPHN.BusinessLayer.ImpServices
             var result = await _bookingDetailRepository.Cancel(id);
             if(result)
             {
-                _notificationService.Insert<string>(context, NotificationTypeEnum.CANCELBOOKINGDETAIL, id);
+                await _notificationService.Insert<BookingDetail>(context, NotificationTypeEnum.CANCELBOOKINGDETAIL, new BookingDetail()
+                {
+                    MatchCode = (await _bookingDetailRepository.GetById(id))?.MatchCode ?? -1
+                });
             }
             return new ServiceResultModel()
             {
@@ -173,7 +176,9 @@ namespace BPHN.BusinessLayer.ImpServices
             var result = await _bookingDetailRepository.UpdateMatch(eventInfo);
             if(result)
             {
-                _notificationService.Insert<CalendarEvent>(context, NotificationTypeEnum.UPDATEMATCH, eventInfo);
+                await _notificationService.Insert<BookingDetail>(context, NotificationTypeEnum.UPDATEMATCH, new BookingDetail() {
+                    MatchCode = (await _bookingDetailRepository.GetById(eventInfo.Id.ToString()))?.MatchCode ?? -1
+                });
             }
             return new ServiceResultModel()
             {

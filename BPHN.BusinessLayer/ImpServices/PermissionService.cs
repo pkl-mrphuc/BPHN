@@ -1,4 +1,5 @@
 ﻿using BPHN.BusinessLayer.IServices;
+using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
 using Microsoft.Extensions.Options;
@@ -12,14 +13,17 @@ namespace BPHN.BusinessLayer.ImpServices
     {
         private readonly IHistoryLogService _historyLogService;
         private readonly INotificationService _notificationService;
+        private readonly IAccountRepository _accountRepository;
         public PermissionService(
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
             INotificationService notificationService,
-            IHistoryLogService historyLogService) : base(serviceProvider, appSettings)
+            IHistoryLogService historyLogService,
+            IAccountRepository accountRepository) : base(serviceProvider, appSettings)
         {
             _historyLogService = historyLogService;
             _notificationService = notificationService;
+            _accountRepository = accountRepository;
         }
 
         public List<Permission> GetDefaultPermissions(Guid accountId, Account context)
@@ -204,9 +208,11 @@ namespace BPHN.BusinessLayer.ImpServices
             var saveResult = await _permissionRepository.Save(permissions);
             if(saveResult)
             {
-                var notification = _notificationService.Insert<List<Permission>>(context, NotificationTypeEnum.CHANGEPERMISSION, permissions);
-                var key = _cacheService.GetKeyCache(accountId, EntityEnum.PERMISSION);
-                await _cacheService.RemoveAsync(key);
+                await _notificationService.Insert<Account>(context, NotificationTypeEnum.CHANGEPERMISSION, new Account()
+                {
+                    UserName = (await _accountRepository.GetAccountById(accountId))?.UserName ?? string.Empty
+                });
+                await _cacheService.RemoveAsync(_cacheService.GetKeyCache(accountId, EntityEnum.PERMISSION));
                 var thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();

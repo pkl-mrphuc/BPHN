@@ -275,7 +275,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     };
                 }
 
-                
+
             }
             return new ServiceResultModel()
             {
@@ -396,8 +396,25 @@ namespace BPHN.BusinessLayer.ImpServices
             var insertResult = await _bookingRepository.Insert(data);
             if (insertResult)
             {
-                var notification = _notificationService.Insert<Booking>(context, NotificationTypeEnum.INSERTBOOKING, data);
-                Thread thread = new Thread(delegate ()
+                if(data.PitchId.HasValue)
+                {
+                    var pitch = await _pitchRepository.GetById(data.PitchId.Value.ToString());
+                    var lstFrame = await _timeFrameInfoRepository.GetByPitchId(data.PitchId.Value);
+                    var frame = lstFrame.Where(item => item.Id == data.TimeFrameInfoId).FirstOrDefault();
+                    var matchDate = data.BookingDetails.Select(item => item.MatchDate.ToString("dd/MM/yyyy")).FirstOrDefault();
+                    if (pitch != null && frame != null && matchDate != null)
+                    {
+                        await _notificationService.Insert<Booking>(context, NotificationTypeEnum.INSERTBOOKING, new Booking()
+                        {
+                            PhoneNumber = data.PhoneNumber,
+                            NameDetail = data.NameDetail,
+                            PitchName = pitch.Name,
+                            TimeFrameInfoName = $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}"
+                        });
+                    }
+                }
+                    
+                var thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();
                     _historyLogService.Write(new HistoryLog()
@@ -508,21 +525,29 @@ namespace BPHN.BusinessLayer.ImpServices
             var insertResult = await _bookingRepository.Insert(booking);
             if (insertResult)
             {
-                _notificationService.Insert<Booking>(fakeContext, NotificationTypeEnum.INSERTBOOKING, booking);
-
-                if(!string.IsNullOrWhiteSpace(_appSettings.SignalrUrl))
+                if (booking.PitchId.HasValue)
                 {
-                    var lstRelationId = await _accountRepository.GetRelationIds(data.AccountId);
-                    if(lstRelationId == null)
+                    var pitch = await _pitchRepository.GetById(booking.PitchId.Value.ToString());
+                    var lstFrame = await _timeFrameInfoRepository.GetByPitchId(booking.PitchId.Value);
+                    var frame = lstFrame.Where(item => item.Id == data.TimeFrameInfoId).FirstOrDefault();
+                    var matchDate = booking.BookingDetails.Select(item => item.MatchDate.ToString("dd/MM/yyyy")).FirstOrDefault();
+                    if (pitch != null && frame != null && matchDate != null)
                     {
-                        lstRelationId = new List<Guid>() { data.AccountId };
+                        await _notificationService.Insert<Booking>(new Account()
+                        {
+                            RelationIds = await _accountRepository.GetRelationIds(data.AccountId) ?? new List<Guid>() { data.AccountId },
+                            Id = Guid.NewGuid()
+                        }, NotificationTypeEnum.INSERTBOOKING, new Booking()
+                        {
+                            PhoneNumber = data.PhoneNumber,
+                            NameDetail = data.NameDetail,
+                            PitchName = pitch.Name,
+                            TimeFrameInfoName = $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}"
+                        });
                     }
-                    var connection = new HubConnectionBuilder().WithUrl(new Uri(_appSettings.SignalrUrl)).Build();
-                    await connection.StartAsync();
-                    await connection.InvokeAsync("PushNotification", lstRelationId.Select(item => item.ToString()).ToList(), Guid.NewGuid().ToString(), NotificationTypeEnum.INSERTBOOKING);
                 }
 
-                Thread thread = new Thread(delegate ()
+                var thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();
                     _historyLogService.Write(new HistoryLog()
@@ -588,7 +613,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
             var lstBookingDetail = await _bookingDetailRepository.GetByBookingId(oldData.Id);
 
-            if(status != BookingStatusEnum.CANCEL)
+            if (status != BookingStatusEnum.CANCEL)
             {
                 var checkFreeServiceResult = await CheckFreeTimeFrame(oldData);
                 if (!checkFreeServiceResult.Success)
@@ -612,30 +637,39 @@ namespace BPHN.BusinessLayer.ImpServices
             var updateResult = await _bookingRepository.Update(data);
             if (updateResult)
             {
-                if(status == BookingStatusEnum.CANCEL)
+
+                if (data.PitchId.HasValue)
                 {
-                    _mailService.SendMail(new ObjectQueue()
+                    var pitch = await _pitchRepository.GetById(data.PitchId.Value.ToString());
+                    var lstFrame = await _timeFrameInfoRepository.GetByPitchId(data.PitchId.Value);
+                    var frame = lstFrame.Where(item => item.Id == data.TimeFrameInfoId).FirstOrDefault();
+                    var matchDate = data.BookingDetails.Select(item => item.MatchDate.ToString("dd/MM/yyyy")).FirstOrDefault();
+                    if (pitch != null && frame != null && matchDate != null)
                     {
-                        QueueJobType = QueueJobTypeEnum.SENDMAIL,
-                        DataJson = JsonConvert.SerializeObject(new DeclineBookingParameter()
+                        if (status == BookingStatusEnum.CANCEL)
                         {
-                            ReceiverAddress = data.Email,
-                            MailType = MailTypeEnum.DECLINEBOOKING,
-                            ParameterType = typeof(DeclineBookingParameter),
-                            PhoneNumber = data.PhoneNumber,
-                            Reason = ""
-                        })
-                    });
-                }
-                else
-                {
-                    if(data.PitchId.HasValue)
-                    {
-                        var pitch = await _pitchRepository.GetById(data.PitchId.Value.ToString());
-                        var lstFrame = await _timeFrameInfoRepository.GetByPitchId(data.PitchId.Value);
-                        var frame = lstFrame.Where(item => item.Id == data.TimeFrameInfoId).FirstOrDefault();
-                        var matchDate = data.BookingDetails.Select(item => item.MatchDate.ToString("dd/MM/yyyy")).FirstOrDefault();
-                        if (pitch != null && frame != null && matchDate != null)
+                            _mailService.SendMail(new ObjectQueue()
+                            {
+                                QueueJobType = QueueJobTypeEnum.SENDMAIL,
+                                DataJson = JsonConvert.SerializeObject(new DeclineBookingParameter()
+                                {
+                                    ReceiverAddress = data.Email,
+                                    MailType = MailTypeEnum.DECLINEBOOKING,
+                                    ParameterType = typeof(DeclineBookingParameter),
+                                    PhoneNumber = data.PhoneNumber,
+                                    Reason = ""
+                                })
+                            });
+
+                            await _notificationService.Insert<Booking>(context, NotificationTypeEnum.DECLINEBOOKING, new Booking()
+                            {
+                                PhoneNumber = data.PhoneNumber,
+                                NameDetail = data.NameDetail,
+                                PitchName = pitch.Name,
+                                TimeFrameInfoName = $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}"
+                            });
+                        }
+                        else
                         {
                             _mailService.SendMail(new ObjectQueue()
                             {
@@ -654,12 +688,18 @@ namespace BPHN.BusinessLayer.ImpServices
                                     MatchDate = matchDate
                                 })
                             });
+
+                            await _notificationService.Insert<Booking>(context, NotificationTypeEnum.APPROVALBOOKING, new Booking()
+                            {
+                                PhoneNumber = data.PhoneNumber,
+                                NameDetail = data.NameDetail,
+                                PitchName = pitch.Name,
+                                TimeFrameInfoName = $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}"
+                            });
                         }
                     }
-                    
                 }
-                
-                var notification = _notificationService.Insert<Booking>(context, status == BookingStatusEnum.CANCEL ? NotificationTypeEnum.DECLINEBOOKING : NotificationTypeEnum.APPROVALBOOKING, data);
+
                 Thread thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();

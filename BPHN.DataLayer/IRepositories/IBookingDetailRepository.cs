@@ -16,5 +16,6 @@ namespace BPHN.DataLayer.IRepositories
         Task<bool> UpdateMatch(CalendarEvent eventInfo);
         Task<List<CalendarEvent>> GetByRangeDate(string startDate, string endDate, string pitchId, string nameDetail);
         Task<List<BookingDetail>> GetByBookingId(Guid bookingId);
+        Task<BookingDetail?> GetById(string id);
     }
 }

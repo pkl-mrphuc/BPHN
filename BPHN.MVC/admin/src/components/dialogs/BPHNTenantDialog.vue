@@ -12,9 +12,8 @@ import {
 } from "vue";
 import { useStore } from "vuex";
 import { ElLoading } from "element-plus";
-import { GenderEnum, NotificationTypeEnum, StatusEnum } from "@/const";
+import { GenderEnum, StatusEnum } from "@/const";
 import useCommonFn from "@/commonFn";
-import connection from "@/ws";
 
 const props = defineProps({
   data: Object,
@@ -91,16 +90,6 @@ const save = () => {
       if (res?.data?.success) {
         emits("callback");
         toggleModel();
-        if (connection && connection.state === "Connected") {
-          connection.invoke(
-            "PushNotification",
-            store.getters["account/getRelationIds"],
-            store.getters["account/getAccountId"],
-            props.mode == "edit"
-              ? NotificationTypeEnum.UPDATEACCOUNT
-              : NotificationTypeEnum.INSERTACCOUNT
-          );
-        }
       } else {
         let msg = res?.data?.message;
         alert(msg ?? t("ErrorMesg"));

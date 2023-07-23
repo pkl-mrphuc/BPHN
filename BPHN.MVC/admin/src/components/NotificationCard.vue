@@ -9,10 +9,10 @@
       <div class="fw-bold mb-2">
         <span class="text-truncate">{{ t(subject) }}</span>
       </div>
-      <div class="text-truncate">{{ content }}</div>
-      <div class="fst-italic">{{ author }}</div>
+      <div class="text-truncate" :title="content">{{ content }}</div>
+      <div class="fst-italic text-truncate" :title="author">{{ author }}</div>
     </div>
-     <el-divider />
+    <el-divider />
   </div>
 </template>
 
@@ -22,6 +22,7 @@ import useCommonFn from "@/commonFn";
 import { useStore } from "vuex";
 import { Check } from "@element-plus/icons-vue";
 import { useI18n } from "vue-i18n";
+import { NotificationTypeEnum } from "@/const";
 
 const props = defineProps({
   data: Object,
@@ -32,7 +33,33 @@ const formatDate = ref(store.getters["config/getFormatDate"]);
 const { t } = useI18n();
 
 const subject = ref(props.data?.subject);
-const content = ref(props.data?.content);
+const content = computed(() => {
+  let model = JSON.parse(props.data?.content);
+  switch (props.data?.notificationType) {
+    case NotificationTypeEnum.CANCELBOOKINGDETAIL:
+      return t("CANCELBOOKINGDETAIL", { code : model?.Code }) ;
+    case NotificationTypeEnum.UPDATEMATCH:
+      return t("UPDATEMATCH", { code : model?.Code });
+    case NotificationTypeEnum.INSERTBOOKING:
+      return t("INSERTBOOKING", { info: `${model?.PhoneNumber}/${model?.PitchName}-${model?.NameDetail}/${model?.TimeFrameInfoName}` });
+    case NotificationTypeEnum.DECLINEBOOKING:
+      return t("DECLINEBOOKING", { info: `${model?.PhoneNumber}/${model?.PitchName}-${model?.NameDetail}/${model?.TimeFrameInfoName}` });
+    case NotificationTypeEnum.APPROVALBOOKING:
+      return t("APPROVALBOOKING", { info: `${model?.PhoneNumber}/${model?.PitchName}-${model?.NameDetail}/${model?.TimeFrameInfoName}` });
+    case NotificationTypeEnum.CHANGEPERMISSION:
+      return t("CHANGEPERMISSION", { name: model?.UserName });
+    case NotificationTypeEnum.INSERTPITCH:
+      return t("INSERTPITCH", { name: model?.Name });
+    case NotificationTypeEnum.UPDATEPITCH:
+      return t("UPDATEPITCH", { name: model?.Name });
+    case NotificationTypeEnum.INSERTACCOUNT:
+      return t("INSERTACCOUNT", { name: model?.UserName });
+    case NotificationTypeEnum.UPDATEACCOUNT:
+      return t("UPDATEACCOUNT", { name: model?.UserName });
+    default:
+      return "";
+  }
+});
 const author = computed(() => {
   return `${props.data?.createdBy} - ${dateToString(
     props.data?.createdDate,

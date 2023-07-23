@@ -153,7 +153,17 @@ const vi = {
     PERMISSION: 'Phân quyền',
     PITCH: 'Sân bóng',
     ACCOUNT: 'Tài khoản',
-    BOOKING: 'Đặt sân'
+    BOOKING: 'Đặt sân',
+    CANCELBOOKINGDETAIL: 'Hủy sân/ trận đấu {code}',
+    UPDATEMATCH: 'Sửa thông tin trận đấu {code}',
+    INSERTBOOKING: '{info} đã được đặt',
+    DECLINEBOOKING: 'Từ chối đặt sân {info}',
+    APPROVALBOOKING: 'Phê duyệt đặt sân {info}',
+    CHANGEPERMISSION: 'Cấp quyền cho tài khoản {name}',
+    INSERTPITCH: 'Thêm mới sân bóng {name}',
+    UPDATEPITCH: 'Sửa thông tin sân bóng {name}',
+    INSERTACCOUNT: 'Thêm mới tài khoản {name}',
+    UPDATEACCOUNT: 'Cập nhật tài khoản {name}'
 }
 
 export default vi;

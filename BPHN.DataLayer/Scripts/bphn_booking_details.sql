@@ -24,18 +24,20 @@ DROP TABLE IF EXISTS `booking_details`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `booking_details` (
   `Id` char(36) NOT NULL,
+  `MatchCode` int NOT NULL AUTO_INCREMENT,
   `MatchDate` datetime NOT NULL,
   `BookingId` char(36) NOT NULL,
   `Deposite` double DEFAULT NULL,
   `Status` varchar(255) DEFAULT NULL,
-  `TeamA` varchar(255) DEFAULT NULL,
-  `TeamB` varchar(255) DEFAULT NULL,
-  `Note` varchar(500) DEFAULT NULL,
   `CreatedDate` datetime DEFAULT NULL,
   `CreatedBy` varchar(255) DEFAULT NULL,
   `ModifiedDate` datetime DEFAULT NULL,
   `ModifiedBy` varchar(255) DEFAULT NULL,
+  `TeamA` varchar(255) DEFAULT NULL,
+  `TeamB` varchar(255) DEFAULT NULL,
+  `Note` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`Id`),
+  UNIQUE KEY `Code_UNIQUE` (`MatchCode`),
   KEY `fk_3` (`BookingId`),
   CONSTRAINT `fk_3` FOREIGN KEY (`BookingId`) REFERENCES `bookings` (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -50,4 +52,4 @@ CREATE TABLE `booking_details` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-16 10:29:16
+-- Dump completed on 2023-07-23 13:29:10

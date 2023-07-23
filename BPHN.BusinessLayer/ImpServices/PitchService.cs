@@ -392,8 +392,11 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if(insertResult)
             {
-                var notification = _notificationService.Insert<Pitch>(context, NotificationTypeEnum.INSERTPITCH, pitch);
-                Thread thread = new Thread(delegate ()
+                await _notificationService.Insert<Pitch>(context, NotificationTypeEnum.INSERTPITCH, new Pitch()
+                {
+                    Name = pitch.Name,
+                });
+                var thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();
                     _historyLogService.Write(new HistoryLog()
@@ -483,8 +486,11 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 await _cacheService.RemoveAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.PITCH, pitch.Id.ToString()));
 
-                var notification = _notificationService.Insert<Pitch>(context, NotificationTypeEnum.UPDATEPITCH, pitch);
-                Thread thread = new Thread(delegate ()
+                await _notificationService.Insert<Pitch>(context, NotificationTypeEnum.UPDATEPITCH, new Pitch()
+                {
+                    Name = pitch.Name
+                });
+                var thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();
                     _historyLogService.Write(new HistoryLog()

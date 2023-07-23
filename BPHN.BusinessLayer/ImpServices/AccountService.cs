@@ -607,7 +607,10 @@ namespace BPHN.BusinessLayer.ImpServices
             var resultPermission = await _permissionRepository.Save(permissions);
             if (resultRegister)
             {
-                _notificationService.Insert<Account>(context, NotificationTypeEnum.INSERTACCOUNT, account);
+                await _notificationService.Insert<Account>(context, NotificationTypeEnum.INSERTACCOUNT, new Account()
+                {
+                    UserName = account.UserName
+                });
                 for (int i = 0; i < context.RelationIds.Count; i++)
                 {
                      await _cacheService.RemoveAsync(_cacheService.GetKeyCache(context.RelationIds[i], EntityEnum.ACCOUNT, "RelationId"));

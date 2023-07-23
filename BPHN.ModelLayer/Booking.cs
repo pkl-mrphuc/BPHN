@@ -5,6 +5,7 @@ namespace BPHN.ModelLayer
 {
     public class Booking : BaseModel, ICloneable
     {
+        public int BookingCode { get; set; }
         [Required]
         [MaxLength(255)]
         public string PhoneNumber { get; set; }

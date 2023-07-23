@@ -24,6 +24,7 @@ DROP TABLE IF EXISTS `bookings`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `bookings` (
   `Id` char(36) NOT NULL,
+  `BookingCode` int NOT NULL AUTO_INCREMENT,
   `PhoneNumber` varchar(255) NOT NULL,
   `Email` varchar(255) DEFAULT NULL,
   `IsRecurring` int DEFAULT NULL,
@@ -41,6 +42,7 @@ CREATE TABLE `bookings` (
   `ModifiedDate` datetime DEFAULT NULL,
   `ModifiedBy` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`Id`),
+  UNIQUE KEY `Code_UNIQUE` (`BookingCode`),
   KEY `fk_1` (`PitchId`),
   KEY `fk_2` (`TimeFrameInfoId`),
   CONSTRAINT `fk_1` FOREIGN KEY (`PitchId`) REFERENCES `pitchs` (`Id`),

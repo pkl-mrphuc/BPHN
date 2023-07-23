@@ -4,6 +4,7 @@ namespace BPHN.ModelLayer
 {
     public class BookingDetail : BaseModel
     {
+        public int MatchCode { get; set; }
         public DateTime MatchDate { get; set; }
         public int Weekendays { get; set; }
         public double Deposite { get; set; }

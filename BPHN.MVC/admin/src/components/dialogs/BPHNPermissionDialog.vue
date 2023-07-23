@@ -5,8 +5,6 @@ import { defineProps, ref, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import { ElLoading } from "element-plus";
 import { useStore } from "vuex";
-import { NotificationTypeEnum } from "@/const";
-import connection from "@/ws";
 
 const { t } = useI18n();
 const { toggleModel } = useToggleModal();
@@ -60,14 +58,6 @@ const save = () => {
       loading.close();
       if (res?.data?.success) {
         toggleModel();
-        if (connection && connection.state === "Connected") {
-          connection.invoke(
-            "PushNotification",
-            store.getters["account/getRelationIds"],
-            store.getters["account/getAccountId"],
-            NotificationTypeEnum.CHANGEPERMISSION
-          );
-        }
       } else {
         let msg = res?.data?.message;
         alert(msg ?? t("ErrorMesg"));

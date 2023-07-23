@@ -25,8 +25,9 @@ DROP TABLE IF EXISTS `notifications`;
 CREATE TABLE `notifications` (
   `Id` char(36) NOT NULL,
   `Subject` varchar(500) DEFAULT NULL,
-  `Content` varchar(500) DEFAULT NULL,
+  `Content` longtext,
   `NotificationType` int DEFAULT NULL,
+  `AccountId` char(36) DEFAULT NULL,
   `CreatedDate` datetime DEFAULT NULL,
   `CreatedBy` varchar(255) DEFAULT NULL,
   `ModifiedDate` datetime DEFAULT NULL,
@@ -44,4 +45,4 @@ CREATE TABLE `notifications` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-17 14:00:07
+-- Dump completed on 2023-07-23 13:29:10

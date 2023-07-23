@@ -153,6 +153,16 @@ const en = {
     PERMISSION: 'Permission',
     PITCH: 'Stadium',
     ACCOUNT: 'Account',
-    BOOKING: 'Booking'
+    BOOKING: 'Booking',
+    CANCELBOOKINGDETAIL: 'Cancel match {code}',
+    UPDATEMATCH: 'Change match information {code}',
+    INSERTBOOKING: '{info} booked',
+    DECLINEBOOKING: 'Decline booking {info}',
+    APPROVALBOOKING: 'Approval booking {info}',
+    CHANGEPERMISSION: 'Grant permission for {name}',
+    INSERTPITCH: 'Add stadium {name}',
+    UPDATEPITCH: 'Change stadium {name}',
+    INSERTACCOUNT: 'Add account {name}',
+    UPDATEACCOUNT: 'Change account {name}'
 }
 export default en;

@@ -8,6 +8,7 @@ import { useRouter } from "vue-router";
 import NotificationCard from "@/components/NotificationCard.vue";
 import connection from "@/ws";
 import { ElNotification } from "element-plus";
+import { NotificationTypeEnum } from "@/const";
 
 const router = useRouter();
 const store = useStore();
@@ -21,18 +22,42 @@ onMounted(() => {
     lstNotification.value = res.data?.data ?? [];
   });
 
-  connection.on("PushNotification", function (type) {
+  connection.on("PushNotification", function (type, model) {
     hasNewNoti.value = true;
     ElNotification({
       title: t("Notification"),
-      message: getMessage(type),
+      message: getMessage(type, model),
       duration: 0,
     });
   });
 });
 
-const getMessage = (type) => {
-  console.log(type);
+const getMessage = (type, model) => {
+  model = JSON.parse(model);
+  switch (type) {
+    case NotificationTypeEnum.CANCELBOOKINGDETAIL:
+      return t("CANCELBOOKINGDETAIL", { code : model?.Code }) ;
+    case NotificationTypeEnum.UPDATEMATCH:
+      return t("UPDATEMATCH", { code : model?.Code });
+    case NotificationTypeEnum.INSERTBOOKING:
+      return t("INSERTBOOKING", { info: `${model?.PhoneNumber}/${model?.PitchName}-${model?.NameDetail}/${model?.TimeFrameInfoName}` });
+    case NotificationTypeEnum.DECLINEBOOKING:
+      return t("DECLINEBOOKING", { info: `${model?.PhoneNumber}/${model?.PitchName}-${model?.NameDetail}/${model?.TimeFrameInfoName}` });
+    case NotificationTypeEnum.APPROVALBOOKING:
+      return t("APPROVALBOOKING", { info: `${model?.PhoneNumber}/${model?.PitchName}-${model?.NameDetail}/${model?.TimeFrameInfoName}` });
+    case NotificationTypeEnum.CHANGEPERMISSION:
+      return t("CHANGEPERMISSION", { name: model?.UserName });
+    case NotificationTypeEnum.INSERTPITCH:
+      return t("INSERTPITCH", { name: model?.Name });
+    case NotificationTypeEnum.UPDATEPITCH:
+      return t("UPDATEPITCH", { name: model?.Name });
+    case NotificationTypeEnum.INSERTACCOUNT:
+      return t("INSERTACCOUNT", { name: model?.UserName });
+    case NotificationTypeEnum.UPDATEACCOUNT:
+      return t("UPDATEACCOUNT", { name: model?.UserName });
+    default:
+      return "";
+  }
 };
 
 const fullname = computed(() => {
@@ -88,7 +113,7 @@ const markRead = () => {
         <el-icon size="24"><Avatar /></el-icon>
       </div>
       <div class="mx-1 pointer">
-        <el-popover trigger="click" :width="300">
+        <el-popover trigger="click" :width="350">
           <template #reference>
             <el-badge is-dot :hidden="!hasNewNoti">
               <el-icon size="24" @click="markRead"><Bell /></el-icon>

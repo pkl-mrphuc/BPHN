@@ -60,6 +60,19 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
+        public async Task<BookingDetail?> GetById(string id)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var dic = new Dictionary<string, object>();
+                dic.Add("@id", id);
+                var query = @"select * from booking_details where Id = @id";
+                var data = await connection.QueryAsync<BookingDetail>(query, dic);
+                return data.FirstOrDefault();
+            }
+        }
+
         public async Task<List<CalendarEvent>> GetByRangeDate(string startDate, string endDate, string pitchId, string nameDetail)
         {
             using (var connection = ConnectDB(GetConnectionString()))
