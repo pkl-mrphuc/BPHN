@@ -80,8 +80,8 @@ const vi = {
     Free: "Trống",
     InputTimeFrameEmptyMesg: "Vui lòng nhập đầy đủ thông tin sân bóng, khung giờ trước khi kiểm tra",
     SearchBy: "Tìm kiếm theo sđt, email, tên sân",
-    MatchDate: "Ngày diễn ra trận đấu",
-    Deposite: "Tiền cọc(nghìn đồng)",
+    MatchDate: "Ngày diễn ra",
+    Deposite: "Cọc",
     Cancel: "Hủy",
     Status: "Trạng thái",
     BookingDate: "Ngày đặt",
@@ -163,7 +163,8 @@ const vi = {
     INSERTPITCH: 'Thêm mới sân bóng {name}',
     UPDATEPITCH: 'Sửa thông tin sân bóng {name}',
     INSERTACCOUNT: 'Thêm mới tài khoản {name}',
-    UPDATEACCOUNT: 'Cập nhật tài khoản {name}'
+    UPDATEACCOUNT: 'Cập nhật tài khoản {name}',
+    MatchInfo: 'Thông tin trận đấu'
 }
 
 export default vi;

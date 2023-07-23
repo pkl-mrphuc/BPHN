@@ -63,7 +63,7 @@ namespace BPHN.WebAPI.Controllers
         public async Task<IActionResult> GetPaging(int pageIndex, int pageSize, string txtSearch, bool hasBookingDetail = false)
         {
             Log.Debug($"Booking/GetPaging start: {JsonConvert.SerializeObject(new { PageIndex = pageIndex, PageSize = pageSize, TxtSearch = txtSearch, HasBookingDetail = hasBookingDetail })}");
-            return Ok(await _bookingService.GetPaging(pageIndex, pageSize, txtSearch, hasBookingDetail));
+            return Ok(await _bookingService.GetPagingV1(pageIndex, pageSize, txtSearch, hasBookingDetail));
         }
 
         [Permission(new[] { FunctionTypeEnum.VIEWLISTBOOKING })]
@@ -73,7 +73,7 @@ namespace BPHN.WebAPI.Controllers
         public async Task<IActionResult> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
         {
             Log.Debug($"Booking/GetCountPaging start: {JsonConvert.SerializeObject(new { PageIndex = pageIndex, PageSize = pageSize, TxtSearch = txtSearch })}");
-            return Ok(await _bookingService.GetCountPaging(pageIndex, pageSize, txtSearch));
+            return Ok(await _bookingService.GetCountPagingV1(pageIndex, pageSize, txtSearch));
         }
 
         [Permission(new[] { FunctionTypeEnum.ADDBOOKING, FunctionTypeEnum.EDITBOOKING })]

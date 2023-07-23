@@ -11,5 +11,8 @@ namespace BPHN.ModelLayer
         [IgnoreLog]
         public Guid BookingId { get; set; }
         public string Status { get; set; }
+        public string TeamA { get; set; }
+        public string TeamB { get; set; }
+        public string Note { get; set; }
     }
 }

@@ -163,6 +163,7 @@ const en = {
     INSERTPITCH: 'Add stadium {name}',
     UPDATEPITCH: 'Change stadium {name}',
     INSERTACCOUNT: 'Add account {name}',
-    UPDATEACCOUNT: 'Change account {name}'
+    UPDATEACCOUNT: 'Change account {name}',
+    MatchInfo: 'Match information'
 }
 export default en;

@@ -13,8 +13,5 @@ namespace BPHN.ModelLayer.Others
         public DateTime End { get; set; }
         public string Stadium { get; set; }
         public string PhoneNumber { get; set; }
-        public string TeamA { get; set; }
-        public string TeamB { get; set; }
-        public string Note { get; set; }
     }
 }

@@ -236,7 +236,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task<ServiceResultModel> GetInstance(string id)
+        public async Task<ServiceResultModel> GetCountPagingV1(int pageIndex, int pageSize, string txtSearch)
         {
             var context = _contextService.GetContext();
             if (context == null)
@@ -249,6 +249,30 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
+            if (!hasPermission)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
+                };
+            }
+
+            if (pageIndex < 0) pageIndex = 1;
+            if (pageSize > 100 || pageSize <= 0) pageSize = 50;
+
+            var result = await _bookingRepository.GetCountPagingV1(pageIndex, pageSize, context.RelationIds.ToArray(), txtSearch);
+            return new ServiceResultModel()
+            {
+                Success = true,
+                Data = result
+            };
+        }
+
+        public async Task<ServiceResultModel> GetInstance(string id)
+        {
             Booking? data = null;
 
             if (string.IsNullOrWhiteSpace(id))
@@ -271,7 +295,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.NOT_EXISTS,
-                        Message = _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig)
+                        Message = _resourceService.Get(SharedResourceKey.NOTEXIST)
                     };
                 }
 
@@ -312,6 +336,41 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageSize > 100 || pageSize <= 0) pageSize = 50;
 
             var lstBooking = await _bookingRepository.GetPaging(pageIndex, pageSize, context.RelationIds.ToArray(), txtSearch, hasBookingDetail);
+            return new ServiceResultModel()
+            {
+                Success = true,
+                Data = lstBooking
+            };
+        }
+
+        public async Task<ServiceResultModel> GetPagingV1(int pageIndex, int pageSize, string txtSearch, bool hasBookingDetail = false)
+        {
+            var context = _contextService.GetContext();
+            if (context == null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
+                };
+            }
+
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
+            if (!hasPermission)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
+                };
+            }
+
+            if (pageIndex < 0) pageIndex = 1;
+            if (pageSize > 100 || pageSize <= 0) pageSize = 50;
+
+            var lstBooking = await _bookingRepository.GetPagingV1(pageIndex, pageSize, context.RelationIds.ToArray(), txtSearch, hasBookingDetail);
             return new ServiceResultModel()
             {
                 Success = true,
@@ -518,7 +577,9 @@ namespace BPHN.BusinessLayer.ImpServices
                     BookingId = data.Id,
                     Status = BookingStatusEnum.PENDING.ToString(),
                     MatchDate = data.StartDate,
-                    Weekendays = (int)data.StartDate.DayOfWeek
+                    Weekendays = (int)data.StartDate.DayOfWeek,
+                    Note = data.Note,
+                    TeamA = data.TeamA
                 }
             };
 
@@ -533,11 +594,13 @@ namespace BPHN.BusinessLayer.ImpServices
                     var matchDate = booking.BookingDetails.Select(item => item.MatchDate.ToString("dd/MM/yyyy")).FirstOrDefault();
                     if (pitch != null && frame != null && matchDate != null)
                     {
-                        await _notificationService.Insert<Booking>(new Account()
+                        var context = new Account()
                         {
                             RelationIds = await _accountRepository.GetRelationIds(data.AccountId) ?? new List<Guid>() { data.AccountId },
-                            Id = Guid.NewGuid()
-                        }, NotificationTypeEnum.INSERTBOOKING, new Booking()
+                            Id = data.AccountId,
+                            FullName = data.PhoneNumber
+                        };
+                        await _notificationService.Insert<Booking>(context, NotificationTypeEnum.INSERTBOOKING, new Booking()
                         {
                             PhoneNumber = data.PhoneNumber,
                             NameDetail = data.NameDetail,

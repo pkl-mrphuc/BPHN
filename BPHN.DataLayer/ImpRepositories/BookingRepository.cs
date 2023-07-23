@@ -1,5 +1,6 @@
 ﻿using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
+using BPHN.ModelLayer.Others;
 using Dapper;
 using Microsoft.Extensions.Options;
 
@@ -208,8 +209,8 @@ namespace BPHN.DataLayer.ImpRepositories
                     for (int i = 0; i < data.BookingDetails.Count; i++)
                     {
                         var item = data.BookingDetails[i];
-                        query = @"insert into booking_details(Id, MatchDate, BookingId, Status, Deposite, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
-                                value (@id, @matchDate, @bookingId, @status, @deposite, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
+                        query = @"insert into booking_details(Id, MatchDate, BookingId, Status, Deposite, TeamA, Note, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
+                                value (@id, @matchDate, @bookingId, @status, @deposite, @teamA, @note, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
                         dic = new Dictionary<string, object?>();
                         dic.Add("@id", item.Id);
                         dic.Add("@matchDate", item.MatchDate);
@@ -220,6 +221,8 @@ namespace BPHN.DataLayer.ImpRepositories
                         dic.Add("@createdBy", item.CreatedBy);
                         dic.Add("@modifiedBy", item.ModifiedBy);
                         dic.Add("@modifiedDate", item.ModifiedDate);
+                        dic.Add("@teamA", item.TeamA);
+                        dic.Add("@note", item.Note);
                         affect = await connection.ExecuteAsync(query, dic, transaction);
                         if(affect <= 0)
                         {
@@ -273,6 +276,114 @@ namespace BPHN.DataLayer.ImpRepositories
                 }
 
                 return false;
+            }
+        }
+
+        public async Task<object> GetCountPagingV1(int pageIndex, int pageSize, Guid[] relationIds, string txtSearch)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var dic = new Dictionary<string, object>();
+                var countQuery = @"select distinct count(1) from booking_details bd 
+                                                            inner join (
+						                                                    select * from bookings where AccountId in @accountId and PhoneNumber like @txtSearch
+                                                                            union 
+                                                                            select * from bookings where AccountId in @accountId and Email like @txtSearch 
+                                                                            union 
+                                                                            select * from bookings where AccountId in @accountId and NameDetail like @txtSearch
+                                                                            union 
+                                                                            (select b.* from bookings b inner join pitchs p on b.PitchId = p.Id where b.AccountId in @accountId and p.Name like @txtSearch)
+                                                                        ) as bs on bs.Id = bd.BookingId";
+
+                dic.Add("@accountId", relationIds);
+                dic.Add("@txtSearch", $"%{txtSearch}%");
+                var totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
+                var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
+                var totalRecordCurrentPage = 0;
+                if (totalRecord > 0)
+                {
+                    if (pageIndex == totalPage)
+                    {
+                        totalRecordCurrentPage = totalRecord - ((pageIndex - 1) * pageSize);
+                    }
+                    else
+                    {
+                        totalRecordCurrentPage = pageSize;
+                    }
+                }
+                return new { TotalPage = totalPage, TotalRecordCurrentPage = totalRecordCurrentPage, TotalAllRecords = totalRecord };
+            }
+        }
+
+        public async Task<List<BookingManager>> GetPagingV1(int pageIndex, int pageSize, Guid[] relationIds, string txtSearch, bool hasBookingDetail = false)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var dic = new Dictionary<string, object>();
+                var query = @"select distinct   bs.BookingCode as BookingCode,
+                                                bs.PhoneNumber as PhoneNumber,
+                                                bs.Email as Email,
+                                                bs.IsRecurring as IsRecurring,
+                                                bs.BookingDate as BookingDate,
+                                                bs.StartDate as StartDate,
+                                                bs.EndDate as EndDate,
+                                                bs.Status as BookingStatus,
+                                                bs.TimeFrameInfoId as TimeFrameInfoId,
+                                                bs.PitchId as PitchId,
+                                                bs.NameDetail as NameDetail,
+                                                p.Name as PitchName, 
+                                                concat('Khung ', date_format(TimeBegin,'%H:%i'), ' - ', date_format(TimeEnd,'%H:%i')) as TimeFrameInfoName,
+                                                bd.Id as BookingDetailId,
+                                                bd.MatchCode as MatchCode,
+                                                bd.MatchDate as MatchDate,
+                                                bd.Deposite as Deposite,
+                                                bd.BookingId as BookingId,
+                                                bd.Status as BookingDetailStatus
+                                                from booking_details bd 
+                                                inner join (
+						                                    select * from bookings where AccountId in @accountId and PhoneNumber like @txtSearch
+                                                            union 
+                                                            select * from bookings where AccountId in @accountId and Email like @txtSearch 
+                                                            union 
+                                                            select * from bookings where AccountId in @accountId and NameDetail like @txtSearch
+                                                            union 
+                                                            (select b.* from bookings b inner join pitchs p on b.PitchId = p.Id where b.AccountId in @accountId and p.Name like @txtSearch)
+                                                        ) as bs on bs.Id = bd.BookingId
+                                                    inner join pitchs p on bs.PitchId = p.Id
+                                                    inner join time_frame_infos tfi on p.Id = tfi.PitchId and tfi.Id = bs.TimeFrameInfoId order by bs.BookingDate desc, bd.MatchDate desc
+                        limit @offSize, @pageSize";
+                var countQuery = @"select distinct count(1) from booking_details bd 
+                                                            inner join (
+						                                                    select * from bookings where AccountId in @accountId and PhoneNumber like @txtSearch
+                                                                            union 
+                                                                            select * from bookings where AccountId in @accountId and Email like @txtSearch 
+                                                                            union 
+                                                                            select * from bookings where AccountId in @accountId and NameDetail like @txtSearch
+                                                                            union 
+                                                                            (select b.* from bookings b inner join pitchs p on b.PitchId = p.Id where b.AccountId in @accountId and p.Name like @txtSearch)
+                                                                        ) as bs on bs.Id = bd.BookingId";
+
+                dic.Add("@accountId", relationIds);
+                dic.Add("@txtSearch", $"%{txtSearch}%");
+                var totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
+                var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
+                if (pageIndex > totalPage)
+                {
+                    pageIndex = 1;
+                }
+                var offSet = (pageIndex - 1) * pageSize;
+                dic.Add("@offSize", offSet);
+                dic.Add("@pageSize", pageSize);
+
+                var lstBooking = (await connection.QueryAsync<BookingManager>(query, dic)).ToList();
+                lstBooking = lstBooking.Select(item =>
+                                        {
+                                            item.Weekendays = (int)item.MatchDate.DayOfWeek;
+                                            return item;
+                                        }).ToList();
+                return lstBooking;
             }
         }
     }
