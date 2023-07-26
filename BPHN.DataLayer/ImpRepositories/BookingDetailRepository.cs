@@ -46,13 +46,14 @@ namespace BPHN.DataLayer.ImpRepositories
                 connection.Open();
                 var dic = new Dictionary<string, object>();
                 dic.Add("@status0", BookingStatusEnum.SUCCESS.ToString());
+                dic.Add("@status1", BookingStatusEnum.PENDING.ToString());
                 dic.Add("@accountId", relationIds);
                 dic.Add("@startDate", $"{date} 00:00:00");
                 dic.Add("@endDate", $"{date} 23:59:59");
                 var query = @"select bd.*, b.PitchId, tfi.TimeBegin as Start, tfi.TimeEnd as End, b.NameDetail as Stadium, b.PhoneNumber as PhoneNumber  from booking_details bd 
                                                 inner join bookings b on b.Id = bd.BookingId
                                                 inner join time_frame_infos tfi on b.TimeFrameInfoId = tfi.Id
-                                                where   bd.Status in (@status0) and 
+                                                where   bd.Status in (@status0, @status1) and 
                                                         b.AccountId in @accountId and 
                                                         bd.MatchDate between @startDate and @endDate";
                 var lstBookingDetail = (await connection.QueryAsync<CalendarEvent>(query, dic)).ToList();

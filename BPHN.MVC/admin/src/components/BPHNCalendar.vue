@@ -6,19 +6,19 @@ import allLocales from "@fullcalendar/core/locales-all";
 import { useStore } from "vuex";
 import useCommonFn from "@/commonFn";
 import useToggleModal from "@/register-components/actionDialog";
-import { ArrowLeft, ArrowRight, InfoFilled } from "@element-plus/icons-vue";
 import { useI18n } from "vue-i18n";
 import { ElLoading } from "element-plus";
+import { BookingStatusEnum } from "@/const";
+import { InfoFilled } from "@element-plus/icons-vue";
 
 const store = useStore();
 const lstResource = ref([]);
-const { dateToString } = useCommonFn();
+const { dateToString, equals } = useCommonFn();
 const { hasRole, openModal } = useToggleModal();
 const objMatch = ref(null);
 const objEvent = ref(null);
 const objCalendar = ref(null);
 const { t } = useI18n();
-const running = ref(0);
 const formatDate = ref(store.getters["config/getFormatDate"]);
 const selectedDate = ref(null);
 const loadingOptions = inject("loadingOptions");
@@ -63,7 +63,7 @@ onMounted(() => {
 });
 
 watch(currentDate, (newValue) => {
-  if(objCalendar.value) {
+  if (objCalendar.value) {
     objCalendar.value.gotoDate(newValue);
     selectedDate.value = getSelectedDate();
   }
@@ -71,7 +71,7 @@ watch(currentDate, (newValue) => {
 
 const getSelectedDate = () => {
   return objCalendar.value
-    ? dateToString(objCalendar.value.currentData.currentDate, formatDate.value)
+    ? dateToString(objCalendar.value.getDate(), formatDate.value)
     : "";
 };
 
@@ -85,6 +85,7 @@ const renderCalendar = async (lstResource) => {
       resources: lstResource,
       locales: allLocales,
       locale: store.getters["config/getLanguage"],
+      height: "1785px",
       headerToolbar: {
         left: "",
         right: "",
@@ -110,7 +111,7 @@ const renderCalendar = async (lstResource) => {
     calendar.render();
     objCalendar.value = calendar;
     selectedDate.value = getSelectedDate(calendar);
-    currentDate.value = objCalendar.value.currentData.currentDate;
+    currentDate.value = objCalendar.value.getDate();
     handleAfterRenderCalendar(calendarEl);
   }
 };
@@ -139,6 +140,7 @@ const getEventByDate = async (date) => {
           teamB: item.teamB ?? "",
           stadium: item.stadium,
           note: item.note ?? "",
+          status: item.status ?? "",
         },
       });
     }
@@ -148,11 +150,16 @@ const getEventByDate = async (date) => {
 
 const buildEventInfoHtml = (timeText, eventInfo) => {
   let eventContainer = document.createElement("div");
-  if (eventInfo?.teamB) {
-    eventContainer.className = "p-2 w-100 h-100 bg-danger";
+  if (equals(eventInfo?.status, BookingStatusEnum.PENDING)) {
+    eventContainer.className = "p-2 w-100 h-100 bg-info";
   } else {
-    eventContainer.className = "p-2 w-100 h-100 bg-primary";
+    if (eventInfo?.teamB) {
+      eventContainer.className = "p-2 w-100 h-100 bg-danger";
+    } else {
+      eventContainer.className = "p-2 w-100 h-100 bg-primary";
+    }
   }
+
   let html = `<div class="fs-3 fw-bold">${eventInfo.stadium}</div>`;
   if (eventInfo?.note) {
     html += `<div class="fs-6 fst-italic">${eventInfo.note}</div>`;
@@ -176,58 +183,60 @@ const loadEvent = (data) => {
     objEvent.value.event.setExtendedProp("note", data.note);
   }
 };
-
-const today = () => {
-  if (running.value > 0) return;
-  ++running.value;
-
-  if (objCalendar.value) {
-    objCalendar.value.today();
-    selectedDate.value = getSelectedDate();
-    currentDate.value = objCalendar.value.currentData.currentDate;
-  }
-
-  setTimeout(() => {
-    running.value = 0;
-  }, 1000);
-};
-
-const prev = () => {
-  if (running.value > 0) return;
-  ++running.value;
-
-  if (objCalendar.value) {
-    objCalendar.value.prev();
-    selectedDate.value = getSelectedDate();
-    currentDate.value = objCalendar.value.currentData.currentDate;
-  }
-
-  setTimeout(() => {
-    running.value = 0;
-  }, 1000);
-};
-
-const next = () => {
-  if (running.value > 0) return;
-  ++running.value;
-
-  if (objCalendar.value) {
-    objCalendar.value.next();
-    selectedDate.value = getSelectedDate();
-    currentDate.value = objCalendar.value.currentData.currentDate;
-  }
-
-  setTimeout(() => {
-    running.value = 0;
-  }, 1000);
-};
 </script>
 
 <template>
   <section>
     <div class="container">
-      <div class="row">
-        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mb-3">
+      <div class="d-flex flex-row align-items-center justify-content-between">
+        <h3 class="fs-3">{{ t("Calendar") }}</h3>
+        <div>
+          <el-popover
+            placement="top-start"
+            :title="t('Note')"
+            width="250"
+            trigger="click"
+          >
+            <template #reference>
+              <el-button
+                class="mx-1"
+                type="warning"
+                :icon="InfoFilled"
+                circle
+              />
+            </template>
+
+            <div class="row mb-3 d-flex flex-row align-items-center">
+              <div class="col-3 square bg-info"></div>
+              <div class="col-9">
+                <div class="mx-3">
+                  {{ t("PENDING") }}
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3 d-flex flex-row align-items-center">
+              <div class="col-3 square bg-danger"></div>
+              <div class="col-9">
+                <div class="mx-3">
+                  {{ t("HasCompetitor") }}
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3 d-flex flex-row align-items-center">
+              <div class="col-3 square bg-primary"></div>
+              <div class="col-9">
+                <div class="mx-3">
+                  {{ t("HasNotCompetitor") }}
+                </div>
+              </div>
+            </div>
+          </el-popover>
+        </div>
+      </div>
+      <div class="row" style="height: calc(100vh - 190px); overflow: scroll">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4">
           <el-calendar v-model="currentDate">
             <template #header="{}">
               <span></span>
@@ -235,55 +244,9 @@ const next = () => {
           </el-calendar>
         </div>
         <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-8">
-          <div class="row d-flex flex-row align-items-center">
-            <h3 class="col-12 col-sm-6 fs-3 m-0">{{ selectedDate }}</h3>
-            <div class="col-12 col-sm-6 d-flex flex-row-reverse">
-              <el-button-group class="mx-1">
-                <el-button type="primary" @click="prev">
-                  <el-icon><ArrowLeft /></el-icon>
-                </el-button>
-                <el-button type="primary" @click="next">
-                  <el-icon><ArrowRight /></el-icon>
-                </el-button>
-              </el-button-group>
-              <el-button class="mx-1" type="primary" @click="today">{{
-                t("Today")
-              }}</el-button>
-              <el-popover
-                placement="top-start"
-                :title="t('Note')"
-                width="250"
-                trigger="click"
-              >
-                <template #reference>
-                  <el-button
-                    class="mx-1"
-                    type="warning"
-                    :icon="InfoFilled"
-                    circle
-                  />
-                </template>
-                <div class="row mb-3 d-flex flex-row align-items-center">
-                  <div class="col-3 square bg-danger"></div>
-                  <div class="col-9">
-                    <div class="mx-3">
-                      {{ t("HasCompetitor") }}
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row mb-3 d-flex flex-row align-items-center">
-                  <div class="col-3 square bg-primary"></div>
-                  <div class="col-9">
-                    <div class="mx-3">
-                      {{ t("HasNotCompetitor") }}
-                    </div>
-                  </div>
-                </div>
-              </el-popover>
-            </div>
+          <div class="mx-2">
+            <div id="calendarTimeGrid"></div>
           </div>
-          <div id="calendarTimeGrid"></div>
         </div>
       </div>
     </div>
@@ -297,10 +260,6 @@ const next = () => {
 </template>
 
 <style scoped>
-#calendarTimeGrid {
-  height: calc(100vh - 170px);
-}
-
 .square {
   width: 15px;
   height: 15px;

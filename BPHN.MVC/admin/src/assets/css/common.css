@@ -341,6 +341,10 @@
     background-color: #f56c6c;
 }
 
+.bg-info {
+    background-color: #909399;
+}
+
 a {
     color: unset;
     outline: none;
