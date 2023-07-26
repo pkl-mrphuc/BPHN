@@ -7,7 +7,7 @@ namespace BPHN.DataLayer.IRepositories
     {
         Task<List<Pitch>> GetPaging(int pageIndex, int pageSize, List<WhereCondition> where);
         Task<object> GetCountPaging(int pageIndex, int pageSize, List<WhereCondition> where);
-        Task<Pitch?> GetById(string id);
+        Task<Pitch?> GetById(Guid id);
         Task<bool> Insert(Pitch pitch);
         Task<bool> Update(Pitch pitch);
     }

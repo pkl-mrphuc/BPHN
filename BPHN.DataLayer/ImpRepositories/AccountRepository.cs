@@ -249,5 +249,16 @@ namespace BPHN.DataLayer.ImpRepositories
                 return result.ToList();
             }
         }
+
+        public async Task<List<Account>> GetAll()
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                string query = @"select Id, UserName, Email from accounts";
+                var lstAccount = await connection.QueryAsync<Account>(query);
+                return lstAccount.ToList();
+            }
+        }
     }
 }

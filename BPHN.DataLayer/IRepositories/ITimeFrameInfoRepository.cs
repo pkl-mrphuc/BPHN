@@ -6,5 +6,6 @@ namespace BPHN.DataLayer.IRepositories
     {
         Task<List<TimeFrameInfo>> GetByPitchId(Guid pitchId);
         Task<List<TimeFrameInfo>> GetByListPitchId(List<Guid> lstPitchId);
+        Task<TimeFrameInfo?> GetById(Guid id);
     }
 }

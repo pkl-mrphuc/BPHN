@@ -14,5 +14,6 @@ namespace BPHN.DataLayer.IRepositories
         Task<object> GetCountPaging(int pageIndex, int pageSize, string txtSearch, List<WhereCondition> where);
         Task<bool> SavePassword(Guid id, string password);
         Task<List<Guid>> GetRelationIds(Guid id);
+        Task<List<Account>> GetAll();
     }
 }

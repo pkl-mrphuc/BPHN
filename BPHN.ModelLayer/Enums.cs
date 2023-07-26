@@ -36,6 +36,7 @@
         SAVE = 4,
         INSERT = 5,
         UPDATE = 6,
+        CANCEL = 7
     }
 
     public enum ActiveStatusEnum
@@ -46,9 +47,9 @@
 
     public enum BookingStatusEnum
     {
-        SUCCESS = 0,
-        CANCEL = 1,
-        PENDING = 2
+        PENDING = 0,
+        SUCCESS = 1,
+        CANCEL = 2
     }
 
     public enum FunctionTypeEnum
@@ -85,6 +86,7 @@
         PERMISSION = 1,
         PITCH = 2,
         ACCOUNT = 3,
-        BOOKING = 4
+        BOOKING = 4,
+        BOOKINGDETAIL = 5
     }
 }

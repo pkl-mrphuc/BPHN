@@ -173,7 +173,9 @@ namespace BPHN.BusinessLayer.ImpServices
                 
                 if(data == null)
                 {
-                    data = await _pitchRepository.GetById(id);
+                    Guid pitchId = Guid.Empty;
+                    Guid.TryParse(id, out pitchId);
+                    data = await _pitchRepository.GetById(pitchId);
                     if(data != null)
                     {
                         data.TimeFrameInfos = await _timeFrameInfoRepository.GetByPitchId(data.Id);
@@ -479,7 +481,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 return item;
             }).ToList();
 
-            var oldPitch = await _pitchRepository.GetById(pitch.Id.ToString());
+            var oldPitch = await _pitchRepository.GetById(pitch.Id);
             var updateResult = await _pitchRepository.Update(pitch);
 
             if (updateResult)

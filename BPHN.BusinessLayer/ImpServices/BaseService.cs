@@ -14,6 +14,7 @@ namespace BPHN.BusinessLayer.ImpServices
         protected readonly IPermissionRepository _permissionRepository;
         protected readonly ICacheService _cacheService;
         protected readonly IResourceService _resourceService;
+        protected readonly IGlobalVariableService _globalVariableService;
         protected readonly AppSettings _appSettings;
 
         public BaseService(IServiceProvider provider, IOptions<AppSettings> appSettings)
@@ -22,6 +23,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _permissionRepository = provider.GetRequiredService<IPermissionRepository>();
             _cacheService = provider.GetRequiredService<ICacheService>();
             _resourceService = provider.GetRequiredService<IResourceService>();
+            _globalVariableService = provider.GetRequiredService<IGlobalVariableService>();
             _appSettings = appSettings.Value;
         }
         public virtual bool ValidateModelByAttribute(object model, List<string> ignoreProperties)

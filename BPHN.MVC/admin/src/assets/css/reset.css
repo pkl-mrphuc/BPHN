@@ -138,3 +138,17 @@ html.dark {
   float: left !important;
   position: relative !important;
 }
+
+.el-calendar__header {
+  display: none;
+}
+
+.el-calendar__body {
+  padding: 0;
+  padding-right: 10px;
+  margin-top: 12px;
+}
+
+.el-calendar-table .el-calendar-day {
+  height: 70px !important;
+}

@@ -208,11 +208,12 @@ namespace BPHN.BusinessLayer.ImpServices
             var saveResult = await _permissionRepository.Save(permissions);
             if(saveResult)
             {
-                await _notificationService.Insert<Account>(context, NotificationTypeEnum.CHANGEPERMISSION, new Account()
-                {
-                    UserName = (await _accountRepository.GetAccountById(accountId))?.UserName ?? string.Empty
-                });
+                var account = _globalVariableService.AccountSystem.ContainsKey(accountId) ?
+                                _globalVariableService.AccountSystem[accountId] : new Account() { UserName = string.Empty };
+                await _notificationService.Insert<Account>(context, NotificationTypeEnum.CHANGEPERMISSION, account);
+
                 await _cacheService.RemoveAsync(_cacheService.GetKeyCache(accountId, EntityEnum.PERMISSION));
+
                 var thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();

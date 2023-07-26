@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, inject } from "vue";
+import { onMounted, ref, inject, watch } from "vue";
 import { Calendar } from "@fullcalendar/core";
 import resourceTimeGridPlugin from "@fullcalendar/resource-timegrid";
 import allLocales from "@fullcalendar/core/locales-all";
@@ -24,9 +24,9 @@ const selectedDate = ref(null);
 const loadingOptions = inject("loadingOptions");
 const pageSize = ref(2);
 const pageIndex = ref(1);
+const currentDate = ref(null);
 
 onMounted(() => {
-
   const { offsetWidth } = document.getElementById("app");
   if (offsetWidth >= 768) {
     pageSize.value = -1;
@@ -38,7 +38,6 @@ onMounted(() => {
     pageSize.value = -1;
   }
 
-
   const loading = ElLoading.service(loadingOptions);
   store
     .dispatch("pitch/getPaging", {
@@ -46,7 +45,7 @@ onMounted(() => {
       hasDetail: false,
       hasInactive: false,
       pageSize: pageSize.value,
-      pageIndex: pageIndex.value
+      pageIndex: pageIndex.value,
     })
     .then(async (res) => {
       let lstPitch = res?.data?.data ?? [];
@@ -61,6 +60,13 @@ onMounted(() => {
       await renderCalendar(lstResource.value);
       loading.close();
     });
+});
+
+watch(currentDate, (newValue) => {
+  if(objCalendar.value) {
+    objCalendar.value.gotoDate(newValue);
+    selectedDate.value = getSelectedDate();
+  }
 });
 
 const getSelectedDate = () => {
@@ -104,6 +110,7 @@ const renderCalendar = async (lstResource) => {
     calendar.render();
     objCalendar.value = calendar;
     selectedDate.value = getSelectedDate(calendar);
+    currentDate.value = objCalendar.value.currentData.currentDate;
     handleAfterRenderCalendar(calendarEl);
   }
 };
@@ -177,6 +184,7 @@ const today = () => {
   if (objCalendar.value) {
     objCalendar.value.today();
     selectedDate.value = getSelectedDate();
+    currentDate.value = objCalendar.value.currentData.currentDate;
   }
 
   setTimeout(() => {
@@ -191,6 +199,7 @@ const prev = () => {
   if (objCalendar.value) {
     objCalendar.value.prev();
     selectedDate.value = getSelectedDate();
+    currentDate.value = objCalendar.value.currentData.currentDate;
   }
 
   setTimeout(() => {
@@ -205,6 +214,7 @@ const next = () => {
   if (objCalendar.value) {
     objCalendar.value.next();
     selectedDate.value = getSelectedDate();
+    currentDate.value = objCalendar.value.currentData.currentDate;
   }
 
   setTimeout(() => {
@@ -216,56 +226,66 @@ const next = () => {
 <template>
   <section>
     <div class="container">
-      <div class="row d-flex flex-row align-items-center">
-        <h3 class="col-12 col-sm-6 fs-3 m-0">{{ selectedDate }}</h3>
-        <div class="col-12 col-sm-6 d-flex flex-row-reverse">
-          <el-button-group class="mx-1">
-            <el-button type="primary" @click="prev">
-              <el-icon><ArrowLeft /></el-icon>
-            </el-button>
-            <el-button type="primary" @click="next">
-              <el-icon><ArrowRight /></el-icon>
-            </el-button>
-          </el-button-group>
-          <el-button class="mx-1" type="primary" @click="today">{{
-            t("Today")
-          }}</el-button>
-          <el-popover
-            placement="top-start"
-            :title="t('Note')"
-            width="250"
-            trigger="click"
-          >
-            <template #reference>
-              <el-button
-                class="mx-1"
-                type="warning"
-                :icon="InfoFilled"
-                circle
-              />
+      <div class="row">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 mb-3">
+          <el-calendar v-model="currentDate">
+            <template #header="{}">
+              <span></span>
             </template>
-            <div class="row mb-3 d-flex flex-row align-items-center">
-              <div class="col-3 square bg-danger"></div>
-              <div class="col-9">
-                <div class="mx-3">
-                  {{ t("HasCompetitor") }}
+          </el-calendar>
+        </div>
+        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-8">
+          <div class="row d-flex flex-row align-items-center">
+            <h3 class="col-12 col-sm-6 fs-3 m-0">{{ selectedDate }}</h3>
+            <div class="col-12 col-sm-6 d-flex flex-row-reverse">
+              <el-button-group class="mx-1">
+                <el-button type="primary" @click="prev">
+                  <el-icon><ArrowLeft /></el-icon>
+                </el-button>
+                <el-button type="primary" @click="next">
+                  <el-icon><ArrowRight /></el-icon>
+                </el-button>
+              </el-button-group>
+              <el-button class="mx-1" type="primary" @click="today">{{
+                t("Today")
+              }}</el-button>
+              <el-popover
+                placement="top-start"
+                :title="t('Note')"
+                width="250"
+                trigger="click"
+              >
+                <template #reference>
+                  <el-button
+                    class="mx-1"
+                    type="warning"
+                    :icon="InfoFilled"
+                    circle
+                  />
+                </template>
+                <div class="row mb-3 d-flex flex-row align-items-center">
+                  <div class="col-3 square bg-danger"></div>
+                  <div class="col-9">
+                    <div class="mx-3">
+                      {{ t("HasCompetitor") }}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <div class="row mb-3 d-flex flex-row align-items-center">
-              <div class="col-3 square bg-primary"></div>
-              <div class="col-9">
-                <div class="mx-3">
-                  {{ t("HasNotCompetitor") }}
+                <div class="row mb-3 d-flex flex-row align-items-center">
+                  <div class="col-3 square bg-primary"></div>
+                  <div class="col-9">
+                    <div class="mx-3">
+                      {{ t("HasNotCompetitor") }}
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </el-popover>
             </div>
-          </el-popover>
+          </div>
+          <div id="calendarTimeGrid"></div>
         </div>
       </div>
-
-      <div id="calendarTimeGrid"></div>
     </div>
   </section>
   <MatchInfoDialog

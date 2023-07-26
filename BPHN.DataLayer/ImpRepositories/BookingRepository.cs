@@ -330,6 +330,11 @@ namespace BPHN.DataLayer.ImpRepositories
                                                 bs.StartDate as StartDate,
                                                 bs.EndDate as EndDate,
                                                 bs.Status as BookingStatus,
+                                                (CASE
+                                                    WHEN bd.Status = 'CANCEL' THEN 2
+                                                    WHEN bd.Status = 'SUCCESS' THEN 1
+                                                    ELSE 0
+                                                END) as StatusId,
                                                 bs.TimeFrameInfoId as TimeFrameInfoId,
                                                 bs.PitchId as PitchId,
                                                 bs.NameDetail as NameDetail,
@@ -352,7 +357,7 @@ namespace BPHN.DataLayer.ImpRepositories
                                                             (select b.* from bookings b inner join pitchs p on b.PitchId = p.Id where b.AccountId in @accountId and p.Name like @txtSearch)
                                                         ) as bs on bs.Id = bd.BookingId
                                                     inner join pitchs p on bs.PitchId = p.Id
-                                                    inner join time_frame_infos tfi on p.Id = tfi.PitchId and tfi.Id = bs.TimeFrameInfoId order by bs.BookingDate desc, bd.MatchDate desc
+                                                    inner join time_frame_infos tfi on p.Id = tfi.PitchId and tfi.Id = bs.TimeFrameInfoId order by StatusId, bd.MatchDate desc
                         limit @offSize, @pageSize";
                 var countQuery = @"select distinct count(1) from booking_details bd 
                                                             inner join (

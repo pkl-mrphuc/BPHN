@@ -13,8 +13,9 @@ namespace BPHN.DataLayer.ImpRepositories
                 
         }
 
-        public async Task<Pitch?> GetById(string id)
+        public async Task<Pitch?> GetById(Guid id)
         {
+            if(id.Equals(Guid.Empty)) return null;
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();

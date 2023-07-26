@@ -607,6 +607,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var resultPermission = await _permissionRepository.Save(permissions);
             if (resultRegister)
             {
+                _globalVariableService.Reset();
                 await _notificationService.Insert<Account>(context, NotificationTypeEnum.INSERTACCOUNT, new Account()
                 {
                     UserName = account.UserName

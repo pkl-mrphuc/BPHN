@@ -6,6 +6,7 @@ using BPHN.ModelLayer.Others;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System.Security;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
@@ -455,24 +456,16 @@ namespace BPHN.BusinessLayer.ImpServices
             var insertResult = await _bookingRepository.Insert(data);
             if (insertResult)
             {
-                if(data.PitchId.HasValue)
+                var pitch = await _pitchRepository.GetById(data.PitchId.HasValue ? data.PitchId.Value : Guid.Empty);
+                var frame = await _timeFrameInfoRepository.GetById(data.TimeFrameInfoId.HasValue ? data.TimeFrameInfoId.Value : Guid.Empty);
+                await _notificationService.Insert<Booking>(context, NotificationTypeEnum.INSERTBOOKING, new Booking()
                 {
-                    var pitch = await _pitchRepository.GetById(data.PitchId.Value.ToString());
-                    var lstFrame = await _timeFrameInfoRepository.GetByPitchId(data.PitchId.Value);
-                    var frame = lstFrame.Where(item => item.Id == data.TimeFrameInfoId).FirstOrDefault();
-                    var matchDate = data.BookingDetails.Select(item => item.MatchDate.ToString("dd/MM/yyyy")).FirstOrDefault();
-                    if (pitch != null && frame != null && matchDate != null)
-                    {
-                        await _notificationService.Insert<Booking>(context, NotificationTypeEnum.INSERTBOOKING, new Booking()
-                        {
-                            PhoneNumber = data.PhoneNumber,
-                            NameDetail = data.NameDetail,
-                            PitchName = pitch.Name,
-                            TimeFrameInfoName = $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}"
-                        });
-                    }
-                }
-                    
+                    PhoneNumber = data.PhoneNumber,
+                    NameDetail = data.NameDetail,
+                    PitchName = pitch?.Name ?? string.Empty,
+                    TimeFrameInfoName = $"{frame?.TimeBegin.ToString("hh:mm:ss") ?? string.Empty} - {frame?.TimeEnd.ToString("hh:mm:ss") ?? string.Empty}"
+                });
+
                 var thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();
@@ -586,29 +579,22 @@ namespace BPHN.BusinessLayer.ImpServices
             var insertResult = await _bookingRepository.Insert(booking);
             if (insertResult)
             {
-                if (booking.PitchId.HasValue)
+                var pitch = await _pitchRepository.GetById(booking.PitchId.HasValue ? booking.PitchId.Value : Guid.Empty);
+                var frame = await _timeFrameInfoRepository.GetById(booking.TimeFrameInfoId.HasValue ? booking.TimeFrameInfoId.Value : Guid.Empty);
+                var matchDate = booking.BookingDetails.Select(item => item.MatchDate.ToString("dd/MM/yyyy")).FirstOrDefault();
+                var context = new Account()
                 {
-                    var pitch = await _pitchRepository.GetById(booking.PitchId.Value.ToString());
-                    var lstFrame = await _timeFrameInfoRepository.GetByPitchId(booking.PitchId.Value);
-                    var frame = lstFrame.Where(item => item.Id == data.TimeFrameInfoId).FirstOrDefault();
-                    var matchDate = booking.BookingDetails.Select(item => item.MatchDate.ToString("dd/MM/yyyy")).FirstOrDefault();
-                    if (pitch != null && frame != null && matchDate != null)
-                    {
-                        var context = new Account()
-                        {
-                            RelationIds = await _accountRepository.GetRelationIds(data.AccountId) ?? new List<Guid>() { data.AccountId },
-                            Id = data.AccountId,
-                            FullName = data.PhoneNumber
-                        };
-                        await _notificationService.Insert<Booking>(context, NotificationTypeEnum.INSERTBOOKING, new Booking()
-                        {
-                            PhoneNumber = data.PhoneNumber,
-                            NameDetail = data.NameDetail,
-                            PitchName = pitch.Name,
-                            TimeFrameInfoName = $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}"
-                        });
-                    }
-                }
+                    RelationIds = await _accountRepository.GetRelationIds(data.AccountId) ?? new List<Guid>() { data.AccountId },
+                    Id = data.AccountId,
+                    FullName = data.PhoneNumber
+                };
+                await _notificationService.Insert<Booking>(context, NotificationTypeEnum.INSERTBOOKING, new Booking()
+                {
+                    PhoneNumber = data.PhoneNumber,
+                    NameDetail = data.NameDetail,
+                    PitchName = pitch?.Name ?? string.Empty,
+                    TimeFrameInfoName = frame != null ? $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}" : string.Empty
+                });
 
                 var thread = new Thread(delegate ()
                 {
@@ -700,70 +686,63 @@ namespace BPHN.BusinessLayer.ImpServices
             var updateResult = await _bookingRepository.Update(data);
             if (updateResult)
             {
+                var pitch = await _pitchRepository.GetById(oldData.PitchId.HasValue ? oldData.PitchId.Value : Guid.Empty);
+                var frame = await _timeFrameInfoRepository.GetById(oldData.TimeFrameInfoId.HasValue ? oldData.TimeFrameInfoId.Value : Guid.Empty);
+                var matchDate = data.BookingDetails.Select(item => item.MatchDate.ToString("dd/MM/yyyy")).FirstOrDefault();
 
-                if (data.PitchId.HasValue)
+                if (status == BookingStatusEnum.CANCEL)
                 {
-                    var pitch = await _pitchRepository.GetById(data.PitchId.Value.ToString());
-                    var lstFrame = await _timeFrameInfoRepository.GetByPitchId(data.PitchId.Value);
-                    var frame = lstFrame.Where(item => item.Id == data.TimeFrameInfoId).FirstOrDefault();
-                    var matchDate = data.BookingDetails.Select(item => item.MatchDate.ToString("dd/MM/yyyy")).FirstOrDefault();
-                    if (pitch != null && frame != null && matchDate != null)
+                    _mailService.SendMail(new ObjectQueue()
                     {
-                        if (status == BookingStatusEnum.CANCEL)
+                        QueueJobType = QueueJobTypeEnum.SENDMAIL,
+                        DataJson = JsonConvert.SerializeObject(new DeclineBookingParameter()
                         {
-                            _mailService.SendMail(new ObjectQueue()
-                            {
-                                QueueJobType = QueueJobTypeEnum.SENDMAIL,
-                                DataJson = JsonConvert.SerializeObject(new DeclineBookingParameter()
-                                {
-                                    ReceiverAddress = data.Email,
-                                    MailType = MailTypeEnum.DECLINEBOOKING,
-                                    ParameterType = typeof(DeclineBookingParameter),
-                                    PhoneNumber = data.PhoneNumber,
-                                    Reason = ""
-                                })
-                            });
+                            ReceiverAddress = data.Email,
+                            MailType = MailTypeEnum.DECLINEBOOKING,
+                            ParameterType = typeof(DeclineBookingParameter),
+                            PhoneNumber = data.PhoneNumber,
+                            Reason = ""
+                        })
+                    });
 
-                            await _notificationService.Insert<Booking>(context, NotificationTypeEnum.DECLINEBOOKING, new Booking()
-                            {
-                                PhoneNumber = data.PhoneNumber,
-                                NameDetail = data.NameDetail,
-                                PitchName = pitch.Name,
-                                TimeFrameInfoName = $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}"
-                            });
-                        }
-                        else
+                    await _notificationService.Insert<Booking>(context, NotificationTypeEnum.DECLINEBOOKING, new Booking()
+                    {
+                        PhoneNumber = data.PhoneNumber,
+                        NameDetail = data.NameDetail,
+                        PitchName = pitch?.Name ?? string.Empty,
+                        TimeFrameInfoName = frame != null ? $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}" : string.Empty
+                    });
+                }
+                else
+                {
+                    _mailService.SendMail(new ObjectQueue()
+                    {
+                        QueueJobType = QueueJobTypeEnum.SENDMAIL,
+                        DataJson = JsonConvert.SerializeObject(new ApprovalBookingParameter()
                         {
-                            _mailService.SendMail(new ObjectQueue()
-                            {
-                                QueueJobType = QueueJobTypeEnum.SENDMAIL,
-                                DataJson = JsonConvert.SerializeObject(new ApprovalBookingParameter()
-                                {
-                                    ReceiverAddress = data.Email,
-                                    MailType = MailTypeEnum.APPROVALBOOKING,
-                                    ParameterType = typeof(ApprovalBookingParameter),
-                                    BookingDate = data.BookingDate.ToString("dd/MM/yyyy"),
-                                    NameDetail = data.NameDetail,
-                                    PhoneNumber = data.PhoneNumber,
-                                    StadiumName = pitch.Name,
-                                    TimeFrameInfo = $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}",
-                                    Price = frame.Price.ToString(),
-                                    MatchDate = matchDate
-                                })
-                            });
+                            ReceiverAddress = data.Email,
+                            MailType = MailTypeEnum.APPROVALBOOKING,
+                            ParameterType = typeof(ApprovalBookingParameter),
+                            BookingDate = data.BookingDate.ToString("dd/MM/yyyy"),
+                            NameDetail = data.NameDetail,
+                            PhoneNumber = data.PhoneNumber,
+                            StadiumName = pitch?.Name ?? string.Empty,
+                            TimeFrameInfo = frame != null ? $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}" : string.Empty,
+                            Price = frame?.Price.ToString() ?? string.Empty,
+                            MatchDate = matchDate ?? string.Empty
+                        })
+                    });
 
-                            await _notificationService.Insert<Booking>(context, NotificationTypeEnum.APPROVALBOOKING, new Booking()
-                            {
-                                PhoneNumber = data.PhoneNumber,
-                                NameDetail = data.NameDetail,
-                                PitchName = pitch.Name,
-                                TimeFrameInfoName = $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}"
-                            });
-                        }
-                    }
+                    await _notificationService.Insert<Booking>(context, NotificationTypeEnum.APPROVALBOOKING, new Booking()
+                    {
+                        PhoneNumber = data.PhoneNumber,
+                        NameDetail = data.NameDetail,
+                        PitchName = pitch?.Name ?? string.Empty,
+                        TimeFrameInfoName = frame != null ? $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}" : string.Empty
+                    });
                 }
 
-                Thread thread = new Thread(delegate ()
+                var thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();
                     _historyLogService.Write(new HistoryLog()

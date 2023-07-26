@@ -34,5 +34,18 @@ namespace BPHN.DataLayer.ImpRepositories
                 return lstTimeFrameInfo.ToList();
             }
         }
+
+        public async Task<TimeFrameInfo?> GetById(Guid id)
+        {
+            if (id.Equals(Guid.Empty)) return null;
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var dic = new Dictionary<string, object>();
+                dic.Add("@id", id);
+                var timeFrameInfo = await connection.QueryFirstOrDefaultAsync<TimeFrameInfo>("select Id, SortOrder, Name, TimeBegin, TimeEnd, Price, PitchId from time_frame_infos where Id = @id order by SortOrder", dic);
+                return timeFrameInfo;
+            }
+        }
     }
 }
