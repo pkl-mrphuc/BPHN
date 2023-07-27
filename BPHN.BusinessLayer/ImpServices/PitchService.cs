@@ -34,7 +34,7 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch, string accountId, bool hasInactive = true)
         {
             if (pageIndex < 1) pageIndex = 1;
-            if (pageSize <= 0 || pageSize > 100) pageSize = 50;
+            if (pageSize <= 0 || pageSize > 1000) pageSize = 50;
             var lstWhere = new List<WhereCondition>();
 
             if (!string.IsNullOrWhiteSpace(accountId))
@@ -73,9 +73,6 @@ namespace BPHN.BusinessLayer.ImpServices
                         Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
                     };
                 }
-
-                pageSize = int.MaxValue;
-
 
                 lstWhere.Add(new WhereCondition()
                 {
@@ -231,7 +228,7 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> GetPaging(int pageIndex, int pageSize, string txtSearch, string accountId, bool hasDetail = false, bool hasInactive = true)
         {
             if (pageIndex < 1) pageIndex = 1;
-            if (pageSize <= 0 || pageSize > 100) pageSize = 50;
+            if (pageSize <= 0 || pageSize > 1000) pageSize = 50;
             var lstWhere = new List<WhereCondition>();
 
             if(!string.IsNullOrWhiteSpace(accountId))
@@ -271,7 +268,6 @@ namespace BPHN.BusinessLayer.ImpServices
                     };
                 }
 
-                pageSize = int.MaxValue;
                 lstWhere.Add(new WhereCondition()
                 {
                     Column = "ManagerId",

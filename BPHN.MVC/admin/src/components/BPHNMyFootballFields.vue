@@ -53,6 +53,8 @@ const loadData = () => {
       accountId: store.getters["account/getAccountId"],
       hasDetail: false,
       hasInactive: true,
+      pageIndex: 1,
+      pageSize: 1000
     })
     .then((res) => {
       loading.close();

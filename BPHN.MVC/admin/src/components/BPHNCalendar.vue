@@ -9,7 +9,12 @@ import useToggleModal from "@/register-components/actionDialog";
 import { useI18n } from "vue-i18n";
 import { ElLoading } from "element-plus";
 import { BookingStatusEnum } from "@/const";
-import { InfoFilled } from "@element-plus/icons-vue";
+import {
+  InfoFilled,
+  ArrowLeft,
+  ArrowRight,
+  FullScreen,
+} from "@element-plus/icons-vue";
 
 const store = useStore();
 const lstResource = ref([]);
@@ -19,26 +24,54 @@ const objMatch = ref(null);
 const objEvent = ref(null);
 const objCalendar = ref(null);
 const { t } = useI18n();
-const formatDate = ref(store.getters["config/getFormatDate"]);
-const selectedDate = ref(null);
 const loadingOptions = inject("loadingOptions");
-const pageSize = ref(2);
+const pageSize = ref(1);
 const pageIndex = ref(1);
-const currentDate = ref(null);
+const currentDate = ref(new Date());
+const totalPage = ref(0);
+const expandMode = ref(false);
+const selectedDateDisplay = ref("");
 
 onMounted(() => {
   const { offsetWidth } = document.getElementById("app");
   if (offsetWidth >= 768) {
-    pageSize.value = -1;
+    pageSize.value = 2;
   }
-  if (offsetWidth >= 992) {
-    pageSize.value = -1;
+  let expandModeCache = localStorage.getItem("expand-mode-calendar-key");
+  if(expandModeCache === "1") {
+    expandMode.value = true;
   }
-  if (offsetWidth >= 1200) {
-    pageSize.value = -1;
-  }
+  loadResource();
+});
 
+watch(currentDate, (newValue) => {
+  if (
+    objCalendar.value &&
+    !equals(dateToString(newValue), dateToString(objCalendar.value.getDate()))
+  ) {
+    objCalendar.value.gotoDate(newValue);
+    selectedDateDisplay.value = currentDate.value
+      ? dateToString(currentDate.value, store.getters["config/getFormatDate"])
+      : "";
+  }
+});
+
+const loadResource = () => {
   const loading = ElLoading.service(loadingOptions);
+
+  store
+    .dispatch("pitch/getCountPaging", {
+      accountId: store.getters["account/getAccountId"],
+      hasInactive: false,
+      pageSize: pageSize.value,
+      pageIndex: pageIndex.value,
+    })
+    .then((res) => {
+      if (res?.data?.data) {
+        totalPage.value = res.data.data.totalPage;
+      }
+    });
+
   store
     .dispatch("pitch/getPaging", {
       accountId: store.getters["account/getAccountId"],
@@ -60,19 +93,6 @@ onMounted(() => {
       await renderCalendar(lstResource.value);
       loading.close();
     });
-});
-
-watch(currentDate, (newValue) => {
-  if (objCalendar.value) {
-    objCalendar.value.gotoDate(newValue);
-    selectedDate.value = getSelectedDate();
-  }
-});
-
-const getSelectedDate = () => {
-  return objCalendar.value
-    ? dateToString(objCalendar.value.getDate(), formatDate.value)
-    : "";
 };
 
 const renderCalendar = async (lstResource) => {
@@ -96,9 +116,9 @@ const renderCalendar = async (lstResource) => {
             dateToString(data.start, "yyyy-MM-dd")
           );
           callback(events);
+        } else {
+          callback([]);
         }
-        callback([]);
-        handleAfterRenderCalendar(calendarEl);
       },
       eventContent: function (arg) {
         let eventInfo = arg.event.extendedProps;
@@ -110,8 +130,12 @@ const renderCalendar = async (lstResource) => {
     });
     calendar.render();
     objCalendar.value = calendar;
-    selectedDate.value = getSelectedDate(calendar);
-    currentDate.value = objCalendar.value.getDate();
+    if (currentDate?.value) {
+      objCalendar.value.gotoDate(currentDate.value);
+      selectedDateDisplay.value = currentDate.value
+        ? dateToString(currentDate.value, store.getters["config/getFormatDate"])
+        : "";
+    }
     handleAfterRenderCalendar(calendarEl);
   }
 };
@@ -121,6 +145,34 @@ const handleAfterRenderCalendar = (calendar) => {
   if (licenseElement) {
     licenseElement.style.display = "none";
   }
+
+  let prevElement = document.createElement("div");
+  prevElement.setAttribute("id", "prev_icon");
+  prevElement.addEventListener("click", () => {
+    pageIndex.value--;
+    loadResource();
+  });
+  let nextElement = document.createElement("div");
+  nextElement.setAttribute("id", "next_icon");
+  nextElement.addEventListener("click", () => {
+    pageIndex.value++;
+    loadResource();
+  });
+  let lstNameStadiumElement = calendar.getElementsByClassName("fc-col-header");
+
+  document.getElementById("prev_icon")?.remove();
+  document.getElementById("next_icon")?.remove();
+
+  if (pageIndex.value == 1) {
+    prevElement.style.display = "none";
+  }
+
+  if (pageIndex.value == totalPage.value) {
+    nextElement.style.display = "none";
+  }
+
+  lstNameStadiumElement?.[0].appendChild(prevElement);
+  lstNameStadiumElement?.[0].appendChild(nextElement);
 };
 
 const getEventByDate = async (date) => {
@@ -183,14 +235,51 @@ const loadEvent = (data) => {
     objEvent.value.event.setExtendedProp("note", data.note);
   }
 };
+
+const today = () => {
+  if (objCalendar.value) {
+    objCalendar.value.today();
+    currentDate.value = objCalendar.value.getDate();
+    selectedDateDisplay.value = currentDate.value
+      ? dateToString(currentDate.value, store.getters["config/getFormatDate"])
+      : "";
+  }
+};
+
+const prev = () => {
+  if (objCalendar.value) {
+    objCalendar.value.prev();
+    currentDate.value = objCalendar.value.getDate();
+    selectedDateDisplay.value = currentDate.value
+      ? dateToString(currentDate.value, store.getters["config/getFormatDate"])
+      : "";
+  }
+};
+
+const next = () => {
+  if (objCalendar.value) {
+    objCalendar.value.next();
+    currentDate.value = objCalendar.value.getDate();
+    selectedDateDisplay.value = currentDate.value
+      ? dateToString(currentDate.value, store.getters["config/getFormatDate"])
+      : "";
+  }
+};
+
+const expandModeClick = () => {
+  expandMode.value = !expandMode.value;
+  renderCalendar(lstResource.value);
+  localStorage.removeItem("expand-mode-calendar-key");
+  localStorage.setItem("expand-mode-calendar-key", expandMode.value ? "1" : "0");
+};
 </script>
 
 <template>
   <section>
     <div class="container">
       <div class="d-flex flex-row align-items-center justify-content-between">
-        <h3 class="fs-3">{{ t("Calendar") }}</h3>
-        <div>
+        <h3 class="fs-3">{{ t("Calendar") }} / {{ selectedDateDisplay }}</h3>
+        <div class="d-flex flex-row">
           <el-popover
             placement="top-start"
             :title="t('Note')"
@@ -233,17 +322,42 @@ const loadEvent = (data) => {
               </div>
             </div>
           </el-popover>
+          <el-button
+            class="mx-1"
+            @click="expandModeClick"
+            :icon="FullScreen"
+            circle
+          ></el-button>
+          <div v-if="expandMode">
+            <el-button-group class="mx-1">
+              <el-button type="primary" @click="prev">
+                <el-icon><ArrowLeft /></el-icon>
+              </el-button>
+              <el-button type="primary" @click="next">
+                <el-icon><ArrowRight /></el-icon>
+              </el-button>
+            </el-button-group>
+            <el-button class="mx-1" type="primary" @click="today">{{
+              t("Today")
+            }}</el-button>
+          </div>
         </div>
       </div>
       <div class="row" style="height: calc(100vh - 190px); overflow: scroll">
-        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4">
+        <div
+          v-if="!expandMode"
+          class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4"
+        >
           <el-calendar v-model="currentDate">
             <template #header="{}">
               <span></span>
             </template>
           </el-calendar>
         </div>
-        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-8">
+        <div
+          class="col-12 col-sm-12 col-md-12 col-lg-12"
+          :class="!expandMode ? 'col-xl-8' : 'col-xl-12'"
+        >
           <div class="mx-2">
             <div id="calendarTimeGrid"></div>
           </div>

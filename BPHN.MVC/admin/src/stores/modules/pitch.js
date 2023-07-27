@@ -25,6 +25,10 @@ const actions = {
         return PitchAPI.getPaging(data)
     }),
 
+    getCountPaging: ((commit, data) => {
+        return PitchAPI.getCountPaging(data)
+    }),
+
     update: ((commit, data) => {
         return PitchAPI.update(data)
     })
