@@ -188,11 +188,13 @@ const getEventByDate = async (date) => {
         end: item.end,
         extendedProps: {
           bookingDetailId: item.id,
+          bookingId: item.bookingId,
           teamA: !item.teamA ? item.phoneNumber : item.teamA,
           teamB: item.teamB ?? "",
           stadium: item.stadium,
           note: item.note ?? "",
           status: item.status ?? "",
+          deposite: item.deposite ?? 0
         },
       });
     }
@@ -233,6 +235,8 @@ const loadEvent = (data) => {
     objEvent.value.event.setExtendedProp("teamA", data.teamA);
     objEvent.value.event.setExtendedProp("teamB", data.teamB);
     objEvent.value.event.setExtendedProp("note", data.note);
+    objEvent.value.event.setExtendedProp("deposite", data.deposite);
+    objEvent.value.event.setExtendedProp("status", data.status);
   }
 };
 

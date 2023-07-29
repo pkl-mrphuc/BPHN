@@ -233,6 +233,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 fakeNewData.TeamA = eventInfo.TeamA;
                 fakeNewData.TeamB = eventInfo.TeamB;
                 fakeNewData.Note = eventInfo.Note;
+                fakeNewData.Deposite = eventInfo.Deposite;
 
                 await _notificationService.Insert<BookingDetail>(context, NotificationTypeEnum.UPDATEMATCH, new BookingDetail() {
                     MatchCode = oldData.MatchCode
