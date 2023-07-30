@@ -27,7 +27,7 @@ export default defineComponent({
     },
     numberDecimal: {
       type: Number,
-      default: 0,
+      default: 2,
     },
     prefix: {
       type: String,
@@ -60,11 +60,19 @@ export default defineComponent({
       if (inpNumber.value?.value == inpNumberMask.value?.ref?.value) {
         number.value = inpNumber.value.value;
         numberMask.value = fakeNumber(inpNumber.value.value);
-        emit("value", inpNumber.value.value);
+        emit("value", emitRealNumber(numberMask.value));
       } else {
         numberMask.value = null;
         number.value = null;
       }
+    };
+
+    const emitRealNumber = (numberMask) => {
+      return (
+        numberMask
+          .replaceAll(props.separateThousand, "")
+          .replaceAll(props.separateDecimal, ".") - "0"
+      );
     };
 
     const fakeNumber = (number) => {

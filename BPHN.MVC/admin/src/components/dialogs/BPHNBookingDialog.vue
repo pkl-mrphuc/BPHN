@@ -64,11 +64,24 @@ const changePitchId = () => {
   if (pitchSelected && pitchSelected.length > 0) {
     let pitch = pitchSelected[0];
     lstDetail.value = pitch.nameDetails.split(";");
+
+    if (!lstDetail.value.includes(nameDetail.value)) {
+      nameDetail.value = null;
+    }
+
+    let isInclude = false;
     for (let i = 0; i < pitch.timeFrameInfos.length; i++) {
       const item = pitch.timeFrameInfos[i];
+      if (item.id === timeFrameInfoId.value) {
+        isInclude = true;
+      }
       item["newName"] = `Khung ${time(item.timeBegin)} - ${time(item.timeEnd)}`;
     }
     lstTimeFrame.value = pitch.timeFrameInfos;
+
+    if (!isInclude) {
+      timeFrameInfoId.value = null;
+    }
   }
 };
 
