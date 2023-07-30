@@ -34,7 +34,7 @@ const en = {
     AddNew: "Add new",
     Edit: "Edit",
     UploadImage: "Upload image",
-    Price: "Price (thousand dong)",
+    Price: "Price",
     TimeBegin: "Begin",
     TimeEnd: "End",
     NameFootballFieldEmptyMesg: "Name is not empty",

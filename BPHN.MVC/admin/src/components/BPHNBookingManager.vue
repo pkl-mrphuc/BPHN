@@ -9,7 +9,7 @@ import {
 } from "@element-plus/icons-vue";
 import useToggleModal from "@/register-components/actionDialog";
 import { useStore } from "vuex";
-import { ElLoading } from "element-plus";
+import { ElLoading, ElNotification } from "element-plus";
 import { inject, ref, onMounted, computed } from "vue";
 import useCommonFn from "@/commonFn";
 import { BookingStatusEnum } from "@/const";
@@ -40,8 +40,11 @@ const addNew = () => {
       openModal("BookingDialog");
       objBooking.value = res.data.data;
     } else {
-      let msg = res?.data?.message;
-      alert(msg ?? t("ErrorMesg"));
+      ElNotification({
+        title: t("Notification"),
+        message: res?.data?.message ?? t("ErrorMesg"),
+        type: "error",
+      });
     }
     loading.close();
   });
@@ -55,8 +58,11 @@ const approval = (id) => {
       openModal("BookingDialog");
       objBooking.value = res.data.data;
     } else {
-      let msg = res?.data?.message;
-      alert(msg ?? t("ErrorMesg"));
+      ElNotification({
+        title: t("Notification"),
+        message: res?.data?.message ?? t("ErrorMesg"),
+        type: "error",
+      });
     }
     loading.close();
   });
@@ -102,8 +108,17 @@ const cancel = (id) => {
   store.dispatch("bookingDetail/cancel", id).then((res) => {
     if (res?.data?.success) {
       loadData();
+      ElNotification({
+        title: t("Notification"),
+        message: t("SaveSuccess"),
+        type: "success",
+      });
     } else {
-      alert(t("ErrorMesg"));
+      ElNotification({
+        title: t("Notification"),
+        message: res?.data?.message ?? t("ErrorMesg"),
+        type: "error",
+      });
     }
   });
 };
@@ -165,13 +180,17 @@ onMounted(() => {
               <el-tag
                 type="success"
                 size="small"
-                v-if="equals(scope.row.bookingStatus, BookingStatusEnum.SUCCESS)"
+                v-if="
+                  equals(scope.row.bookingStatus, BookingStatusEnum.SUCCESS)
+                "
                 >{{ t(scope.row.bookingStatus) }}</el-tag
               >
               <el-tag
                 type="info"
                 size="small"
-                v-else-if="equals(scope.row.bookingStatus, BookingStatusEnum.PENDING)"
+                v-else-if="
+                  equals(scope.row.bookingStatus, BookingStatusEnum.PENDING)
+                "
                 >{{ t(scope.row.bookingStatus) }}</el-tag
               >
               <el-tag type="danger" size="small" v-else>{{
@@ -198,14 +217,22 @@ onMounted(() => {
                 <el-tag
                   type="success"
                   size="small"
-                  v-if="equals(scope.row.bookingDetailStatus, BookingStatusEnum.SUCCESS)"
+                  v-if="
+                    equals(
+                      scope.row.bookingDetailStatus,
+                      BookingStatusEnum.SUCCESS
+                    )
+                  "
                   >{{ t(scope.row.bookingDetailStatus) }}</el-tag
                 >
                 <el-tag
                   type="info"
                   size="small"
                   v-else-if="
-                    equals(scope.row.bookingDetailStatus, BookingStatusEnum.PENDING)
+                    equals(
+                      scope.row.bookingDetailStatus,
+                      BookingStatusEnum.PENDING
+                    )
                   "
                   >{{ t(scope.row.bookingDetailStatus) }}</el-tag
                 >
@@ -231,12 +258,20 @@ onMounted(() => {
                 <span class="text-truncate">{{ scope.row.nameDetail }}</span>
               </template>
             </el-table-column>
-            <el-table-column :label="t('Weekdays')" prop="weekendays" min-width="120">
+            <el-table-column
+              :label="t('Weekdays')"
+              prop="weekendays"
+              min-width="120"
+            >
               <template #default="scope">
                 {{ t(getWeekdays(scope.row.weekendays)) }}
               </template>
             </el-table-column>
-            <el-table-column :label="t('MatchDate')" prop="matchDate" min-width="120">
+            <el-table-column
+              :label="t('MatchDate')"
+              prop="matchDate"
+              min-width="120"
+            >
               <template #default="scope">
                 {{ dateToString(scope.row.matchDate, formatDate) }}
               </template>
@@ -261,14 +296,22 @@ onMounted(() => {
                   :icon="Delete"
                   size="small"
                   v-if="
-                    !equals(scope.row.bookingDetailStatus, BookingStatusEnum.CANCEL) &&
-                    !equals(scope.row.bookingDetailStatus, BookingStatusEnum.PENDING)
+                    !equals(
+                      scope.row.bookingDetailStatus,
+                      BookingStatusEnum.CANCEL
+                    ) &&
+                    !equals(
+                      scope.row.bookingDetailStatus,
+                      BookingStatusEnum.PENDING
+                    )
                   "
                 ></el-button>
                 <el-button
                   @click="approval(scope.row.bookingId)"
                   type="warning"
-                  v-if="equals(scope.row.bookingStatus, BookingStatusEnum.PENDING)"
+                  v-if="
+                    equals(scope.row.bookingStatus, BookingStatusEnum.PENDING)
+                  "
                   circle
                   :icon="Checked"
                   size="small"

@@ -5,7 +5,7 @@ import { computed, ref, inject } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { GenderEnum } from "@/const";
-import { ElLoading } from "element-plus";
+import { ElLoading, ElNotification } from "element-plus";
 
 const running = ref(0);
 const loadingOptions = inject("loadingOptions");
@@ -51,11 +51,19 @@ const changePassword = () => {
   const loading = ElLoading.service(loadingOptions);
 
   if (!password.value || !passwordAgain.value) {
-    alert(t("PasswordEmptyMesg"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("PasswordEmptyMesg"),
+      type: "warning",
+    });
     return;
   }
   if (password.value != passwordAgain.value) {
-    alert(t("NoMatchPasswordMesg"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("NoMatchPasswordMesg"),
+      type: "warning",
+    });
     return;
   }
 
@@ -66,11 +74,18 @@ const changePassword = () => {
   store.dispatch("account/changePassword", data).then((res) => {
     loading.close();
     if (res?.data?.success) {
-      alert(t("SaveSuccess"));
+      ElNotification({
+        title: t("Notification"),
+        message: t("SaveSuccess"),
+        type: "success",
+      });
       router.push("login");
     } else {
-      let msg = res?.data?.message;
-      alert(msg ?? t("ErrorMesg"));
+      ElNotification({
+        title: t("Notification"),
+        message: res?.data?.message ?? t("ErrorMesg"),
+        type: "error",
+      });
     }
 
     setTimeout(() => {

@@ -4,6 +4,7 @@ import { Refresh, Search } from "@element-plus/icons-vue";
 import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
 import useCommonFn from "@/commonFn";
+import { ElNotification } from "element-plus";
 
 const { t } = useI18n();
 const store = useStore();
@@ -55,7 +56,11 @@ const loadData = () => {
 
 const goToViewDetail = (id) => {
   console.log(id);
-  alert(t("FeatureIsDeveloping"));
+  ElNotification({
+    title: t("Notification"),
+    message: t("FeatureIsDeveloping"),
+    type: "info",
+  });
 };
 
 const prevClick = () => {

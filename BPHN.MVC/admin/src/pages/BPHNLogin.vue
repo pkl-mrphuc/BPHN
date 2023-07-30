@@ -3,13 +3,13 @@ import { ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import { ElNotification } from "element-plus";
 
 const { t } = useI18n();
 const store = useStore();
 const router = useRouter();
 const username = ref("");
 const password = ref("");
-const isLoading = ref(false);
 const inpUsername = ref(null);
 
 onMounted(() => {
@@ -18,22 +18,41 @@ onMounted(() => {
 
 const login = () => {
   if (!username.value) {
-    alert(t("UsernameEmptyMesg"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("UsernameEmptyMesg"),
+      type: "warning",
+    });
     return;
   }
   if (!password.value) {
-    alert(t("PasswordEmptyMesg"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("PasswordEmptyMesg"),
+      type: "warning",
+    });
     return;
   }
 
-  isLoading.value = true;
   store
     .dispatch("account/login", {
       username: username.value,
       password: password.value,
     })
-    .then(() => {
-      isLoading.value = false;
+    .then((res) => {
+      if (res?.data?.success) {
+        let user = res.data.data;
+        if (user) {
+          store.commit("account/setContext", user);
+          router.push("calendar");
+        }
+      } else {
+        ElNotification({
+          title: t("Notification"),
+          message: res?.data?.message ?? t("ErrorMesg"),
+          type: "error",
+        });
+      }
     });
 };
 
@@ -44,7 +63,7 @@ const goToForgot = () => {
 
 <template>
   <div
-    style="width: 100vw; height: 100vh;"
+    style="width: 100vw; height: 100vh"
     class="container p-3 d-flex flex-row align-items-center justify-content-center"
   >
     <div class="row w-75 w-sm-100 w-md-75 w-lg-50">
@@ -68,6 +87,7 @@ const goToForgot = () => {
                 :placeholder="t('Username')"
                 tabindex="1"
                 ref="inpUsername"
+                @keyup.enter="login"
               />
             </el-form-item>
             <el-form-item>
@@ -84,18 +104,13 @@ const goToForgot = () => {
             <el-form-item>
               <el-button
                 type="primary"
-                :loading="isLoading"
                 @click="login"
-                @keyup.enter="login"
                 tabindex="3"
                 >{{ t("Submit") }}</el-button
               >
-              <el-button
-                type="info"
-                link
-                @click="goToForgot()"
-                tabindex="4"
-                >{{ t("ForgotPasswordTitle") }}</el-button>
+              <el-button type="info" link @click="goToForgot()" tabindex="4">{{
+                t("ForgotPasswordTitle")
+              }}</el-button>
             </el-form-item>
           </el-form>
         </div>

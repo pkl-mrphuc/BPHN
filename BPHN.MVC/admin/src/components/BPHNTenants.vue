@@ -4,7 +4,7 @@ import { Refresh, Search, Edit, CircleCheck } from "@element-plus/icons-vue";
 import { ref, onMounted, inject } from "vue";
 import { useStore } from "vuex";
 import useToggleModal from "@/register-components/actionDialog";
-import { ElLoading } from "element-plus";
+import { ElLoading, ElNotification } from "element-plus";
 import { StatusEnum, GenderEnum } from "@/const";
 import useCommonFn from "@/commonFn";
 
@@ -92,8 +92,11 @@ const permission = (id) => {
       lstPermission.value = res.data.data;
       accountId.value = id;
     } else {
-      let msg = res?.data?.message;
-      alert(msg ?? t("ErrorMesg"));
+      ElNotification({
+        title: t("Notification"),
+        message: res?.data?.message ?? t("ErrorMesg"),
+        type: "error",
+      });
     }
     loading.close();
   });
@@ -106,8 +109,11 @@ const openForm = (id) => {
       openModal("TenantDialog");
       objTenant.value = res.data.data;
     } else {
-      let msg = res?.data?.message;
-      alert(msg ?? t("ErrorMesg"));
+      ElNotification({
+        title: t("Notification"),
+        message: res?.data?.message ?? t("ErrorMesg"),
+        type: "error",
+      });
     }
     loading.close();
   });

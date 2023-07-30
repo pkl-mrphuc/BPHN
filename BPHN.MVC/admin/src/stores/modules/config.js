@@ -95,28 +95,15 @@ const actions = {
             }
 
         })
-            .catch((error) => {
-                console.log(error)
-                alert(i18n.global.t("ErrorMesg"))
-            })
     }),
 
     save: ((commit, configs) => {
         ConfigAPI.save(configs).then((res) => {
             if (res?.data?.success) {
-                alert(i18n.global.t("SaveSuccess"))
                 localStorage.removeItem("config-key")
                 router.go()
             }
-            else {
-                let msg = res?.data?.message
-                alert(msg ?? i18n.global.t("ErrorMesg"))
-            }
         })
-            .catch((error) => {
-                console.log(error)
-                alert(i18n.global.t("ErrorMesg"))
-            })
     })
 
 };

@@ -3,7 +3,7 @@ import { FunctionTypeEnum } from "@/const";
 import useToggleModal from "@/register-components/actionDialog";
 import { defineProps, ref, inject } from "vue";
 import { useI18n } from "vue-i18n";
-import { ElLoading } from "element-plus";
+import { ElLoading, ElNotification } from "element-plus";
 import { useStore } from "vuex";
 
 const { t } = useI18n();
@@ -58,9 +58,17 @@ const save = () => {
       loading.close();
       if (res?.data?.success) {
         toggleModel();
+        ElNotification({
+          title: t("Notification"),
+          message: t("SaveSuccess"),
+          type: "success",
+        });
       } else {
-        let msg = res?.data?.message;
-        alert(msg ?? t("ErrorMesg"));
+        ElNotification({
+          title: t("Notification"),
+          message: t("ErrorMesg"),
+          type: "error",
+        });
       }
       setTimeout(() => {
         running.value = 0;

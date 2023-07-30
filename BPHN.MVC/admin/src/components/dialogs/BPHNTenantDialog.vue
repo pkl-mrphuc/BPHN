@@ -11,7 +11,7 @@ import {
   nextTick,
 } from "vue";
 import { useStore } from "vuex";
-import { ElLoading } from "element-plus";
+import { ElLoading, ElNotification } from "element-plus";
 import { GenderEnum, StatusEnum } from "@/const";
 import useCommonFn from "@/commonFn";
 
@@ -52,26 +52,46 @@ const save = () => {
   ++running.value;
 
   if (!email.value) {
-    alert(t("EmailEmptyMesg"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("EmailEmptyMesg"),
+      type: "warning",
+    });
     return;
   }
   if (!fullName.value) {
-    alert(t("FullNameEmptyMesg"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("FullNameEmptyMesg"),
+      type: "warning",
+    });
     return;
   }
   if (!phoneNumber.value) {
-    alert(t("PhoneNumberEmptyMesg"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("PhoneNumberEmptyMesg"),
+      type: "warning",
+    });
     return;
   }
   if (!isEmail(email.value)) {
-    alert(t("InvalidEmail"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("InvalidEmail"),
+      type: "warning",
+    });
     return;
   }
 
   let actionPath = "account/register";
   if (props.mode == "edit") {
     actionPath = "account/update";
-    alert(t("FeatureIsDeveloping"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("FeatureIsDeveloping"),
+      type: "info",
+    });
     return;
   }
 
@@ -90,9 +110,17 @@ const save = () => {
       if (res?.data?.success) {
         emits("callback");
         toggleModel();
+        ElNotification({
+          title: t("Notification"),
+          message: t("SaveSuccess"),
+          type: "success",
+        });
       } else {
-        let msg = res?.data?.message;
-        alert(msg ?? t("ErrorMesg"));
+        ElNotification({
+          title: t("Notification"),
+          message: res?.data?.message ?? t("ErrorMesg"),
+          type: "error",
+        });
       }
       loading.close();
 

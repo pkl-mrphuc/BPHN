@@ -27,7 +27,7 @@ export default defineComponent({
     },
     numberDecimal: {
       type: Number,
-      default: 2,
+      default: 0,
     },
     prefix: {
       type: String,
@@ -49,7 +49,7 @@ export default defineComponent({
         inpNumberMask.value.ref.classList += " text-end";
       }
 
-      numberMask.value = fakeNumber(number.value)
+      numberMask.value = fakeNumber(number.value);
     });
 
     const realNumber = () => {
@@ -108,11 +108,17 @@ export default defineComponent({
           }
         }
       }
-      thousand = thousand - "0" + increament + ""
-      thousand = thousand.split('').reverse().join('')
-      thousand = thousand.match(/.{1,3}/g).join(props.separateThousand).split('').reverse().join('')
+      thousand = thousand - "0" + increament + "";
+      thousand = thousand.split("").reverse().join("");
+      thousand = thousand
+        .match(/.{1,3}/g)
+        .join(props.separateThousand)
+        .split("")
+        .reverse()
+        .join("");
 
       if (props.numberDecimal === 0) {
+        if (thousand === "0") return "";
         return `${props.prefix}${thousand}${props.suffixes}`;
       }
       return `${props.prefix}${thousand}${props.separateDecimal}${decimal}${props.suffixes}`;

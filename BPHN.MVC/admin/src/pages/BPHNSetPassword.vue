@@ -3,6 +3,7 @@ import { computed, ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
+import { ElNotification } from "element-plus";
 
 const { t } = useI18n();
 const store = useStore();
@@ -31,11 +32,19 @@ const goToLogin = () => {
 
 const submit = () => {
   if (!password.value || !passwordAgain.value) {
-    alert(t("PasswordEmptyMesg"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("PasswordEmptyMesg"),
+      type: "warning",
+    });
     return;
   }
   if (password.value != passwordAgain.value) {
-    alert(t("NoMatchPasswordMesg"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("NoMatchPasswordMesg"),
+      type: "warning",
+    });
     return;
   }
 
@@ -44,7 +53,22 @@ const submit = () => {
     code: getQueryStringByKey("code"),
     password: password.value,
   };
-  store.dispatch("account/setPassword", data);
+  store.dispatch("account/setPassword", data).then((res) => {
+    if (res?.data?.success) {
+      router.push("login");
+      ElNotification({
+        title: t("Notification"),
+        message: t("SaveSuccess"),
+        type: "success",
+      });
+    } else {
+      ElNotification({
+        title: t("Notification"),
+        message: res?.data?.message ?? t("ErrorMesg"),
+        type: "error",
+      });
+    }
+  });
 };
 </script>
 

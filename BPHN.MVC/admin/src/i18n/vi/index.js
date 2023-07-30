@@ -34,7 +34,7 @@ const vi = {
     AddNew: "Thêm mới",
     Edit: "Sửa",
     UploadImage: "Tải ảnh",
-    Price: "Giá (Nghìn đồng)",
+    Price: "Giá",
     TimeBegin: "Giờ vào",
     TimeEnd: "Giờ ra",
     NameFootballFieldEmptyMesg: "Tên sân không được để trống",

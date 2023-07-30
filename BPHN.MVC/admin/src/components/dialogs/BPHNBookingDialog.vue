@@ -11,7 +11,7 @@ import {
 import useToggleModal from "@/register-components/actionDialog";
 import useCommonFn from "@/commonFn";
 import { useStore } from "vuex";
-import { ElLoading } from "element-plus";
+import { ElLoading, ElNotification } from "element-plus";
 
 const { toggleModel, openModal, hasRole } = useToggleModal();
 const { sameDate, yearEndDay, time, dateToString, equals } = useCommonFn();
@@ -91,15 +91,26 @@ const checkFreeTimeFrame = async () => {
 
 const quickCheck = async () => {
   if (!pitchId.value || !nameDetail.value || !timeFrameInfoId.value) {
-    alert(t("InputTimeFrameEmptyMesg"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("InputTimeFrameEmptyMesg"),
+      type: "warning",
+    });
     return;
   }
   let result = await checkFreeTimeFrame();
   if (result?.data?.success) {
-    alert(t("Free"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("Free"),
+      type: "info",
+    });
   } else {
-    let msg = result?.data?.message;
-    alert(msg ?? t("Reserved"));
+    ElNotification({
+      title: t("Notification"),
+      message: result?.data?.message ?? t("Reserved"),
+      type: "info",
+    });
   }
 };
 
@@ -112,7 +123,11 @@ const save = () => {
   ++running.value;
 
   if (!phoneNumber.value) {
-    alert(t("PhoneNumberEmptyMesg"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("PhoneNumberEmptyMesg"),
+      type: "warning",
+    });
     return;
   }
   const loading = ElLoading.service(loadingOptions);
@@ -134,9 +149,17 @@ const save = () => {
       if (res?.data?.success) {
         emits("callback");
         toggleModel();
+        ElNotification({
+          title: t("Notification"),
+          message: t("SaveSuccess"),
+          type: "success",
+        });
       } else {
-        let msg = res?.data?.message;
-        alert(msg ?? t("ErrorMesg"));
+        ElNotification({
+          title: t("Notification"),
+          message: res?.data?.message ?? t("ErrorMesg"),
+          type: "error",
+        });
       }
 
       setTimeout(() => {
@@ -171,9 +194,17 @@ const decline = () => {
     if (res?.data?.success) {
       emits("callback");
       toggleModel();
+      ElNotification({
+        title: t("Notification"),
+        message: t("SaveSuccess"),
+        type: "success",
+      });
     } else {
-      let msg = res?.data?.message;
-      alert(msg ?? t("ErrorMesg"));
+      ElNotification({
+        title: t("Notification"),
+        message: res?.data?.message ?? t("ErrorMesg"),
+        type: "error",
+      });
     }
 
     setTimeout(() => {
@@ -191,9 +222,17 @@ const approval = () => {
     if (res?.data?.success) {
       emits("callback");
       toggleModel();
+      ElNotification({
+        title: t("Notification"),
+        message: t("SaveSuccess"),
+        type: "success",
+      });
     } else {
-      let msg = res?.data?.message;
-      alert(msg ?? t("ErrorMesg"));
+      ElNotification({
+        title: t("Notification"),
+        message: res?.data?.message ?? t("ErrorMesg"),
+        type: "error",
+      });
     }
 
     setTimeout(() => {
@@ -209,6 +248,8 @@ onMounted(() => {
       accountId: store.getters["account/getAccountId"],
       hasDetail: true,
       hasInactive: false,
+      pageIndex: 1,
+      pageSize: 1000,
     })
     .then((res) => {
       if (res?.data?.data) {

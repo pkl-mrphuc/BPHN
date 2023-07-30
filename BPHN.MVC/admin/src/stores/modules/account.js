@@ -1,6 +1,4 @@
 import AccountAPI from "@/apis/AccountAPI";
-import i18n from "@/i18n/index.js";
-import router from "@/routers/index.js";
 
 const state = {
     context: null
@@ -65,58 +63,16 @@ const mutations = {
 };
 
 const actions = {
-    login: ({ commit }, account) => {
-        AccountAPI.login(account).then((res) => {
-            if (res?.data?.success) {
-                let user = res.data.data;
-                if (user) {
-                    commit("setContext", user);
-                    router.push("calendar");
-                }
-            }
-            else {
-                let msg = res?.data?.message;
-                alert(msg ?? i18n.global.t("ErrorMesg"));
-            }
-        })
-            .catch((error) => {
-                console.log(error);
-                alert(i18n.global.t("ErrorMesg"));
-            })
-    },
+    login: ((commit, account) => {
+        return AccountAPI.login(account)
+    }),
 
     forgot: ((commit, email) => {
-        AccountAPI.forgot(email).then((res) => {
-            if (res?.data?.success) {
-                alert(i18n.global.t("SetPasswordMesg"));
-                router.push("login");
-            }
-            else {
-                let msg = res?.data?.message;
-                alert(msg ?? i18n.global.t("ErrorMesg"));
-            }
-        })
-            .catch((error) => {
-                console.log(error);
-                alert(i18n.global.t("ErrorMesg"));
-            })
+        return AccountAPI.forgot(email)
     }),
 
     setPassword: ((commit, data) => {
-        AccountAPI.setPassword(data).then((res) => {
-            if (res?.data?.success) {
-                alert(i18n.global.t("SaveSuccess"));
-                router.push("login");
-            }
-            else {
-                let msg = res?.data?.message
-                alert(msg ?? i18n.global.t("ErrorMesg"))
-            }
-        })
-            .catch((error) => {
-                console.log(error);
-                alert(i18n.global.t("ErrorMesg"));
-            })
+        return AccountAPI.setPassword(data)
     }),
 
     changePassword: ((commit, data) => {

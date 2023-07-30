@@ -3,6 +3,7 @@ import { ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import { ElNotification } from "element-plus";
 
 const router = useRouter();
 const { t } = useI18n();
@@ -20,10 +21,29 @@ const goToLogin = () => {
 
 const forgot = () => {
   if (!email.value) {
-    alert(t("EmailEmptyMesg"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("EmailEmptyMesg"),
+      type: "warning",
+    });
     return;
   }
-  store.dispatch("account/forgot", email.value);
+  store.dispatch("account/forgot", email.value).then((res) => {
+    if (res?.data?.success) {
+      router.push("login");
+      ElNotification({
+        title: t("Notification"),
+        message: t("SaveSuccess"),
+        type: "success",
+      });
+    } else {
+      ElNotification({
+        title: t("Notification"),
+        message: res?.data?.message ?? t("ErrorMesg"),
+        type: "error",
+      });
+    }
+  });
 };
 </script>
 

@@ -6,6 +6,7 @@ import { useStore } from "vuex";
 import { BookingStatusEnum } from "@/const";
 import useCommonFn from "@/commonFn";
 import MaskNumberInput from "@/components/MaskNumberInput.vue";
+import { ElNotification } from "element-plus";
 
 const { toggleModel } = useToggleModal();
 const { t } = useI18n();
@@ -25,7 +26,11 @@ const bookingId = ref(props.data?.bookingId ?? "");
 
 const save = () => {
   if (!teamA.value) {
-    alert(t("TeamAEmptyMesg"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("TeamAEmptyMesg"),
+      type: "warning",
+    });
     return;
   }
 
@@ -39,23 +44,35 @@ const save = () => {
   store.dispatch("bookingDetail/updateMatch", data);
   emit("callback", data);
   toggleModel();
+  ElNotification({
+    title: t("Notification"),
+    message: t("SaveSuccess"),
+    type: "success",
+  });
 };
 
 const decline = () => {
   store.dispatch("booking/decline", bookingId.value).then((res) => {
     if (res?.data?.success) {
-      alert(t("SaveSuccess"));
+      ElNotification({
+        title: t("Notification"),
+        message: t("SaveSuccess"),
+        type: "success",
+      });
       emit("callback", {
         teamA: teamA.value,
         teamB: teamB.value,
         note: note.value,
         deposite: deposite.value,
-        status: BookingStatusEnum.CANCEL
+        status: BookingStatusEnum.CANCEL,
       });
       toggleModel();
     } else {
-      let msg = res?.data?.message;
-      alert(msg ?? t("ErrorMesg"));
+      ElNotification({
+        title: t("Notification"),
+        message: res?.data?.message ?? t("ErrorMesg"),
+        type: "error",
+      });
     }
   });
 };
@@ -63,17 +80,24 @@ const decline = () => {
 const approval = () => {
   store.dispatch("booking/approval", bookingId.value).then((res) => {
     if (res?.data?.success) {
-      alert(t("SaveSuccess"));
+      ElNotification({
+        title: t("Notification"),
+        message: t("SaveSuccess"),
+        type: "success",
+      });
       emit("callback", {
         teamA: teamA.value,
         teamB: teamB.value,
         note: note.value,
         deposite: deposite.value,
-        status: BookingStatusEnum.SUCCESS
+        status: BookingStatusEnum.SUCCESS,
       });
     } else {
-      let msg = res?.data?.message;
-      alert(msg ?? t("ErrorMesg"));
+      ElNotification({
+        title: t("Notification"),
+        message: res?.data?.message ?? t("ErrorMesg"),
+        type: "error",
+      });
     }
   });
 };

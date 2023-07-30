@@ -12,10 +12,11 @@ import useToggleModal from "@/register-components/actionDialog";
 import { useI18n } from "vue-i18n";
 import { v4 as uuidv4 } from "uuid";
 import { useStore } from "vuex";
-import { ElLoading } from "element-plus";
+import { ElLoading, ElNotification } from "element-plus";
 import useCommonFn from "@/commonFn";
 import { StatusEnum } from "@/const";
 import { LocationInformation } from "@element-plus/icons-vue";
+import MaskNumberInput from "../MaskNumberInput.vue";
 
 const props = defineProps({
   data: Object,
@@ -70,26 +71,46 @@ const nameTimeFrame = (sortOrder) => {
 
 const save = () => {
   if (!name.value) {
-    alert(t("NameFootballFieldEmptyMesg"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("NameFootballFieldEmptyMesg"),
+      type: "warning",
+    });
     return;
   }
   if (!address.value) {
-    alert(t("AddressFootballFieldEmptyMesg"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("AddressFootballFieldEmptyMesg"),
+      type: "warning",
+    });
     return;
   }
   if (
     timeSlotPerDay.value != lstTimeFrame.value.length ||
     timeSlotPerDay.value > maxTimeSlot.value
   ) {
-    alert(t("TimeSlotInvalidMesg"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("TimeSlotInvalidMesg"),
+      type: "warning",
+    });
     return;
   }
   if (!isValidNameDetail()) {
-    alert(t("NameDetailsEmptyMesg"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("NameDetailsEmptyMesg"),
+      type: "warning",
+    });
     return;
   }
   if (hasConflictTimeFrame()) {
-    alert(t("ConfictTimeFrame"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("ConfictTimeFrame"),
+      type: "warning",
+    });
     return;
   }
 
@@ -114,9 +135,17 @@ const save = () => {
       if (res.data?.success) {
         emit("callback", res);
         toggleModel();
+        ElNotification({
+          title: t("Notification"),
+          message: t("SaveSuccess"),
+          type: "success",
+        });
       } else {
-        let msg = res?.data?.message;
-        alert(msg ?? t("ErrorMesg"));
+        ElNotification({
+          title: t("Notification"),
+          message: res?.data?.message ?? t("ErrorMesg"),
+          type: "error",
+        });
       }
     });
 };
@@ -377,13 +406,16 @@ const isValidNameDetail = () => {
                 :min-width="160"
               >
                 <template #default="scope">
-                  <el-input-number
+                  <mask-number-input
                     v-if="equals(scope.row.key, 'Price')"
-                    v-model="item.price"
+                    :value="item.price"
+                    @value="
+                      (value) => {
+                        item.price = value;
+                      }
+                    "
                     class="w-100"
-                    :min="0"
-                    :step="100"
-                  />
+                  ></mask-number-input>
 
                   <el-time-picker
                     v-if="equals(scope.row.key, 'TimeBegin')"

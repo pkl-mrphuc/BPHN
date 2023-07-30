@@ -16,6 +16,7 @@
 .pbhn-login>.box {
     background-color: #fff;
 }
+
 html.dark .pbhn-login>.box {
     background-color: unset;
 }
@@ -77,4 +78,14 @@ html.dark .pbhn-login>.box {
     position: absolute;
     top: 10px;
     left: 10px;
+}
+
+.img.img-anime {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .img.img-anime {
+        display: block;
+    }
 }

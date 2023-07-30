@@ -4,6 +4,7 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useStore } from "vuex";
 import { ConfigKeyEnum, RoleEnum } from "@/const";
+import { ElNotification } from "element-plus";
 
 const store = useStore();
 const { t } = useI18n();
@@ -13,7 +14,6 @@ const formatDate = ref(store.getters["config/getFormatDate"]);
 const multiUser = ref(store.getters["config/getMultiUser"]);
 const role = ref(store.getters["account/getRole"]);
 const running = ref(0);
-const isLoading = ref(false);
 const { equals } = useCommonFn();
 
 const lstConfig = computed(() => {
@@ -91,7 +91,11 @@ watch(getMultiUser, (newValue) => {
 
 const useMultiUser = () => {
   if (multiUser.value) {
-    alert(t("ContactSupplier"));
+    ElNotification({
+      title: t("Notification"),
+      message: t("ContactSupplier"),
+      type: "info",
+    });
     multiUser.value = false;
   }
 };
@@ -99,7 +103,6 @@ const useMultiUser = () => {
 const save = () => {
   if (running.value > 0) return;
   ++running.value;
-  isLoading.value = true;
   let configs = [
     {
       Key: ConfigKeyEnum.DARKMODE,
@@ -118,10 +121,23 @@ const save = () => {
       Value: `${multiUser.value}`,
     },
   ];
-  store.dispatch("config/save", configs).then(() => {
+  store.dispatch("config/save", configs).then((res) => {
+    if (res?.data?.success) {
+      ElNotification({
+        title: t("Notification"),
+        message: t("SaveSuccess"),
+        type: "success",
+      });
+    } else {
+      ElNotification({
+        title: t("Notification"),
+        message: res?.data?.message ?? t("ErrorMesg"),
+        type: "success",
+      });
+    }
+
     setTimeout(() => {
       running.value = 0;
-      isLoading.value = false;
     }, 1000);
   });
 };
@@ -133,9 +149,7 @@ const save = () => {
       <div class="d-flex flex-row align-items-center justify-content-between">
         <h3 class="fs-3">{{ t("Configurations") }}</h3>
         <div>
-          <el-button type="primary" @click="save" :loading="isLoading">{{
-            t("Save")
-          }}</el-button>
+          <el-button type="primary" @click="save">{{ t("Save") }}</el-button>
         </div>
       </div>
       <div>

@@ -2,7 +2,7 @@
 import { useI18n } from "vue-i18n";
 import FootballFieldCard from "@/components/FootballFieldCard.vue";
 import useToggleModal from "@/register-components/actionDialog";
-import { ElLoading } from "element-plus";
+import { ElLoading, ElNotification } from "element-plus";
 import { onMounted, inject, ref } from "vue";
 import { useStore } from "vuex";
 import { Refresh } from "@element-plus/icons-vue";
@@ -37,8 +37,11 @@ const openForm = (id) => {
       openModal("FootballFieldDialog");
       objStadium.value = res.data.data;
     } else {
-      let msg = res?.data?.message;
-      alert(msg ?? t("ErrorMesg"));
+      ElNotification({
+        title: t("Notification"),
+        message: res?.data?.message ?? t("ErrorMesg"),
+        type: "error"
+      })
     }
     loading.close();
   });
