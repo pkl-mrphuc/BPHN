@@ -1,6 +1,8 @@
-﻿using BPHN.BusinessLayer.IServices;
+﻿using AutoMapper;
+using BPHN.BusinessLayer.IServices;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Attributes;
+using BPHN.ModelLayer.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Serilog;
@@ -11,9 +13,11 @@ namespace BPHN.WebAPI.Controllers
     public class PermissionsController : BaseController
     {
         private readonly IPermissionService _permissionService;
+        private readonly IMapper _mapper;
         public PermissionsController(IServiceProvider provider)
         {
             _permissionService = provider.GetRequiredService<IPermissionService>();
+            _mapper = provider.GetRequiredService<IMapper>();
         }
 
         [HttpGet]
@@ -27,10 +31,10 @@ namespace BPHN.WebAPI.Controllers
         [Permission(new[] { FunctionTypeEnum.ADDUSER, FunctionTypeEnum.EDITUSER })]
         [HttpPost]
         [Route("save/{accountId}")]
-        public async Task<IActionResult> SavePermissions(Guid accountId, [FromBody] List<Permission> request)
+        public async Task<IActionResult> SavePermissions(Guid accountId, [FromBody] List<SavePermissionRequest> request)
         {
             Log.Debug($"Permission/SavePermissions start: {JsonConvert.SerializeObject(new { AccountId = accountId, Permission = request })}");
-            return Ok(await _permissionService.SavePermissions(accountId, request));
+            return Ok(await _permissionService.SavePermissions(accountId, _mapper.Map<List<Permission>>(request)));
         }
     }
 }

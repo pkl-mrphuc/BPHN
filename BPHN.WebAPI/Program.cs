@@ -47,6 +47,7 @@ builder.Services.AddSingleton<IRabbitMQProducerService, RabbitMQProducerService>
 builder.Services.AddSingleton<IResourceService, ResourceService>();
 builder.Services.AddSingleton<IGlobalVariableService, GlobalVariableService>();
 builder.Services.AddMvc(options => options.ModelValidatorProviders.Clear());
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers();
 
 Log.Logger = new LoggerConfiguration()

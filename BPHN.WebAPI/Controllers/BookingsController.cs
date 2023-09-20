@@ -1,11 +1,12 @@
-﻿using BPHN.BusinessLayer.IServices;
+﻿using AutoMapper;
+using BPHN.BusinessLayer.IServices;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Attributes;
 using BPHN.ModelLayer.Others;
+using BPHN.ModelLayer.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Asn1.Ocsp;
 using Serilog;
 
 namespace BPHN.WebAPI.Controllers
@@ -13,9 +14,11 @@ namespace BPHN.WebAPI.Controllers
     public class BookingsController : BaseController
     {
         private readonly IBookingService _bookingService;
+        private readonly IMapper _mapper;
         public BookingsController(IServiceProvider provider)
         {
             _bookingService = provider.GetRequiredService<IBookingService>();
+            _mapper = provider.GetRequiredService<IMapper>();   
         }
 
         [AllowAnonymous]
@@ -31,10 +34,10 @@ namespace BPHN.WebAPI.Controllers
         [ApiAuthorize]
         [HttpPost]
         [Route("insert")]
-        public async Task<IActionResult> Insert([FromBody] Booking request)
+        public async Task<IActionResult> Insert([FromBody] InsertBookingRequest request)
         {
             Log.Debug($"Booking/Insert start: {JsonConvert.SerializeObject(request)}");
-            return Ok(await _bookingService.Insert(request));
+            return Ok(await _bookingService.Insert(_mapper.Map<Booking>(request)));
         }
 
         [AllowAnonymous]
@@ -50,10 +53,10 @@ namespace BPHN.WebAPI.Controllers
         [ApiAuthorize]
         [HttpPost]
         [Route("check-time-frame")]
-        public async Task<IActionResult> CheckFreeTimeFrame([FromBody] Booking request)
+        public async Task<IActionResult> CheckFreeTimeFrame([FromBody] CheckFreeTimeFrameRequest request)
         {
             Log.Debug($"Booking/CheckFreeTimeFrame start: {JsonConvert.SerializeObject(request)}");
-            return Ok(await _bookingService.CheckFreeTimeFrame(request));
+            return Ok(await _bookingService.CheckFreeTimeFrame(_mapper.Map<Booking>(request)));
         }
 
         [Permission(new[] { FunctionTypeEnum.VIEWLISTBOOKING })]
@@ -80,10 +83,10 @@ namespace BPHN.WebAPI.Controllers
         [ApiAuthorize]
         [HttpPost]
         [Route("find-blank")]
-        public async Task<IActionResult> FindBlank([FromBody] Booking request)
+        public async Task<IActionResult> FindBlank([FromBody] FindBlankRequeset request)
         {
             Log.Debug($"Booking/FindBlank start: {JsonConvert.SerializeObject(request)}");
-            return Ok(await _bookingService.FindBlank(request));
+            return Ok(await _bookingService.FindBlank(_mapper.Map<Booking>(request)));
         }
 
         [Permission(new[] { FunctionTypeEnum.EDITBOOKING })]

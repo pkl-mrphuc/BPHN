@@ -1,7 +1,9 @@
-﻿using BPHN.BusinessLayer.IServices;
+﻿using AutoMapper;
+using BPHN.BusinessLayer.IServices;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Attributes;
 using BPHN.ModelLayer.Others;
+using BPHN.ModelLayer.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -12,9 +14,11 @@ namespace BPHN.WebAPI.Controllers
     public class BookingDetailsController : BaseController
     {
         private readonly IBookingDetailService _bookingDetailService;
+        private readonly IMapper _mapper;
         public BookingDetailsController(IServiceProvider provider)
         {
             _bookingDetailService = provider.GetRequiredService<IBookingDetailService>();
+            _mapper = provider.GetRequiredService<IMapper>();
         }
 
         [Permission(new[] { FunctionTypeEnum.EDITBOOKING })]
@@ -41,10 +45,10 @@ namespace BPHN.WebAPI.Controllers
         [ApiAuthorize]
         [HttpPost]
         [Route("update-match")]
-        public async Task<IActionResult> UpdateMatch([FromBody]CalendarEvent request)
+        public async Task<IActionResult> UpdateMatch([FromBody]CalendarEventRequest request)
         {
             Log.Debug($"BookingDetail/UpdateMatch start: {JsonConvert.SerializeObject(request)}");
-            return Ok(await _bookingDetailService.UpdateMatch(request));
+            return Ok(await _bookingDetailService.UpdateMatch(_mapper.Map<CalendarEvent>(request)));
         }
 
         [HttpGet]

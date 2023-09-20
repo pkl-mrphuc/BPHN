@@ -1,6 +1,8 @@
-﻿using BPHN.BusinessLayer.IServices;
+﻿using AutoMapper;
+using BPHN.BusinessLayer.IServices;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Attributes;
+using BPHN.ModelLayer.Requests;
 using BPHN.ModelLayer.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,29 +14,31 @@ namespace BPHN.WebAPI.Controllers
     public class AccountsController : BaseController
     {
         private readonly IAccountService _accountService;
+        private readonly IMapper _mapper;
 
         public AccountsController(IServiceProvider provider)
         {
             _accountService = provider.GetRequiredService<IAccountService>();
+            _mapper = provider.GetRequiredService<IMapper>();
         }
 
         [AllowAnonymous]
         [Route("login")]
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] Account request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             Log.Debug($"Account/Login start: {JsonConvert.SerializeObject(request)}");
-            return Ok(await _accountService.Login(request));
+            return Ok(await _accountService.Login(_mapper.Map<Account>(request)));
         }
 
         [Permission(new[] { FunctionTypeEnum.ADDUSER })]
         [ApiAuthorize]
         [Route("register")]
         [HttpPost]
-        public async Task<IActionResult> RegisterForTenant([FromBody] Account request)
+        public async Task<IActionResult> RegisterForTenant([FromBody] InsertAccountRequest request)
         {
             Log.Debug($"Account/RegisterForTenant start: {JsonConvert.SerializeObject(request)}");
-            return Ok(await _accountService.RegisterForTenant(request));
+            return Ok(await _accountService.RegisterForTenant(_mapper.Map<Account>(request)));
         }
 
         [ApiAuthorize]
@@ -67,10 +71,10 @@ namespace BPHN.WebAPI.Controllers
         [ApiAuthorize]
         [Route("change-password")]
         [HttpPost]
-        public async Task<IActionResult> ChangePassword([FromBody] Account request)
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
         {
             Log.Debug($"Account/ChangePassword start: {JsonConvert.SerializeObject(request)}");
-            return Ok(await _accountService.ChangePassword(request));
+            return Ok(await _accountService.ChangePassword(_mapper.Map<Account>(request)));
         }
 
         [Permission(new[] { FunctionTypeEnum.VIEWLISTUSER })]

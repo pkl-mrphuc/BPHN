@@ -1,6 +1,8 @@
-﻿using BPHN.BusinessLayer.IServices;
+﻿using AutoMapper;
+using BPHN.BusinessLayer.IServices;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Attributes;
+using BPHN.ModelLayer.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Serilog;
@@ -11,9 +13,11 @@ namespace BPHN.WebAPI.Controllers
     public class ConfigsController : BaseController
     {
         private readonly IConfigService _configService;
+        private readonly IMapper _mapper;
         public ConfigsController(IServiceProvider provider)
         {
             _configService = provider.GetRequiredService<IConfigService>();
+            _mapper = provider.GetRequiredService<IMapper>();
         }
 
         [HttpGet]
@@ -26,10 +30,10 @@ namespace BPHN.WebAPI.Controllers
 
         [HttpPost]
         [Route("save")]
-        public async Task<IActionResult> SaveConfigs([FromBody] List<Config> request)
+        public async Task<IActionResult> SaveConfigs([FromBody] List<SaveConfigRequest> request)
         {
             Log.Debug($"Config/SaveConfigs start: {JsonConvert.SerializeObject(request)}");
-            return Ok(await _configService.Save(request));
+            return Ok(await _configService.Save(_mapper.Map<List<Config>>(request)));
         }
     }
 }

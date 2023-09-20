@@ -1,6 +1,8 @@
-﻿using BPHN.BusinessLayer.IServices;
+﻿using AutoMapper;
+using BPHN.BusinessLayer.IServices;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Attributes;
+using BPHN.ModelLayer.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -11,29 +13,31 @@ namespace BPHN.WebAPI.Controllers
     public class PitchsController : BaseController
     {
         private readonly IPitchService _pitchService;
+        private readonly IMapper _mapper;
         public PitchsController(IServiceProvider provider)
         {
             _pitchService = provider.GetRequiredService<IPitchService>();
+            _mapper = provider.GetRequiredService<IMapper>();
         }
 
         [Permission(new[] { FunctionTypeEnum.ADDPITCH })]
         [ApiAuthorize]
         [Route("insert")]
         [HttpPost]
-        public async Task<IActionResult> Insert([FromBody] Pitch request)
+        public async Task<IActionResult> Insert([FromBody] InsertPitchRequest request)
         {
             Log.Debug($"Pitch/Insert start: {JsonConvert.SerializeObject(request)}");
-            return Ok(await _pitchService.Insert(request));
+            return Ok(await _pitchService.Insert(_mapper.Map<Pitch>(request)));
         }
 
         [Permission(new[] { FunctionTypeEnum.EDITPITCH })]
         [ApiAuthorize]
         [Route("update")]
         [HttpPost]
-        public async Task<IActionResult> Update([FromBody] Pitch request)
+        public async Task<IActionResult> Update([FromBody] UpdatePitchRequest request)
         {
             Log.Debug($"Pitch/Update start: {JsonConvert.SerializeObject(request)}");
-            return Ok(await _pitchService.Update(request));
+            return Ok(await _pitchService.Update(_mapper.Map<Pitch>(request)));
         }
 
         [ApiAuthorize]
