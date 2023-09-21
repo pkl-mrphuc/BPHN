@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Requests;
+using BPHN.ModelLayer.Responses;
 
 namespace BPHN.WebAPI.Models
 {
@@ -22,6 +23,8 @@ namespace BPHN.WebAPI.Models
             CreateMap<SaveConfigRequest, Config>();
 
             CreateMap<SavePermissionRequest, Permission>();
+
+            CreateMap<Account, AccountRespond>();
         }
     }
 }

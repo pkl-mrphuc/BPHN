@@ -1,4 +1,5 @@
-﻿using BPHN.BusinessLayer.IServices;
+﻿using AutoMapper;
+using BPHN.BusinessLayer.IServices;
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,7 @@ namespace BPHN.BusinessLayer.ImpServices
         protected readonly ICacheService _cacheService;
         protected readonly IResourceService _resourceService;
         protected readonly IGlobalVariableService _globalVariableService;
+        protected readonly IMapper _mapper;
         protected readonly AppSettings _appSettings;
 
         public BaseService(IServiceProvider provider, IOptions<AppSettings> appSettings)
@@ -24,6 +26,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _cacheService = provider.GetRequiredService<ICacheService>();
             _resourceService = provider.GetRequiredService<IResourceService>();
             _globalVariableService = provider.GetRequiredService<IGlobalVariableService>();
+            _mapper = provider.GetRequiredService<IMapper>();
             _appSettings = appSettings.Value;
         }
         public virtual bool ValidateModelByAttribute(object model, List<string> ignoreProperties)

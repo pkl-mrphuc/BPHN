@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace BPHN.ModelLayer.Requests
+﻿namespace BPHN.ModelLayer.Requests
 {
     public class InsertAccountRequest
     {

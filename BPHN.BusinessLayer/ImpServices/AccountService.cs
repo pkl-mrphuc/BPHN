@@ -3,6 +3,7 @@ using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.ObjectQueues;
 using BPHN.ModelLayer.Others;
+using BPHN.ModelLayer.Responses;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -294,7 +295,7 @@ namespace BPHN.BusinessLayer.ImpServices
             return new ServiceResultModel()
             {
                 Success = true,
-                Data = data
+                Data = _mapper.Map<AccountRespond>(data)
             };
         }
 
@@ -364,7 +365,7 @@ namespace BPHN.BusinessLayer.ImpServices
             return new ServiceResultModel()
             {
                 Success = true,
-                Data = lstTenants
+                Data = _mapper.Map<List<AccountRespond>>(lstTenants)
             };
         }
 
@@ -494,7 +495,7 @@ namespace BPHN.BusinessLayer.ImpServices
             return new ServiceResultModel()
             {
                 Success = true,
-                Data = new Account()
+                Data = new LoginRespond()
                 {
                     Id = realAccount.Id,
                     FullName = realAccount.FullName,
