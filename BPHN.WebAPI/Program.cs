@@ -1,3 +1,4 @@
+using AutoMapper;
 using BPHN.BusinessLayer.ImpServices;
 using BPHN.BusinessLayer.IServices;
 using BPHN.DataLayer.ImpRepositories;
@@ -6,6 +7,7 @@ using BPHN.ImpRabbitMQLayer;
 using BPHN.IRabbitMQLayer;
 using BPHN.ModelLayer;
 using BPHN.WebAPI;
+using BPHN.WebAPI.Models;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -46,8 +48,11 @@ builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddSingleton<IRabbitMQProducerService, RabbitMQProducerService>();
 builder.Services.AddSingleton<IResourceService, ResourceService>();
 builder.Services.AddSingleton<IGlobalVariableService, GlobalVariableService>();
+builder.Services.AddSingleton(new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new MappingProfiles());
+}).CreateMapper());
 builder.Services.AddMvc(options => options.ModelValidatorProviders.Clear());
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers();
 
 Log.Logger = new LoggerConfiguration()
