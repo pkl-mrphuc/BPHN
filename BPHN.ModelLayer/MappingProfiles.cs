@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BPHN.ModelLayer;
+using BPHN.ModelLayer.Others;
 using BPHN.ModelLayer.Requests;
 using BPHN.ModelLayer.Responses;
 
@@ -25,6 +26,12 @@ namespace BPHN.WebAPI.Models
             CreateMap<SavePermissionRequest, Permission>();
 
             CreateMap<Account, AccountRespond>();
+            CreateMap<CalendarEvent, CalendarEventRespond>();
+            CreateMap<Booking, BookingRespond>();
+            CreateMap<Config, ConfigRespond>();
+            CreateMap<HistoryLog, HistoryLogRespond>();
+            CreateMap<Notification, NotificationRespond>();
+            CreateMap<Permission, PermissionRespond>();
         }
     }
 }

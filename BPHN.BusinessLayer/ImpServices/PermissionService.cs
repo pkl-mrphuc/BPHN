@@ -2,6 +2,7 @@
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
+using BPHN.ModelLayer.Responses;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Security.Principal;
@@ -165,7 +166,7 @@ namespace BPHN.BusinessLayer.ImpServices
             return new ServiceResultModel()
             {
                 Success = true,
-                Data = permissions
+                Data = _mapper.Map<List<PermissionRespond>>(permissions)
             };
         }
 

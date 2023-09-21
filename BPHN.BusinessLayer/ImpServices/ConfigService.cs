@@ -2,6 +2,7 @@
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
+using BPHN.ModelLayer.Responses;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -58,7 +59,7 @@ namespace BPHN.BusinessLayer.ImpServices
             return new ServiceResultModel()
             {
                 Success = true,
-                Data = lstConfig
+                Data = _mapper.Map<List<ConfigRespond>>(lstConfig)
             };
         }
 

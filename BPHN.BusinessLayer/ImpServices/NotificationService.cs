@@ -3,6 +3,7 @@ using BPHN.DataLayer.ImpRepositories;
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
+using BPHN.ModelLayer.Responses;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -43,10 +44,12 @@ namespace BPHN.BusinessLayer.ImpServices
                 }
             };
 
+            var lstNotification = await _notificationRepository.GetTopFiveNewNotifications(lstWhere);
+
             return new ServiceResultModel()
             {
                 Success = true,
-                Data = await _notificationRepository.GetTopFiveNewNotifications(lstWhere)
+                Data = _mapper.Map<List<NotificationRespond>>(lstNotification)
             };
         }
 
@@ -87,7 +90,7 @@ namespace BPHN.BusinessLayer.ImpServices
             return new ServiceResultModel()
             {
                 Success = true,
-                Data = notification
+                Data = _mapper.Map<NotificationRespond>(notification)
             };
         }
 

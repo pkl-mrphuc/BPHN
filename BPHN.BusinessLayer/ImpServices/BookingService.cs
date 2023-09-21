@@ -3,6 +3,7 @@ using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.ObjectQueues;
 using BPHN.ModelLayer.Others;
+using BPHN.ModelLayer.Responses;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -305,7 +306,7 @@ namespace BPHN.BusinessLayer.ImpServices
             return new ServiceResultModel()
             {
                 Success = true,
-                Data = data
+                Data = _mapper.Map<BookingRespond>(data)
             };
         }
 
@@ -340,7 +341,7 @@ namespace BPHN.BusinessLayer.ImpServices
             return new ServiceResultModel()
             {
                 Success = true,
-                Data = lstBooking
+                Data = _mapper.Map<List<BookingRespond>>(lstBooking)
             };
         }
 
@@ -375,7 +376,7 @@ namespace BPHN.BusinessLayer.ImpServices
             return new ServiceResultModel()
             {
                 Success = true,
-                Data = lstBooking
+                Data = _mapper.Map<List<BookingRespond>>(lstBooking)
             };
         }
 

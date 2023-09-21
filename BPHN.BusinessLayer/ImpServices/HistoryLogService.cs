@@ -2,19 +2,19 @@
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
+using BPHN.ModelLayer.Responses;
+using Microsoft.Extensions.Options;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
-    public class HistoryLogService : IHistoryLogService
+    public class HistoryLogService : BaseService, IHistoryLogService
     {
         private readonly IHistoryLogRepository _historyLogRepository;
-        private readonly IContextService _contextService;
-        private readonly IResourceService _resourceService;
-        public HistoryLogService(IHistoryLogRepository historyLogRepository, IContextService contextService, IResourceService resourceService)
+        public HistoryLogService(IHistoryLogRepository historyLogRepository, 
+            IServiceProvider provider, 
+            IOptions<AppSettings> appSettings) : base (provider, appSettings) 
         {
             _historyLogRepository = historyLogRepository;
-            _contextService = contextService;
-            _resourceService = resourceService;
         }
         public async Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
         {
@@ -104,7 +104,7 @@ namespace BPHN.BusinessLayer.ImpServices
             return new ServiceResultModel()
             {
                 Success = true,
-                Data = resultPaging
+                Data = _mapper.Map<List<HistoryLogRespond>>(resultPaging)
             };
         }
 
