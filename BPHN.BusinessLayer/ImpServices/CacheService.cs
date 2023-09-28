@@ -19,34 +19,44 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public string Get(string key)
         {
-            try
+            var result = string.Empty;
+            if(_appSettings.EnableCacheService)
             {
-                var value = _cache.GetStringAsync(key).Result;
-                if (value != null) return value;
-                return string.Empty;
+                try
+                {
+                    var value = _cache.GetStringAsync(key).Result;
+                    if (value != null)
+                    {
+                        result = value;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"Cache/Get error: {JsonConvert.SerializeObject(ex)}");
+                }
             }
-            catch (Exception ex)
-            {
-                Log.Error($"Cache/Get error: {JsonConvert.SerializeObject(ex)}");
-                return string.Empty;
-            }
-            
+            return result;
         }
 
         public async Task<string> GetAsync(string key)
         {
-            try
+            var result = string.Empty;
+            if(_appSettings.EnableCacheService)
             {
-                var value = await _cache.GetStringAsync(key);
-                if (value != null) return value;
-                return string.Empty;
+                try
+                {
+                    var value = await _cache.GetStringAsync(key);
+                    if (value != null)
+                    {
+                        result = value;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"Cache/GetAsync error: {JsonConvert.SerializeObject(ex)}");
+                }
             }
-            catch (Exception ex)
-            {
-                Log.Error($"Cache/GetAsync error: {JsonConvert.SerializeObject(ex)}");
-                return string.Empty;
-            }
-            
+            return result;
         }
 
         public string GetKeyCache(Guid id, EntityEnum model, string key = "")
@@ -61,86 +71,94 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public void Remove(string key)
         {
-            try
+            if(_appSettings.EnableCacheService)
             {
-                _cache.Remove(key);
+                try
+                {
+                    _cache.Remove(key);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"Cache/Remove error: {JsonConvert.SerializeObject(ex)}");
+                }
             }
-            catch (Exception ex)
-            {
-                Log.Error($"Cache/Remove error: {JsonConvert.SerializeObject(ex)}");
-            }
-            
         }
 
         public async Task RemoveAsync(string key)
         {
-            try
+            if (_appSettings.EnableCacheService)
             {
-                await _cache.RemoveAsync(key);
+                try
+                {
+                    await _cache.RemoveAsync(key);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"Cache/RemoveAsync error: {JsonConvert.SerializeObject(ex)}");
+                }
             }
-            catch (Exception ex)
-            {
-                Log.Error($"Cache/RemoveAsync error: {JsonConvert.SerializeObject(ex)}");
-            }
-            
         }
 
         public void Set(string key, string value, int? expireHour = null)
         {
-            if (_appSettings.RedisExpireHour == 0)
+            if (_appSettings.EnableCacheService)
             {
-                expireHour = Constansts.EXPIRE_HOUR_REDIS_CACHE;
-            }
+                if (_appSettings.RedisExpireHour == 0)
+                {
+                    expireHour = Constansts.EXPIRE_HOUR_REDIS_CACHE;
+                }
 
-            if (expireHour == null)
-            {
-                expireHour = _appSettings.RedisExpireHour;
-            }
+                if (expireHour == null)
+                {
+                    expireHour = _appSettings.RedisExpireHour;
+                }
 
-            var expireSecond = Convert.ToDouble(expireHour * 60 * 60);
-            var options = new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(expireSecond),
-            };
+                var expireSecond = Convert.ToDouble(expireHour * 60 * 60);
+                var options = new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(expireSecond),
+                };
 
-            try
-            {
-                _cache.SetString(key, value, options);
+                try
+                {
+                    _cache.SetString(key, value, options);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"Cache/Set error: {JsonConvert.SerializeObject(ex)}");
+                }
             }
-            catch (Exception ex)
-            {
-                Log.Error($"Cache/Set error: {JsonConvert.SerializeObject(ex)}");
-            }
-            
         }
 
         public async Task SetAsync(string key, string value, int? expireHour = null)
         {
-            if(_appSettings.RedisExpireHour == 0)
+            if (_appSettings.EnableCacheService)
             {
-                expireHour = Constansts.EXPIRE_HOUR_REDIS_CACHE;
-            }
+                if (_appSettings.RedisExpireHour == 0)
+                {
+                    expireHour = Constansts.EXPIRE_HOUR_REDIS_CACHE;
+                }
 
-            if (expireHour == null)
-            {
-                expireHour = _appSettings.RedisExpireHour;
-            }
+                if (expireHour == null)
+                {
+                    expireHour = _appSettings.RedisExpireHour;
+                }
 
-            var expireSecond = Convert.ToDouble(expireHour * 60 * 60);
-            var options = new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(expireSecond),
-            };
+                var expireSecond = Convert.ToDouble(expireHour * 60 * 60);
+                var options = new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(expireSecond),
+                };
 
-            try
-            {
-                await _cache.SetStringAsync(key, value, options);
+                try
+                {
+                    await _cache.SetStringAsync(key, value, options);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"Cache/SetAsync error: {JsonConvert.SerializeObject(ex)}");
+                }
             }
-            catch (Exception ex)
-            {
-                Log.Error($"Cache/SetAsync error: {JsonConvert.SerializeObject(ex)}");
-            }
-            
         }
     }
 }

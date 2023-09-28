@@ -23,6 +23,7 @@ namespace BPHN.ModelLayer
         public string Email { get; set; }
         public RoleEnum Role { get; set; }
         public string Token { get; set; }
+        public string RefreshToken { get; set; }
         public string Status { get; set; }
         public Guid? ParentId { get; set; }
         public string IPAddress { get; set; }

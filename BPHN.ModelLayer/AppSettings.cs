@@ -4,6 +4,7 @@
     {
         public string MailTemplateAPI { get; set; }
         public string Secret { get; set; }
+        public string Secret1 { get; set; }
         public string ClientHost { get; set; }
         public RabbitMQConfiguration RabbitMQConfiguration { get; set; }
         public MailConfiguration MailConfiguration { get; set; }
@@ -13,6 +14,7 @@
         public string FileFolder { get; set; }
         public string FileUrl { get; set; }
         public string SignalrUrl { get; set; }
+        public bool EnableCacheService { get; set; }
     }
 
     public class RabbitMQConfiguration

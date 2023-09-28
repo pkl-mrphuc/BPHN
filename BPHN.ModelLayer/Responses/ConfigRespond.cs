@@ -1,6 +1,10 @@
-﻿namespace BPHN.ModelLayer.Responses
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BPHN.ModelLayer.Responses
 {
     public class ConfigRespond
     {
+        public string Key { get; set; }
+        public string Value { get; set; }
     }
 }

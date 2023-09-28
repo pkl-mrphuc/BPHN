@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace BPHN.DataLayer.ImpRepositories
@@ -73,7 +74,7 @@ namespace BPHN.DataLayer.ImpRepositories
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[] { new Claim("id", id) }),
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = DateTime.UtcNow.AddHours(12),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -258,6 +259,50 @@ namespace BPHN.DataLayer.ImpRepositories
                 string query = @"select Id, UserName, Email from accounts";
                 var lstAccount = await connection.QueryAsync<Account>(query);
                 return lstAccount.ToList();
+            }
+        }
+
+        public string GetRefreshToken(string id)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.Secret1);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[] 
+                { 
+                    new Claim("id", id), 
+                    new Claim("expiredTime", DateTime.UtcNow.AddDays(7).Ticks.ToString()) 
+                }),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
+        public void SaveToken(Guid id, string token, string refreshToken)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                string query = @"update accounts set Token = @token, RefreshToken = @refreshToken where Id = @id";
+                var dic = new Dictionary<string, object>();
+                dic.Add("@id", id);
+                dic.Add("@token", token);
+                dic.Add("@refreshToken", refreshToken);
+                connection.Execute(query, dic);
+            }
+        }
+
+        public async Task<Account?> GetAccountByRefreshToken(string refreshToken)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var query = @"select * from accounts where RefreshToken = @refreshToken";
+                Dictionary<string, object> dic = new Dictionary<string, object>();
+                dic.Add("@refreshToken", refreshToken);
+                var account = await connection.QueryFirstOrDefaultAsync<Account>(query, dic);
+                return account;
             }
         }
     }

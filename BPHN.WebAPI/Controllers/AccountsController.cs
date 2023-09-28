@@ -114,5 +114,14 @@ namespace BPHN.WebAPI.Controllers
             Log.Debug($"Account/Refresh start");
             return Ok(await _accountService.Refresh());
         }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("refresh-token")]
+        public IActionResult RefreshToken(string refreshToken)
+        {
+            Log.Debug($"Account/RefreshToken start: {refreshToken}");
+            return Ok(_accountService.RefreshToken(refreshToken));
+        }
     }
 }

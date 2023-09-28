@@ -471,6 +471,9 @@ namespace BPHN.BusinessLayer.ImpServices
 
 
             string token = _accountRepository.GetToken(realAccount.Id.ToString());
+            string refreshToken = _accountRepository.GetRefreshToken(realAccount.Id.ToString());
+
+            _accountRepository.SaveToken(realAccount.Id, token, refreshToken);
 
             var fakeContext = new Account()
             {
@@ -506,6 +509,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     Role = realAccount.Role,
                     ParentId = realAccount.ParentId,
                     Token = token,
+                    RefreshToken = refreshToken,
                     RelationIds = await _accountRepository.GetRelationIds(realAccount.Id)
                 }
             };
@@ -536,6 +540,48 @@ namespace BPHN.BusinessLayer.ImpServices
             return new ServiceResultModel()
             {
                 Success = true
+            };
+        }
+
+        public ServiceResultModel RefreshToken(string refreshToken)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.Secret1);
+            tokenHandler.ValidateToken(refreshToken, new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero
+            }, out SecurityToken validatedToken);
+
+            var jwtToken = (JwtSecurityToken)validatedToken;
+
+            if(jwtToken is null)
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INACTIVE_DATA
+                };
+            }
+
+            var userId = Guid.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
+            var expiredTimeTick = long.Parse(jwtToken.Claims.First(x => x.Type == "expiredTime").Value);
+            var expiredTime = new DateTime(expiredTimeTick);
+            var token = _accountRepository.GetToken(userId.ToString());
+            if(expiredTime < DateTime.UtcNow)
+            {
+                refreshToken = _accountRepository.GetRefreshToken(userId.ToString());
+            }
+
+            _accountRepository.SaveToken(userId, token, refreshToken);
+
+            return new ServiceResultModel()
+            {
+                Success = true,
+                Data = token
             };
         }
 
