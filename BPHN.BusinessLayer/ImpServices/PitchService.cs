@@ -327,7 +327,7 @@ namespace BPHN.BusinessLayer.ImpServices
             return new ServiceResultModel()
             {
                 Success = true,
-                Data = _mapper.Map<List<PitchRespond>>(resultPaging)
+                Data = _mapper.Map<List<GetPagingPitchRespond>>(resultPaging)
             };
         }
 
