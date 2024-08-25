@@ -1,6 +1,6 @@
 ﻿namespace BPHN.ModelLayer.Responses
 {
-    public class GetPagingPitchRespond
+    public sealed class GetPagingPitchRespond
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

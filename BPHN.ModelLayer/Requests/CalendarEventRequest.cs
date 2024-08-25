@@ -1,6 +1,6 @@
 ﻿namespace BPHN.ModelLayer.Requests
 {
-    public class CalendarEventRequest
+    public sealed class CalendarEventRequest
     {
     }
 }

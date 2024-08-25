@@ -21,6 +21,7 @@ namespace BPHN.WebAPI.Models
             CreateMap<InsertPitchRequest, Pitch>();
             CreateMap<UpdatePitchRequest, Pitch>();
             CreateMap<Pitch, GetPagingPitchRespond>();
+            CreateMap<Pitch, PitchRespond>();
 
             CreateMap<SaveConfigRequest, Config>();
 
@@ -35,6 +36,7 @@ namespace BPHN.WebAPI.Models
             CreateMap<Permission, PermissionRespond>();
 
             CreateMap<TimeFrameInfo, TimeFrameInfoRespond>();
+            CreateMap<TimeFrameInfoRequest, TimeFrameInfo>();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace BPHN.ModelLayer.Requests
 {
-    public class CheckFreeTimeFrameRequest
+    public sealed class CheckFreeTimeFrameRequest
     {
     }
 }

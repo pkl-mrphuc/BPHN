@@ -2,7 +2,7 @@
 
 namespace BPHN.ModelLayer.Responses
 {
-    public class ConfigRespond
+    public sealed class ConfigRespond
     {
         public string Key { get; set; }
         public string Value { get; set; }

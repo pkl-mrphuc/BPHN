@@ -1,6 +1,6 @@
 ﻿namespace BPHN.ModelLayer.Responses
 {
-    public class PermissionRespond
+    public sealed class PermissionRespond
     {
         public Guid Id { get; set; }
         public int FunctionType { get; set; }

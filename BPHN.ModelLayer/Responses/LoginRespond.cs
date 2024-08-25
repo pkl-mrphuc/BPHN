@@ -1,6 +1,6 @@
 ﻿namespace BPHN.ModelLayer.Responses
 {
-    public class LoginRespond
+    public sealed class LoginRespond
     {
         public Guid Id { get; set; }
         public string FullName { get; set; }

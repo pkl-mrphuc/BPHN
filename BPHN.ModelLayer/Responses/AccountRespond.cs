@@ -1,6 +1,6 @@
 ﻿namespace BPHN.ModelLayer.Responses
 {
-    public class AccountRespond
+    public sealed class AccountRespond
     {
         public string UserName { get; set; }
         public string FullName { get; set; }

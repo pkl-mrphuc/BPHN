@@ -1,6 +1,6 @@
 ﻿namespace BPHN.ModelLayer.Requests
 {
-    public class InsertBookingRequest
+    public sealed class InsertBookingRequest
     {
     }
 }

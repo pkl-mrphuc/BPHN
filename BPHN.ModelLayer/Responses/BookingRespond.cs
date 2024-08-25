@@ -1,6 +1,6 @@
 ﻿namespace BPHN.ModelLayer.Responses
 {
-    public class BookingRespond
+    public sealed class BookingRespond
     {
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace BPHN.ModelLayer.Requests
 {
-    public class SavePermissionRequest
+    public sealed class SavePermissionRequest
     {
         public Guid Id { get; set; }
         public int FunctionType { get; set; }

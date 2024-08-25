@@ -1,6 +1,6 @@
 ﻿namespace BPHN.ModelLayer.Responses
 {
-    public class CalendarEventRespond
+    public sealed class CalendarEventRespond
     {
     }
 }

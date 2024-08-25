@@ -1,6 +1,6 @@
 ﻿namespace BPHN.ModelLayer.Responses
 {
-    public class HistoryLogRespond
+    public sealed class HistoryLogRespond
     {
         public Guid Id { get; set; }
         public string ActionName { get; set; }

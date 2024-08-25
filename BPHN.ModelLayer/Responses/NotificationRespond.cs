@@ -1,6 +1,6 @@
 ﻿namespace BPHN.ModelLayer.Responses
 {
-    public class NotificationRespond
+    public sealed class NotificationRespond
     {
         public string Subject { get; set; }
         public string Content { get; set; }
