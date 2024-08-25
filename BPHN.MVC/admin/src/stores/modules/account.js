@@ -53,6 +53,11 @@ const getters = {
     getRelationIds: (state) => {
         if (!state.context) return "";
         return state.context.relationIds;
+    },
+
+    getAvatarUrl: (state) => {
+        if (!state.context) return "";
+        return state.context.avatarUrl;
     }
 };
 

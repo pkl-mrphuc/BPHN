@@ -16,6 +16,7 @@ const { toggleModel } = useToggleModal();
 const showSetPassword = ref(false);
 const password = ref("");
 const passwordAgain = ref("");
+const hdfFile = ref(null);
 
 const fullName = computed(() => {
   return store.getters["account/getFullName"];
@@ -43,6 +44,10 @@ const gender = computed(() => {
     default:
       return t("Other");
   }
+});
+
+const avatarUrl = computed(() => {
+  return store.getters["account/getAvatarUrl"];
 });
 
 const changePassword = () => {
@@ -93,6 +98,30 @@ const changePassword = () => {
     }, 1000);
   });
 };
+
+const upload = () => {
+  hdfFile.value.click();
+};
+
+const changeHdfFile = (event) => {
+  let files = event.target.files;
+  if (files?.length > 0) {
+    hdfFile.value = files[0];
+    readImageFile(files[0]);
+    store.dispatch("file/upload", {
+      file: files[0],
+      id: store.getters["account/getAccountId"],
+    });
+  }
+};
+
+const readImageFile = (file) => {
+  let reader = new FileReader();
+  reader.onload = (e) => {
+    avatarUrl.value = e.target.result;
+  };
+  reader.readAsDataURL(file);
+};
 </script>
 
 
@@ -102,11 +131,27 @@ const changePassword = () => {
       <div class="container">
         <div class="row">
           <div
-            class="d-flex flex-row justify-content-center mb-3 col-12 col-sm-12 col-md-3"
+            class="d-flex flex-row justify-content-center mb-3 col-12 col-sm-12 col-md-3 pointer"
+            @click="upload"
           >
             <el-avatar
+              v-if="avatarUrl"
+              :size="120"
+              :src="avatarUrl"
+            />
+            <el-avatar
+              v-else
               :size="120"
               src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
+            />
+            <!-- hdf = hidden field -->
+            <input
+              type="file"
+              hidden
+              accept="image/*"
+              @change="changeHdfFile"
+              name="hdfFile"
+              ref="hdfFile"
             />
           </div>
           <div class="col-12 col-sm-12 col-md-9">

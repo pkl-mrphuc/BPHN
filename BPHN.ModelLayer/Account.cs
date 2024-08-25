@@ -30,5 +30,6 @@ namespace BPHN.ModelLayer
         public List<Permission>? Permissions { get; set; }
         public List<Guid> RelationIds { get; set; }
         public string LanguageConfig { get; set; }
+        public string AvatarUrl { get; set; }
     }
 }

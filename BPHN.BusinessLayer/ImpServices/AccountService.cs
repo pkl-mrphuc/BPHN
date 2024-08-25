@@ -21,6 +21,7 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IConfigRepository _configRepository;
         private readonly IPermissionService _permissionService;
         private readonly INotificationService _notificationService;
+        private readonly IFileService _fileService;
         public AccountService(
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
@@ -30,7 +31,8 @@ namespace BPHN.BusinessLayer.ImpServices
             IHistoryLogService historyLogService,
             IConfigRepository configRepository,
             IPermissionService permissionService,
-            INotificationService notificationService) : base(serviceProvider, appSettings)
+            INotificationService notificationService,
+            IFileService fileService) : base(serviceProvider, appSettings)
         {
             _accountRepository = accountRepository;
             _mailService = mailService;
@@ -39,6 +41,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _configRepository = configRepository;
             _permissionService = permissionService;
             _notificationService = notificationService;
+            _fileService = fileService;
         }
 
         public async Task<ServiceResultModel> ChangePassword(Account account)
@@ -107,46 +110,46 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             Account? account = null;
             var cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(id, EntityEnum.ACCOUNT));
-            if(!string.IsNullOrWhiteSpace(cacheResult))
+            if (!string.IsNullOrWhiteSpace(cacheResult))
             {
                 account = JsonConvert.DeserializeObject<Account>(cacheResult);
             }
-            if(account == null)
+            if (account == null)
             {
                 account = await _accountRepository.GetAccountById(id);
-                if(account != null)
+                if (account != null)
                 {
                     await _cacheService.SetAsync(_cacheService.GetKeyCache(id, EntityEnum.ACCOUNT), JsonConvert.SerializeObject(account));
                 }
             }
-            
+
             if (account != null)
             {
                 List<Guid>? lstRelationId = null;
                 cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(id, EntityEnum.ACCOUNT, "RelationId"));
-                if(!string.IsNullOrWhiteSpace(cacheResult))
+                if (!string.IsNullOrWhiteSpace(cacheResult))
                 {
                     lstRelationId = JsonConvert.DeserializeObject<List<Guid>>(cacheResult);
                 }
 
-                if(lstRelationId == null)
+                if (lstRelationId == null)
                 {
                     lstRelationId = await _accountRepository.GetRelationIds(id);
-                    if(lstRelationId != null)
+                    if (lstRelationId != null)
                     {
                         await _cacheService.SetAsync(_cacheService.GetKeyCache(id, EntityEnum.ACCOUNT, "RelationId"), JsonConvert.SerializeObject(lstRelationId));
                     }
                 }
-                account.RelationIds = lstRelationId == null ||  lstRelationId.Count == 0 ? new List<Guid>() { id } :  lstRelationId;
+                account.RelationIds = lstRelationId == null || lstRelationId.Count == 0 ? new List<Guid>() { id } : lstRelationId;
 
                 List<Config>? lstConfig = null;
                 cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(id, EntityEnum.CONFIG));
-                if(!string.IsNullOrWhiteSpace(cacheResult))
+                if (!string.IsNullOrWhiteSpace(cacheResult))
                 {
                     lstConfig = JsonConvert.DeserializeObject<List<Config>>(cacheResult);
                 }
 
-                if(lstConfig == null)
+                if (lstConfig == null)
                 {
                     lstConfig = await _configRepository.GetConfigs(id, "Language");
                 }
@@ -269,6 +272,11 @@ namespace BPHN.BusinessLayer.ImpServices
                         {
                             await _cacheService.SetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.ACCOUNT, accountId.ToString()), JsonConvert.SerializeObject(data));
                         }
+                    }
+
+                    if (data is not null)
+                    {
+                        data.AvatarUrl = (string)(_fileService.GetLinkFile(accountId.ToString()).Data ?? "");
                     }
                 }
                 else
@@ -510,7 +518,8 @@ namespace BPHN.BusinessLayer.ImpServices
                     ParentId = realAccount.ParentId,
                     Token = token,
                     RefreshToken = refreshToken,
-                    RelationIds = await _accountRepository.GetRelationIds(realAccount.Id)
+                    RelationIds = await _accountRepository.GetRelationIds(realAccount.Id),
+                    AvatarUrl = (string)(_fileService.GetLinkFile(realAccount.Id.ToString()).Data ?? "")
                 }
             };
         }
@@ -558,7 +567,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var jwtToken = (JwtSecurityToken)validatedToken;
 
-            if(jwtToken is null)
+            if (jwtToken is null)
             {
                 return new ServiceResultModel()
                 {
@@ -571,7 +580,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var expiredTimeTick = long.Parse(jwtToken.Claims.First(x => x.Type == "expiredTime").Value);
             var expiredTime = new DateTime(expiredTimeTick);
             var token = _accountRepository.GetToken(userId.ToString());
-            if(expiredTime < DateTime.UtcNow)
+            if (expiredTime < DateTime.UtcNow)
             {
                 refreshToken = _accountRepository.GetRefreshToken(userId.ToString());
             }
@@ -661,7 +670,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 });
                 for (int i = 0; i < context.RelationIds.Count; i++)
                 {
-                     await _cacheService.RemoveAsync(_cacheService.GetKeyCache(context.RelationIds[i], EntityEnum.ACCOUNT, "RelationId"));
+                    await _cacheService.RemoveAsync(_cacheService.GetKeyCache(context.RelationIds[i], EntityEnum.ACCOUNT, "RelationId"));
                 }
                 if (account.Status.Equals(ActiveStatusEnum.ACTIVE.ToString()))
                 {

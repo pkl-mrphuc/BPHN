@@ -11,5 +11,6 @@
         public RoleEnum Role { get; set; }
         public string Status { get; set; }
         public Guid? ParentId { get; set; }
+        public string AvatarUrl { get; set; }
     }
 }
