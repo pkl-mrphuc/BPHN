@@ -8,9 +8,12 @@ namespace BPHN.BusinessLayer.ImpServices
 {
     public class FileService : IFileService
     {
+        [Obsolete]
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IResourceService _resourceService;
         private AppSettings _appSettings;
+
+        [Obsolete]
         public FileService(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSettings, IResourceService resourceService)
         {
             _hostingEnvironment = hostingEnvironment;
@@ -18,6 +21,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _resourceService = resourceService;
         }
 
+        [Obsolete]
         public ServiceResultModel DeleteFile(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
@@ -30,18 +34,21 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var getLinkService = GetLinkFile(id);
-            if (getLinkService.Success && getLinkService.Data is not null)
-            {
-                var fileName = ((string)getLinkService.Data).Replace(_appSettings.FileUrl, "");
-                var path = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder);
-                var dir = new DirectoryInfo(path);
-                var files = dir.GetFiles(fileName);
+            var pathPng = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, $"{id}.png");
+            var pathJpg = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, $"{id}.jpg");
+            var pathJpeg = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, $"{id}.jpeg");
 
-                foreach (var file in files)
-                {
-                    file.Delete();
-                }
+            if (File.Exists(pathPng))
+            {
+                File.Delete(pathPng);
+            }
+            else if (File.Exists(pathJpg))
+            {
+                File.Delete(pathJpg);
+            }
+            else if (File.Exists(pathJpeg))
+            {
+                File.Delete(pathJpeg);
             }
 
             return new ServiceResultModel
@@ -50,6 +57,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
+        [Obsolete]
         public ServiceResultModel GetLinkFile(string id)
         {
 
@@ -63,59 +71,31 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var path = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder);
-            var dir = new DirectoryInfo(path);
+            var pathPng = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, $"{id}.png");
+            var pathJpg = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, $"{id}.jpg");
+            var pathJpeg = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, $"{id}.jpeg");
 
             var fullName = string.Empty;
-
-            if (!id.Contains(".png") &&
-                !id.Contains(".jpg") &&
-                !id.Contains(".jpeg"))
+            if (File.Exists(pathPng))
             {
-
-                var filesPng = dir.GetFiles(id + ".png");
-                var filesJpg = dir.GetFiles(id + ".jpg");
-                var filesJpeg = dir.GetFiles(id + ".jpeg");
-
-                if (filesJpeg.Length == 0 &&
-                    filesPng.Length == 0 &&
-                    filesJpg.Length == 0)
-                {
-                    return new ServiceResultModel()
-                    {
-                        Success = false,
-                        ErrorCode = ErrorCodes.NOT_EXISTS,
-                        Message = _resourceService.Get(SharedResourceKey.NOTEXIST)
-                    };
-                }
-
-                if (filesPng.Length > 0)
-                {
-                    fullName = filesPng[0].Name;
-                }
-                if (filesJpeg.Length > 0)
-                {
-                    fullName = filesJpeg[0].Name;
-                }
-                if (filesJpg.Length > 0)
-                {
-                    fullName = filesJpg[0].Name;
-                }
+                fullName = $"{id}.png";
+            }
+            else if (File.Exists(pathJpg))
+            {
+                fullName = $"{id}.jpg";
+            }
+            else if (File.Exists(pathJpeg))
+            {
+                fullName = $"{id}.jpeg";
             }
             else
             {
-                var files = dir.GetFiles(id);
-                if (files.Length == 0)
+                return new ServiceResultModel()
                 {
-                    return new ServiceResultModel()
-                    {
-                        Success = false,
-                        ErrorCode = ErrorCodes.NOT_EXISTS,
-                        Message = _resourceService.Get(SharedResourceKey.NOTEXIST)
-                    };
-                }
-
-                fullName = files[0].Name;
+                    Success = false,
+                    ErrorCode = ErrorCodes.NOT_EXISTS,
+                    Message = _resourceService.Get(SharedResourceKey.NOTEXIST)
+                };
             }
 
             return new ServiceResultModel()
@@ -125,6 +105,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
+        [Obsolete]
         public async Task<ServiceResultModel> UploadFile(IFormFile file, string id)
         {
             if (string.IsNullOrWhiteSpace(id) || file == null)
@@ -152,8 +133,8 @@ namespace BPHN.BusinessLayer.ImpServices
 
             DeleteFile(id);
 
-            var path = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, string.Format("{0}{1}", id, extension));
-            var fileStream = new FileStream(path, FileMode.Create);
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, $"{id}{extension}");
+            using var fileStream = new FileStream(path, FileMode.Create);
             await file.CopyToAsync(fileStream);
 
             return new ServiceResultModel()
