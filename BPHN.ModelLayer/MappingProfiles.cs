@@ -28,8 +28,10 @@ namespace BPHN.WebAPI.Models
             CreateMap<SavePermissionRequest, Permission>();
 
             CreateMap<Account, AccountRespond>();
+            CreateMap<CalendarEventRequest, CalendarEvent>();
             CreateMap<CalendarEvent, CalendarEventRespond>();
             CreateMap<Booking, BookingRespond>();
+            CreateMap<BookingManager, BookingRespond>();
             CreateMap<Config, ConfigRespond>();
             CreateMap<HistoryLog, HistoryLogRespond>();
             CreateMap<Notification, NotificationRespond>();

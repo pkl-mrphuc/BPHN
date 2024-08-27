@@ -17,6 +17,7 @@ const showSetPassword = ref(false);
 const password = ref("");
 const passwordAgain = ref("");
 const hdfFile = ref(null);
+const imgAvatar = ref(null);
 
 const fullName = computed(() => {
   return store.getters["account/getFullName"];
@@ -111,6 +112,10 @@ const changeHdfFile = (event) => {
     store.dispatch("file/upload", {
       file: files[0],
       id: store.getters["account/getAccountId"],
+    }).then((res) => {
+      if (res?.data?.success) {
+        store.commit("account/setAvatarUrl", res.data.data);
+      }
     });
   }
 };
@@ -118,7 +123,7 @@ const changeHdfFile = (event) => {
 const readImageFile = (file) => {
   let reader = new FileReader();
   reader.onload = (e) => {
-    avatarUrl.value = e.target.result;
+    imgAvatar.value.src = e.target.result;
   };
   reader.readAsDataURL(file);
 };
@@ -134,16 +139,23 @@ const readImageFile = (file) => {
             class="d-flex flex-row justify-content-center mb-3 col-12 col-sm-12 col-md-3 pointer"
             @click="upload"
           >
-            <el-avatar
-              v-if="avatarUrl"
-              :size="120"
-              :src="avatarUrl"
-            />
-            <el-avatar
-              v-else
-              :size="120"
-              src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
-            />
+          <img
+            v-if="avatarUrl"
+            ref="imgAvatar"
+            :src="avatarUrl"
+            height="120"
+            width="120"
+            class="image"
+          />
+          <img
+            v-else
+            height="120"
+            width="120"
+            ref="imgAvatar"
+            src="../../assets/images/avatar-default.png"
+            class="image"
+          />
+            
             <!-- hdf = hidden field -->
             <input
               type="file"
@@ -267,3 +279,10 @@ const readImageFile = (file) => {
     </template>
   </Dialog>
 </template>
+<style scoped>
+.image {
+  display: block;
+  object-fit: cover;
+  border-radius: 50%;
+}
+</style>

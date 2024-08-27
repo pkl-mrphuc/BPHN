@@ -18,6 +18,38 @@ namespace BPHN.BusinessLayer.ImpServices
             _resourceService = resourceService;
         }
 
+        public ServiceResultModel DeleteFile(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return new ServiceResultModel()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.EMPTY_INPUT,
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
+                };
+            }
+
+            var getLinkService = GetLinkFile(id);
+            if (getLinkService.Success && getLinkService.Data is not null)
+            {
+                var fileName = ((string)getLinkService.Data).Replace(_appSettings.FileUrl, "");
+                var path = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder);
+                var dir = new DirectoryInfo(path);
+                var files = dir.GetFiles(fileName);
+
+                foreach (var file in files)
+                {
+                    file.Delete();
+                }
+            }
+
+            return new ServiceResultModel
+            {
+                Success = true
+            };
+        }
+
         public ServiceResultModel GetLinkFile(string id)
         {
 
@@ -45,7 +77,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 var filesJpg = dir.GetFiles(id + ".jpg");
                 var filesJpeg = dir.GetFiles(id + ".jpeg");
 
-                if(filesJpeg.Length == 0 && 
+                if (filesJpeg.Length == 0 &&
                     filesPng.Length == 0 &&
                     filesJpg.Length == 0)
                 {
@@ -57,15 +89,15 @@ namespace BPHN.BusinessLayer.ImpServices
                     };
                 }
 
-                if(filesPng.Length > 0)
+                if (filesPng.Length > 0)
                 {
                     fullName = filesPng[0].Name;
                 }
-                if(filesJpeg.Length > 0)
+                if (filesJpeg.Length > 0)
                 {
                     fullName = filesJpeg[0].Name;
                 }
-                if(filesJpg.Length > 0)
+                if (filesJpg.Length > 0)
                 {
                     fullName = filesJpg[0].Name;
                 }
@@ -73,7 +105,7 @@ namespace BPHN.BusinessLayer.ImpServices
             else
             {
                 var files = dir.GetFiles(id);
-                if(files.Length == 0)
+                if (files.Length == 0)
                 {
                     return new ServiceResultModel()
                     {
@@ -118,23 +150,16 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var path = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, string.Format("{0}{1}", id, extension));
-            if(File.Exists(path))
-            {
-                return new ServiceResultModel()
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EXISTED,
-                    Message = _resourceService.Get(SharedResourceKey.EXISTED)
-                };
-            }
+            DeleteFile(id);
 
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, string.Format("{0}{1}", id, extension));
             var fileStream = new FileStream(path, FileMode.Create);
             await file.CopyToAsync(fileStream);
 
             return new ServiceResultModel()
             {
-                Success = true
+                Success = true,
+                Data = $"{_appSettings.FileUrl}{id}{extension}"
             };
         }
     }

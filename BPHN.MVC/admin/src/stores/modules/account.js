@@ -64,6 +64,10 @@ const getters = {
 const mutations = {
     setContext: (state, payload) => {
         state.context = payload;
+    },
+
+    setAvatarUrl: (state, payload) => {
+        state.context.avatarUrl = payload;
     }
 };
 

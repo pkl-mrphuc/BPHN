@@ -7,5 +7,6 @@
         public string Status { get; set; }
         public string AvatarUrl { get; set; }
         public List<TimeFrameInfoRespond> TimeFrameInfos { get; set; }
+        public string NameDetails { get; set; }
     }
 }
