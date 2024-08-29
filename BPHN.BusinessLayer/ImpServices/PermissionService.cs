@@ -29,9 +29,9 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public List<Permission> GetDefaultPermissions(Guid accountId, Account context)
         {
-            return new List<Permission>()
+            return new List<Permission>
             {
-                new Permission()
+                new Permission
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
@@ -42,7 +42,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     ModifiedBy = context.FullName,
                     ModifiedDate = DateTime.Now
                 },
-                new Permission()
+                new Permission
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
@@ -53,7 +53,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     ModifiedBy = context.FullName,
                     ModifiedDate = DateTime.Now
                 },
-                new Permission()
+                new Permission
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
@@ -64,7 +64,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     ModifiedBy = context.FullName,
                     ModifiedDate = DateTime.Now
                 },
-                new Permission()
+                new Permission
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
@@ -75,7 +75,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     ModifiedBy = context.FullName,
                     ModifiedDate = DateTime.Now
                 },
-                new Permission()
+                new Permission
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
@@ -86,7 +86,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     ModifiedBy = context.FullName,
                     ModifiedDate = DateTime.Now
                 },
-                new Permission()
+                new Permission
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
@@ -97,7 +97,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     ModifiedBy = context.FullName,
                     ModifiedDate = DateTime.Now
                 },
-                new Permission()
+                new Permission
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
@@ -108,7 +108,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     ModifiedBy = context.FullName,
                     ModifiedDate = DateTime.Now
                 },
-                new Permission()
+                new Permission
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
@@ -119,7 +119,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     ModifiedBy = context.FullName,
                     ModifiedDate = DateTime.Now
                 },
-                new Permission()
+                new Permission
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
@@ -130,7 +130,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     ModifiedBy = context.FullName,
                     ModifiedDate = DateTime.Now
                 },
-                new Permission()
+                new Permission
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
@@ -147,9 +147,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> GetPermissions(Guid accountId)
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -158,12 +158,12 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var permissions = await _permissionRepository.GetPermissions(accountId);
-            if(permissions == null || permissions.Count == 0)
+            if(permissions is null || permissions.Count == 0)
             {
                 permissions = GetDefaultPermissions(accountId, context);
             }
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = _mapper.Map<List<PermissionRespond>>(permissions)
@@ -173,9 +173,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> SavePermissions(Guid accountId, List<Permission> permissions)
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -186,7 +186,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDITUSER);
             if(!hasPermission)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
@@ -215,32 +215,27 @@ namespace BPHN.BusinessLayer.ImpServices
 
                 await _cacheService.RemoveAsync(_cacheService.GetKeyCache(accountId, EntityEnum.PERMISSION));
 
-                var thread = new Thread(delegate ()
+                var historyLogId = Guid.NewGuid();
+                await _historyLogService.Write(new HistoryLog
                 {
-                    var historyLogId = Guid.NewGuid();
-                    _historyLogService.Write(new HistoryLog()
+                    Id = historyLogId,
+                    IPAddress = context.IPAddress,
+                    Actor = context.UserName,
+                    ActorId = context.Id,
+                    ActionType = ActionEnum.SAVE,
+                    Entity = EntityEnum.PERMISSION.ToString(),
+                    ActionName = string.Empty,
+                    Description = BuildLinkDescription(historyLogId),
+                    Data = new HistoryLogDescription
                     {
-                        Id = historyLogId,
-                        IPAddress = context.IPAddress,
-                        Actor = context.UserName,
-                        ActorId = context.Id,
-                        ActionType = ActionEnum.SAVE,
-                        Entity = EntityEnum.PERMISSION.ToString(),
-                        ActionName = string.Empty,
-                        Description = BuildLinkDescription(historyLogId),
-                        Data = new HistoryLogDescription()
-                        {
-                            ModelId = context.Id,
-                            OldData = JsonConvert.SerializeObject(oldPermissions),
-                            NewData = JsonConvert.SerializeObject(permissions)
-                        }
-                    }, context);
-
-                });
-                thread.Start();
+                        ModelId = context.Id,
+                        OldData = JsonConvert.SerializeObject(oldPermissions),
+                        NewData = JsonConvert.SerializeObject(permissions)
+                    }
+                }, context);
             }
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = saveResult

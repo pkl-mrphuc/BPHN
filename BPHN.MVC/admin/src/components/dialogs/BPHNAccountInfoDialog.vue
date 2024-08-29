@@ -107,14 +107,21 @@ const upload = () => {
 const changeHdfFile = (event) => {
   let files = event.target.files;
   if (files?.length > 0) {
-    hdfFile.value = files[0];
     readImageFile(files[0]);
     store.dispatch("file/upload", {
       file: files[0],
       id: store.getters["account/getAccountId"],
     }).then((res) => {
       if (res?.data?.success) {
-        store.commit("account/setAvatarUrl", res.data.data);
+        fetch(res.data.data).then(() => {
+          store.commit("account/setAvatarUrl", res.data.data);
+        });
+      } else {
+        ElNotification({
+          title: t("Notification"),
+          message: res?.data?.message ?? t("ErrorMesg"),
+          type: "error",
+        });
       }
     });
   }
@@ -135,36 +142,13 @@ const readImageFile = (file) => {
     <template #body>
       <div class="container">
         <div class="row">
-          <div
-            class="d-flex flex-row justify-content-center mb-3 col-12 col-sm-12 col-md-3 pointer"
-            @click="upload"
-          >
-          <img
-            v-if="avatarUrl"
-            ref="imgAvatar"
-            :src="avatarUrl"
-            height="120"
-            width="120"
-            class="image"
-          />
-          <img
-            v-else
-            height="120"
-            width="120"
-            ref="imgAvatar"
-            src="../../assets/images/avatar-default.png"
-            class="image"
-          />
-            
+          <div class="d-flex flex-row justify-content-center mb-3 col-12 col-sm-12 col-md-3 pointer" @click="upload">
+            <img v-if="avatarUrl" ref="imgAvatar" :src="avatarUrl" height="120" width="120" class="image" />
+            <img v-else height="120" width="120" ref="imgAvatar" src="../../assets/images/avatar-default.png"
+              class="image" />
+
             <!-- hdf = hidden field -->
-            <input
-              type="file"
-              hidden
-              accept="image/*"
-              @change="changeHdfFile"
-              name="hdfFile"
-              ref="hdfFile"
-            />
+            <input type="file" hidden accept="image/*" @change="changeHdfFile" name="hdfFile" ref="hdfFile" />
           </div>
           <div class="col-12 col-sm-12 col-md-9">
             <div class="row mb-3">
@@ -221,46 +205,31 @@ const readImageFile = (file) => {
               <div class="col-6 fw-bold"></div>
               <div class="col-6">
                 <div class="mx-3">
-                  <el-checkbox
-                    v-model="showSetPassword"
-                    :label="t('SetPasswordTitle')"
-                  />
+                  <el-checkbox v-model="showSetPassword" :label="t('SetPasswordTitle')" />
                 </div>
               </div>
             </div>
             <div class="row mb-3" v-if="showSetPassword">
-              <div
-                class="col-6 fw-bold d-flex flex-row align-items-center justify-content-end"
-              >
+              <div class="col-6 fw-bold d-flex flex-row align-items-center justify-content-end">
                 <div class="mx-3">
                   {{ t("Password") }}
                 </div>
               </div>
               <div class="col-6">
                 <div class="mx-3">
-                  <el-input
-                    type="password"
-                    v-model="password"
-                    :placeholder="t('Password')"
-                  />
+                  <el-input type="password" v-model="password" :placeholder="t('Password')" />
                 </div>
               </div>
             </div>
             <div class="row mb-3" v-if="showSetPassword">
-              <div
-                class="col-6 fw-bold d-flex flex-row align-items-center justify-content-end"
-              >
+              <div class="col-6 fw-bold d-flex flex-row align-items-center justify-content-end">
                 <div class="mx-3">
                   {{ t("PasswordAgain") }}
                 </div>
               </div>
               <div class="col-6">
                 <div class="mx-3">
-                  <el-input
-                    type="password"
-                    v-model="passwordAgain"
-                    :placeholder="t('PasswordAgain')"
-                  />
+                  <el-input type="password" v-model="passwordAgain" :placeholder="t('PasswordAgain')" />
                 </div>
               </div>
             </div>
@@ -269,12 +238,7 @@ const readImageFile = (file) => {
       </div>
     </template>
     <template #foot>
-      <el-button
-        type="primary"
-        @click="changePassword"
-        v-if="showSetPassword"
-        >{{ t("Submit") }}</el-button
-      >
+      <el-button type="primary" @click="changePassword" v-if="showSetPassword">{{ t("Submit") }}</el-button>
       <el-button @click="toggleModel">{{ t("Close") }}</el-button>
     </template>
   </Dialog>

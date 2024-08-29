@@ -25,9 +25,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> GetConfigs(string? key = null)
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -37,26 +37,26 @@ namespace BPHN.BusinessLayer.ImpServices
 
             List<Config>? lstConfig = null;
             var cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.CONFIG));
-            if(!string.IsNullOrWhiteSpace(cacheResult))
+            if (!string.IsNullOrWhiteSpace(cacheResult))
             {
                 lstConfig = JsonConvert.DeserializeObject<List<Config>>(cacheResult);
             }
 
-            if(lstConfig == null)
+            if (lstConfig is null)
             {
                 lstConfig = await _configRepository.GetConfigs(context.Id, key);
-                if(string.IsNullOrWhiteSpace(key) && lstConfig != null)
+                if (string.IsNullOrWhiteSpace(key) && lstConfig is not null)
                 {
                     await _cacheService.SetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.CONFIG), JsonConvert.SerializeObject(lstConfig));
                 }
             }
 
-            if(!string.IsNullOrWhiteSpace(key))
+            if (!string.IsNullOrWhiteSpace(key))
             {
                 lstConfig = lstConfig?.Where(item => item.Key == key).ToList();
             }
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = _mapper.Map<List<ConfigRespond>>(lstConfig)
@@ -66,9 +66,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> Save(List<Config> configs)
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -76,9 +76,9 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            if (configs == null)
+            if (configs is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = true,
                     Data = true
@@ -98,36 +98,31 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var oldConfigs = await _configRepository.GetConfigs(context.Id);
             var saveResult = await _configRepository.Save(configs);
-            if(saveResult)
+            if (saveResult)
             {
                 var key = _cacheService.GetKeyCache(context.Id, EntityEnum.CONFIG);
                 await _cacheService.RemoveAsync(key);
-                var thread = new Thread(delegate ()
+                var historyLogId = Guid.NewGuid();
+                await _historyLogService.Write(new HistoryLog
                 {
-                    var historyLogId = Guid.NewGuid();
-                    _historyLogService.Write(new HistoryLog()
+                    Id = historyLogId,
+                    IPAddress = context.IPAddress,
+                    Actor = context.UserName,
+                    ActorId = context.Id,
+                    ActionType = ActionEnum.SAVE,
+                    Entity = EntityEnum.CONFIG.ToString(),
+                    ActionName = string.Empty,
+                    Description = BuildLinkDescription(historyLogId),
+                    Data = new HistoryLogDescription
                     {
-                        Id = historyLogId,
-                        IPAddress = context.IPAddress,
-                        Actor = context.UserName,
-                        ActorId = context.Id,
-                        ActionType = ActionEnum.SAVE,
-                        Entity = EntityEnum.CONFIG.ToString(),
-                        ActionName = string.Empty,
-                        Description = BuildLinkDescription(historyLogId),
-                        Data = new HistoryLogDescription()
-                        {
-                            ModelId = context.Id,
-                            OldData = JsonConvert.SerializeObject(oldConfigs),
-                            NewData = JsonConvert.SerializeObject(configs)
-                        }
-                    }, context);
-
-                });
-                thread.Start();
+                        ModelId = context.Id,
+                        OldData = JsonConvert.SerializeObject(oldConfigs),
+                        NewData = JsonConvert.SerializeObject(configs)
+                    }
+                }, context);
             }
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = saveResult

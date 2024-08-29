@@ -22,9 +22,9 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
 
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -32,9 +32,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-
             var where = new List<WhereCondition>();
-            where.Add(new WhereCondition()
+            where.Add(new WhereCondition
             {
                 Column = "ActorId",
                 Operator = "=",
@@ -42,7 +41,7 @@ namespace BPHN.BusinessLayer.ImpServices
             });
             if (!string.IsNullOrWhiteSpace(txtSearch))
             {
-                where.Add(new WhereCondition()
+                where.Add(new WhereCondition
                 {
                     Column = "ActionName",
                     Operator = "like",
@@ -51,7 +50,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var resultCountPaging = await _historyLogRepository.GetCountPaging(pageIndex, pageSize, where);
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                  Success = true,
                  Data = resultCountPaging
@@ -60,7 +59,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> GetDescription(string historyLogId)
         {
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = await _historyLogRepository.GetDescription(historyLogId)
@@ -73,9 +72,9 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
 
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -83,9 +82,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-
             var where = new List<WhereCondition>();
-            where.Add(new WhereCondition()
+            where.Add(new WhereCondition
             {
                 Column = "ActorId",
                 Operator = "=",
@@ -93,7 +91,7 @@ namespace BPHN.BusinessLayer.ImpServices
             });
             if(!string.IsNullOrWhiteSpace(txtSearch))
             {
-                where.Add(new WhereCondition()
+                where.Add(new WhereCondition
                 {
                     Column = "ActionName",
                     Operator = "like",
@@ -101,7 +99,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 });
             }
             var resultPaging = await _historyLogRepository.GetPaging(pageIndex, pageSize, where);
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = _mapper.Map<List<HistoryLogRespond>>(resultPaging)
@@ -111,9 +109,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> Write(HistoryLog history, Account? context)
         {
 
-            if(context == null)
+            if(context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -152,7 +150,7 @@ namespace BPHN.BusinessLayer.ImpServices
             history.CreatedDate = DateTime.Now;
             history.Id = history.Id.Equals(Guid.Empty) ? Guid.NewGuid() : history.Id;
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = await _historyLogRepository.Write(history)

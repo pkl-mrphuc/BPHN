@@ -26,7 +26,7 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             if (string.IsNullOrWhiteSpace(id))
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
@@ -34,26 +34,35 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
+            var result = true;
+
             var pathPng = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, $"{id}.png");
             var pathJpg = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, $"{id}.jpg");
             var pathJpeg = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, $"{id}.jpeg");
 
-            if (File.Exists(pathPng))
+            try
             {
-                File.Delete(pathPng);
+                if (File.Exists(pathPng))
+                {
+                    File.Delete(pathPng);
+                }
+                else if (File.Exists(pathJpg))
+                {
+                    File.Delete(pathJpg);
+                }
+                else if (File.Exists(pathJpeg))
+                {
+                    File.Delete(pathJpeg);
+                }
             }
-            else if (File.Exists(pathJpg))
+            catch (Exception)
             {
-                File.Delete(pathJpg);
-            }
-            else if (File.Exists(pathJpeg))
-            {
-                File.Delete(pathJpeg);
+                result = false;
             }
 
             return new ServiceResultModel
             {
-                Success = true
+                Success = result
             };
         }
 
@@ -63,7 +72,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (string.IsNullOrWhiteSpace(id))
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
@@ -90,7 +99,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
             else
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.NOT_EXISTS,
@@ -98,7 +107,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = $"{_appSettings.FileUrl}{fullName}"
@@ -108,9 +117,9 @@ namespace BPHN.BusinessLayer.ImpServices
         [Obsolete]
         public async Task<ServiceResultModel> UploadFile(IFormFile file, string id)
         {
-            if (string.IsNullOrWhiteSpace(id) || file == null)
+            if (string.IsNullOrWhiteSpace(id) || file is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
@@ -123,7 +132,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var validExtension = new string[3] { ".png", ".jpg", ".jpeg" };
             if (!validExtension.Contains(extension.ToLower()))
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.NOT_EXISTS,
@@ -131,17 +140,26 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            DeleteFile(id);
-
-            var path = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, $"{id}{extension}");
-            using var fileStream = new FileStream(path, FileMode.Create);
-            await file.CopyToAsync(fileStream);
-
-            return new ServiceResultModel()
+            if (DeleteFile(id).Success)
             {
-                Success = true,
-                Data = $"{_appSettings.FileUrl}{id}{extension}"
-            };
+                var path = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, $"{id}{extension}");
+                using var fileStream = new FileStream(path, FileMode.Create);
+                await file.CopyToAsync(fileStream);
+
+                return new ServiceResultModel
+                {
+                    Success = true,
+                    Data = $"{_appSettings.FileUrl}{id}{extension}"
+                };
+            }
+            else
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_ROLE
+                };
+            }
         }
     }
 }

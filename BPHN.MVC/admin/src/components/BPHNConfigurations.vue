@@ -121,25 +121,11 @@ const save = () => {
       Value: `${multiUser.value}`,
     },
   ];
-  store.dispatch("config/save", configs).then((res) => {
-    if (res?.data?.success) {
-      ElNotification({
-        title: t("Notification"),
-        message: t("SaveSuccess"),
-        type: "success",
-      });
-    } else {
-      ElNotification({
-        title: t("Notification"),
-        message: res?.data?.message ?? t("ErrorMesg"),
-        type: "success",
-      });
-    }
+  store.dispatch("config/save", configs);
 
-    setTimeout(() => {
-      running.value = 0;
-    }, 1000);
-  });
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
 };
 </script>
 
@@ -161,31 +147,18 @@ const save = () => {
           </el-table-column>
           <el-table-column label="" min-width="300">
             <template #default="scope">
-              <el-switch
-                v-if="equals(scope.row.key, ConfigKeyEnum.DARKMODE)"
-                v-model="darkMode"
-              />
-              <el-select
-                v-if="equals(scope.row.key, ConfigKeyEnum.LANGUAGE)"
-                v-model="language"
-              >
+              <el-switch v-if="equals(scope.row.key, ConfigKeyEnum.DARKMODE)" v-model="darkMode" />
+              <el-select v-if="equals(scope.row.key, ConfigKeyEnum.LANGUAGE)" v-model="language">
                 <el-option value="vi" label="Vietnamese" />
                 <el-option value="en" label="English" />
               </el-select>
-              <el-select
-                v-if="equals(scope.row.key, ConfigKeyEnum.FORMATDATE)"
-                v-model="formatDate"
-              >
+              <el-select v-if="equals(scope.row.key, ConfigKeyEnum.FORMATDATE)" v-model="formatDate">
                 <el-option value="yyyy-MM-dd" label="yyyy-MM-dd" />
                 <el-option value="dd/MM/yyyy" label="dd/MM/yyyy" />
                 <el-option value="dd-MM-yyyy" label="dd-MM-yyyy" />
               </el-select>
-              <el-switch
-                v-if="equals(scope.row.key, ConfigKeyEnum.MULTIUSER)"
-                v-model="multiUser"
-                disabled
-                @change="useMultiUser"
-              />
+              <el-switch v-if="equals(scope.row.key, ConfigKeyEnum.MULTIUSER)" v-model="multiUser" disabled
+                @change="useMultiUser" />
             </template>
           </el-table-column>
         </el-table>

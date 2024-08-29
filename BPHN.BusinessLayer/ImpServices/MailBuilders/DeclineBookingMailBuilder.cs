@@ -26,16 +26,16 @@ namespace BPHN.BusinessLayer.ImpServices.MailBuilders
 
         public async Task<string> BuildBody(object? data)
         {
-            if (data != null && _appSettings != null && !string.IsNullOrWhiteSpace(_appSettings.MailTemplateAPI))
+            if (data is not null && _appSettings is not null && !string.IsNullOrWhiteSpace(_appSettings.MailTemplateAPI))
             {
                 using (var client = new HttpClient())
                 {
                     var declineBookingParam = (DeclineBookingParameter)data;
-                    if (declineBookingParam != null)
+                    if (declineBookingParam is not null)
                     {
-                        var vm = new MailVm<DeclineBookingParameter>()
+                        var vm = new MailVm<DeclineBookingParameter>
                         {
-                            Model = new DeclineBookingParameter()
+                            Model = new DeclineBookingParameter
                             {
                                 PhoneNumber = declineBookingParam.PhoneNumber,
                                 Reason = declineBookingParam.Reason

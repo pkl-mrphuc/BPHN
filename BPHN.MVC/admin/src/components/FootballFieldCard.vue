@@ -40,7 +40,6 @@ const upload = () => {
 const changeHdfFile = (event) => {
   let files = event.target.files;
   if (files?.length > 0) {
-    hdfFile.value = files[0];
     readImageFile(files[0]);
     store.dispatch("file/upload", {
       file: files[0],

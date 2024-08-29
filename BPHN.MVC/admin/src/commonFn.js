@@ -32,7 +32,7 @@ export default function useCommonFn() {
         let day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
 
         let result = "";
-        switch(formatDate) {
+        switch (formatDate) {
             case "yyyy-MM-dd":
                 result = `${fullYear}-${month}-${day}`;
                 break;
@@ -44,7 +44,7 @@ export default function useCommonFn() {
                 break;
         }
 
-        if(hasTime) {
+        if (hasTime) {
             let hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
             let minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
             let seconds = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds();
@@ -84,6 +84,11 @@ export default function useCommonFn() {
         return /^[^@]+@\w+(\.\w+)+\w$/.test(string);
     }
 
+    const padToFive = (number) => {
+        if (number <= 99999) { number = ("0000" + number).slice(-5); }
+        return number;
+    }
+
     return {
         sameDate,
         newDate,
@@ -93,6 +98,7 @@ export default function useCommonFn() {
         getWeekdays,
         ticks,
         equals,
-        isEmail
+        isEmail,
+        padToFive
     }
 }

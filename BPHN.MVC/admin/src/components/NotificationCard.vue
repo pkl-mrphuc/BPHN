@@ -27,7 +27,7 @@ import { NotificationTypeEnum } from "@/const";
 const props = defineProps({
   data: Object,
 });
-const { dateToString } = useCommonFn();
+const { dateToString, padToFive } = useCommonFn();
 const store = useStore();
 const formatDate = ref(store.getters["config/getFormatDate"]);
 const { t } = useI18n();
@@ -37,15 +37,15 @@ const content = computed(() => {
   let model = JSON.parse(props.data?.content);
   switch (props.data?.notificationType) {
     case NotificationTypeEnum.CANCELBOOKINGDETAIL:
-      return t("CANCELBOOKINGDETAIL", { code : model?.Code }) ;
+      return t("CANCELBOOKINGDETAIL", { code : `M${padToFive(model?.MatchCode)}` }) ;
     case NotificationTypeEnum.UPDATEMATCH:
-      return t("UPDATEMATCH", { code : model?.Code });
+      return t("UPDATEMATCH", { code : `M${padToFive(model?.MatchCode)}` });
     case NotificationTypeEnum.INSERTBOOKING:
-      return t("INSERTBOOKING", { info: `${model?.PhoneNumber}/${model?.PitchName}-${model?.NameDetail}/${model?.TimeFrameInfoName}` });
+      return t("INSERTBOOKING", { phone: model?.PhoneNumber, info: `${model?.PitchName}-${model?.NameDetail}`, timeFrame: model?.TimeFrameInfoName });
     case NotificationTypeEnum.DECLINEBOOKING:
-      return t("DECLINEBOOKING", { info: `${model?.PhoneNumber}/${model?.PitchName}-${model?.NameDetail}/${model?.TimeFrameInfoName}` });
+      return t("DECLINEBOOKING", { phone: model?.PhoneNumber, info: `${model?.PitchName}-${model?.NameDetail}`, timeFrame: model?.TimeFrameInfoName });
     case NotificationTypeEnum.APPROVALBOOKING:
-      return t("APPROVALBOOKING", { info: `${model?.PhoneNumber}/${model?.PitchName}-${model?.NameDetail}/${model?.TimeFrameInfoName}` });
+      return t("APPROVALBOOKING", { phone: model?.PhoneNumber, info: `${model?.PitchName}-${model?.NameDetail}`, timeFrame: model?.TimeFrameInfoName });
     case NotificationTypeEnum.CHANGEPERMISSION:
       return t("CHANGEPERMISSION", { name: model?.UserName });
     case NotificationTypeEnum.INSERTPITCH:

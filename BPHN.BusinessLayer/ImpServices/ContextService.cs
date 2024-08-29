@@ -15,7 +15,7 @@ namespace BPHN.BusinessLayer.ImpServices
         public Account? GetContext()
         {
             var user = _httpContextAccessor.HttpContext?.Items["User"];
-            if(user != null)
+            if (user is not null)
             {
                 var result = (Account)user;
                 result.IPAddress = GetIPAddress();
@@ -24,9 +24,6 @@ namespace BPHN.BusinessLayer.ImpServices
             return null;
         }
 
-        public string GetIPAddress()
-        {
-            return _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
-        }
+        public string GetIPAddress() => _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
     }
 }

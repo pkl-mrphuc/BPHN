@@ -28,7 +28,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var sendMail = JsonConvert.DeserializeObject<SendMailParameter>(dataJson);
 
-            if (sendMail == null)
+            if (sendMail is null)
             {
                 throw new Exception("Input Empty");
             }
@@ -39,7 +39,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var body = await builder.BuildBody(data);
 
-            if(string.IsNullOrWhiteSpace(body))
+            if (string.IsNullOrWhiteSpace(body))
             {
                 throw new Exception("Build Body Fail");
             }
@@ -54,7 +54,7 @@ namespace BPHN.BusinessLayer.ImpServices
             message.SubjectEncoding = Encoding.UTF8;
             message.IsBodyHtml = true;
             message.Sender = new MailAddress(_appSettings.MailConfiguration.Mail, _appSettings.MailConfiguration.DisplayName);
-            if(sendMail.HasAttachmentFile)
+            if (sendMail.HasAttachmentFile)
             {
                 var files = builder.BuildAttachments(data);
                 for (int i = 0; i < files.Count; i++)

@@ -9,11 +9,13 @@ import NotificationCard from "@/components/NotificationCard.vue";
 import connection from "@/ws";
 import { ElNotification } from "element-plus";
 import { NotificationTypeEnum } from "@/const";
+import useCommonFn from "@/commonFn";
 
 const router = useRouter();
 const store = useStore();
 const { t } = useI18n();
 const { openModal, hasRole } = useToggleModal();
+const { padToFive } = useCommonFn();
 const lstNotification = ref([]);
 const hasNewNoti = ref(false);
 
@@ -36,9 +38,9 @@ const getMessage = (type, model) => {
   model = JSON.parse(model);
   switch (type) {
     case NotificationTypeEnum.CANCELBOOKINGDETAIL:
-      return t("CANCELBOOKINGDETAIL", { code : model?.Code }) ;
+      return t("CANCELBOOKINGDETAIL", { code : `M${padToFive(model?.MatchCode)}` }) ;
     case NotificationTypeEnum.UPDATEMATCH:
-      return t("UPDATEMATCH", { code : model?.Code });
+      return t("UPDATEMATCH", { code : `M${padToFive(model?.MatchCode)}` });
     case NotificationTypeEnum.INSERTBOOKING:
       return t("INSERTBOOKING", { info: `${model?.PhoneNumber}/${model?.PitchName}-${model?.NameDetail}/${model?.TimeFrameInfoName}` });
     case NotificationTypeEnum.DECLINEBOOKING:

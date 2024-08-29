@@ -29,7 +29,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _mapper = provider.GetRequiredService<IMapper>();
             _appSettings = appSettings.Value;
         }
-        public virtual bool ValidateModelByAttribute(object model, List<string> ignoreProperties)
+        public virtual bool ValidateModelByAttribute(object model, params string[] ignoreProperties)
         {
             var validateProperties = model
                 .GetType()
@@ -47,10 +47,10 @@ namespace BPHN.BusinessLayer.ImpServices
 
                     var attribute = customAttributes[j]; 
                     var namePropertyOfAttribute = attribute.TypeId.GetType().GetProperty("Name") ?? null;
-                    if(namePropertyOfAttribute != null)
+                    if(namePropertyOfAttribute is not null)
                     {
                         var nameAttribute = namePropertyOfAttribute.GetValue(attribute.TypeId, null);
-                        if(nameAttribute != null)
+                        if(nameAttribute is not null)
                         {
                             switch (nameAttribute.ToString())
                             {
@@ -77,7 +77,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
         private bool ValidateRequiredValue(object? value, PropertyInfo property, Attribute attribute)
         {
-            if (value == null) return false;
+            if (value is null) return false;
             if (property.PropertyType == typeof(string) && string.IsNullOrWhiteSpace(value.ToString())) return false;
             return true;
         }
@@ -85,12 +85,12 @@ namespace BPHN.BusinessLayer.ImpServices
         private bool ValidateMaxLengthValue(object? value, PropertyInfo property, Attribute attribute)
         {
             var lengthProperty = attribute.GetType().GetProperty("Length");
-            if(lengthProperty != null)
+            if(lengthProperty is not null)
             {
                 int maxLength = Convert.ToInt32(lengthProperty.GetValue(attribute, null));
                 if (property.PropertyType == typeof(string) && maxLength >= 0)
                 {
-                    if (value != null && value.GetType() == typeof(string))
+                    if (value is not null && value.GetType() == typeof(string))
                     {
                         string strValue = (string)value;
                         if (strValue.Length > maxLength)
@@ -123,22 +123,22 @@ namespace BPHN.BusinessLayer.ImpServices
                 permissions = JsonConvert.DeserializeObject<List<Permission>>(cacheResult);
             }
             
-            if(permissions == null)
+            if(permissions is null)
             {
                 permissions = await _permissionRepository.GetPermissions(accountId);
-                if(permissions != null)
+                if(permissions is not null)
                 {
                     await _cacheService.SetAsync(_cacheService.GetKeyCache(accountId, EntityEnum.PERMISSION), JsonConvert.SerializeObject(permissions));
                 }
             }
 
-            if (permissions == null)
+            if (permissions is null)
             {
                 return false;
             }
 
             var result = permissions.Where(item => item.FunctionType == (int)functionType && item.Allow)
-                                .FirstOrDefault() != null ? true : false;
+                                .FirstOrDefault() is not null ? true : false;
             if(!result)
             {
                 var context = _contextService.GetContext();

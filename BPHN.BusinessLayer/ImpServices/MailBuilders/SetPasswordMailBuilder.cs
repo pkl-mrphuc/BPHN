@@ -27,15 +27,15 @@ namespace BPHN.BusinessLayer.ImpServices.MailBuilders
 
         public async Task<string> BuildBody(object? data)
         {
-            if (data != null && _appSettings != null && !string.IsNullOrWhiteSpace(_appSettings.MailTemplateAPI))
+            if (data is not null && _appSettings is not null && !string.IsNullOrWhiteSpace(_appSettings.MailTemplateAPI))
             {
                 using (var client = new HttpClient())
                 {
                     var setPasswordParam = (SetPasswordParameter)data;
-                    if(setPasswordParam != null)
+                    if(setPasswordParam is not null)
                     {
                         string key = _keyGenerator.Encryption(JsonConvert.SerializeObject(
-                                new ExpireSetPasswordModel()
+                                new ExpireSetPasswordModel
                                 {
                                     ExpireTime = DateTime.Now.AddMinutes(30),
                                     AccountId = setPasswordParam.AccountId.ToString()
@@ -43,9 +43,9 @@ namespace BPHN.BusinessLayer.ImpServices.MailBuilders
                             ));
 
                         string link = $"{_appSettings.ClientHost}/set-password?code={key}&userName={setPasswordParam.UserName}";
-                        var vm = new MailVm<MailForgotPasswordVm>()
+                        var vm = new MailVm<MailForgotPasswordVm>
                         {
-                            Model = new MailForgotPasswordVm()
+                            Model = new MailForgotPasswordVm
                             {
                                 AccountId = setPasswordParam.AccountId,
                                 FullName = setPasswordParam.FullName,

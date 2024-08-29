@@ -5,7 +5,7 @@ namespace BPHN.BusinessLayer.IServices
 {
     public interface IBookingDetailService
     {
-        List<BookingDetail> GetMatchDatesByWeekendays(DateTime startDate, DateTime endDate, int weekendays);
+        List<BookingDetail> GetMatchDatesByWeekdays(DateTime startDate, DateTime endDate, int weekendays);
         List<BookingDetail> GetMatchDates(DateTime startDate, DateTime endDate);
         Task<ServiceResultModel> Cancel(string id);
         Task<ServiceResultModel> GetByDate(string date);

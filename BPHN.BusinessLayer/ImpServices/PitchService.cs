@@ -44,9 +44,9 @@ namespace BPHN.BusinessLayer.ImpServices
                 Guid.TryParse(accountId, out id);
 
                 var context = _contextService.GetContext();
-                if (context == null)
+                if (context is null)
                 {
-                    return new ServiceResultModel()
+                    return new ServiceResultModel
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.OUT_TIME,
@@ -56,7 +56,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
                 if (!context.Id.Equals(id))
                 {
-                    return new ServiceResultModel()
+                    return new ServiceResultModel
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.NO_INTEGRITY,
@@ -67,7 +67,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
                 if (!hasPermission)
                 {
-                    return new ServiceResultModel()
+                    return new ServiceResultModel
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.INVALID_ROLE,
@@ -75,7 +75,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     };
                 }
 
-                lstWhere.Add(new WhereCondition()
+                lstWhere.Add(new WhereCondition
                 {
                     Column = "ManagerId",
                     Operator = "in",
@@ -85,7 +85,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (!hasInactive || string.IsNullOrWhiteSpace(accountId))
             {
-                lstWhere.Add(new WhereCondition()
+                lstWhere.Add(new WhereCondition
                 {
                     Column = "Status",
                     Operator = "=",
@@ -95,7 +95,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (!string.IsNullOrWhiteSpace(txtSearch))
             {
-                lstWhere.Add(new WhereCondition()
+                lstWhere.Add(new WhereCondition
                 {
                     Column = "Name",
                     Operator = "like",
@@ -104,7 +104,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var resultCountPaging = await _pitchRepository.GetCountPaging(pageIndex, pageSize, lstWhere);
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = resultCountPaging
@@ -114,9 +114,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> GetInstance(string id)
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -169,21 +169,21 @@ namespace BPHN.BusinessLayer.ImpServices
                     data = JsonConvert.DeserializeObject<Pitch>(cacheResult);
                 }
                 
-                if(data == null)
+                if(data is null)
                 {
                     Guid pitchId = Guid.Empty;
                     Guid.TryParse(id, out pitchId);
                     data = await _pitchRepository.GetById(pitchId);
-                    if(data != null)
+                    if(data is not null)
                     {
                         data.TimeFrameInfos = await _timeFrameInfoRepository.GetByPitchId(data.Id);
                         await _cacheService.SetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.PITCH, id), JsonConvert.SerializeObject(data));
                     }
                 }
 
-                if (data == null)
+                if (data is null)
                 {
-                    return new ServiceResultModel()
+                    return new ServiceResultModel
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.NOT_EXISTS,
@@ -200,7 +200,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 if (data.TimeSlotPerDay != data.TimeFrameInfos.Count ||
                     data.Quantity != data.ListNameDetails.Count)
                 {
-                    return new ServiceResultModel()
+                    return new ServiceResultModel
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.NO_INTEGRITY,
@@ -219,7 +219,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 }
             }
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = _mapper.Map<PitchRespond>(data)
@@ -238,9 +238,9 @@ namespace BPHN.BusinessLayer.ImpServices
                 Guid.TryParse(accountId, out id);
 
                 var context = _contextService.GetContext();
-                if (context == null)
+                if (context is null)
                 {
-                    return new ServiceResultModel()
+                    return new ServiceResultModel
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.OUT_TIME,
@@ -250,7 +250,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
                 if(!context.Id.Equals(id))
                 {
-                    return new ServiceResultModel()
+                    return new ServiceResultModel
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.NO_INTEGRITY,
@@ -261,7 +261,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
                 if (!hasPermission)
                 {
-                    return new ServiceResultModel()
+                    return new ServiceResultModel
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.INVALID_ROLE,
@@ -269,7 +269,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     };
                 }
 
-                lstWhere.Add(new WhereCondition()
+                lstWhere.Add(new WhereCondition
                 {
                     Column = "ManagerId",
                     Operator = "in",
@@ -279,7 +279,7 @@ namespace BPHN.BusinessLayer.ImpServices
             
             if(!hasInactive || string.IsNullOrWhiteSpace(accountId))
             {
-                lstWhere.Add(new WhereCondition()
+                lstWhere.Add(new WhereCondition
                 {
                     Column = "Status",
                     Operator = "=",
@@ -289,7 +289,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if(!string.IsNullOrWhiteSpace(txtSearch))
             {
-                lstWhere.Add(new WhereCondition()
+                lstWhere.Add(new WhereCondition
                 {
                     Column = "Name",
                     Operator = "like",
@@ -324,7 +324,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 return item;
             }).ToList();
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = _mapper.Map<List<GetPagingPitchRespond>>(resultPaging)
@@ -334,9 +334,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> Insert(Pitch pitch)
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -347,7 +347,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.ADDPITCH);
             if(!hasPermission)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
@@ -355,11 +355,11 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var isValid = ValidateModelByAttribute(pitch, new List<string>());
+            var isValid = ValidateModelByAttribute(pitch);
             
             if( !isValid || pitch.TimeFrameInfos.Count == 0 || pitch.ListNameDetails.Count == 0)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
@@ -398,7 +398,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 var thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();
-                    _historyLogService.Write(new HistoryLog()
+                    _historyLogService.Write(new HistoryLog
                     {
                         Id = historyLogId,
                         IPAddress = context.IPAddress,
@@ -408,7 +408,7 @@ namespace BPHN.BusinessLayer.ImpServices
                         ActionName = string.Empty,
                         Entity = EntityEnum.PITCH.ToString(),
                         Description = BuildLinkDescription(historyLogId),
-                        Data = new HistoryLogDescription()
+                        Data = new HistoryLogDescription
                         {
                             ModelId = pitch.Id,
                             NewData = JsonConvert.SerializeObject(pitch)
@@ -418,7 +418,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 thread.Start();
             }
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = insertResult
@@ -428,9 +428,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> Update(Pitch pitch)
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -441,7 +441,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDITPITCH);
             if (!hasPermission)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
@@ -449,11 +449,11 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var isValid = ValidateModelByAttribute(pitch, new List<string>());
+            var isValid = ValidateModelByAttribute(pitch);
 
             if (!isValid || pitch.TimeFrameInfos.Count == 0 || pitch.ListNameDetails.Count == 0)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
@@ -492,7 +492,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 var thread = new Thread(delegate ()
                 {
                     var historyLogId = Guid.NewGuid();
-                    _historyLogService.Write(new HistoryLog()
+                    _historyLogService.Write(new HistoryLog
                     {
                         Id = historyLogId,
                         IPAddress = context.IPAddress,
@@ -502,7 +502,7 @@ namespace BPHN.BusinessLayer.ImpServices
                         ActionName = string.Empty,
                         Entity = EntityEnum.PITCH.ToString(),
                         Description = BuildLinkDescription(historyLogId),
-                        Data = new HistoryLogDescription()
+                        Data = new HistoryLogDescription
                         {
                             ModelId = pitch.Id,
                             OldData = JsonConvert.SerializeObject(oldPitch),
@@ -513,7 +513,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 thread.Start();
             }
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = updateResult

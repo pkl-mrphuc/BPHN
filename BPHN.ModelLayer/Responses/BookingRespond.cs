@@ -15,5 +15,6 @@
         public double Deposite { get; set; }
         public Guid BookingDetailId { get; set; }
         public Guid BookingId { get; set; }
+        public string MatchCode { get; set; }
     }
 }

@@ -25,7 +25,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 try
                 {
                     var value = _cache.GetStringAsync(key).Result;
-                    if (value != null)
+                    if (value is not null)
                     {
                         result = value;
                     }
@@ -46,7 +46,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 try
                 {
                     var value = await _cache.GetStringAsync(key);
-                    if (value != null)
+                    if (value is not null)
                     {
                         result = value;
                     }
@@ -108,7 +108,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     expireHour = Constansts.EXPIRE_HOUR_REDIS_CACHE;
                 }
 
-                if (expireHour == null)
+                if (expireHour is null)
                 {
                     expireHour = _appSettings.RedisExpireHour;
                 }
@@ -139,7 +139,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     expireHour = Constansts.EXPIRE_HOUR_REDIS_CACHE;
                 }
 
-                if (expireHour == null)
+                if (expireHour is null)
                 {
                     expireHour = _appSettings.RedisExpireHour;
                 }

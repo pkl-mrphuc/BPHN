@@ -47,9 +47,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> ChangePassword(Account account)
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -57,10 +57,10 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var isValid = ValidateModelByAttribute(account, new List<string>() { "UserName", "PhoneNumber", "FullName", "Email" });
+            var isValid = ValidateModelByAttribute(account, "UserName", "PhoneNumber", "FullName", "Email");
             if (!isValid)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
@@ -70,7 +70,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (account.Id != context.Id)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.NOT_EXISTS,
@@ -83,23 +83,19 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (resultResetPassword)
             {
-                var thread = new Thread(delegate ()
+                await _historyLogService.Write(new HistoryLog
                 {
-                    _historyLogService.Write(new HistoryLog()
-                    {
-                        IPAddress = context.IPAddress,
-                        Actor = context.UserName,
-                        ActorId = context.Id,
-                        ActionType = ActionEnum.SUBMITRESETPASSWORD,
-                        ActionName = string.Empty,
-                        Description = string.Empty,
-                        Entity = EntityEnum.ACCOUNT.ToString()
-                    }, context);
-                });
-                thread.Start();
+                    IPAddress = context.IPAddress,
+                    Actor = context.UserName,
+                    ActorId = context.Id,
+                    ActionType = ActionEnum.SUBMITRESETPASSWORD,
+                    ActionName = string.Empty,
+                    Description = string.Empty,
+                    Entity = EntityEnum.ACCOUNT.ToString()
+                }, context);
             }
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = resultResetPassword
@@ -114,16 +110,16 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 account = JsonConvert.DeserializeObject<Account>(cacheResult);
             }
-            if (account == null)
+            if (account is null)
             {
                 account = await _accountRepository.GetAccountById(id);
-                if (account != null)
+                if (account is not null)
                 {
                     await _cacheService.SetAsync(_cacheService.GetKeyCache(id, EntityEnum.ACCOUNT), JsonConvert.SerializeObject(account));
                 }
             }
 
-            if (account != null)
+            if (account is not null)
             {
                 List<Guid>? lstRelationId = null;
                 cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(id, EntityEnum.ACCOUNT, "RelationId"));
@@ -132,15 +128,15 @@ namespace BPHN.BusinessLayer.ImpServices
                     lstRelationId = JsonConvert.DeserializeObject<List<Guid>>(cacheResult);
                 }
 
-                if (lstRelationId == null)
+                if (lstRelationId is null)
                 {
                     lstRelationId = await _accountRepository.GetRelationIds(id);
-                    if (lstRelationId != null)
+                    if (lstRelationId is not null)
                     {
                         await _cacheService.SetAsync(_cacheService.GetKeyCache(id, EntityEnum.ACCOUNT, "RelationId"), JsonConvert.SerializeObject(lstRelationId));
                     }
                 }
-                account.RelationIds = lstRelationId == null || lstRelationId.Count == 0 ? new List<Guid>() { id } : lstRelationId;
+                account.RelationIds = lstRelationId is null || lstRelationId.Count == 0 ? new List<Guid>() { id } : lstRelationId;
 
                 List<Config>? lstConfig = null;
                 cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(id, EntityEnum.CONFIG));
@@ -149,13 +145,13 @@ namespace BPHN.BusinessLayer.ImpServices
                     lstConfig = JsonConvert.DeserializeObject<List<Config>>(cacheResult);
                 }
 
-                if (lstConfig == null)
+                if (lstConfig is null)
                 {
                     lstConfig = await _configRepository.GetConfigs(id, "Language");
                 }
                 account.LanguageConfig = lstConfig?.Where(item => item.Key == "Language").FirstOrDefault()?.Value ?? string.Empty;
             }
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = account
@@ -165,9 +161,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -179,7 +175,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (!hasPermission ||
                 (context.Role != RoleEnum.ADMIN && !await AllowMultiUser(context.Id)))
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
@@ -194,7 +190,7 @@ namespace BPHN.BusinessLayer.ImpServices
             switch (context.Role)
             {
                 case RoleEnum.ADMIN:
-                    where.Add(new WhereCondition()
+                    where.Add(new WhereCondition
                     {
                         Column = "Role",
                         Operator = "in",
@@ -202,19 +198,19 @@ namespace BPHN.BusinessLayer.ImpServices
                     });
                     break;
                 default:
-                    where.Add(new WhereCondition()
+                    where.Add(new WhereCondition
                     {
                         Column = "Role",
                         Operator = "in",
                         Value = new[] { RoleEnum.USER.ToString() }
                     });
-                    where.Add(new WhereCondition()
+                    where.Add(new WhereCondition
                     {
                         Column = "Id",
                         Operator = "!=",
                         Value = context.Id
                     });
-                    where.Add(new WhereCondition()
+                    where.Add(new WhereCondition
                     {
                         Column = "ParentId",
                         Operator = "in",
@@ -225,7 +221,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var resultCountPaging = await _accountRepository.GetCountPaging(pageIndex, pageSize, txtSearch, where);
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = resultCountPaging
@@ -235,9 +231,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> GetInstance(string id)
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -265,10 +261,10 @@ namespace BPHN.BusinessLayer.ImpServices
                         data = JsonConvert.DeserializeObject<Account>(cacheResult);
                     }
 
-                    if (data == null)
+                    if (data is null)
                     {
                         data = await _accountRepository.GetAccountById(accountId);
-                        if (data != null)
+                        if (data is not null)
                         {
                             await _cacheService.SetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.ACCOUNT, accountId.ToString()), JsonConvert.SerializeObject(data));
                         }
@@ -276,12 +272,12 @@ namespace BPHN.BusinessLayer.ImpServices
 
                     if (data is not null)
                     {
-                        data.AvatarUrl = (string)(_fileService.GetLinkFile(accountId.ToString()).Data ?? "");
+                        data.AvatarUrl = (string)(_fileService.GetLinkFile(accountId.ToString()).Data ?? string.Empty);
                     }
                 }
                 else
                 {
-                    return new ServiceResultModel()
+                    return new ServiceResultModel
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.EMPTY_INPUT,
@@ -289,9 +285,9 @@ namespace BPHN.BusinessLayer.ImpServices
                     };
                 }
 
-                if (data == null)
+                if (data is null)
                 {
-                    return new ServiceResultModel()
+                    return new ServiceResultModel
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.NOT_EXISTS,
@@ -300,7 +296,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 }
             }
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = _mapper.Map<AccountRespond>(data)
@@ -310,9 +306,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> GetPaging(int pageIndex, int pageSize, string txtSearch)
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -324,7 +320,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (!hasPermission ||
                 (context.Role != RoleEnum.ADMIN && !await AllowMultiUser(context.Id)))
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
@@ -339,7 +335,7 @@ namespace BPHN.BusinessLayer.ImpServices
             switch (context.Role)
             {
                 case RoleEnum.ADMIN:
-                    where.Add(new WhereCondition()
+                    where.Add(new WhereCondition
                     {
                         Column = "Role",
                         Operator = "in",
@@ -347,19 +343,19 @@ namespace BPHN.BusinessLayer.ImpServices
                     });
                     break;
                 default:
-                    where.Add(new WhereCondition()
+                    where.Add(new WhereCondition
                     {
                         Column = "Role",
                         Operator = "in",
                         Value = new[] { RoleEnum.USER.ToString() }
                     });
-                    where.Add(new WhereCondition()
+                    where.Add(new WhereCondition
                     {
                         Column = "Id",
                         Operator = "!=",
                         Value = context.Id
                     });
-                    where.Add(new WhereCondition()
+                    where.Add(new WhereCondition
                     {
                         Column = "ParentId",
                         Operator = "in",
@@ -370,7 +366,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var lstTenants = await _accountRepository.GetPaging(pageIndex, pageSize, txtSearch, where);
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = _mapper.Map<List<AccountRespond>>(lstTenants)
@@ -381,7 +377,7 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             if (string.IsNullOrWhiteSpace(token))
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
@@ -404,7 +400,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (jwtToken.ValidTo < DateTime.Now)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -412,7 +408,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = jwtToken
@@ -421,10 +417,10 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> Login(Account account)
         {
-            var isValid = ValidateModelByAttribute(account, new List<string>() { "Id", "PhoneNumber", "FullName", "Email" });
+            var isValid = ValidateModelByAttribute(account, "Id", "PhoneNumber", "FullName", "Email");
             if (!isValid)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
@@ -434,9 +430,9 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var realAccount = await _accountRepository.GetAccountByUserName(account.UserName);
 
-            if (realAccount == null)
+            if (realAccount is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.NOT_EXISTS,
@@ -446,7 +442,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (!realAccount.Status.Equals(ActiveStatusEnum.ACTIVE.ToString()))
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INACTIVE_DATA,
@@ -458,7 +454,7 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 if (!BCrypt.Net.BCrypt.Verify(account.Password, realAccount.Password))
                 {
-                    return new ServiceResultModel()
+                    return new ServiceResultModel
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.NOT_EXISTS,
@@ -468,8 +464,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
             catch (Exception)
             {
-
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.NOT_EXISTS,
@@ -477,36 +472,31 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-
             string token = _accountRepository.GetToken(realAccount.Id.ToString());
             string refreshToken = _accountRepository.GetRefreshToken(realAccount.Id.ToString());
 
             _accountRepository.SaveToken(realAccount.Id, token, refreshToken);
 
-            var fakeContext = new Account()
+            var fakeContext = new Account
             {
                 FullName = realAccount.FullName,
                 IPAddress = _contextService.GetIPAddress()
             };
 
-            var thread = new Thread(delegate ()
+            await _historyLogService.Write(new HistoryLog
             {
-                _historyLogService.Write(new HistoryLog()
-                {
-                    IPAddress = fakeContext.IPAddress,
-                    Actor = realAccount.UserName,
-                    ActorId = realAccount.Id,
-                    ActionType = ActionEnum.LOGIN,
-                    ActionName = string.Empty,
-                    Entity = EntityEnum.ACCOUNT.ToString()
-                }, fakeContext);
-            });
-            thread.Start();
+                IPAddress = fakeContext.IPAddress,
+                Actor = realAccount.UserName,
+                ActorId = realAccount.Id,
+                ActionType = ActionEnum.LOGIN,
+                ActionName = string.Empty,
+                Entity = EntityEnum.ACCOUNT.ToString()
+            }, fakeContext);
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
-                Data = new LoginRespond()
+                Data = new LoginRespond
                 {
                     Id = realAccount.Id,
                     FullName = realAccount.FullName,
@@ -519,7 +509,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     Token = token,
                     RefreshToken = refreshToken,
                     RelationIds = await _accountRepository.GetRelationIds(realAccount.Id),
-                    AvatarUrl = (string)(_fileService.GetLinkFile(realAccount.Id.ToString()).Data ?? "")
+                    AvatarUrl = (string)(_fileService.GetLinkFile(realAccount.Id.ToString()).Data ?? string.Empty)
                 }
             };
         }
@@ -527,9 +517,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> Refresh()
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -546,7 +536,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 await _cacheService.RemoveAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.ACCOUNT, context.RelationIds[i].ToString()));
             }
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true
             };
@@ -569,7 +559,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (jwtToken is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INACTIVE_DATA
@@ -587,7 +577,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             _accountRepository.SaveToken(userId, token, refreshToken);
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = token
@@ -597,9 +587,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> RegisterForTenant(Account account)
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -611,7 +601,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (!hasPermission ||
                 (context.Role != RoleEnum.ADMIN && !await AllowMultiUser(context.Id)))
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
@@ -619,10 +609,10 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var isValid = ValidateModelByAttribute(account, new List<string>() { "Id", "Password" });
+            var isValid = ValidateModelByAttribute(account, "Id", "Password");
             if (!isValid)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
@@ -633,7 +623,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var existUserName = await _accountRepository.CheckExistUserName(account.UserName);
             if (existUserName)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EXISTED,
@@ -664,7 +654,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (resultRegister)
             {
                 _globalVariableService.Reset();
-                await _notificationService.Insert<Account>(context, NotificationTypeEnum.INSERTACCOUNT, new Account()
+                await _notificationService.Insert<Account>(context, NotificationTypeEnum.INSERTACCOUNT, new Account
                 {
                     UserName = account.UserName
                 });
@@ -674,42 +664,34 @@ namespace BPHN.BusinessLayer.ImpServices
                 }
                 if (account.Status.Equals(ActiveStatusEnum.ACTIVE.ToString()))
                 {
-                    var thread = new Thread(() =>
+                    _mailService.SendMail(new ObjectQueue
                     {
-                        _mailService.SendMail(new ObjectQueue()
+                        QueueJobType = QueueJobTypeEnum.SENDMAIL,
+                        DataJson = JsonConvert.SerializeObject(new SetPasswordParameter
                         {
-                            QueueJobType = QueueJobTypeEnum.SENDMAIL,
-                            DataJson = JsonConvert.SerializeObject(new SetPasswordParameter()
-                            {
-                                ReceiverAddress = account.Email,
-                                AccountId = account.Id,
-                                FullName = account.FullName,
-                                UserName = account.UserName,
-                                MailType = MailTypeEnum.SETPASSWORD,
-                                ParameterType = typeof(SetPasswordParameter)
-                            })
-                        });
+                            ReceiverAddress = account.Email,
+                            AccountId = account.Id,
+                            FullName = account.FullName,
+                            UserName = account.UserName,
+                            MailType = MailTypeEnum.SETPASSWORD,
+                            ParameterType = typeof(SetPasswordParameter)
+                        })
                     });
-                    thread.Start();
                 }
 
-                var threadLog = new Thread(delegate ()
+                await _historyLogService.Write(new HistoryLog
                 {
-                    _historyLogService.Write(new HistoryLog()
-                    {
-                        IPAddress = context.IPAddress,
-                        Actor = context.UserName,
-                        ActorId = context.Id,
-                        ActionType = ActionEnum.REGISTERACCOUNT,
-                        ActionName = string.Empty,
-                        Description = account.UserName,
-                        Entity = EntityEnum.ACCOUNT.ToString()
-                    }, context);
-                });
-                threadLog.Start();
+                    IPAddress = context.IPAddress,
+                    Actor = context.UserName,
+                    ActorId = context.Id,
+                    ActionType = ActionEnum.REGISTERACCOUNT,
+                    ActionName = string.Empty,
+                    Description = account.UserName,
+                    Entity = EntityEnum.ACCOUNT.ToString()
+                }, context);
             }
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = resultRegister
@@ -720,7 +702,7 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             if (string.IsNullOrWhiteSpace(userName))
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
@@ -729,9 +711,9 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var realAccount = await _accountRepository.GetAccountByUserName(userName);
-            if (realAccount == null)
+            if (realAccount is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.NOT_EXISTS,
@@ -741,7 +723,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (!realAccount.Status.Equals(ActiveStatusEnum.ACTIVE.ToString()))
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INACTIVE_DATA,
@@ -749,10 +731,10 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var resultSendMail = _mailService.SendMail(new ObjectQueue()
+            var resultSendMail = _mailService.SendMail(new ObjectQueue
             {
                 QueueJobType = QueueJobTypeEnum.SENDMAIL,
-                DataJson = JsonConvert.SerializeObject(new SetPasswordParameter()
+                DataJson = JsonConvert.SerializeObject(new SetPasswordParameter
                 {
                     ReceiverAddress = realAccount.Email,
                     AccountId = realAccount.Id,
@@ -771,23 +753,19 @@ namespace BPHN.BusinessLayer.ImpServices
                     IPAddress = _contextService.GetIPAddress()
                 };
 
-                var thread = new Thread(delegate ()
+                await _historyLogService.Write(new HistoryLog
                 {
-                    _historyLogService.Write(new HistoryLog()
-                    {
-                        IPAddress = fakeContext.IPAddress,
-                        Actor = realAccount.UserName,
-                        ActorId = realAccount.Id,
-                        ActionType = ActionEnum.SENDRESETPASSWORD,
-                        ActionName = string.Empty,
-                        Description = string.Empty,
-                        Entity = EntityEnum.ACCOUNT.ToString()
-                    }, fakeContext);
-                });
-                thread.Start();
+                    IPAddress = fakeContext.IPAddress,
+                    Actor = realAccount.UserName,
+                    ActorId = realAccount.Id,
+                    ActionType = ActionEnum.SENDRESETPASSWORD,
+                    ActionName = string.Empty,
+                    Description = string.Empty,
+                    Entity = EntityEnum.ACCOUNT.ToString()
+                }, fakeContext);
             }
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = resultSendMail
@@ -798,7 +776,7 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             if (string.IsNullOrWhiteSpace(code) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(userName))
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
@@ -809,9 +787,9 @@ namespace BPHN.BusinessLayer.ImpServices
             var param = _keyGenerator.Decryption(code);
             var expireResetPasswordModel = JsonConvert.DeserializeObject<ExpireSetPasswordModel>(param);
 
-            if (expireResetPasswordModel == null)
+            if (expireResetPasswordModel is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
@@ -821,7 +799,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (expireResetPasswordModel.ExpireTime < DateTime.Now)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -829,16 +807,16 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var account = new Account()
+            var account = new Account
             {
                 Id = Guid.Parse(expireResetPasswordModel.AccountId),
                 Password = password,
             };
 
-            var isValid = ValidateModelByAttribute(account, new List<string>() { "UserName", "PhoneNumber", "FullName", "Email" });
+            var isValid = ValidateModelByAttribute(account, "UserName", "PhoneNumber", "FullName", "Email");
             if (!isValid)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
@@ -847,9 +825,9 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var realAccount = await _accountRepository.GetAccountById(account.Id);
-            if (realAccount == null)
+            if (realAccount is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.NOT_EXISTS,
@@ -859,7 +837,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (realAccount.UserName != userName)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.NO_INTEGRITY,
@@ -872,29 +850,25 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (resultResetPassword)
             {
-                var fakeContext = new Account()
+                var fakeContext = new Account
                 {
                     FullName = realAccount.FullName,
                     IPAddress = _contextService.GetIPAddress()
                 };
 
-                var thread = new Thread(delegate ()
+                await _historyLogService.Write(new HistoryLog
                 {
-                    _historyLogService.Write(new HistoryLog()
-                    {
-                        IPAddress = fakeContext.IPAddress,
-                        Actor = realAccount.UserName,
-                        ActorId = realAccount.Id,
-                        ActionType = ActionEnum.SUBMITRESETPASSWORD,
-                        ActionName = string.Empty,
-                        Description = string.Empty,
-                        Entity = EntityEnum.ACCOUNT.ToString()
-                    }, fakeContext);
-                });
-                thread.Start();
+                    IPAddress = fakeContext.IPAddress,
+                    Actor = realAccount.UserName,
+                    ActorId = realAccount.Id,
+                    ActionType = ActionEnum.SUBMITRESETPASSWORD,
+                    ActionName = string.Empty,
+                    Description = string.Empty,
+                    Entity = EntityEnum.ACCOUNT.ToString()
+                }, fakeContext);
             }
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = resultResetPassword
@@ -904,7 +878,7 @@ namespace BPHN.BusinessLayer.ImpServices
         public ServiceResultModel ValidateToken(string token)
         {
             var result = GetTokenInfo(token);
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = result.Success
             };
@@ -913,7 +887,7 @@ namespace BPHN.BusinessLayer.ImpServices
         private async Task<bool> AllowMultiUser(Guid accountId)
         {
             var configs = await _configRepository.GetConfigs(accountId, "MultiUser");
-            return configs != null && configs.Any(item => item.Value == "true") ? true : false;
+            return configs is not null && configs.Any(item => item.Value == "true") ? true : false;
         }
 
     }

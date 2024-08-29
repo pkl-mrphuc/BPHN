@@ -1,5 +1,4 @@
 ﻿using BPHN.BusinessLayer.IServices;
-using BPHN.DataLayer.ImpRepositories;
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
@@ -24,9 +23,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> GetTopFiveNewNotifications()
         {
             var context = _contextService.GetContext();
-            if(context == null)
+            if(context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -36,7 +35,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var lstWhere = new List<WhereCondition>()
             {
-                new WhereCondition()
+                new WhereCondition
                 {
                     Column = "AccountId",
                     Operator = "in",
@@ -46,7 +45,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var lstNotification = await _notificationRepository.GetTopFiveNewNotifications(lstWhere);
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = _mapper.Map<List<NotificationRespond>>(lstNotification)
@@ -55,7 +54,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> Insert<T>(Account context, NotificationTypeEnum type, T model)
         {
-            var notification = new Notification()
+            var notification = new Notification
             {
                 Id = Guid.NewGuid(),
                 AccountId = context.Id,
@@ -68,7 +67,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 ModifiedDate = DateTime.Now,
             };
 
-            if (_appSettings != null && !string.IsNullOrWhiteSpace(_appSettings.SignalrUrl))
+            if (_appSettings is not null && !string.IsNullOrWhiteSpace(_appSettings.SignalrUrl))
             {
                 var connection = new HubConnectionBuilder().WithUrl(new Uri(_appSettings.SignalrUrl)).Build();
                 await connection.StartAsync();
@@ -81,13 +80,9 @@ namespace BPHN.BusinessLayer.ImpServices
                                             );
             }
 
-            var thread = new Thread(async delegate ()
-            {
-                await _notificationRepository.Insert(notification);
-            });
-            thread.Start();
+            await _notificationRepository.Insert(notification);
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = _mapper.Map<NotificationRespond>(notification)

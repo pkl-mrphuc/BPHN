@@ -1,13 +1,11 @@
 ﻿using BPHN.BusinessLayer.IServices;
-using BPHN.ModelLayer.ObjectQueues;
-using BPHN.ModelLayer.Others;
-using BPHN.ModelLayer.ViewModels;
 using BPHN.ModelLayer;
+using BPHN.ModelLayer.ObjectQueues;
+using BPHN.ModelLayer.ViewModels;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Net.Mail;
 using System.Text;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
 
 namespace BPHN.BusinessLayer.ImpServices.MailBuilders
 {
@@ -27,16 +25,16 @@ namespace BPHN.BusinessLayer.ImpServices.MailBuilders
 
         public async Task<string> BuildBody(object? data)
         {
-            if (data != null && _appSettings != null && !string.IsNullOrWhiteSpace(_appSettings.MailTemplateAPI))
+            if (data is not null && _appSettings is not null && !string.IsNullOrWhiteSpace(_appSettings.MailTemplateAPI))
             {
                 using (var client = new HttpClient())
                 {
                     var approvalBookingParam = (ApprovalBookingParameter)data;
-                    if (approvalBookingParam != null)
+                    if (approvalBookingParam is not null)
                     {
                         var vm = new MailVm<MailApprovalBookingVm>()
                         {
-                            Model = new MailApprovalBookingVm()
+                            Model = new MailApprovalBookingVm
                             {
                                 BookingDate = approvalBookingParam.BookingDate,
                                 MatchDate = approvalBookingParam.MatchDate,

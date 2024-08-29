@@ -1,4 +1,4 @@
-﻿using BPHN.BusinessLayer.IServices;
+﻿ using BPHN.BusinessLayer.IServices;
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.ObjectQueues;
@@ -49,9 +49,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> CheckFreeTimeFrame(Booking data)
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -63,7 +63,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var hasPermissionEdit = await IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
             if (!hasPermissionAdd && !hasPermissionEdit)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
@@ -73,7 +73,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (data.IsRecurring)
             {
-                data.BookingDetails = _bookingDetailService.GetMatchDatesByWeekendays(data.StartDate, data.EndDate, data.Weekendays ?? (int)DayOfWeek.Monday);
+                data.BookingDetails = _bookingDetailService.GetMatchDatesByWeekdays(data.StartDate, data.EndDate, data.Weekendays ?? (int)DayOfWeek.Monday);
             }
             else
             {
@@ -86,7 +86,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var result = await _bookingRepository.CheckFreeTimeFrame(data);
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = result,
                 Message = !result ? _resourceService.Get(SharedResourceKey.EXISTED, context.LanguageConfig) : string.Empty
@@ -97,9 +97,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> FindBlank(Booking data)
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -111,7 +111,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var hasPermissionEdit = await IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
             if (!hasPermissionAdd && !hasPermissionEdit)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
@@ -138,7 +138,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     for (int i = 0; i <= 6; i++)
                     {
-                        var lstDateByWeekendays = _bookingDetailService.GetMatchDatesByWeekendays(data.StartDate, data.EndDate, i);
+                        var lstDateByWeekendays = _bookingDetailService.GetMatchDatesByWeekdays(data.StartDate, data.EndDate, i);
                         for (int j = 0; j < lstTimeFramesInADay.Count; j++)
                         {
                             var clone = (Booking)lstTimeFramesInADay[j].Clone();
@@ -147,8 +147,8 @@ namespace BPHN.BusinessLayer.ImpServices
                             clone.BookingDate = DateTime.Now;
                             clone.StartDate = data.StartDate;
                             clone.EndDate = data.EndDate;
-                            clone.PitchName = clone.Pitch == null ? string.Empty : clone.Pitch.Name;
-                            clone.TimeFrameInfoName = clone.TimeFrameInfo == null ? string.Empty : clone.TimeFrameInfo.Name;
+                            clone.PitchName = clone.Pitch is null ? string.Empty : clone.Pitch.Name;
+                            clone.TimeFrameInfoName = clone.TimeFrameInfo is null ? string.Empty : clone.TimeFrameInfo.Name;
                             clone.BookingDetails = lstDateByWeekendays;
                             clone.Weekendays = i;
                             lstBooking.Add(clone);
@@ -169,8 +169,8 @@ namespace BPHN.BusinessLayer.ImpServices
                             clone.BookingDate = DateTime.Now;
                             clone.StartDate = lstDate[i].MatchDate;
                             clone.EndDate = lstDate[i].MatchDate;
-                            clone.PitchName = clone.Pitch == null ? string.Empty : clone.Pitch.Name;
-                            clone.TimeFrameInfoName = clone.TimeFrameInfo == null ? string.Empty : clone.TimeFrameInfo.Name;
+                            clone.PitchName = clone.Pitch is null ? string.Empty : clone.Pitch.Name;
+                            clone.TimeFrameInfoName = clone.TimeFrameInfo is null ? string.Empty : clone.TimeFrameInfo.Name;
                             clone.BookingDetails = new List<BookingDetail>() { lstDate[i] };
                             clone.Weekendays = (int)lstDate[i].MatchDate.DayOfWeek;
                             lstBooking.Add(clone);
@@ -186,8 +186,8 @@ namespace BPHN.BusinessLayer.ImpServices
                                                         b.Item1 == a.PitchId &&
                                                         b.Item2 == a.TimeFrameInfoId &&
                                                         b.Item3 == a.NameDetail &&
-                                                        a.BookingDetails.Where(c => setMatchDate.Contains(c.MatchDate.ToString("dd/MM/yyyy"))).FirstOrDefault() != null
-                                                    ).FirstOrDefault() != null ? true : false;
+                                                        a.BookingDetails.Where(c => setMatchDate.Contains(c.MatchDate.ToString("dd/MM/yyyy"))).FirstOrDefault() is not null
+                                                    ).FirstOrDefault() is not null ? true : false;
 
                     if (!isConflict)
                     {
@@ -196,7 +196,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 }
             }
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = lstResult
@@ -206,9 +206,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -219,7 +219,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
             if (!hasPermission)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
@@ -231,7 +231,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageSize > 100 || pageSize <= 0) pageSize = 50;
 
             var result = await _bookingRepository.GetCountPaging(pageIndex, pageSize, context.RelationIds.ToArray(), txtSearch);
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = result
@@ -241,9 +241,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> GetCountPagingV1(int pageIndex, int pageSize, string txtSearch)
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -254,7 +254,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
             if (!hasPermission)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
@@ -266,7 +266,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageSize > 100 || pageSize <= 0) pageSize = 50;
 
             var result = await _bookingRepository.GetCountPagingV1(pageIndex, pageSize, context.RelationIds.ToArray(), txtSearch);
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = result
@@ -291,9 +291,9 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 var lstBook = await _bookingRepository.GetById(id);
                 data = lstBook.FirstOrDefault();
-                if (data == null)
+                if (data is null)
                 {
-                    return new ServiceResultModel()
+                    return new ServiceResultModel
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.NOT_EXISTS,
@@ -303,7 +303,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
 
             }
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = _mapper.Map<BookingRespond>(data)
@@ -313,9 +313,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> GetPaging(int pageIndex, int pageSize, string txtSearch, bool hasBookingDetail = false)
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -326,7 +326,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
             if (!hasPermission)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
@@ -338,7 +338,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageSize > 100 || pageSize <= 0) pageSize = 50;
 
             var lstBooking = await _bookingRepository.GetPaging(pageIndex, pageSize, context.RelationIds.ToArray(), txtSearch, hasBookingDetail);
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = _mapper.Map<List<BookingRespond>>(lstBooking)
@@ -348,9 +348,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> GetPagingV1(int pageIndex, int pageSize, string txtSearch, bool hasBookingDetail = false)
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -361,7 +361,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
             if (!hasPermission)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
@@ -373,7 +373,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageSize > 100 || pageSize <= 0) pageSize = 50;
 
             var lstBooking = await _bookingRepository.GetPagingV1(pageIndex, pageSize, context.RelationIds.ToArray(), txtSearch, hasBookingDetail);
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = _mapper.Map<List<BookingRespond>>(lstBooking)
@@ -383,9 +383,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> Insert(Booking data)
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -396,7 +396,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.ADDBOOKING);
             if (!hasPermission)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
@@ -404,10 +404,10 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var isValid = ValidateModelByAttribute(data, new List<string>());
+            var isValid = ValidateModelByAttribute(data);
             if (!isValid)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
@@ -419,7 +419,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 (data.IsRecurring && (!data.Weekendays.HasValue || (data.Weekendays.HasValue && data.Weekendays.Value < 0) || (data.Weekendays.HasValue && data.Weekendays.Value > 6))) ||
                 data.EndDate.Date < DateTime.Now.Date)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.NO_INTEGRITY,
@@ -467,29 +467,25 @@ namespace BPHN.BusinessLayer.ImpServices
                     TimeFrameInfoName = $"{frame?.TimeBegin.ToString("hh:mm:ss") ?? string.Empty} - {frame?.TimeEnd.ToString("hh:mm:ss") ?? string.Empty}"
                 });
 
-                var thread = new Thread(delegate ()
+                var historyLogId = Guid.NewGuid();
+                await _historyLogService.Write(new HistoryLog
                 {
-                    var historyLogId = Guid.NewGuid();
-                    _historyLogService.Write(new HistoryLog()
+                    Id = historyLogId,
+                    IPAddress = context.IPAddress,
+                    Actor = context.UserName,
+                    ActorId = context.Id,
+                    ActionType = ActionEnum.INSERT,
+                    Entity = EntityEnum.BOOKING.ToString(),
+                    Description = BuildLinkDescription(historyLogId),
+                    Data = new HistoryLogDescription
                     {
-                        Id = historyLogId,
-                        IPAddress = context.IPAddress,
-                        Actor = context.UserName,
-                        ActorId = context.Id,
-                        ActionType = ActionEnum.INSERT,
-                        Entity = EntityEnum.BOOKING.ToString(),
-                        Description = BuildLinkDescription(historyLogId),
-                        Data = new HistoryLogDescription()
-                        {
-                            ModelId = data.Id,
-                            NewData = JsonConvert.SerializeObject(data)
-                        }
-                    }, context);
-                });
-                thread.Start();
+                        ModelId = data.Id,
+                        NewData = JsonConvert.SerializeObject(data)
+                    }
+                }, context);
             }
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = insertResult
@@ -506,17 +502,16 @@ namespace BPHN.BusinessLayer.ImpServices
                 IPAddress = _contextService.GetIPAddress()
             };
 
-            var isValid = ValidateModelByAttribute(data, new List<string>());
+            var isValid = ValidateModelByAttribute(data);
             if (!isValid)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EMPTY_INPUT,
                     Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
                 };
             }
-
 
             var checkFreeServiceResult = await _bookingRepository.CheckFreeTimeFrame(new Booking()
             {
@@ -532,7 +527,7 @@ namespace BPHN.BusinessLayer.ImpServices
             });
             if (!checkFreeServiceResult)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.EXISTED,
@@ -559,9 +554,9 @@ namespace BPHN.BusinessLayer.ImpServices
             booking.ModifiedBy = fakeContext.UserName;
             booking.ModifiedDate = DateTime.Now;
 
-            booking.BookingDetails = new List<BookingDetail>()
+            booking.BookingDetails = new List<BookingDetail>
             {
-                new BookingDetail()
+                new BookingDetail
                 {
                     Id = Guid.NewGuid(),
                     CreatedDate = DateTime.Now,
@@ -594,32 +589,28 @@ namespace BPHN.BusinessLayer.ImpServices
                     PhoneNumber = data.PhoneNumber,
                     NameDetail = data.NameDetail,
                     PitchName = pitch?.Name ?? string.Empty,
-                    TimeFrameInfoName = frame != null ? $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}" : string.Empty
+                    TimeFrameInfoName = frame is not null ? $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}" : string.Empty
                 });
 
-                var thread = new Thread(delegate ()
+                var historyLogId = Guid.NewGuid();
+                await _historyLogService.Write(new HistoryLog
                 {
-                    var historyLogId = Guid.NewGuid();
-                    _historyLogService.Write(new HistoryLog()
+                    Id = historyLogId,
+                    IPAddress = fakeContext.IPAddress,
+                    Actor = fakeContext.FullName,
+                    ActorId = data.AccountId,
+                    ActionType = ActionEnum.INSERT,
+                    Entity = EntityEnum.BOOKING.ToString(),
+                    Description = BuildLinkDescription(historyLogId),
+                    Data = new HistoryLogDescription
                     {
-                        Id = historyLogId,
-                        IPAddress = fakeContext.IPAddress,
-                        Actor = fakeContext.FullName,
-                        ActorId = data.AccountId,
-                        ActionType = ActionEnum.INSERT,
-                        Entity = EntityEnum.BOOKING.ToString(),
-                        Description = BuildLinkDescription(historyLogId),
-                        Data = new HistoryLogDescription()
-                        {
-                            ModelId = data.Id,
-                            NewData = JsonConvert.SerializeObject(data)
-                        }
-                    }, fakeContext);
-                });
-                thread.Start();
+                        ModelId = data.Id,
+                        NewData = JsonConvert.SerializeObject(data)
+                    }
+                }, fakeContext);
             }
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = insertResult
@@ -629,9 +620,9 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> Update(string id, BookingStatusEnum status)
         {
             var context = _contextService.GetContext();
-            if (context == null)
+            if (context is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.OUT_TIME,
@@ -642,7 +633,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
             if (!hasPermission)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_ROLE,
@@ -652,9 +643,9 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var lstBook = await _bookingRepository.GetById(id);
             var oldData = lstBook.FirstOrDefault();
-            if (oldData == null)
+            if (oldData is null)
             {
-                return new ServiceResultModel()
+                return new ServiceResultModel
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.NOT_EXISTS,
@@ -711,7 +702,7 @@ namespace BPHN.BusinessLayer.ImpServices
                         PhoneNumber = data.PhoneNumber,
                         NameDetail = data.NameDetail,
                         PitchName = pitch?.Name ?? string.Empty,
-                        TimeFrameInfoName = frame != null ? $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}" : string.Empty
+                        TimeFrameInfoName = frame is not null ? $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}" : string.Empty
                     });
                 }
                 else
@@ -728,7 +719,7 @@ namespace BPHN.BusinessLayer.ImpServices
                             NameDetail = data.NameDetail,
                             PhoneNumber = data.PhoneNumber,
                             StadiumName = pitch?.Name ?? string.Empty,
-                            TimeFrameInfo = frame != null ? $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}" : string.Empty,
+                            TimeFrameInfo = frame is not null ? $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}" : string.Empty,
                             Price = frame?.Price.ToString() ?? string.Empty,
                             MatchDate = matchDate ?? string.Empty
                         })
@@ -739,34 +730,30 @@ namespace BPHN.BusinessLayer.ImpServices
                         PhoneNumber = data.PhoneNumber,
                         NameDetail = data.NameDetail,
                         PitchName = pitch?.Name ?? string.Empty,
-                        TimeFrameInfoName = frame != null ? $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}" : string.Empty
+                        TimeFrameInfoName = frame is not null ? $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}" : string.Empty
                     });
                 }
 
-                var thread = new Thread(delegate ()
+                var historyLogId = Guid.NewGuid();
+                await _historyLogService.Write(new HistoryLog
                 {
-                    var historyLogId = Guid.NewGuid();
-                    _historyLogService.Write(new HistoryLog()
+                    Id = historyLogId,
+                    IPAddress = context.IPAddress,
+                    Actor = context.UserName,
+                    ActorId = context.Id,
+                    ActionType = ActionEnum.UPDATE,
+                    Entity = EntityEnum.BOOKING.ToString(),
+                    Description = BuildLinkDescription(historyLogId),
+                    Data = new HistoryLogDescription
                     {
-                        Id = historyLogId,
-                        IPAddress = context.IPAddress,
-                        Actor = context.UserName,
-                        ActorId = context.Id,
-                        ActionType = ActionEnum.UPDATE,
-                        Entity = EntityEnum.BOOKING.ToString(),
-                        Description = BuildLinkDescription(historyLogId),
-                        Data = new HistoryLogDescription()
-                        {
-                            ModelId = oldData.Id,
-                            OldData = JsonConvert.SerializeObject(oldData),
-                            NewData = JsonConvert.SerializeObject(data)
-                        }
-                    }, context);
-                });
-                thread.Start();
+                        ModelId = oldData.Id,
+                        OldData = JsonConvert.SerializeObject(oldData),
+                        NewData = JsonConvert.SerializeObject(data)
+                    }
+                }, context);
             }
 
-            return new ServiceResultModel()
+            return new ServiceResultModel
             {
                 Success = true,
                 Data = updateResult
@@ -778,13 +765,13 @@ namespace BPHN.BusinessLayer.ImpServices
             var lstBooking = new List<Booking>();
             var lstPitch = await _pitchRepository.GetPaging(1, int.MaxValue, new List<WhereCondition>()
             {
-                new WhereCondition()
+                new WhereCondition
                 {
                     Column = "ManagerId",
                     Operator = "=",
                     Value = accountId
                 },
-                new WhereCondition()
+                new WhereCondition
                 {
                     Column = "Status",
                     Operator = "=",
@@ -814,7 +801,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 item.TimeFrameInfos = dicFrame.ContainsKey(item.Id) ? dicFrame[item.Id] : new List<TimeFrameInfo>();
                 return item;
             }).ToList();
-            if (lstPitch != null)
+            if (lstPitch is not null)
             {
                 lstPitch = lstPitch.Where(item => item.Status == ActiveStatusEnum.ACTIVE.ToString()).ToList();
                 for (int i = 0; i < lstPitch.Count; i++)
@@ -851,10 +838,10 @@ namespace BPHN.BusinessLayer.ImpServices
             for (int i = 0; i < lstBooked.Count; i++)
             {
                 var booked = lstBooked[i];
-                var bookingDetetails = lstBookedDetail.Where(item => item.BookingId == booked.Id).ToList();
-                for (int j = 0; j < bookingDetetails.Count; j++)
+                var bookingDetails = lstBookedDetail.Where(item => item.BookingId == booked.Id).ToList();
+                for (int j = 0; j < bookingDetails.Count; j++)
                 {
-                    hashSetResult.Add(new Tuple<Guid?, Guid?, string, DateTime>(booked.PitchId, booked.TimeFrameInfoId, booked.NameDetail, bookingDetetails[j].MatchDate));
+                    hashSetResult.Add(new Tuple<Guid?, Guid?, string, DateTime>(booked.PitchId, booked.TimeFrameInfoId, booked.NameDetail, bookingDetails[j].MatchDate));
                 }
             }
             return hashSetResult;
