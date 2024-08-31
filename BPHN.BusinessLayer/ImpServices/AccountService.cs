@@ -566,8 +566,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var userId = Guid.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
-            var expiredTimeTick = long.Parse(jwtToken.Claims.First(x => x.Type == "expiredTime").Value);
+            var userId = Guid.Parse(jwtToken.Claims.First(x => "id".Equals(x.Type)).Value);
+            var expiredTimeTick = long.Parse(jwtToken.Claims.First(x => "expiredTime".Equals(x.Type)).Value);
             var expiredTime = new DateTime(expiredTimeTick);
             var token = _accountRepository.GetToken(userId.ToString());
             if (expiredTime < DateTime.UtcNow)
@@ -784,8 +784,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var param = _keyGenerator.Decryption(code);
-            var expireResetPasswordModel = JsonConvert.DeserializeObject<ExpireSetPasswordModel>(param);
+            var parameter = _keyGenerator.Decryption(code);
+            var expireResetPasswordModel = JsonConvert.DeserializeObject<ExpireSetPasswordModel>(parameter);
 
             if (expireResetPasswordModel is null)
             {
@@ -887,7 +887,7 @@ namespace BPHN.BusinessLayer.ImpServices
         private async Task<bool> AllowMultiUser(Guid accountId)
         {
             var configs = await _configRepository.GetConfigs(accountId, "MultiUser");
-            return configs is not null && configs.Any(item => item.Value == "true") ? true : false;
+            return configs is not null && configs.Any(item => "true".Equals(item.Value)) ? true : false;
         }
 
     }

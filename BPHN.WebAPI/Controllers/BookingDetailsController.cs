@@ -21,7 +21,7 @@ namespace BPHN.WebAPI.Controllers
             _mapper = provider.GetRequiredService<IMapper>();
         }
 
-        [Permission(new[] { FunctionTypeEnum.EDITBOOKING })]
+        [Permission(FunctionTypeEnum.EDITBOOKING)]
         [ApiAuthorize]
         [HttpPost]
         [Route("cancel/{id}")]
@@ -31,7 +31,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _bookingDetailService.Cancel(id));
         }
 
-        [Permission(new[] { FunctionTypeEnum.VIEWLISTBOOKINGDETAIL })]
+        [Permission(FunctionTypeEnum.VIEWLISTBOOKINGDETAIL)]
         [ApiAuthorize]
         [HttpGet]
         [Route("{date}")]
@@ -41,7 +41,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _bookingDetailService.GetByDate(date));
         }
 
-        [Permission(new[] { FunctionTypeEnum.EDITBOOKING })]
+        [Permission(FunctionTypeEnum.EDITBOOKING)]
         [ApiAuthorize]
         [HttpPost]
         [Route("update-match")]

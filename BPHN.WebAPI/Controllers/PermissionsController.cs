@@ -28,7 +28,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _permissionService.GetPermissions(accountId));
         }
 
-        [Permission(new[] { FunctionTypeEnum.ADDUSER, FunctionTypeEnum.EDITUSER })]
+        [Permission(FunctionTypeEnum.ADDUSER, FunctionTypeEnum.EDITUSER)]
         [HttpPost]
         [Route("save/{accountId}")]
         public async Task<IActionResult> SavePermissions(Guid accountId, [FromBody] List<SavePermissionRequest> request)

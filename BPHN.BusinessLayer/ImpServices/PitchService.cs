@@ -391,31 +391,27 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if(insertResult)
             {
-                await _notificationService.Insert<Pitch>(context, NotificationTypeEnum.INSERTPITCH, new Pitch()
+                await _notificationService.Insert<Pitch>(context, NotificationTypeEnum.INSERTPITCH, new Pitch
                 {
                     Name = pitch.Name,
                 });
-                var thread = new Thread(delegate ()
+                var historyLogId = Guid.NewGuid();
+                await _historyLogService.Write(new HistoryLog
                 {
-                    var historyLogId = Guid.NewGuid();
-                    _historyLogService.Write(new HistoryLog
+                    Id = historyLogId,
+                    IPAddress = context.IPAddress,
+                    Actor = context.UserName,
+                    ActorId = context.Id,
+                    ActionType = ActionEnum.INSERT,
+                    ActionName = string.Empty,
+                    Entity = EntityEnum.PITCH.ToString(),
+                    Description = BuildLinkDescription(historyLogId),
+                    Data = new HistoryLogDescription
                     {
-                        Id = historyLogId,
-                        IPAddress = context.IPAddress,
-                        Actor = context.UserName,
-                        ActorId = context.Id,
-                        ActionType = ActionEnum.INSERT,
-                        ActionName = string.Empty,
-                        Entity = EntityEnum.PITCH.ToString(),
-                        Description = BuildLinkDescription(historyLogId),
-                        Data = new HistoryLogDescription
-                        {
-                            ModelId = pitch.Id,
-                            NewData = JsonConvert.SerializeObject(pitch)
-                        }
-                    }, context);
-                });
-                thread.Start();
+                        ModelId = pitch.Id,
+                        NewData = JsonConvert.SerializeObject(pitch)
+                    }
+                }, context);
             }
 
             return new ServiceResultModel
@@ -489,28 +485,24 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Name = pitch.Name
                 });
-                var thread = new Thread(delegate ()
+                var historyLogId = Guid.NewGuid();
+                await _historyLogService.Write(new HistoryLog
                 {
-                    var historyLogId = Guid.NewGuid();
-                    _historyLogService.Write(new HistoryLog
+                    Id = historyLogId,
+                    IPAddress = context.IPAddress,
+                    Actor = context.UserName,
+                    ActorId = context.Id,
+                    ActionType = ActionEnum.UPDATE,
+                    ActionName = string.Empty,
+                    Entity = EntityEnum.PITCH.ToString(),
+                    Description = BuildLinkDescription(historyLogId),
+                    Data = new HistoryLogDescription
                     {
-                        Id = historyLogId,
-                        IPAddress = context.IPAddress,
-                        Actor = context.UserName,
-                        ActorId = context.Id,
-                        ActionType = ActionEnum.UPDATE,
-                        ActionName = string.Empty,
-                        Entity = EntityEnum.PITCH.ToString(),
-                        Description = BuildLinkDescription(historyLogId),
-                        Data = new HistoryLogDescription
-                        {
-                            ModelId = pitch.Id,
-                            OldData = JsonConvert.SerializeObject(oldPitch),
-                            NewData = JsonConvert.SerializeObject(pitch)
-                        }
-                    }, context);
-                });
-                thread.Start();
+                        ModelId = pitch.Id,
+                        OldData = JsonConvert.SerializeObject(oldPitch),
+                        NewData = JsonConvert.SerializeObject(pitch)
+                    }
+                }, context);
             }
 
             return new ServiceResultModel

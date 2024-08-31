@@ -1,6 +1,4 @@
 ﻿using BPHN.BusinessLayer.IServices;
-using BPHN.ModelLayer;
-using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace BPHN.WebAPI
@@ -8,12 +6,10 @@ namespace BPHN.WebAPI
     public class AuthenMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly AppSettings _appSettings;
 
-        public AuthenMiddleware(RequestDelegate next, IOptions<AppSettings> appSettings)
+        public AuthenMiddleware(RequestDelegate next)
         {
             _next = next;
-            _appSettings = appSettings.Value;
         }
 
         public async Task Invoke(HttpContext context, IAccountService accountService)

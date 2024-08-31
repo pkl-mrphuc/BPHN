@@ -33,7 +33,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var lstWhere = new List<WhereCondition>()
+            var lstWhere = new List<WhereCondition>
             {
                 new WhereCondition
                 {

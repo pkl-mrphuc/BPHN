@@ -20,7 +20,7 @@ namespace BPHN.WebAPI.Controllers
             _mapper = provider.GetRequiredService<IMapper>();
         }
 
-        [Permission(new[] { FunctionTypeEnum.ADDPITCH })]
+        [Permission(FunctionTypeEnum.ADDPITCH)]
         [ApiAuthorize]
         [Route("insert")]
         [HttpPost]
@@ -30,7 +30,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _pitchService.Insert(_mapper.Map<Pitch>(request)));
         }
 
-        [Permission(new[] { FunctionTypeEnum.EDITPITCH })]
+        [Permission(FunctionTypeEnum.EDITPITCH)]
         [ApiAuthorize]
         [Route("update")]
         [HttpPost]
@@ -49,7 +49,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _pitchService.GetInstance(id));
         }
 
-        [Permission(new[] { FunctionTypeEnum.VIEWLISTPITCH })]
+        [Permission(FunctionTypeEnum.VIEWLISTPITCH)]
         [AllowAnonymous]
         [Route("paging")]
         [HttpGet]
@@ -59,7 +59,7 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _pitchService.GetPaging(pageIndex, pageSize, txtSearch, accountId, hasDetail, hasInactive));
         }
 
-        [Permission(new[] { FunctionTypeEnum.VIEWLISTPITCH })]
+        [Permission(FunctionTypeEnum.VIEWLISTPITCH)]
         [AllowAnonymous]
         [Route("count-paging")]
         [HttpGet]

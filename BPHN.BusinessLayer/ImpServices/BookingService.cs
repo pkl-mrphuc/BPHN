@@ -77,8 +77,9 @@ namespace BPHN.BusinessLayer.ImpServices
             }
             else
             {
-                data.BookingDetails = new List<BookingDetail>() {
-                    new BookingDetail()
+                data.BookingDetails = new List<BookingDetail> 
+                {
+                    new BookingDetail
                     {
                         MatchDate = data.StartDate
                     }
