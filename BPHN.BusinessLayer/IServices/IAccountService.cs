@@ -1,10 +1,12 @@
 ﻿using BPHN.ModelLayer;
+using Microsoft.AspNetCore.Authentication;
 
 namespace BPHN.BusinessLayer.IServices
 {
     public interface IAccountService
     {
         Task<ServiceResultModel> Login(Account account);
+        Task<ServiceResultModel> LoginGoogle(AuthenticateResult authenticateResult);
         Task<ServiceResultModel> GetById(Guid id);
         Task<ServiceResultModel> RegisterForTenant(Account account);
         Task<ServiceResultModel> ResetPassword(string userName);
