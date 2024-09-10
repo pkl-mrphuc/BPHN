@@ -4,6 +4,7 @@ using BPHN.ModelLayer;
 using BPHN.ModelLayer.ObjectQueues;
 using BPHN.ModelLayer.Others;
 using BPHN.ModelLayer.Responses;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -514,6 +515,11 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
+        public async Task<ServiceResultModel> LoginGoogle(AuthenticateResult authenticateResult)
+        {
+            throw new Exception();
+        }
+
         public async Task<ServiceResultModel> Refresh()
         {
             var context = _contextService.GetContext();
@@ -650,7 +656,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var resultRegister = await _accountRepository.RegisterForTenant(account);
             var permissions = _permissionService.GetDefaultPermissions(account.Id, context);
-            var resultPermission = await _permissionRepository.Save(permissions);
+            await _permissionRepository.Save(permissions);
             if (resultRegister)
             {
                 _globalVariableService.Reset();

@@ -8,6 +8,8 @@ using BPHN.IRabbitMQLayer;
 using BPHN.ModelLayer;
 using BPHN.WebAPI;
 using BPHN.WebAPI.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -84,6 +86,19 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 builder.Services.AddSignalR();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+    .AddCookie()
+    .AddGoogle(googleOptions =>
+    {
+        googleOptions.ClientId = "1069130122771-l2vls4cofg16runiou4hlaq3n3s74b0i.apps.googleusercontent.com";
+        googleOptions.ClientSecret = "hq542hbiI9zifILsWchgT8xS";
+        googleOptions.CallbackPath = "/signin-google"; // This should match the redirect URI set in the Google Console
+    });
 
 var app = builder.Build();
 
@@ -97,6 +112,8 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
+//app.UseAuthentication();
+//app.UseAuthorization();
 app.UseMiddleware<AuthenMiddleware>();
 
 app.MapControllers();

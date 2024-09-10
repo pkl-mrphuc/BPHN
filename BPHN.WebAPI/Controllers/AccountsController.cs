@@ -4,6 +4,9 @@ using BPHN.ModelLayer;
 using BPHN.ModelLayer.Attributes;
 using BPHN.ModelLayer.Requests;
 using BPHN.ModelLayer.ViewModels;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -122,6 +125,21 @@ namespace BPHN.WebAPI.Controllers
         {
             Log.Debug($"Account/RefreshToken start: {refreshToken}");
             return Ok(_accountService.RefreshToken(refreshToken));
+        }
+
+        [HttpGet("redirect-google-login")]
+        public IActionResult Login()
+        {
+            var redirectUrl = Url.Action("LoginGoogle", "Accounts");
+            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        }
+
+        [HttpGet("login-google")]
+        public async Task<IActionResult> LoginGoogle()
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Ok(await _accountService.LoginGoogle(authenticateResult));
         }
     }
 }
