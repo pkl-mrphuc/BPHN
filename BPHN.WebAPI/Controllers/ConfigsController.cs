@@ -13,11 +13,9 @@ namespace BPHN.WebAPI.Controllers
     public class ConfigsController : BaseController
     {
         private readonly IConfigService _configService;
-        private readonly IMapper _mapper;
-        public ConfigsController(IServiceProvider provider)
+        public ConfigsController(IServiceProvider provider) : base(provider)
         {
             _configService = provider.GetRequiredService<IConfigService>();
-            _mapper = provider.GetRequiredService<IMapper>();
         }
 
         [HttpGet]

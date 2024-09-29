@@ -4,6 +4,6 @@
     {
         public QueueJobTypeEnum QueueJobType { get; set; }
         public string DataJson { get; set; }
-        public Type DataType { get; set; }
+        public string DataType { get; set; }
     }
 }

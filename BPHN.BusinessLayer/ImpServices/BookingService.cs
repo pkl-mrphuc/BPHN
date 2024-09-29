@@ -1,4 +1,4 @@
-﻿ using BPHN.BusinessLayer.IServices;
+﻿using BPHN.BusinessLayer.IServices;
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.ObjectQueues;
@@ -77,7 +77,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
             else
             {
-                data.BookingDetails = new List<BookingDetail> 
+                data.BookingDetails = new List<BookingDetail>
                 {
                     new BookingDetail
                     {
@@ -468,16 +468,10 @@ namespace BPHN.BusinessLayer.ImpServices
                     TimeFrameInfoName = $"{frame?.TimeBegin.ToString("hh:mm:ss") ?? string.Empty} - {frame?.TimeEnd.ToString("hh:mm:ss") ?? string.Empty}"
                 });
 
-                var historyLogId = Guid.NewGuid();
-                await _historyLogService.Write(new HistoryLog
+                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
                 {
-                    Id = historyLogId,
-                    IPAddress = context.IPAddress,
-                    Actor = context.UserName,
-                    ActorId = context.Id,
                     ActionType = ActionEnum.INSERT,
                     Entity = EntityEnum.BOOKING.ToString(),
-                    Description = BuildLinkDescription(historyLogId),
                     Data = new HistoryLogDescription
                     {
                         ModelId = data.Id,
@@ -593,16 +587,10 @@ namespace BPHN.BusinessLayer.ImpServices
                     TimeFrameInfoName = frame is not null ? $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}" : string.Empty
                 });
 
-                var historyLogId = Guid.NewGuid();
-                await _historyLogService.Write(new HistoryLog
+                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
                 {
-                    Id = historyLogId,
-                    IPAddress = fakeContext.IPAddress,
-                    Actor = fakeContext.FullName,
-                    ActorId = data.AccountId,
                     ActionType = ActionEnum.INSERT,
                     Entity = EntityEnum.BOOKING.ToString(),
-                    Description = BuildLinkDescription(historyLogId),
                     Data = new HistoryLogDescription
                     {
                         ModelId = data.Id,
@@ -685,18 +673,15 @@ namespace BPHN.BusinessLayer.ImpServices
 
                 if (status == BookingStatusEnum.CANCEL)
                 {
-                    _mailService.SendMail(new ObjectQueue()
-                    {
-                        QueueJobType = QueueJobTypeEnum.SENDMAIL,
-                        DataJson = JsonConvert.SerializeObject(new DeclineBookingParameter()
+                    _mailService.SendMail("bphn.email.decline-booking",
+                        new DeclineBookingParameter
                         {
                             ReceiverAddress = data.Email,
                             MailType = MailTypeEnum.DECLINEBOOKING,
                             ParameterType = typeof(DeclineBookingParameter),
                             PhoneNumber = data.PhoneNumber,
                             Reason = ""
-                        })
-                    });
+                        });
 
                     await _notificationService.Insert<Booking>(context, NotificationTypeEnum.DECLINEBOOKING, new Booking()
                     {
@@ -708,10 +693,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 }
                 else
                 {
-                    _mailService.SendMail(new ObjectQueue()
-                    {
-                        QueueJobType = QueueJobTypeEnum.SENDMAIL,
-                        DataJson = JsonConvert.SerializeObject(new ApprovalBookingParameter()
+                    _mailService.SendMail("bphn.email.approval-booking",
+                        new ApprovalBookingParameter
                         {
                             ReceiverAddress = data.Email,
                             MailType = MailTypeEnum.APPROVALBOOKING,
@@ -723,8 +706,7 @@ namespace BPHN.BusinessLayer.ImpServices
                             TimeFrameInfo = frame is not null ? $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}" : string.Empty,
                             Price = frame?.Price.ToString() ?? string.Empty,
                             MatchDate = matchDate ?? string.Empty
-                        })
-                    });
+                        });
 
                     await _notificationService.Insert<Booking>(context, NotificationTypeEnum.APPROVALBOOKING, new Booking()
                     {
@@ -735,16 +717,10 @@ namespace BPHN.BusinessLayer.ImpServices
                     });
                 }
 
-                var historyLogId = Guid.NewGuid();
-                await _historyLogService.Write(new HistoryLog
+                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
                 {
-                    Id = historyLogId,
-                    IPAddress = context.IPAddress,
-                    Actor = context.UserName,
-                    ActorId = context.Id,
                     ActionType = ActionEnum.UPDATE,
                     Entity = EntityEnum.BOOKING.ToString(),
-                    Description = BuildLinkDescription(historyLogId),
                     Data = new HistoryLogDescription
                     {
                         ModelId = oldData.Id,

@@ -1,6 +1,7 @@
 ﻿using BPHN.BusinessLayer.IServices;
 using BPHN.IRabbitMQLayer;
 using BPHN.ModelLayer;
+using Newtonsoft.Json;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
@@ -13,9 +14,14 @@ namespace BPHN.BusinessLayer.ImpServices
             _producer = producer;
         }
 
-        public bool SendMail(ObjectQueue objQueue)
+        public bool SendMail<T>(string type, T data)
         {
-            _producer.Publish(objQueue);
+            _producer.Publish(new ObjectQueue
+            {
+                QueueJobType = QueueJobTypeEnum.SENDMAIL,
+                DataJson = JsonConvert.SerializeObject(data),
+                DataType = type
+            });
             return true;
         }
     }

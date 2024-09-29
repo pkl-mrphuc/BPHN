@@ -4,6 +4,6 @@ namespace BPHN.IRabbitMQLayer
 {
     public interface IRabbitMQProducerService
     {
-        void Publish(ObjectQueue param);
+        bool Publish(ObjectQueue param);
     }
 }

@@ -21,7 +21,7 @@ namespace BPHN.WebAPI.Controllers
         private readonly ICacheService _cacheService;
         private string _folderDir = string.Empty;
 
-        public MailTemplatesController(IServiceProvider provider)
+        public MailTemplatesController(IServiceProvider provider) : base(provider)
         {
             _provider = provider;
             _viewEngine = provider.GetRequiredService<IRazorViewEngine>();

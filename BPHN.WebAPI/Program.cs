@@ -22,6 +22,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = appSettings.GetValue<string>("RedisCacheUrl");
 });
+builder.Services.AddScoped<ILogService, LogService>();
 builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();

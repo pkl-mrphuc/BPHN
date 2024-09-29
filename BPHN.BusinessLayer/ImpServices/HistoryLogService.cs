@@ -1,20 +1,25 @@
 ﻿using BPHN.BusinessLayer.IServices;
 using BPHN.DataLayer.IRepositories;
+using BPHN.IRabbitMQLayer;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
 using BPHN.ModelLayer.Responses;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
     public class HistoryLogService : BaseService, IHistoryLogService
     {
         private readonly IHistoryLogRepository _historyLogRepository;
-        public HistoryLogService(IHistoryLogRepository historyLogRepository, 
-            IServiceProvider provider, 
-            IOptions<AppSettings> appSettings) : base (provider, appSettings) 
+        private readonly IRabbitMQProducerService _producer;
+        public HistoryLogService(IHistoryLogRepository historyLogRepository,
+            IRabbitMQProducerService producer,
+            IServiceProvider provider,
+            IOptions<AppSettings> appSettings) : base(provider, appSettings)
         {
             _historyLogRepository = historyLogRepository;
+            _producer = producer;
         }
         public async Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
         {
@@ -52,8 +57,8 @@ namespace BPHN.BusinessLayer.ImpServices
             var resultCountPaging = await _historyLogRepository.GetCountPaging(pageIndex, pageSize, where);
             return new ServiceResultModel
             {
-                 Success = true,
-                 Data = resultCountPaging
+                Success = true,
+                Data = resultCountPaging
             };
         }
 
@@ -89,7 +94,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 Operator = "=",
                 Value = context.Id.ToString()
             });
-            if(!string.IsNullOrWhiteSpace(txtSearch))
+            if (!string.IsNullOrWhiteSpace(txtSearch))
             {
                 where.Add(new WhereCondition
                 {
@@ -106,10 +111,9 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task<ServiceResultModel> Write(HistoryLog history, Account? context)
+        public ServiceResultModel Write(Guid id, HistoryLog history, Account? context)
         {
-
-            if(context is null)
+            if (context is null)
             {
                 return new ServiceResultModel
                 {
@@ -144,16 +148,26 @@ namespace BPHN.BusinessLayer.ImpServices
                     break;
             }
 
+            history.Id = !Guid.Empty.Equals(history.Id) ? history.Id : id;
+            history.ActorId = !Guid.Empty.Equals(history.ActorId) ? history.ActorId : context.Id;
             history.ModifiedDate = DateTime.Now;
-            history.ModifiedBy = context.FullName;
-            history.CreatedBy = context.FullName;
             history.CreatedDate = DateTime.Now;
-            history.Id = history.Id.Equals(Guid.Empty) ? Guid.NewGuid() : history.Id;
+            history.IPAddress = history.IPAddress ?? context.IPAddress;
+            history.Actor = history.Actor ?? context.UserName;
+            history.ModifiedBy = history.ModifiedBy ?? context.FullName;
+            history.CreatedBy = history.CreatedBy ?? context.FullName;
+            history.ActionName = history.ActionName ?? string.Empty;
+            history.Description = history.Description ?? string.Empty;
 
             return new ServiceResultModel
             {
                 Success = true,
-                Data = await _historyLogRepository.Write(history)
+                Data = _producer.Publish(new ObjectQueue
+                {
+                    QueueJobType = QueueJobTypeEnum.WRITELOG,
+                    DataType = "bphn.log.history",
+                    DataJson = JsonConvert.SerializeObject(history)
+                })
             };
         }
     }

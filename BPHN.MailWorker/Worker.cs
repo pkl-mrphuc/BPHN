@@ -12,7 +12,7 @@ namespace BPHN.MailWorker
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await _consumer.Subcribe();   
+            _consumer.Subscribe();   
         }
     }
 }

@@ -2,6 +2,6 @@
 {
     public interface IRabbitMQComsumerService
     {
-        Task Subcribe();
+        Task Subscribe();
     }
 }

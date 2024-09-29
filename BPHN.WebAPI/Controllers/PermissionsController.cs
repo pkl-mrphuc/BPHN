@@ -13,11 +13,9 @@ namespace BPHN.WebAPI.Controllers
     public class PermissionsController : BaseController
     {
         private readonly IPermissionService _permissionService;
-        private readonly IMapper _mapper;
-        public PermissionsController(IServiceProvider provider)
+        public PermissionsController(IServiceProvider provider) : base(provider)
         {
             _permissionService = provider.GetRequiredService<IPermissionService>();
-            _mapper = provider.GetRequiredService<IMapper>();
         }
 
         [HttpGet]

@@ -24,7 +24,8 @@
 
     public enum QueueJobTypeEnum
     {
-        SENDMAIL = 0
+        SENDMAIL = 0,
+        WRITELOG = 1
     }
 
     public enum ActionEnum

@@ -8,7 +8,7 @@ namespace BPHN.WebAPI.Controllers
     public class ResourcesController : BaseController
     {
         private readonly IResourceService _resourceService;
-        public ResourcesController(IServiceProvider provider)
+        public ResourcesController(IServiceProvider provider) : base(provider)
         {
             _resourceService = provider.GetRequiredService<IResourceService>();
         }

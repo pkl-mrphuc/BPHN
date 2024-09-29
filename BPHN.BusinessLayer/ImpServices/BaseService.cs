@@ -11,6 +11,7 @@ namespace BPHN.BusinessLayer.ImpServices
 {
     public class BaseService : IBaseService
     {
+        protected readonly ILogService _logService;
         protected readonly IContextService _contextService;
         protected readonly IPermissionRepository _permissionRepository;
         protected readonly ICacheService _cacheService;
@@ -21,6 +22,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public BaseService(IServiceProvider provider, IOptions<AppSettings> appSettings)
         {
+            _logService = provider.GetRequiredService<ILogService>();
             _contextService = provider.GetRequiredService<IContextService>();
             _permissionRepository = provider.GetRequiredService<IPermissionRepository>();
             _cacheService = provider.GetRequiredService<ICacheService>();

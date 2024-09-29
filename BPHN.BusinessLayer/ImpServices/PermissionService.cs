@@ -215,17 +215,10 @@ namespace BPHN.BusinessLayer.ImpServices
 
                 await _cacheService.RemoveAsync(_cacheService.GetKeyCache(accountId, EntityEnum.PERMISSION));
 
-                var historyLogId = Guid.NewGuid();
-                await _historyLogService.Write(new HistoryLog
+                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
                 {
-                    Id = historyLogId,
-                    IPAddress = context.IPAddress,
-                    Actor = context.UserName,
-                    ActorId = context.Id,
                     ActionType = ActionEnum.SAVE,
                     Entity = EntityEnum.PERMISSION.ToString(),
-                    ActionName = string.Empty,
-                    Description = BuildLinkDescription(historyLogId),
                     Data = new HistoryLogDescription
                     {
                         ModelId = context.Id,

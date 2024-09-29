@@ -4,6 +4,6 @@ namespace BPHN.BusinessLayer.IServices
 {
     public interface IEmailService
     {
-        bool SendMail(ObjectQueue objQueue);
+        bool SendMail<T>(string type, T data);
     }
 }

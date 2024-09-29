@@ -102,17 +102,11 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 var key = _cacheService.GetKeyCache(context.Id, EntityEnum.CONFIG);
                 await _cacheService.RemoveAsync(key);
-                var historyLogId = Guid.NewGuid();
-                await _historyLogService.Write(new HistoryLog
+
+                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
                 {
-                    Id = historyLogId,
-                    IPAddress = context.IPAddress,
-                    Actor = context.UserName,
-                    ActorId = context.Id,
                     ActionType = ActionEnum.SAVE,
                     Entity = EntityEnum.CONFIG.ToString(),
-                    ActionName = string.Empty,
-                    Description = BuildLinkDescription(historyLogId),
                     Data = new HistoryLogDescription
                     {
                         ModelId = context.Id,

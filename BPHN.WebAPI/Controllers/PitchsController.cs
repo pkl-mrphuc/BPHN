@@ -13,11 +13,9 @@ namespace BPHN.WebAPI.Controllers
     public class PitchsController : BaseController
     {
         private readonly IPitchService _pitchService;
-        private readonly IMapper _mapper;
-        public PitchsController(IServiceProvider provider)
+        public PitchsController(IServiceProvider provider) : base(provider)
         {
             _pitchService = provider.GetRequiredService<IPitchService>();
-            _mapper = provider.GetRequiredService<IMapper>();
         }
 
         [Permission(FunctionTypeEnum.ADDPITCH)]

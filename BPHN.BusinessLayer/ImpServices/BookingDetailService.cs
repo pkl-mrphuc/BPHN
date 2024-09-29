@@ -72,16 +72,10 @@ namespace BPHN.BusinessLayer.ImpServices
                     MatchCode = oldData.MatchCode
                 });
 
-                var historyLogId = Guid.NewGuid();
-                await _historyLogService.Write(new HistoryLog
+                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
                 {
-                    Id = historyLogId,
-                    IPAddress = context.IPAddress,
-                    Actor = context.UserName,
-                    ActorId = context.Id,
                     ActionType = ActionEnum.CANCEL,
                     Entity = EntityEnum.BOOKINGDETAIL.ToString(),
-                    Description = BuildLinkDescription(historyLogId),
                     Data = new HistoryLogDescription
                     {
                         ModelId = oldData.Id,
@@ -236,16 +230,10 @@ namespace BPHN.BusinessLayer.ImpServices
                     MatchCode = oldData.MatchCode
                 });
 
-                var historyLogId = Guid.NewGuid();
-                await _historyLogService.Write(new HistoryLog
+                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
                 {
-                    Id = historyLogId,
-                    IPAddress = context.IPAddress,
-                    Actor = context.UserName,
-                    ActorId = context.Id,
                     ActionType = ActionEnum.UPDATE,
                     Entity = EntityEnum.BOOKINGDETAIL.ToString(),
-                    Description = BuildLinkDescription(historyLogId),
                     Data = new HistoryLogDescription
                     {
                         ModelId = oldData.Id,

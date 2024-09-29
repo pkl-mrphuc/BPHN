@@ -14,11 +14,9 @@ namespace BPHN.WebAPI.Controllers
     public class BookingDetailsController : BaseController
     {
         private readonly IBookingDetailService _bookingDetailService;
-        private readonly IMapper _mapper;
-        public BookingDetailsController(IServiceProvider provider)
+        public BookingDetailsController(IServiceProvider provider) : base(provider)
         {
             _bookingDetailService = provider.GetRequiredService<IBookingDetailService>();
-            _mapper = provider.GetRequiredService<IMapper>();
         }
 
         [Permission(FunctionTypeEnum.EDITBOOKING)]

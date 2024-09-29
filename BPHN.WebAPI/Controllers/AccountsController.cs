@@ -14,12 +14,9 @@ namespace BPHN.WebAPI.Controllers
     public class AccountsController : BaseController
     {
         private readonly IAccountService _accountService;
-        private readonly IMapper _mapper;
-
-        public AccountsController(IServiceProvider provider)
+        public AccountsController(IServiceProvider provider) : base(provider)
         {
             _accountService = provider.GetRequiredService<IAccountService>();
-            _mapper = provider.GetRequiredService<IMapper>();
         }
 
         [AllowAnonymous]

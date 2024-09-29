@@ -83,14 +83,9 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (resultResetPassword)
             {
-                await _historyLogService.Write(new HistoryLog
+                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
                 {
-                    IPAddress = context.IPAddress,
-                    Actor = context.UserName,
-                    ActorId = context.Id,
                     ActionType = ActionEnum.SUBMITRESETPASSWORD,
-                    ActionName = string.Empty,
-                    Description = string.Empty,
                     Entity = EntityEnum.ACCOUNT.ToString()
                 }, context);
             }
@@ -482,14 +477,11 @@ namespace BPHN.BusinessLayer.ImpServices
                 FullName = realAccount.FullName,
                 IPAddress = _contextService.GetIPAddress()
             };
-
-            await _historyLogService.Write(new HistoryLog
+            _historyLogService.Write(Guid.NewGuid(), new HistoryLog
             {
-                IPAddress = fakeContext.IPAddress,
                 Actor = realAccount.UserName,
                 ActorId = realAccount.Id,
                 ActionType = ActionEnum.LOGIN,
-                ActionName = string.Empty,
                 Entity = EntityEnum.ACCOUNT.ToString()
             }, fakeContext);
 
@@ -664,10 +656,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 }
                 if (account.Status.Equals(ActiveStatusEnum.ACTIVE.ToString()))
                 {
-                    _mailService.SendMail(new ObjectQueue
-                    {
-                        QueueJobType = QueueJobTypeEnum.SENDMAIL,
-                        DataJson = JsonConvert.SerializeObject(new SetPasswordParameter
+                    _mailService.SendMail("bphn.email.set-password",
+                        new SetPasswordParameter
                         {
                             ReceiverAddress = account.Email,
                             AccountId = account.Id,
@@ -675,17 +665,12 @@ namespace BPHN.BusinessLayer.ImpServices
                             UserName = account.UserName,
                             MailType = MailTypeEnum.SETPASSWORD,
                             ParameterType = typeof(SetPasswordParameter)
-                        })
-                    });
+                        });
                 }
 
-                await _historyLogService.Write(new HistoryLog
+                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
                 {
-                    IPAddress = context.IPAddress,
-                    Actor = context.UserName,
-                    ActorId = context.Id,
                     ActionType = ActionEnum.REGISTERACCOUNT,
-                    ActionName = string.Empty,
                     Description = account.UserName,
                     Entity = EntityEnum.ACCOUNT.ToString()
                 }, context);
@@ -731,10 +716,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var resultSendMail = _mailService.SendMail(new ObjectQueue
-            {
-                QueueJobType = QueueJobTypeEnum.SENDMAIL,
-                DataJson = JsonConvert.SerializeObject(new SetPasswordParameter
+            var resultSendMail = _mailService.SendMail("bphn.email.forgot-password",
+                new SetPasswordParameter
                 {
                     ReceiverAddress = realAccount.Email,
                     AccountId = realAccount.Id,
@@ -742,8 +725,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     UserName = realAccount.UserName,
                     MailType = MailTypeEnum.FORTGOTPASSWORD,
                     ParameterType = typeof(SetPasswordParameter)
-                })
-            });
+                });
 
             if (resultSendMail)
             {
@@ -752,15 +734,11 @@ namespace BPHN.BusinessLayer.ImpServices
                     FullName = realAccount.FullName,
                     IPAddress = _contextService.GetIPAddress()
                 };
-
-                await _historyLogService.Write(new HistoryLog
+                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
                 {
-                    IPAddress = fakeContext.IPAddress,
                     Actor = realAccount.UserName,
                     ActorId = realAccount.Id,
                     ActionType = ActionEnum.SENDRESETPASSWORD,
-                    ActionName = string.Empty,
-                    Description = string.Empty,
                     Entity = EntityEnum.ACCOUNT.ToString()
                 }, fakeContext);
             }
@@ -856,14 +834,11 @@ namespace BPHN.BusinessLayer.ImpServices
                     IPAddress = _contextService.GetIPAddress()
                 };
 
-                await _historyLogService.Write(new HistoryLog
+                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
                 {
-                    IPAddress = fakeContext.IPAddress,
                     Actor = realAccount.UserName,
                     ActorId = realAccount.Id,
                     ActionType = ActionEnum.SUBMITRESETPASSWORD,
-                    ActionName = string.Empty,
-                    Description = string.Empty,
                     Entity = EntityEnum.ACCOUNT.ToString()
                 }, fakeContext);
             }

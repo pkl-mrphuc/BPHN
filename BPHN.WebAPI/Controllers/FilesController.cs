@@ -6,7 +6,7 @@ namespace BPHN.WebAPI.Controllers
     public class FilesController : BaseController
     {
         private readonly IFileService _fileService;
-        public FilesController(IServiceProvider provider)
+        public FilesController(IServiceProvider provider) : base(provider)
         {
             _fileService = provider.GetRequiredService<IFileService>();
         }

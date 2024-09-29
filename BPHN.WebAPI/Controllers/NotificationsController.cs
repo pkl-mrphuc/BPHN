@@ -10,7 +10,7 @@ namespace BPHN.WebAPI.Controllers
     public class NotificationsController : BaseController
     {
         private readonly INotificationService _notificationService;
-        public NotificationsController(IServiceProvider provider)
+        public NotificationsController(IServiceProvider provider) : base(provider)
         {
             _notificationService = provider.GetRequiredService<INotificationService>();
         }

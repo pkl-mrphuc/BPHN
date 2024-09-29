@@ -395,17 +395,11 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Name = pitch.Name,
                 });
-                var historyLogId = Guid.NewGuid();
-                await _historyLogService.Write(new HistoryLog
+
+                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
                 {
-                    Id = historyLogId,
-                    IPAddress = context.IPAddress,
-                    Actor = context.UserName,
-                    ActorId = context.Id,
                     ActionType = ActionEnum.INSERT,
-                    ActionName = string.Empty,
                     Entity = EntityEnum.PITCH.ToString(),
-                    Description = BuildLinkDescription(historyLogId),
                     Data = new HistoryLogDescription
                     {
                         ModelId = pitch.Id,
@@ -485,17 +479,11 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Name = pitch.Name
                 });
-                var historyLogId = Guid.NewGuid();
-                await _historyLogService.Write(new HistoryLog
+
+                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
                 {
-                    Id = historyLogId,
-                    IPAddress = context.IPAddress,
-                    Actor = context.UserName,
-                    ActorId = context.Id,
                     ActionType = ActionEnum.UPDATE,
-                    ActionName = string.Empty,
                     Entity = EntityEnum.PITCH.ToString(),
-                    Description = BuildLinkDescription(historyLogId),
                     Data = new HistoryLogDescription
                     {
                         ModelId = pitch.Id,

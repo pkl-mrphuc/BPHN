@@ -1,9 +1,7 @@
 ﻿using BPHN.IRabbitMQLayer;
 using BPHN.ModelLayer;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using RabbitMQ.Client;
-using Serilog;
 using System.Text;
 
 namespace BPHN.ImpRabbitMQLayer
@@ -11,48 +9,45 @@ namespace BPHN.ImpRabbitMQLayer
     public class RabbitMQProducerService : IRabbitMQProducerService
     {
         private readonly AppSettings _appSettings;
+        private readonly IModel? _model;
         public RabbitMQProducerService(IOptions<AppSettings> appSettings)
         {
             _appSettings = appSettings.Value;
+            _model = CreateChannel()?.CreateModel();
         }
 
-        public void Publish(ObjectQueue param)
+        private IConnection? CreateChannel()
         {
             try
             {
-                Log.Debug($"RabbitMQProducer/Publish start: {JsonConvert.SerializeObject(param)}");
-                var connection = CreateChannel();
-                using var model = connection.CreateModel();
-                model.QueueDeclare(queue: "BPHN.MailQueue",
-                                    durable: false,
-                                    exclusive: false,
-                                    autoDelete: false,
-                                    arguments: null);
-
-                var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(param));
-                model.BasicPublish(exchange: string.Empty,
-                                     routingKey: "BPHN.MailQueue",
-                                     basicProperties: null,
-                                     body: body);
+                var connection = new ConnectionFactory
+                {
+                    UserName = _appSettings.RabbitMQConfiguration.Username,
+                    Password = _appSettings.RabbitMQConfiguration.Password,
+                    HostName = _appSettings.RabbitMQConfiguration.HostName
+                };
+                connection.DispatchConsumersAsync = true;
+                var channel = connection.CreateConnection();
+                return channel;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Log.Error($"RabbitMQProducer/Publish error: {JsonConvert.SerializeObject(ex)}");
+                return null;
             }
-            
         }
 
-        private IConnection CreateChannel()
+        public bool Publish(ObjectQueue param)
         {
-            ConnectionFactory connection = new ConnectionFactory()
-            {
-                UserName = _appSettings.RabbitMQConfiguration.Username,
-                Password = _appSettings.RabbitMQConfiguration.Password,
-                HostName = _appSettings.RabbitMQConfiguration.HostName
-            };
-            connection.DispatchConsumersAsync = true;
-            var channel = connection.CreateConnection();
-            return channel;
+            if (_model is null) return false;
+
+            var body = Encoding.UTF8.GetBytes(param.DataJson);
+            _model.ExchangeDeclare(exchange: "BPHN.Queue", type: ExchangeType.Topic, durable: true);
+            _model.BasicPublish(exchange: "BPHN.Queue",
+                     routingKey: param.DataType,
+                     basicProperties: null,
+                     body: body);
+
+            return true;
         }
     }
 }

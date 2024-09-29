@@ -10,7 +10,7 @@ namespace BPHN.WebAPI.Controllers
     public class HistoryLogsController : BaseController
     {
         private readonly IHistoryLogService _historyLogService;
-        public HistoryLogsController(IHistoryLogService historyLogService)
+        public HistoryLogsController(IServiceProvider provider, IHistoryLogService historyLogService) : base(provider)
         {
             _historyLogService = historyLogService;
         }
