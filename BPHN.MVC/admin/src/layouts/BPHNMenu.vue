@@ -6,7 +6,8 @@ import {
   Setting,
   MapLocation,
   VideoCameraFilled,
-  User
+  User,
+  Histogram
 } from "@element-plus/icons-vue";
 import { useStore } from "vuex";
 import { computed, ref } from "vue";
@@ -35,6 +36,15 @@ const goTo = (link) => {
 <template>
   <section>
     <el-menu class="el-menu-vertical-demo" :collapse="toggle">
+      <el-menu-item>
+        <el-icon @click="goTo('overview')"><Histogram /></el-icon>
+        <template #title>
+          <router-link class="text-decoration-none" to="/overview">
+            <span>{{ t("Overview") }}</span>
+          </router-link>
+        </template>
+      </el-menu-item>
+
       <el-menu-item>
         <el-icon @click="goTo('bm')"><Ticket /></el-icon>
         <template #title>

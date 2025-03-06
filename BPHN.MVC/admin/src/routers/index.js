@@ -9,12 +9,20 @@ import Configurations from "@/components/BPHNConfigurations.vue";
 import BookingManager from "@/components/BPHNBookingManager.vue";
 import HistoryLogs from "@/components/BPHNHistoryLogs.vue";
 import Tenants from "@/components/BPHNTenants.vue";
+import Overview from "@/components/BPHNOverview.vue";
 
 const routes = [
   {
     path: "/",
     component: Layout,
     children: [
+      {
+        path: "/overview",
+        component: Overview,
+        meta: {
+          title: "OVerviewTitle"
+        }
+      },
       {
         path: "/calendar",
         component: Calendar,
