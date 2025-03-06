@@ -5,7 +5,6 @@ using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
 using BPHN.ModelLayer.Responses;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
@@ -162,12 +161,13 @@ namespace BPHN.BusinessLayer.ImpServices
             return new ServiceResultModel
             {
                 Success = true,
-                Data = _producer.Publish(new ObjectQueue
-                {
-                    QueueJobType = QueueJobTypeEnum.WRITELOG,
-                    DataType = "bphn.log.history",
-                    DataJson = JsonConvert.SerializeObject(history)
-                })
+                //Data = _producer.Publish(new ObjectQueue
+                //{
+                //    QueueJobType = QueueJobTypeEnum.WRITELOG,
+                //    DataType = "bphn.log.history",
+                //    DataJson = JsonConvert.SerializeObject(history)
+                //})
+                Data = _historyLogRepository.Write(history).Result
             };
         }
     }

@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
-using System.Threading.Channels;
 
 namespace BPHN.ImpRabbitMQLayer
 {
@@ -16,11 +15,13 @@ namespace BPHN.ImpRabbitMQLayer
         private IModel? _model;
         private readonly IConnection _connection;
         private readonly IEmailWorker _mailWorker;
+        private readonly ILogWorker _logWorker;
 
         public RabbitMQConsumerService(IOptions<AppSettings> appSettings, IServiceProvider provider)
         {
             _appSettings = appSettings.Value;
             _mailWorker = provider.GetRequiredService<IEmailWorker>();
+            _logWorker = provider.GetRequiredService<ILogWorker>();
         }
 
         public async Task Subscribe()
@@ -39,6 +40,18 @@ namespace BPHN.ImpRabbitMQLayer
                     var message = Encoding.UTF8.GetString(body);
                     var routerKey = ea.RoutingKey;
 
+                    switch (routerKey)
+                    {
+                        case "bphn.email.set-password":
+                        case "bphn.email.forgot-password":
+                        case "bphn.email.decline-booking":
+                        case "bphn.email.approval-booking":
+                            await _mailWorker.Handle(message);
+                            break;
+                        case "bphn.log.history":
+                            await _logWorker.Handle(message);
+                            break;
+                    }
                 };
                 _model.BasicConsume(queue: queueName,
                                     autoAck: true,

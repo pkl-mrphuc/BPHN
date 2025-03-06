@@ -1,5 +1,6 @@
 using AutoMapper;
 using BPHN.BusinessLayer.ImpServices;
+using BPHN.BusinessLayer.ImpServices.MailBuilders;
 using BPHN.BusinessLayer.IServices;
 using BPHN.DataLayer.ImpRepositories;
 using BPHN.DataLayer.IRepositories;
@@ -24,7 +25,6 @@ builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = appSettings.GetValue<string>("RedisCacheUrl");
 });
-builder.Services.AddScoped<ILogService, LogService>();
 builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
@@ -51,6 +51,12 @@ builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddSingleton<IRabbitMQProducerService, RabbitMQProducerService>();
 builder.Services.AddSingleton<IResourceService, ResourceService>();
 builder.Services.AddSingleton<IGlobalVariableService, GlobalVariableService>();
+builder.Services.AddSingleton<IKeyGenerator, KeyGenerator>();
+builder.Services.AddSingleton<IMailBuilderFactory, MailBuilderFactory>();
+builder.Services.AddSingleton<IMailBuilder, ForgotPasswordMailBuilder>();
+builder.Services.AddSingleton<IMailBuilder, SetPasswordMailBuilder>();
+builder.Services.AddSingleton<IMailBuilder, DeclineBookingMailBuilder>();
+builder.Services.AddSingleton<IMailBuilder, ApprovalBookingMailBuilder>();
 builder.Services.AddSingleton(new MapperConfiguration(mc =>
 {
     mc.AddProfile(new MappingProfiles());
