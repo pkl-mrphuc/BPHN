@@ -8,5 +8,6 @@
         public string AvatarUrl { get; set; }
         public List<TimeFrameInfoRespond> TimeFrameInfos { get; set; }
         public string NameDetails { get; set; }
+        public Guid ManagerId { get; set; }
     }
 }

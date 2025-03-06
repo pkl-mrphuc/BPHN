@@ -1,4 +1,6 @@
-﻿namespace BPHN.ModelLayer.Responses
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BPHN.ModelLayer.Responses
 {
     public sealed class BookingRespond
     {
