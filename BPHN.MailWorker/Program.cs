@@ -16,6 +16,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<IRabbitMQComsumerService, RabbitMQConsumerService>();
         services.AddSingleton<IKeyGenerator, KeyGenerator>();
         services.AddSingleton<IEmailWorker, EmailWorker>();
+        services.AddSingleton<ILogWorker, LogWorker>();
         services.AddSingleton<IMailBuilderFactory, MailBuilderFactory>();
         services.AddSingleton<ForgotPasswordMailBuilder>();
         services.AddSingleton<IMailBuilder, ForgotPasswordMailBuilder>(item => item.GetService<ForgotPasswordMailBuilder>());

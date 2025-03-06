@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using BPHN.BusinessLayer.IServices;
+﻿using BPHN.BusinessLayer.IServices;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Attributes;
 using BPHN.ModelLayer.Requests;
