@@ -31,6 +31,7 @@ namespace BPHN.WebAPI.Models
             CreateMap<CalendarEventRequest, CalendarEvent>();
             CreateMap<CalendarEvent, CalendarEventRespond>();
             CreateMap<Booking, BookingRespond>();
+            CreateMap<Booking, GetSingleBookingRespond>();
             CreateMap<BookingManager, BookingRespond>();
             CreateMap<Config, ConfigRespond>();
             CreateMap<HistoryLog, HistoryLogRespond>();

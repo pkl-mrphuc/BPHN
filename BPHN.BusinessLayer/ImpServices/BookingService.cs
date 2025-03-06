@@ -307,7 +307,7 @@ namespace BPHN.BusinessLayer.ImpServices
             return new ServiceResultModel
             {
                 Success = true,
-                Data = _mapper.Map<BookingRespond>(data)
+                Data = _mapper.Map<GetSingleBookingRespond>(data)
             };
         }
 
@@ -558,10 +558,10 @@ namespace BPHN.BusinessLayer.ImpServices
                     CreatedBy = fakeContext.UserName,
                     ModifiedBy = fakeContext.UserName,
                     ModifiedDate = DateTime.Now,
-                    BookingId = data.Id,
+                    BookingId = booking.Id,
                     Status = BookingStatusEnum.PENDING.ToString(),
-                    MatchDate = data.StartDate,
-                    Weekendays = (int)data.StartDate.DayOfWeek,
+                    MatchDate = booking.StartDate,
+                    Weekendays = (int)booking.StartDate.DayOfWeek,
                     Note = data.Note,
                     TeamA = data.TeamA
                 }
