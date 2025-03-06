@@ -104,6 +104,8 @@ const vi = {
     Entity: 'Đối tượng',
     Accounts: 'Tài khoản',
     AccountsTitle: 'Tài khoản',
+    OverviewTitle: 'Tổng quan',
+    Overview: 'Tổng quan',
     TenantForm: 'Tài khoản',
     Male: 'Nam',
     Female: 'Nữ',

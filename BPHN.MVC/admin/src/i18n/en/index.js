@@ -104,6 +104,8 @@ const en = {
     Entity: 'Entity name',
     Accounts: 'Accounts',
     AccountsTitle: 'Accounts',
+    OverviewTitle: 'Overview',
+    Overview: 'Overview',
     TenantForm: 'Tenants',
     Male: 'Male',
     Female: 'Female',
