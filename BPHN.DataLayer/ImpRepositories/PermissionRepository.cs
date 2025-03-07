@@ -15,10 +15,10 @@ namespace BPHN.DataLayer.ImpRepositories
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
-                var dic = new Dictionary<string, object?>();
-                dic.Add("@accountId", accountId);
-                var query = @"select * from permissions where AccountId = @accountId order by FunctionType";
-                var lstPermission = await connection.QueryAsync<Permission>(query, dic);
+                var lstPermission = await connection.QueryAsync<Permission>(Query.PERMISSION__GET_ALL, new Dictionary<string, object?>
+                {
+                    { "@accountId", accountId }
+                });
                 return lstPermission.ToList();
             }
         }

@@ -19,19 +19,10 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var query = @"select    Id, 
-                                        Name, 
-                                        Address, 
-                                        MinutesPerMatch, 
-                                        Quantity, 
-                                        TimeSlotPerDay, 
-                                        Status, 
-                                        NameDetails 
-                                        from pitchs 
-                                        where id = @id";
-                var dic = new Dictionary<string, object>();
-                dic.Add("@id", id);
-                var pitch = await connection.QueryFirstOrDefaultAsync<Pitch>(query, dic);
+                var pitch = await connection.QueryFirstOrDefaultAsync<Pitch>(Query.PITCH__GET_BY_ID, new Dictionary<string, object>
+                {
+                    {"@id", id }
+                });
                 return pitch;
             }
         }

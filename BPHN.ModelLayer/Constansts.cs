@@ -42,7 +42,17 @@
         public const string BOOKING_DETAIL__GET_BY_ID = "select * from booking_details where Id = @id";
         public const string BOOKING_DETAIL__UPDATE_MATCH = "update booking_details set TeamA = @teamA, TeamB = @teamB, Note = @note, Deposite = @deposite where Id = @id";
 
-        public const string CONFIG_GET_ALL = "select c.Key, c.Value from configs c where c.AccountId = @accountId";
-        public const string CONFIG_GET_BY_KEY = "select c.Key, c.Value from configs c where c.AccountId = @accountId and c.Key in (@key)";
+        public const string CONFIG__GET_ALL = "select c.Key, c.Value from configs c where c.AccountId = @accountId";
+        public const string CONFIG__GET_BY_KEY = "select c.Key, c.Value from configs c where c.AccountId = @accountId and c.Key in (@key)";
+
+        public const string HISTORY_LOG__GET_DESCRIPTION = "select ModelId, OldData, NewData from history_log_descriptions where Id = @id";
+
+        public const string PERMISSION__GET_ALL = "select * from permissions where AccountId = @accountId order by FunctionType";
+
+        public const string PITCH__GET_BY_ID = "select Id, Name, Address, MinutesPerMatch, Quantity, TimeSlotPerDay, Status, NameDetails from pitchs where id = @id";
+
+        public const string TIME_FRAME__GET_BY_PITCH_ID = "select Id, SortOrder, Name, TimeBegin, TimeEnd, Price from time_frame_infos where PitchId = @pitchId order by SortOrder";
+        public const string TIME_FRAME__GET_BY_LIST_PITCH_ID = "select Id, SortOrder, Name, TimeBegin, TimeEnd, Price, PitchId from time_frame_infos where PitchId in @pitchId order by SortOrder";
+        public const string TIME_FRAME__GET_BY_ID = "select Id, SortOrder, Name, TimeBegin, TimeEnd, Price, PitchId from time_frame_infos where Id = @id";
     }
 }
