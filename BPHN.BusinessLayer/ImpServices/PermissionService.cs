@@ -4,9 +4,8 @@ using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
 using BPHN.ModelLayer.Responses;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using System.Security.Principal;
-using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
@@ -14,20 +13,114 @@ namespace BPHN.BusinessLayer.ImpServices
     {
         private readonly IHistoryLogService _historyLogService;
         private readonly INotificationService _notificationService;
-        private readonly IAccountRepository _accountRepository;
+        private readonly IPermissionRepository _permissionRepository;
         public PermissionService(
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
             INotificationService notificationService,
             IHistoryLogService historyLogService,
-            IAccountRepository accountRepository) : base(serviceProvider, appSettings)
+            IPermissionRepository permissionRepository) : base(serviceProvider, appSettings)
         {
             _historyLogService = historyLogService;
             _notificationService = notificationService;
-            _accountRepository = accountRepository;
+            _permissionRepository = permissionRepository;
         }
 
-        public List<Permission> GetDefaultPermissions(Guid accountId, Account context)
+        public async Task<ServiceResultModel> GetPermissions(Guid accountId)
+        {
+            var context = _contextService.GetContext();
+            if (context is null)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
+                };
+            }
+
+            var permissions = await _permissionRepository.GetPermissions(accountId);
+            if (permissions.IsNullOrEmpty())
+            {
+                permissions = GetDefaultPermissions(accountId, context);
+            }
+
+            return new ServiceResultModel
+            {
+                Success = true,
+                Data = _mapper.Map<List<PermissionRespond>>(permissions)
+            };
+        }
+
+        public async Task<ServiceResultModel> SavePermissions(Guid accountId, IEnumerable<Permission> permissions)
+        {
+            var context = _contextService.GetContext();
+            if (context is null)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
+                };
+            }
+
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDITUSER);
+            if (!hasPermission)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
+                };
+            }
+
+            permissions = permissions.Select(item =>
+            {
+                item.ModifiedDate = DateTime.Now;
+                item.ModifiedBy = context.FullName;
+                item.CreatedBy = context.FullName;
+                item.CreatedDate = DateTime.Now;
+                item.AccountId = accountId;
+                item.Id = item.Id.Equals(Guid.Empty) ? Guid.NewGuid() : item.Id;
+                return item;
+            });
+
+            var oldPermissions = await _permissionRepository.GetPermissions(accountId);
+            var saveResult = await _permissionRepository.Save(permissions);
+            if (saveResult)
+            {
+                var account = new Account() { UserName = string.Empty };
+                await _notificationService.Insert<Account>(context, NotificationTypeEnum.CHANGEPERMISSION, account);
+
+                _historyLogService.Write(Guid.NewGuid(),
+                    new HistoryLog
+                    {
+                        ActionType = ActionEnum.SAVE,
+                        Entity = EntityEnum.PERMISSION.ToString(),
+                        Data = new HistoryLogDescription
+                        {
+                            ModelId = context.Id,
+                            OldData = JsonConvert.SerializeObject(oldPermissions),
+                            NewData = JsonConvert.SerializeObject(permissions)
+                        }
+                    }, context);
+            }
+
+            return new ServiceResultModel
+            {
+                Success = true,
+                Data = saveResult
+            };
+        }
+
+        public async Task<IEnumerable<Permission>> GetAll(Guid accountId)
+        {
+            return await _permissionRepository.GetPermissions(accountId);
+        }
+
+        public IEnumerable<Permission> GetDefaultPermissions(Guid accountId, Account context)
         {
             return new List<Permission>
             {
@@ -141,97 +234,6 @@ namespace BPHN.BusinessLayer.ImpServices
                     ModifiedBy = context.FullName,
                     ModifiedDate = DateTime.Now
                 },
-            };
-        }
-
-        public async Task<ServiceResultModel> GetPermissions(Guid accountId)
-        {
-            var context = _contextService.GetContext();
-            if (context is null)
-            {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
-            }
-
-            var permissions = await _permissionRepository.GetPermissions(accountId);
-            if(permissions is null || permissions.Count == 0)
-            {
-                permissions = GetDefaultPermissions(accountId, context);
-            }
-
-            return new ServiceResultModel
-            {
-                Success = true,
-                Data = _mapper.Map<List<PermissionRespond>>(permissions)
-            };
-        }
-
-        public async Task<ServiceResultModel> SavePermissions(Guid accountId, List<Permission> permissions)
-        {
-            var context = _contextService.GetContext();
-            if (context is null)
-            {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
-            }
-
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDITUSER);
-            if(!hasPermission)
-            {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
-            }
-
-            permissions = permissions.Select(item =>
-            {
-                item.ModifiedDate = DateTime.Now;
-                item.ModifiedBy = context.FullName;
-                item.CreatedBy = context.FullName;
-                item.CreatedDate = DateTime.Now;
-                item.AccountId = accountId;
-                item.Id = item.Id.Equals(Guid.Empty) ? Guid.NewGuid() : item.Id;
-                return item;
-            }).ToList();
-
-            var oldPermissions = await _permissionRepository.GetPermissions(accountId);
-            var saveResult = await _permissionRepository.Save(permissions);
-            if(saveResult)
-            {
-                var account = _globalVariableService.AccountSystem.ContainsKey(accountId) ?
-                                _globalVariableService.AccountSystem[accountId] : new Account() { UserName = string.Empty };
-                await _notificationService.Insert<Account>(context, NotificationTypeEnum.CHANGEPERMISSION, account);
-
-                await _cacheService.RemoveAsync(_cacheService.GetKeyCache(accountId, EntityEnum.PERMISSION));
-
-                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
-                {
-                    ActionType = ActionEnum.SAVE,
-                    Entity = EntityEnum.PERMISSION.ToString(),
-                    Data = new HistoryLogDescription
-                    {
-                        ModelId = context.Id,
-                        OldData = JsonConvert.SerializeObject(oldPermissions),
-                        NewData = JsonConvert.SerializeObject(permissions)
-                    }
-                }, context);
-            }
-
-            return new ServiceResultModel
-            {
-                Success = true,
-                Data = saveResult
             };
         }
     }

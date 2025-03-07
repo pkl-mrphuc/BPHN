@@ -13,7 +13,6 @@ namespace BPHN.BusinessLayer.ImpServices
 {
     public class EmailService : BaseService, IEmailService
     {
-        private readonly IMailBuilderFactory _mailFactory;
         private readonly IRabbitMQProducerService _producer;
         private readonly IKeyGenerator _keyGenerator;
         private IOptions<AppSettings> _;
@@ -22,11 +21,9 @@ namespace BPHN.BusinessLayer.ImpServices
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
             IRabbitMQProducerService producer,
-            IKeyGenerator keyGenerator,
-            IMailBuilderFactory mailFactory) : base(serviceProvider, appSettings)
+            IKeyGenerator keyGenerator) : base(serviceProvider, appSettings)
         {
             _producer = producer;
-            _mailFactory = mailFactory;
             _keyGenerator = keyGenerator;
             _ = appSettings;
         }

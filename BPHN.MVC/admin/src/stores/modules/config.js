@@ -7,7 +7,8 @@ const state = {
     darkMode: true,
     loadedConfig: false,
     formatDate: process.env.VUE_APP_FORMAT_DATE,
-    multiUser: false
+    multiUser: false,
+    email: ""
 };
 
 const getters = {
@@ -29,6 +30,10 @@ const getters = {
 
     getMultiUser: (state) => {
         return state.multiUser;
+    },
+
+    getSystemEmail: (state) => {
+        return state.email;
     }
 };
 
@@ -51,6 +56,10 @@ const mutations = {
 
     setMultiUser: (state, payload) => {
         state.multiUser = payload;
+    },
+
+    setSystemEmail: (state, payload) => {
+        state.email = payload;
     }
 };
 
@@ -89,6 +98,10 @@ const actions = {
                 if(map.has("MultiUser")) {
                     let multiUser = map.get("MultiUser") == "true";
                     commit("setMultiUser", multiUser);
+                }
+
+                if(map.has("SystemEmail")) {
+                    commit("setSystemEmail", map.get("SystemEmail"));
                 }
 
                 commit("setLoadedConfig", true)

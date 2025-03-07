@@ -7,6 +7,7 @@ namespace BPHN.BusinessLayer.IServices
     {
         Task<ServiceResultModel> UploadFile(IFormFile file, string id);
         ServiceResultModel GetLinkFile(string id);
+        string GetFileUrl(string id);
         ServiceResultModel DeleteFile(string id);
     }
 }

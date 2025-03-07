@@ -18,7 +18,7 @@ import AccountInfoDialog from "@/components/dialogs/BPHNAccountInfoDialog.vue";
 import TenantDialog from "@/components/dialogs/BPHNTenantDialog.vue";
 import MatchInfoDialog from "@/components/dialogs/BPHNMatchInfoDialog.vue";
 import PermissionDialog from "@/components/dialogs/BPHNPermissionDialog.vue";
-
+import ConnectSystemEmailDialog from "@/components/dialogs/BPHNConnectSystemEmailDialog.vue";
 jwtInterceptor();
 
 createApp(App)
@@ -44,4 +44,5 @@ createApp(App)
     .component("TenantDialog", TenantDialog)
     .component("MatchInfoDialog", MatchInfoDialog)
     .component("PermissionDialog", PermissionDialog)
+    .component("ConnectSystemEmailDialog", ConnectSystemEmailDialog)
     .mount("#app");

@@ -13,7 +13,7 @@ namespace BPHN.BusinessLayer.ImpServices
     {
         private readonly INotificationRepository _notificationRepository;
         public NotificationService(
-            IServiceProvider provider, 
+            IServiceProvider provider,
             IOptions<AppSettings> appSettings,
             INotificationRepository notificationRepository) : base(provider, appSettings)
         {
@@ -23,7 +23,7 @@ namespace BPHN.BusinessLayer.ImpServices
         public async Task<ServiceResultModel> GetTopFiveNewNotifications()
         {
             var context = _contextService.GetContext();
-            if(context is null)
+            if (context is null)
             {
                 return new ServiceResultModel
                 {
@@ -72,10 +72,10 @@ namespace BPHN.BusinessLayer.ImpServices
                 var connection = new HubConnectionBuilder().WithUrl(new Uri(_appSettings.SignalrUrl)).Build();
                 await connection.StartAsync();
                 await connection.InvokeAsync(
-                                                "PushNotification", 
-                                                context.RelationIds.Select(item => item.ToString()).ToList(), 
-                                                context.Id.ToString(), 
-                                                (int)type, 
+                                                "PushNotification",
+                                                context.RelationIds.Select(item => item.ToString()).ToList(),
+                                                context.Id.ToString(),
+                                                (int)type,
                                                 JsonConvert.SerializeObject(model)
                                             );
             }
@@ -91,7 +91,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
         private string BuildSubject<T>(NotificationTypeEnum type, T model)
         {
-            switch(type)
+            switch (type)
             {
                 case NotificationTypeEnum.INSERTPITCH:
                 case NotificationTypeEnum.UPDATEPITCH:

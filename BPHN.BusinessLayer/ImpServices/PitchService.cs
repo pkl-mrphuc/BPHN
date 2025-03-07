@@ -14,23 +14,24 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IPitchRepository _pitchRepository;
         private readonly IHistoryLogService _historyLogService;
         private readonly IFileService _fileService;
-        private readonly ITimeFrameInfoRepository _timeFrameInfoRepository;
+        private readonly ITimeFrameInfoService _timeFrameInfoService;
         private readonly INotificationService _notificationService;
         public PitchService(
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
-            IPitchRepository pitchRepository, 
+            IPitchRepository pitchRepository,
             IHistoryLogService historyLogService,
             IFileService fileService,
             INotificationService notificationService,
-            ITimeFrameInfoRepository timeFrameInfoRepository) : base(serviceProvider, appSettings)
+            ITimeFrameInfoService timeFrameInfoService) : base(serviceProvider, appSettings)
         {
             _pitchRepository = pitchRepository;
             _historyLogService = historyLogService;
             _fileService = fileService;
-            _timeFrameInfoRepository = timeFrameInfoRepository;
+            _timeFrameInfoService = timeFrameInfoService;
             _notificationService = notificationService;
         }
+
 
         public async Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch, string accountId, bool hasInactive = true)
         {
@@ -164,19 +165,19 @@ namespace BPHN.BusinessLayer.ImpServices
             else
             {
                 var cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.PITCH, id));
-                if(!string.IsNullOrWhiteSpace(cacheResult))
+                if (!string.IsNullOrWhiteSpace(cacheResult))
                 {
                     data = JsonConvert.DeserializeObject<Pitch>(cacheResult);
                 }
-                
-                if(data is null)
+
+                if (data is null)
                 {
                     Guid pitchId = Guid.Empty;
                     Guid.TryParse(id, out pitchId);
                     data = await _pitchRepository.GetById(pitchId);
-                    if(data is not null)
+                    if (data is not null)
                     {
-                        data.TimeFrameInfos = await _timeFrameInfoRepository.GetByPitchId(data.Id);
+                        data.TimeFrameInfos = await _timeFrameInfoService.GetByPitchId(data.Id);
                         await _cacheService.SetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.PITCH, id), JsonConvert.SerializeObject(data));
                     }
                 }
@@ -232,7 +233,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageSize <= 0 || pageSize > 1000) pageSize = 50;
             var lstWhere = new List<WhereCondition>();
 
-            if(!string.IsNullOrWhiteSpace(accountId))
+            if (!string.IsNullOrWhiteSpace(accountId))
             {
                 Guid id;
                 Guid.TryParse(accountId, out id);
@@ -248,7 +249,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     };
                 }
 
-                if(!context.Id.Equals(id))
+                if (!context.Id.Equals(id))
                 {
                     return new ServiceResultModel
                     {
@@ -276,8 +277,8 @@ namespace BPHN.BusinessLayer.ImpServices
                     Value = context.RelationIds.ToArray()
                 });
             }
-            
-            if(!hasInactive || string.IsNullOrWhiteSpace(accountId))
+
+            if (!hasInactive || string.IsNullOrWhiteSpace(accountId))
             {
                 lstWhere.Add(new WhereCondition
                 {
@@ -287,7 +288,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 });
             }
 
-            if(!string.IsNullOrWhiteSpace(txtSearch))
+            if (!string.IsNullOrWhiteSpace(txtSearch))
             {
                 lstWhere.Add(new WhereCondition
                 {
@@ -298,7 +299,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var resultPaging = await _pitchRepository.GetPaging(pageIndex, pageSize, lstWhere);
-            var lstFrameInfo = await _timeFrameInfoRepository.GetByListPitchId(resultPaging.Select(item => item.Id).ToList());
+            var lstFrameInfo = await _timeFrameInfoService.GetByListPitchId(resultPaging.Select(item => item.Id).ToList());
             var dicFrame = new Dictionary<Guid, List<TimeFrameInfo>>();
             var now = DateTime.Now;
             foreach (var frame in lstFrameInfo)
@@ -316,10 +317,10 @@ namespace BPHN.BusinessLayer.ImpServices
                     dicFrame.Add(frame.PitchId, new List<TimeFrameInfo>() { frame });
                 }
             }
-            
+
             resultPaging = resultPaging.Select(item =>
             {
-                item.AvatarUrl = (string)(_fileService.GetLinkFile(item.Id.ToString()).Data ?? "");
+                item.AvatarUrl = _fileService.GetFileUrl(item.Id.ToString());
                 item.TimeFrameInfos = hasDetail && dicFrame.ContainsKey(item.Id) ? dicFrame[item.Id] : new List<TimeFrameInfo>();
                 return item;
             }).ToList();
@@ -345,7 +346,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.ADDPITCH);
-            if(!hasPermission)
+            if (!hasPermission)
             {
                 return new ServiceResultModel
                 {
@@ -356,8 +357,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var isValid = ValidateModelByAttribute(pitch);
-            
-            if( !isValid || pitch.TimeFrameInfos.Count == 0 || pitch.ListNameDetails.Count == 0)
+            if (!isValid || pitch.TimeFrameInfos.Count == 0 || pitch.ListNameDetails.Count == 0)
             {
                 return new ServiceResultModel
                 {
@@ -388,24 +388,24 @@ namespace BPHN.BusinessLayer.ImpServices
             pitch.NameDetails = string.Join(";", pitch.ListNameDetails.ToArray());
 
             var insertResult = await _pitchRepository.Insert(pitch);
-
-            if(insertResult)
+            if (insertResult)
             {
                 await _notificationService.Insert<Pitch>(context, NotificationTypeEnum.INSERTPITCH, new Pitch
                 {
                     Name = pitch.Name,
                 });
 
-                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
-                {
-                    ActionType = ActionEnum.INSERT,
-                    Entity = EntityEnum.PITCH.ToString(),
-                    Data = new HistoryLogDescription
+                _historyLogService.Write(Guid.NewGuid(), 
+                    new HistoryLog
                     {
-                        ModelId = pitch.Id,
-                        NewData = JsonConvert.SerializeObject(pitch)
-                    }
-                }, context);
+                        ActionType = ActionEnum.INSERT,
+                        Entity = EntityEnum.PITCH.ToString(),
+                        Data = new HistoryLogDescription
+                        {
+                            ModelId = pitch.Id,
+                            NewData = JsonConvert.SerializeObject(pitch)
+                        }
+                    }, context);
             }
 
             return new ServiceResultModel
@@ -473,24 +473,23 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (updateResult)
             {
-                await _cacheService.RemoveAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.PITCH, pitch.Id.ToString()));
-
-                await _notificationService.Insert<Pitch>(context, NotificationTypeEnum.UPDATEPITCH, new Pitch()
+                await _notificationService.Insert<Pitch>(context, NotificationTypeEnum.UPDATEPITCH, new Pitch
                 {
                     Name = pitch.Name
                 });
 
-                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
-                {
-                    ActionType = ActionEnum.UPDATE,
-                    Entity = EntityEnum.PITCH.ToString(),
-                    Data = new HistoryLogDescription
+                _historyLogService.Write(Guid.NewGuid(), 
+                    new HistoryLog
                     {
-                        ModelId = pitch.Id,
-                        OldData = JsonConvert.SerializeObject(oldPitch),
-                        NewData = JsonConvert.SerializeObject(pitch)
-                    }
-                }, context);
+                        ActionType = ActionEnum.UPDATE,
+                        Entity = EntityEnum.PITCH.ToString(),
+                        Data = new HistoryLogDescription
+                        {
+                            ModelId = pitch.Id,
+                            OldData = JsonConvert.SerializeObject(oldPitch),
+                            NewData = JsonConvert.SerializeObject(pitch)
+                        }
+                    }, context);
             }
 
             return new ServiceResultModel
@@ -498,6 +497,16 @@ namespace BPHN.BusinessLayer.ImpServices
                 Success = true,
                 Data = updateResult
             };
+        }
+
+        public async Task<List<Pitch>> GetAll(string accountId)
+        {
+            return await _pitchRepository.GetAll(accountId);
+        }
+
+        public async Task<Pitch?> GetById(Guid id)
+        {
+            return await _pitchRepository.GetById(id);
         }
     }
 }

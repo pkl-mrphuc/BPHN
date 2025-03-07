@@ -27,8 +27,8 @@ namespace BPHN.ModelLayer
         public string Status { get; set; }
         public Guid? ParentId { get; set; }
         public string IPAddress { get; set; }
-        public List<Permission>? Permissions { get; set; }
-        public List<Guid> RelationIds { get; set; }
+        public IEnumerable<Permission>? Permissions { get; set; }
+        public IEnumerable<Guid> RelationIds { get; set; }
         public string LanguageConfig { get; set; }
         public string AvatarUrl { get; set; }
     }

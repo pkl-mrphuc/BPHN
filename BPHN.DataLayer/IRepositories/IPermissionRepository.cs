@@ -4,7 +4,7 @@ namespace BPHN.DataLayer.IRepositories
 {
     public interface IPermissionRepository
     {
-        Task<List<Permission>> GetPermissions(Guid accountId);
-        Task<bool> Save(List<Permission> permissions);
+        Task<IEnumerable<Permission>> GetPermissions(Guid accountId);
+        Task<bool> Save(IEnumerable<Permission> permissions);
     }
 }

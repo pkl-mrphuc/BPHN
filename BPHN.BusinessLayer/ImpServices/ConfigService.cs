@@ -36,24 +36,17 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             List<Config>? lstConfig = null;
-            var cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.CONFIG));
-            if (!string.IsNullOrWhiteSpace(cacheResult))
+            if (string.IsNullOrWhiteSpace(key))
             {
-                lstConfig = JsonConvert.DeserializeObject<List<Config>>(cacheResult);
+                lstConfig = await GetConfigs(context.Id);
             }
-
-            if (lstConfig is null)
+            else
             {
-                lstConfig = await _configRepository.GetConfigs(context.Id, key);
-                if (string.IsNullOrWhiteSpace(key) && lstConfig is not null)
+                var config = await _configRepository.GetByKey(context.Id, key);
+                if (config is not null)
                 {
-                    await _cacheService.SetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.CONFIG), JsonConvert.SerializeObject(lstConfig));
+                    lstConfig = new List<Config> { config };
                 }
-            }
-
-            if (!string.IsNullOrWhiteSpace(key))
-            {
-                lstConfig = lstConfig?.Where(item => item.Key == key).ToList();
             }
 
             return new ServiceResultModel
@@ -100,20 +93,18 @@ namespace BPHN.BusinessLayer.ImpServices
             var saveResult = await _configRepository.Save(configs);
             if (saveResult)
             {
-                var key = _cacheService.GetKeyCache(context.Id, EntityEnum.CONFIG);
-                await _cacheService.RemoveAsync(key);
-
-                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
-                {
-                    ActionType = ActionEnum.SAVE,
-                    Entity = EntityEnum.CONFIG.ToString(),
-                    Data = new HistoryLogDescription
+                _historyLogService.Write(Guid.NewGuid(),
+                    new HistoryLog
                     {
-                        ModelId = context.Id,
-                        OldData = JsonConvert.SerializeObject(oldConfigs),
-                        NewData = JsonConvert.SerializeObject(configs)
-                    }
-                }, context);
+                        ActionType = ActionEnum.SAVE,
+                        Entity = EntityEnum.CONFIG.ToString(),
+                        Data = new HistoryLogDescription
+                        {
+                            ModelId = context.Id,
+                            OldData = JsonConvert.SerializeObject(oldConfigs),
+                            NewData = JsonConvert.SerializeObject(configs)
+                        }
+                    }, context);
             }
 
             return new ServiceResultModel
@@ -121,6 +112,36 @@ namespace BPHN.BusinessLayer.ImpServices
                 Success = true,
                 Data = saveResult
             };
+        }
+
+        public async Task<bool> AllowMultiUser(Guid accountId)
+        {
+            return "true".Equals(await GetValueByKey(accountId, "MultiUser"));
+        }
+
+        public async Task<string> Language(Guid accountId)
+        {
+            return await GetValueByKey(accountId, "Language");
+        }
+
+        public async Task<Dictionary<string, string>> GetByKey(Guid accountId, params string[] keys)
+        {
+            return await _configRepository.GetByKey(accountId, keys);
+        }
+
+        public async Task<List<Config>> GetConfigs(Guid accountId)
+        {
+            return await _configRepository.GetConfigs(accountId);
+        }
+
+        public async Task<Config> GetByKey(Guid accountId, string key)
+        {
+            return await _configRepository.GetByKey(accountId, key);
+        }
+
+        public async Task<string> GetValueByKey(Guid accountId, string key)
+        {
+            return await _configRepository.GetValueByKey(accountId, key);
         }
     }
 }
