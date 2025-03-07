@@ -3,11 +3,12 @@ import { useI18n } from "vue-i18n";
 import {
   Ticket,
   Calendar,
-  Setting,
+  Tools,
   MapLocation,
   VideoCameraFilled,
   User,
-  Histogram
+  Histogram,
+  Finished
 } from "@element-plus/icons-vue";
 import { useStore } from "vuex";
 import { computed, ref } from "vue";
@@ -72,6 +73,15 @@ const goTo = (link) => {
         </template>
       </el-menu-item>
 
+      <el-menu-item>
+        <el-icon @click="goTo('invoices')"><Finished /></el-icon>
+        <template #title>
+          <router-link class="text-decoration-none" to="/invoices">
+            <span>{{ t("Invoices") }}</span>
+          </router-link>
+        </template>
+      </el-menu-item>
+
       <el-menu-item v-if="equals(role, RoleEnum.ADMIN) || multiUser">
         <el-icon @click="goTo('tenants')"><User /></el-icon>
         <template #title>
@@ -85,7 +95,7 @@ const goTo = (link) => {
       </el-menu-item>
 
       <el-menu-item>
-        <el-icon @click="goTo('configuartions')"><Setting /></el-icon>
+        <el-icon @click="goTo('configuartions')"><Tools /></el-icon>
         <template #title>
           <router-link class="text-decoration-none" to="/configuartions">
             <span>{{ t("Configurations") }}</span>
@@ -110,4 +120,4 @@ const goTo = (link) => {
   height: calc(100vh - 60px - 1px);
   overflow-y: scroll;
 }
-</style>>
+</style>

@@ -106,6 +106,8 @@ const en = {
     AccountsTitle: 'Accounts',
     OverviewTitle: 'Overview',
     Overview: 'Overview',
+    InvoicesTitle: 'Invoices',
+    Invoices: 'Invoices',
     TenantForm: 'Tenants',
     Male: 'Male',
     Female: 'Female',
