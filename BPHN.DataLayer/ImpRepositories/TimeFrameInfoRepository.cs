@@ -16,9 +16,10 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var dic = new Dictionary<string, object>();
-                dic.Add("@pitchId", pitchId);
-                var lstTimeFrameInfo = await connection.QueryAsync<TimeFrameInfo>("select Id, SortOrder, Name, TimeBegin, TimeEnd, Price from time_frame_infos where PitchId = @pitchId order by SortOrder", dic);
+                var lstTimeFrameInfo = await connection.QueryAsync<TimeFrameInfo>(Query.TIME_FRAME__GET_BY_PITCH_ID, new Dictionary<string, object>
+                {
+                    { "@pitchId", pitchId }
+                });
                 return lstTimeFrameInfo.ToList();
             }
         }
@@ -28,9 +29,10 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var dic = new Dictionary<string, object>();
-                dic.Add("@pitchId", lstPitchId.ToArray());
-                var lstTimeFrameInfo = await connection.QueryAsync<TimeFrameInfo>("select Id, SortOrder, Name, TimeBegin, TimeEnd, Price, PitchId from time_frame_infos where PitchId in @pitchId order by SortOrder", dic);
+                var lstTimeFrameInfo = await connection.QueryAsync<TimeFrameInfo>(Query.TIME_FRAME__GET_BY_LIST_PITCH_ID, new Dictionary<string, object>
+                {
+                    { "@pitchId", lstPitchId.ToArray() }
+                });
                 return lstTimeFrameInfo.ToList();
             }
         }
@@ -41,9 +43,10 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var dic = new Dictionary<string, object>();
-                dic.Add("@id", id);
-                var timeFrameInfo = await connection.QueryFirstOrDefaultAsync<TimeFrameInfo>("select Id, SortOrder, Name, TimeBegin, TimeEnd, Price, PitchId from time_frame_infos where Id = @id order by SortOrder", dic);
+                var timeFrameInfo = await connection.QueryFirstOrDefaultAsync<TimeFrameInfo>(Query.TIME_FRAME__GET_BY_ID, new Dictionary<string, object>
+                {
+                    { "@id", id }
+                });
                 return timeFrameInfo;
             }
         }

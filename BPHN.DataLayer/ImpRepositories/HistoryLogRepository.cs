@@ -48,13 +48,13 @@ namespace BPHN.DataLayer.ImpRepositories
 
         public async Task<HistoryLogDescription?> GetDescription(string historyLogId)
         {
-            var query = @"select ModelId, OldData, NewData from history_log_descriptions where Id = @id";
-            var dic = new Dictionary<string, object>();
-            dic.Add("@id", historyLogId);
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var data = await connection.QueryFirstAsync<HistoryLogDescription>(query, dic);
+                var data = await connection.QueryFirstAsync<HistoryLogDescription>(Query.HISTORY_LOG__GET_DESCRIPTION, new Dictionary<string, object>
+                {
+                    { "@id", historyLogId }
+                });
                 return data;
             }
         }

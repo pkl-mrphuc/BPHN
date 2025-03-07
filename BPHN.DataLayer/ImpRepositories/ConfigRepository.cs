@@ -58,7 +58,7 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var configs = (await connection.QueryAsync<Config>(Query.CONFIG_GET_ALL, new Dictionary<string, object>
+                var configs = (await connection.QueryAsync<Config>(Query.CONFIG__GET_ALL, new Dictionary<string, object>
                 {
                     { "@accountId", accountId }
                 })).ToList();
@@ -71,7 +71,7 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var configs = (await connection.QueryAsync<Config>(Query.CONFIG_GET_BY_KEY, new Dictionary<string, object>
+                var configs = (await connection.QueryAsync<Config>(Query.CONFIG__GET_BY_KEY, new Dictionary<string, object>
                 {
                     { "@accountId", accountId },
                     { "@key", key }
