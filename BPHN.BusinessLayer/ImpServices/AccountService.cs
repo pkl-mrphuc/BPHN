@@ -78,10 +78,9 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(account.Password);
             var resultResetPassword = await _accountRepository.SavePassword(account.Id, passwordHash);
-
             if (resultResetPassword)
             {
-                _historyLogService.Write(Guid.NewGuid(), 
+                _historyLogService.Write(Guid.NewGuid(),
                     new HistoryLog
                     {
                         ActionType = ActionEnum.SUBMITRESETPASSWORD,
@@ -171,12 +170,10 @@ namespace BPHN.BusinessLayer.ImpServices
                     break;
             }
 
-            var resultCountPaging = await _accountRepository.GetCountPaging(pageIndex, pageSize, txtSearch, where);
-
             return new ServiceResultModel
             {
                 Success = true,
-                Data = resultCountPaging
+                Data = await _accountRepository.GetCountPaging(pageIndex, pageSize, txtSearch, where)
             };
         }
 
@@ -193,36 +190,23 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            Account? data = null;
-            if (string.IsNullOrWhiteSpace(id))
+            if (!string.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out var accountId))
             {
-                data = new Account();
-                data.Id = Guid.NewGuid();
-                data.Gender = GenderEnum.MALE.ToString();
-                data.Status = ActiveStatusEnum.ACTIVE.ToString();
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.EMPTY_INPUT,
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
+                };
             }
-            else
-            {
-                Guid accountId;
-                var success = Guid.TryParse(id, out accountId);
-                if (success)
-                {
-                    data = await _accountRepository.GetAccountById(accountId);
-                    if (data is not null)
-                    {
-                        data.AvatarUrl = _fileService.GetFileUrl(accountId.ToString());
-                    }
-                }
-                else
-                {
-                    return new ServiceResultModel
-                    {
-                        Success = false,
-                        ErrorCode = ErrorCodes.EMPTY_INPUT,
-                        Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
-                    };
-                }
 
+            var data = new Account();
+            data.Id = Guid.NewGuid();
+            data.Gender = GenderEnum.MALE.ToString();
+            data.Status = ActiveStatusEnum.ACTIVE.ToString();
+            if (Guid.TryParse(id, out accountId))
+            {
+                data = await _accountRepository.GetAccountById(accountId);
                 if (data is null)
                 {
                     return new ServiceResultModel
@@ -232,6 +216,8 @@ namespace BPHN.BusinessLayer.ImpServices
                         Message = _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig)
                     };
                 }
+
+                data.AvatarUrl = _fileService.GetFileUrl(accountId.ToString());
             }
 
             return new ServiceResultModel
@@ -255,8 +241,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTUSER);
-            if (!hasPermission ||
-                (context.Role != RoleEnum.ADMIN && !await _configService.AllowMultiUser(context.Id)))
+            if (!hasPermission || (context.Role != RoleEnum.ADMIN && !await _configService.AllowMultiUser(context.Id)))
             {
                 return new ServiceResultModel
                 {
@@ -367,7 +352,6 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var realAccount = await _accountRepository.GetAccountByUserName(account.UserName);
-
             if (realAccount is null)
             {
                 return new ServiceResultModel
@@ -415,14 +399,14 @@ namespace BPHN.BusinessLayer.ImpServices
 
             _accountRepository.SaveToken(realAccount.Id, token, refreshToken);
 
-            _historyLogService.Write(Guid.NewGuid(), 
+            _historyLogService.Write(Guid.NewGuid(),
                 new HistoryLog
                 {
                     Actor = realAccount.UserName,
                     ActorId = realAccount.Id,
                     ActionType = ActionEnum.LOGIN,
                     Entity = EntityEnum.ACCOUNT.ToString()
-                }, 
+                },
                 new Account
                 {
                     FullName = realAccount.FullName,
@@ -530,8 +514,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.ADDUSER);
-            if (!hasPermission ||
-                (context.Role != RoleEnum.ADMIN && !await _configService.AllowMultiUser(context.Id)))
+            if (!hasPermission || (context.Role != RoleEnum.ADMIN && !await _configService.AllowMultiUser(context.Id)))
             {
                 return new ServiceResultModel
                 {
@@ -604,7 +587,7 @@ namespace BPHN.BusinessLayer.ImpServices
                         });
                 }
 
-                _historyLogService.Write(Guid.NewGuid(), 
+                _historyLogService.Write(Guid.NewGuid(),
                     new HistoryLog
                     {
                         ActionType = ActionEnum.REGISTERACCOUNT,
@@ -666,14 +649,14 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (resultSendMail)
             {
-                _historyLogService.Write(Guid.NewGuid(), 
+                _historyLogService.Write(Guid.NewGuid(),
                     new HistoryLog
                     {
                         Actor = realAccount.UserName,
                         ActorId = realAccount.Id,
                         ActionType = ActionEnum.SENDRESETPASSWORD,
                         Entity = EntityEnum.ACCOUNT.ToString()
-                    }, 
+                    },
                     new Account()
                     {
                         FullName = realAccount.FullName,
@@ -702,7 +685,6 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var parameter = _keyGenerator.Decryption(code);
             var expireResetPasswordModel = JsonConvert.DeserializeObject<ExpireSetPasswordModel>(parameter);
-
             if (expireResetPasswordModel is null)
             {
                 return new ServiceResultModel
@@ -763,17 +745,16 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(account.Password);
             var resultResetPassword = await _accountRepository.SavePassword(account.Id, passwordHash);
-
             if (resultResetPassword)
             {
-                _historyLogService.Write(Guid.NewGuid(), 
+                _historyLogService.Write(Guid.NewGuid(),
                     new HistoryLog
                     {
                         Actor = realAccount.UserName,
                         ActorId = realAccount.Id,
                         ActionType = ActionEnum.SUBMITRESETPASSWORD,
                         Entity = EntityEnum.ACCOUNT.ToString()
-                    }, 
+                    },
                     new Account
                     {
                         FullName = realAccount.FullName,
