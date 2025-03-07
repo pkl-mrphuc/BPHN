@@ -59,9 +59,9 @@ namespace BPHN.DataLayer.ImpRepositories
             {
                 connection.Open();
                 var configs = (await connection.QueryAsync<Config>(Query.CONFIG_GET_ALL, new Dictionary<string, object>
-                    {
-                        { "@accountId", accountId }
-                    })).ToList();
+                {
+                    { "@accountId", accountId }
+                })).ToList();
                 return configs;
             }
         }
