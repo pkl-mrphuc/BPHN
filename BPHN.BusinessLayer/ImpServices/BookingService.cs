@@ -505,7 +505,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 PitchId = data.PitchId,
                 NameDetail = data.NameDetail,
                 TimeFrameInfoId = data.TimeFrameInfoId,
-                BookingDetails = new List<BookingDetail>() {
+                BookingDetails = new List<BookingDetail>
+                {
                     new BookingDetail()
                     {
                         MatchDate = data.StartDate
@@ -699,7 +700,7 @@ namespace BPHN.BusinessLayer.ImpServices
                             MatchDate = matchDate ?? string.Empty
                         });
 
-                    await _notificationService.Insert<Booking>(context, NotificationTypeEnum.APPROVALBOOKING, new Booking()
+                    await _notificationService.Insert<Booking>(context, NotificationTypeEnum.APPROVALBOOKING, new Booking
                     {
                         PhoneNumber = data.PhoneNumber,
                         NameDetail = data.NameDetail,
@@ -708,17 +709,18 @@ namespace BPHN.BusinessLayer.ImpServices
                     });
                 }
 
-                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
-                {
-                    ActionType = ActionEnum.UPDATE,
-                    Entity = EntityEnum.BOOKING.ToString(),
-                    Data = new HistoryLogDescription
+                _historyLogService.Write(Guid.NewGuid(), 
+                    new HistoryLog
                     {
-                        ModelId = oldData.Id,
-                        OldData = JsonConvert.SerializeObject(oldData),
-                        NewData = JsonConvert.SerializeObject(data)
-                    }
-                }, context);
+                        ActionType = ActionEnum.UPDATE,
+                        Entity = EntityEnum.BOOKING.ToString(),
+                        Data = new HistoryLogDescription
+                        {
+                            ModelId = oldData.Id,
+                            OldData = JsonConvert.SerializeObject(oldData),
+                            NewData = JsonConvert.SerializeObject(data)
+                        }
+                    }, context);
             }
 
             return new ServiceResultModel
