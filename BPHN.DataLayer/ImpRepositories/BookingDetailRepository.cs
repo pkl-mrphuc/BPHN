@@ -17,11 +17,11 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var dic = new Dictionary<string, object>();
-                dic.Add("@status", BookingStatusEnum.CANCEL.ToString());
-                dic.Add("@id", id);
-                var query = "update booking_details set Status = @status where Id = @id";
-                var affect = await connection.ExecuteAsync(query, dic);
+                var affect = await connection.ExecuteAsync(Query.BOOKING_DETAIL__UPDATE_STATUS, new Dictionary<string, object>
+                {
+                    { "@status", BookingStatusEnum.CANCEL.ToString() },
+                    { "@id", id }
+                });
                 return affect > 0 ? true : false;
             }
         }
@@ -31,10 +31,10 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var dic = new Dictionary<string, object>();
-                dic.Add("@bookingId", bookingId);
-                var query = @"select * from booking_details where BookingId = @bookingId";
-                var data = await connection.QueryAsync<BookingDetail>(query, dic);
+                var data = await connection.QueryAsync<BookingDetail>(Query.BOOKING_DETAIL__GET_BY_BOOKING_ID, new Dictionary<string, object>()
+                {
+                    { "@bookingId", bookingId }
+                });
                 return data.ToList();
             }
         }
@@ -66,10 +66,10 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var dic = new Dictionary<string, object>();
-                dic.Add("@id", id);
-                var query = @"select * from booking_details where Id = @id";
-                var data = await connection.QueryAsync<BookingDetail>(query, dic);
+                var data = await connection.QueryAsync<BookingDetail>(Query.BOOKING_DETAIL__GET_BY_ID, new Dictionary<string, object>
+                {
+                    { "@id", id }
+                });
                 return data.FirstOrDefault();
             }
         }
@@ -84,7 +84,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 dic.Add("@startDate", $"{startDate} 00:00:00");
                 dic.Add("@endDate", $"{endDate} 23:59:59");
                 dic.Add("@pitchId", pitchId);
-                
+
                 var query = @"select bd.*, b.PitchId, tfi.TimeBegin as Start, tfi.TimeEnd as End, b.NameDetail as Stadium, b.PhoneNumber as PhoneNumber  from booking_details bd 
                                                 inner join bookings b on b.Id = bd.BookingId
                                                 inner join time_frame_infos tfi on b.TimeFrameInfoId = tfi.Id
@@ -130,14 +130,14 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var dic = new Dictionary<string, object>();
-                dic.Add("@id", eventInfo.Id);
-                dic.Add("@teamA", eventInfo.TeamA);
-                dic.Add("@teamB", eventInfo.TeamB);
-                dic.Add("@note", eventInfo.Note);
-                dic.Add("@deposite", eventInfo.Deposite);
-                var query = "update booking_details set TeamA = @teamA, TeamB = @teamB, Note = @note, Deposite = @deposite where Id = @id";
-                var affect = await connection.ExecuteAsync(query, dic);
+                var affect = await connection.ExecuteAsync(Query.BOOKING_DETAIL__UPDATE_MATCH, new Dictionary<string, object>
+                {
+                    { "@id", eventInfo.Id},
+                    { "@teamA", eventInfo.TeamA},
+                    { "@teamB", eventInfo.TeamB},
+                    { "@note", eventInfo.Note},
+                    { "@deposite", eventInfo.Deposite},
+                });
                 return affect > 0 ? true : false;
             }
         }

@@ -36,5 +36,10 @@
         public const string ACCOUNT__UPDATE_PASSWORD = "update accounts set Password = @password where Id = @id";
         public const string ACCOUNT__GET_ALL = "select Id, UserName, Email from accounts";
         public const string ACCOUNT__UPDATE_TOKEN = "update accounts set Token = @token, RefreshToken = @refreshToken where Id = @id";
+
+        public const string BOOKING_DETAIL__UPDATE_STATUS = "update booking_details set Status = @status where Id = @id";
+        public const string BOOKING_DETAIL__GET_BY_BOOKING_ID = "select * from booking_details where BookingId = @bookingId";
+        public const string BOOKING_DETAIL__GET_BY_ID = "select * from booking_details where Id = @id";
+        public const string BOOKING_DETAIL__UPDATE_MATCH = "update booking_details set TeamA = @teamA, TeamB = @teamB, Note = @note, Deposite = @deposite where Id = @id";
     }
 }
