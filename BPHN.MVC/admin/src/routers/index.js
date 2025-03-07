@@ -10,6 +10,7 @@ import BookingManager from "@/components/BPHNBookingManager.vue";
 import HistoryLogs from "@/components/BPHNHistoryLogs.vue";
 import Tenants from "@/components/BPHNTenants.vue";
 import Overview from "@/components/BPHNOverview.vue";
+import Invoices from "@/components/BPHNInvoices.vue";
 
 const routes = [
   {
@@ -42,6 +43,13 @@ const routes = [
         component: MyFootballFields,
         meta: {
           title: "FootballFieldTitle"
+        }
+      },
+      {
+        path: "/invoices",
+        component: Invoices,
+        meta: {
+          title: "InvoiceTitle"
         }
       },
       {
