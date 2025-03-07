@@ -8,12 +8,10 @@ namespace BPHN.BusinessLayer.ImpServices
 {
     public class FileService : IFileService
     {
-        [Obsolete]
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IResourceService _resourceService;
         private AppSettings _appSettings;
 
-        [Obsolete]
         public FileService(IHostingEnvironment hostingEnvironment, IOptions<AppSettings> appSettings, IResourceService resourceService)
         {
             _hostingEnvironment = hostingEnvironment;
@@ -21,7 +19,6 @@ namespace BPHN.BusinessLayer.ImpServices
             _resourceService = resourceService;
         }
 
-        [Obsolete]
         public ServiceResultModel DeleteFile(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
@@ -66,7 +63,6 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        [Obsolete]
         public ServiceResultModel GetLinkFile(string id)
         {
 
@@ -80,24 +76,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var pathPng = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, $"{id}.png");
-            var pathJpg = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, $"{id}.jpg");
-            var pathJpeg = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, $"{id}.jpeg");
-
-            var fullName = string.Empty;
-            if (File.Exists(pathPng))
-            {
-                fullName = $"{id}.png";
-            }
-            else if (File.Exists(pathJpg))
-            {
-                fullName = $"{id}.jpg";
-            }
-            else if (File.Exists(pathJpeg))
-            {
-                fullName = $"{id}.jpeg";
-            }
-            else
+            var fileUrl = GetFileUrl(id);
+            if (string.IsNullOrWhiteSpace(fileUrl))
             {
                 return new ServiceResultModel
                 {
@@ -110,11 +90,10 @@ namespace BPHN.BusinessLayer.ImpServices
             return new ServiceResultModel
             {
                 Success = true,
-                Data = $"{_appSettings.FileUrl}{fullName}"
+                Data = fileUrl
             };
         }
 
-        [Obsolete]
         public async Task<ServiceResultModel> UploadFile(IFormFile file, string id)
         {
             if (string.IsNullOrWhiteSpace(id) || file is null)
@@ -160,6 +139,29 @@ namespace BPHN.BusinessLayer.ImpServices
                     ErrorCode = ErrorCodes.INVALID_ROLE
                 };
             }
+        }
+
+        public string GetFileUrl(string id)
+        {
+            var pathPng = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, $"{id}.png");
+            var pathJpg = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, $"{id}.jpg");
+            var pathJpeg = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, $"{id}.jpeg");
+
+            string? fullName = null;
+            if (File.Exists(pathPng))
+            {
+                fullName = $"{_appSettings.FileUrl}{id}.png";
+            }
+            else if (File.Exists(pathJpg))
+            {
+                fullName = $"{_appSettings.FileUrl}{id}.jpg";
+            }
+            else if (File.Exists(pathJpeg))
+            {
+                fullName = $"{_appSettings.FileUrl}{id}.jpeg";
+            }
+
+            return fullName ?? string.Empty;
         }
     }
 }

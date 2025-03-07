@@ -4,10 +4,8 @@ using BPHN.ModelLayer;
 using BPHN.ModelLayer.ObjectQueues;
 using BPHN.ModelLayer.Others;
 using BPHN.ModelLayer.Responses;
-using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System.Security;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
@@ -15,34 +13,31 @@ namespace BPHN.BusinessLayer.ImpServices
     {
         private readonly IBookingRepository _bookingRepository;
         private readonly IHistoryLogService _historyLogService;
-        private readonly IPitchRepository _pitchRepository;
-        private readonly IBookingDetailRepository _bookingDetailRepository;
+        private readonly IPitchService _pitchService;
         private readonly IBookingDetailService _bookingDetailService;
-        private readonly ITimeFrameInfoRepository _timeFrameInfoRepository;
+        private readonly ITimeFrameInfoService _timeFrameInfoService;
         private readonly INotificationService _notificationService;
-        private readonly IAccountRepository _accountRepository;
+        private readonly IAccountService _accountService;
         private readonly IEmailService _mailService;
         public BookingService(
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
             IBookingRepository bookingRepository,
             IHistoryLogService historyLogService,
-            IPitchRepository pitchRepository,
-            IBookingDetailRepository bookingDetailRepository,
+            IPitchService pitchService,
             IBookingDetailService bookingDetailService,
             INotificationService notificationService,
-            ITimeFrameInfoRepository timeFrameInfoRepository,
-            IAccountRepository accountRepository,
+            ITimeFrameInfoService timeFrameInfoService,
+            IAccountService accountService,
             IEmailService mailService) : base(serviceProvider, appSettings)
         {
             _bookingRepository = bookingRepository;
             _historyLogService = historyLogService;
-            _bookingDetailRepository = bookingDetailRepository;
-            _pitchRepository = pitchRepository;
             _bookingDetailService = bookingDetailService;
-            _timeFrameInfoRepository = timeFrameInfoRepository;
+            _pitchService = pitchService;
+            _timeFrameInfoService = timeFrameInfoService;
             _notificationService = notificationService;
-            _accountRepository = accountRepository;
+            _accountService = accountService;
             _mailService = mailService;
         }
 
@@ -290,8 +285,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
             else
             {
-                var lstBook = await _bookingRepository.GetById(id);
-                data = lstBook.FirstOrDefault();
+                data = await _bookingRepository.GetById(id);
                 if (data is null)
                 {
                     return new ServiceResultModel
@@ -301,8 +295,6 @@ namespace BPHN.BusinessLayer.ImpServices
                         Message = _resourceService.Get(SharedResourceKey.NOTEXIST)
                     };
                 }
-
-
             }
             return new ServiceResultModel
             {
@@ -458,8 +450,8 @@ namespace BPHN.BusinessLayer.ImpServices
             var insertResult = await _bookingRepository.Insert(data);
             if (insertResult)
             {
-                var pitch = await _pitchRepository.GetById(data.PitchId.HasValue ? data.PitchId.Value : Guid.Empty);
-                var frame = await _timeFrameInfoRepository.GetById(data.TimeFrameInfoId.HasValue ? data.TimeFrameInfoId.Value : Guid.Empty);
+                var pitch = await _pitchService.GetById(data.PitchId ?? Guid.Empty);
+                var frame = await _timeFrameInfoService.GetById(data.TimeFrameInfoId ?? Guid.Empty);
                 await _notificationService.Insert<Booking>(context, NotificationTypeEnum.INSERTBOOKING, new Booking()
                 {
                     PhoneNumber = data.PhoneNumber,
@@ -570,12 +562,12 @@ namespace BPHN.BusinessLayer.ImpServices
             var insertResult = await _bookingRepository.Insert(booking);
             if (insertResult)
             {
-                var pitch = await _pitchRepository.GetById(booking.PitchId.HasValue ? booking.PitchId.Value : Guid.Empty);
-                var frame = await _timeFrameInfoRepository.GetById(booking.TimeFrameInfoId.HasValue ? booking.TimeFrameInfoId.Value : Guid.Empty);
+                var pitch = await _pitchService.GetById(booking.PitchId ?? Guid.Empty);
+                var frame = await _timeFrameInfoService.GetById(booking.TimeFrameInfoId ?? Guid.Empty);
                 var matchDate = booking.BookingDetails.Select(item => item.MatchDate.ToString("dd/MM/yyyy")).FirstOrDefault();
                 var context = new Account()
                 {
-                    RelationIds = await _accountRepository.GetRelationIds(data.AccountId) ?? new List<Guid>() { data.AccountId },
+                    RelationIds = await _accountService.GetRelationIds(data.AccountId),
                     Id = data.AccountId,
                     FullName = data.PhoneNumber
                 };
@@ -630,8 +622,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var lstBook = await _bookingRepository.GetById(id);
-            var oldData = lstBook.FirstOrDefault();
+            var oldData = await _bookingRepository.GetById(id);
             if (oldData is null)
             {
                 return new ServiceResultModel
@@ -641,7 +632,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     Message = _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig)
                 };
             }
-            var lstBookingDetail = await _bookingDetailRepository.GetByBookingId(oldData.Id);
+            var lstBookingDetail = await _bookingDetailService.GetByBookingId(oldData.Id);
 
             if (status != BookingStatusEnum.CANCEL)
             {
@@ -667,8 +658,8 @@ namespace BPHN.BusinessLayer.ImpServices
             var updateResult = await _bookingRepository.Update(data);
             if (updateResult)
             {
-                var pitch = await _pitchRepository.GetById(oldData.PitchId.HasValue ? oldData.PitchId.Value : Guid.Empty);
-                var frame = await _timeFrameInfoRepository.GetById(oldData.TimeFrameInfoId.HasValue ? oldData.TimeFrameInfoId.Value : Guid.Empty);
+                var pitch = await _pitchService.GetById(oldData.PitchId ?? Guid.Empty);
+                var frame = await _timeFrameInfoService.GetById(oldData.TimeFrameInfoId ?? Guid.Empty);
                 var matchDate = data.BookingDetails.Select(item => item.MatchDate.ToString("dd/MM/yyyy")).FirstOrDefault();
 
                 if (status == BookingStatusEnum.CANCEL)
@@ -740,23 +731,9 @@ namespace BPHN.BusinessLayer.ImpServices
         private async Task<List<Booking>> GetAllTimeFrameInfoCanBookInADay(string accountId)
         {
             var lstBooking = new List<Booking>();
-            var lstPitch = await _pitchRepository.GetPaging(1, int.MaxValue, new List<WhereCondition>()
-            {
-                new WhereCondition
-                {
-                    Column = "ManagerId",
-                    Operator = "=",
-                    Value = accountId
-                },
-                new WhereCondition
-                {
-                    Column = "Status",
-                    Operator = "=",
-                    Value = ActiveStatusEnum.ACTIVE.ToString()
-                }
-            });
+            var lstPitch = await _pitchService.GetAll(accountId);
             var now = DateTime.Now;
-            var lstFrameInfo = await _timeFrameInfoRepository.GetByListPitchId(lstPitch.Select(item => item.Id).ToList());
+            var lstFrameInfo = await _timeFrameInfoService.GetByListPitchId(lstPitch.Select(item => item.Id).ToList());
             var dicFrame = new Dictionary<Guid, List<TimeFrameInfo>>();
             foreach (var frame in lstFrameInfo)
             {
@@ -781,7 +758,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (lstPitch is not null)
             {
                 lstPitch = lstPitch.Where(item => item.Status == ActiveStatusEnum.ACTIVE.ToString()).ToList();
-                for (int i = 0; i < lstPitch.Count; i++)
+                for (int i = 0; i < lstPitch.Count(); i++)
                 {
                     var lstTimeFrameInfo = lstPitch[i].TimeFrameInfos;
                     var lstNameDetail = lstPitch[i].NameDetails.Split(";").ToList();
@@ -807,9 +784,9 @@ namespace BPHN.BusinessLayer.ImpServices
 
         private async Task<HashSet<Tuple<Guid?, Guid?, string, DateTime>>> GetDictionaryBookedByDate(Guid accountId, DateTime startDate, DateTime endDate)
         {
-            var lstBookedDetail = await _bookingDetailRepository.GetInRangeDate(accountId, startDate, endDate);
+            var lstBookedDetail = await _bookingDetailService.GetInRangeDate(accountId, startDate, endDate);
             var lstBookingId = string.Join(";", (new HashSet<Guid>(lstBookedDetail.Select(item => item.BookingId))).ToArray());
-            var lstBooked = await _bookingRepository.GetById(lstBookingId);
+            var lstBooked = await _bookingRepository.GetByIds(lstBookingId);
 
             var hashSetResult = new HashSet<Tuple<Guid?, Guid?, string, DateTime>>();
             for (int i = 0; i < lstBooked.Count; i++)

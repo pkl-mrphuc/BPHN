@@ -19,8 +19,7 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IEmailService _mailService;
         private readonly IKeyGenerator _keyGenerator;
         private readonly IHistoryLogService _historyLogService;
-        private readonly IConfigRepository _configRepository;
-        private readonly IPermissionService _permissionService;
+        private readonly IConfigService _configService;
         private readonly INotificationService _notificationService;
         private readonly IFileService _fileService;
         public AccountService(
@@ -30,8 +29,7 @@ namespace BPHN.BusinessLayer.ImpServices
             IEmailService mailService,
             IKeyGenerator keyGenerator,
             IHistoryLogService historyLogService,
-            IConfigRepository configRepository,
-            IPermissionService permissionService,
+            IConfigService configService,
             INotificationService notificationService,
             IFileService fileService) : base(serviceProvider, appSettings)
         {
@@ -39,8 +37,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _mailService = mailService;
             _keyGenerator = keyGenerator;
             _historyLogService = historyLogService;
-            _configRepository = configRepository;
-            _permissionService = permissionService;
+            _configService = configService;
             _notificationService = notificationService;
             _fileService = fileService;
         }
@@ -84,11 +81,12 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (resultResetPassword)
             {
-                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
-                {
-                    ActionType = ActionEnum.SUBMITRESETPASSWORD,
-                    Entity = EntityEnum.ACCOUNT.ToString()
-                }, context);
+                _historyLogService.Write(Guid.NewGuid(), 
+                    new HistoryLog
+                    {
+                        ActionType = ActionEnum.SUBMITRESETPASSWORD,
+                        Entity = EntityEnum.ACCOUNT.ToString()
+                    }, context);
             }
 
             return new ServiceResultModel
@@ -100,52 +98,11 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> GetById(Guid id)
         {
-            Account? account = null;
-            var cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(id, EntityEnum.ACCOUNT));
-            if (!string.IsNullOrWhiteSpace(cacheResult))
-            {
-                account = JsonConvert.DeserializeObject<Account>(cacheResult);
-            }
-            if (account is null)
-            {
-                account = await _accountRepository.GetAccountById(id);
-                if (account is not null)
-                {
-                    await _cacheService.SetAsync(_cacheService.GetKeyCache(id, EntityEnum.ACCOUNT), JsonConvert.SerializeObject(account));
-                }
-            }
-
+            var account = await _accountRepository.GetAccountById(id);
             if (account is not null)
             {
-                List<Guid>? lstRelationId = null;
-                cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(id, EntityEnum.ACCOUNT, "RelationId"));
-                if (!string.IsNullOrWhiteSpace(cacheResult))
-                {
-                    lstRelationId = JsonConvert.DeserializeObject<List<Guid>>(cacheResult);
-                }
-
-                if (lstRelationId is null)
-                {
-                    lstRelationId = await _accountRepository.GetRelationIds(id);
-                    if (lstRelationId is not null)
-                    {
-                        await _cacheService.SetAsync(_cacheService.GetKeyCache(id, EntityEnum.ACCOUNT, "RelationId"), JsonConvert.SerializeObject(lstRelationId));
-                    }
-                }
-                account.RelationIds = lstRelationId is null || lstRelationId.Count == 0 ? new List<Guid>() { id } : lstRelationId;
-
-                List<Config>? lstConfig = null;
-                cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(id, EntityEnum.CONFIG));
-                if (!string.IsNullOrWhiteSpace(cacheResult))
-                {
-                    lstConfig = JsonConvert.DeserializeObject<List<Config>>(cacheResult);
-                }
-
-                if (lstConfig is null)
-                {
-                    lstConfig = await _configRepository.GetConfigs(id, "Language");
-                }
-                account.LanguageConfig = lstConfig?.Where(item => item.Key == "Language").FirstOrDefault()?.Value ?? string.Empty;
+                account.RelationIds = await _accountRepository.GetRelationIds(id);
+                account.LanguageConfig = await _configService.Language(id);
             }
             return new ServiceResultModel
             {
@@ -168,8 +125,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTUSER);
-            if (!hasPermission ||
-                (context.Role != RoleEnum.ADMIN && !await AllowMultiUser(context.Id)))
+            if (!hasPermission || (context.Role != RoleEnum.ADMIN && !await _configService.AllowMultiUser(context.Id)))
             {
                 return new ServiceResultModel
                 {
@@ -251,24 +207,10 @@ namespace BPHN.BusinessLayer.ImpServices
                 var success = Guid.TryParse(id, out accountId);
                 if (success)
                 {
-                    var cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.ACCOUNT, accountId.ToString()));
-                    if (!string.IsNullOrWhiteSpace(cacheResult))
-                    {
-                        data = JsonConvert.DeserializeObject<Account>(cacheResult);
-                    }
-
-                    if (data is null)
-                    {
-                        data = await _accountRepository.GetAccountById(accountId);
-                        if (data is not null)
-                        {
-                            await _cacheService.SetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.ACCOUNT, accountId.ToString()), JsonConvert.SerializeObject(data));
-                        }
-                    }
-
+                    data = await _accountRepository.GetAccountById(accountId);
                     if (data is not null)
                     {
-                        data.AvatarUrl = (string)(_fileService.GetLinkFile(accountId.ToString()).Data ?? string.Empty);
+                        data.AvatarUrl = _fileService.GetFileUrl(accountId.ToString());
                     }
                 }
                 else
@@ -314,7 +256,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTUSER);
             if (!hasPermission ||
-                (context.Role != RoleEnum.ADMIN && !await AllowMultiUser(context.Id)))
+                (context.Role != RoleEnum.ADMIN && !await _configService.AllowMultiUser(context.Id)))
             {
                 return new ServiceResultModel
                 {
@@ -436,7 +378,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            if (!realAccount.Status.Equals(ActiveStatusEnum.ACTIVE.ToString()))
+            if (!ActiveStatusEnum.ACTIVE.ToString().Equals(realAccount.Status))
             {
                 return new ServiceResultModel
                 {
@@ -473,18 +415,19 @@ namespace BPHN.BusinessLayer.ImpServices
 
             _accountRepository.SaveToken(realAccount.Id, token, refreshToken);
 
-            var fakeContext = new Account
-            {
-                FullName = realAccount.FullName,
-                IPAddress = _contextService.GetIPAddress()
-            };
-            _historyLogService.Write(Guid.NewGuid(), new HistoryLog
-            {
-                Actor = realAccount.UserName,
-                ActorId = realAccount.Id,
-                ActionType = ActionEnum.LOGIN,
-                Entity = EntityEnum.ACCOUNT.ToString()
-            }, fakeContext);
+            _historyLogService.Write(Guid.NewGuid(), 
+                new HistoryLog
+                {
+                    Actor = realAccount.UserName,
+                    ActorId = realAccount.Id,
+                    ActionType = ActionEnum.LOGIN,
+                    Entity = EntityEnum.ACCOUNT.ToString()
+                }, 
+                new Account
+                {
+                    FullName = realAccount.FullName,
+                    IPAddress = _contextService.GetIPAddress()
+                });
 
             return new ServiceResultModel
             {
@@ -502,7 +445,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     Token = token,
                     RefreshToken = refreshToken,
                     RelationIds = await _accountRepository.GetRelationIds(realAccount.Id),
-                    AvatarUrl = (string)(_fileService.GetLinkFile(realAccount.Id.ToString()).Data ?? string.Empty)
+                    AvatarUrl = _fileService.GetFileUrl(realAccount.Id.ToString())
                 }
             };
         }
@@ -523,15 +466,6 @@ namespace BPHN.BusinessLayer.ImpServices
                     ErrorCode = ErrorCodes.OUT_TIME,
                     Message = _resourceService.Get(SharedResourceKey.OUTTIME)
                 };
-            }
-
-            await _cacheService.RemoveAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.ACCOUNT));
-            await _cacheService.RemoveAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.ACCOUNT, "RelationId"));
-            await _cacheService.RemoveAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.CONFIG));
-            await _cacheService.RemoveAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.PERMISSION));
-            for (int i = 0; i < context.RelationIds.Count; i++)
-            {
-                await _cacheService.RemoveAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.ACCOUNT, context.RelationIds[i].ToString()));
             }
 
             return new ServiceResultModel
@@ -597,7 +531,7 @@ namespace BPHN.BusinessLayer.ImpServices
 
             var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.ADDUSER);
             if (!hasPermission ||
-                (context.Role != RoleEnum.ADMIN && !await AllowMultiUser(context.Id)))
+                (context.Role != RoleEnum.ADMIN && !await _configService.AllowMultiUser(context.Id)))
             {
                 return new ServiceResultModel
                 {
@@ -635,6 +569,7 @@ namespace BPHN.BusinessLayer.ImpServices
             account.ModifiedBy = context.FullName;
             account.ModifiedDate = DateTime.Now;
             account.Role = RoleEnum.TENANT;
+            account.Permissions = _permissionService.GetDefaultPermissions(account.Id, context);
             if (context.Role == RoleEnum.TENANT)
             {
                 account.ParentId = context.Id;
@@ -647,20 +582,15 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var resultRegister = await _accountRepository.RegisterForTenant(account);
-            var permissions = _permissionService.GetDefaultPermissions(account.Id, context);
-            await _permissionRepository.Save(permissions);
+            var _ = await _permissionService.SavePermissions(account.Id, account.Permissions);
             if (resultRegister)
             {
-                _globalVariableService.Reset();
                 await _notificationService.Insert<Account>(context, NotificationTypeEnum.INSERTACCOUNT, new Account
                 {
                     UserName = account.UserName
                 });
-                for (int i = 0; i < context.RelationIds.Count; i++)
-                {
-                    await _cacheService.RemoveAsync(_cacheService.GetKeyCache(context.RelationIds[i], EntityEnum.ACCOUNT, "RelationId"));
-                }
-                if (account.Status.Equals(ActiveStatusEnum.ACTIVE.ToString()))
+
+                if (ActiveStatusEnum.ACTIVE.ToString().Equals(account.Status))
                 {
                     _mailService.SendMail("bphn.email.set-password",
                         new SetPasswordParameter
@@ -674,12 +604,13 @@ namespace BPHN.BusinessLayer.ImpServices
                         });
                 }
 
-                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
-                {
-                    ActionType = ActionEnum.REGISTERACCOUNT,
-                    Description = account.UserName,
-                    Entity = EntityEnum.ACCOUNT.ToString()
-                }, context);
+                _historyLogService.Write(Guid.NewGuid(), 
+                    new HistoryLog
+                    {
+                        ActionType = ActionEnum.REGISTERACCOUNT,
+                        Description = account.UserName,
+                        Entity = EntityEnum.ACCOUNT.ToString()
+                    }, context);
             }
 
             return new ServiceResultModel
@@ -712,7 +643,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            if (!realAccount.Status.Equals(ActiveStatusEnum.ACTIVE.ToString()))
+            if (!ActiveStatusEnum.ACTIVE.ToString().Equals(realAccount.Status))
             {
                 return new ServiceResultModel
                 {
@@ -735,18 +666,19 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (resultSendMail)
             {
-                var fakeContext = new Account()
-                {
-                    FullName = realAccount.FullName,
-                    IPAddress = _contextService.GetIPAddress()
-                };
-                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
-                {
-                    Actor = realAccount.UserName,
-                    ActorId = realAccount.Id,
-                    ActionType = ActionEnum.SENDRESETPASSWORD,
-                    Entity = EntityEnum.ACCOUNT.ToString()
-                }, fakeContext);
+                _historyLogService.Write(Guid.NewGuid(), 
+                    new HistoryLog
+                    {
+                        Actor = realAccount.UserName,
+                        ActorId = realAccount.Id,
+                        ActionType = ActionEnum.SENDRESETPASSWORD,
+                        Entity = EntityEnum.ACCOUNT.ToString()
+                    }, 
+                    new Account()
+                    {
+                        FullName = realAccount.FullName,
+                        IPAddress = _contextService.GetIPAddress()
+                    });
             }
 
             return new ServiceResultModel
@@ -834,19 +766,19 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (resultResetPassword)
             {
-                var fakeContext = new Account
-                {
-                    FullName = realAccount.FullName,
-                    IPAddress = _contextService.GetIPAddress()
-                };
-
-                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
-                {
-                    Actor = realAccount.UserName,
-                    ActorId = realAccount.Id,
-                    ActionType = ActionEnum.SUBMITRESETPASSWORD,
-                    Entity = EntityEnum.ACCOUNT.ToString()
-                }, fakeContext);
+                _historyLogService.Write(Guid.NewGuid(), 
+                    new HistoryLog
+                    {
+                        Actor = realAccount.UserName,
+                        ActorId = realAccount.Id,
+                        ActionType = ActionEnum.SUBMITRESETPASSWORD,
+                        Entity = EntityEnum.ACCOUNT.ToString()
+                    }, 
+                    new Account
+                    {
+                        FullName = realAccount.FullName,
+                        IPAddress = _contextService.GetIPAddress()
+                    });
             }
 
             return new ServiceResultModel
@@ -865,11 +797,9 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        private async Task<bool> AllowMultiUser(Guid accountId)
+        public async Task<IEnumerable<Guid>> GetRelationIds(Guid id)
         {
-            var configs = await _configRepository.GetConfigs(accountId, "MultiUser");
-            return configs is not null && configs.Any(item => "true".Equals(item.Value)) ? true : false;
+            return await _accountRepository.GetRelationIds(id);
         }
-
     }
 }

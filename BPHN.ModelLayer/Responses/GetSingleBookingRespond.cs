@@ -10,8 +10,8 @@ namespace BPHN.ModelLayer.Responses
     public sealed class GetSingleBookingRespond
     {
         public Guid Id { get; set; }
-        public Guid PitchId { get; set; }
-        public Guid TimeFrameInfoId { get; set; }
+        public Guid? PitchId { get; set; }
+        public Guid? TimeFrameInfoId { get; set; }
         public bool IsRecurring { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

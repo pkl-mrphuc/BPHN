@@ -50,8 +50,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var oldData = await _bookingDetailRepository.GetById(id);
-            
-            if(oldData is null)
+            if (oldData is null)
             {
                 return new ServiceResultModel
                 {
@@ -62,27 +61,94 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var result = await _bookingDetailRepository.Cancel(id);
-            if(result)
+            if (result)
             {
-                var fakeNewData = oldData;
-                fakeNewData.Status = BookingStatusEnum.CANCEL.ToString();
-
                 await _notificationService.Insert<BookingDetail>(context, NotificationTypeEnum.CANCELBOOKINGDETAIL, new BookingDetail
                 {
                     MatchCode = oldData.MatchCode
                 });
 
-                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
-                {
-                    ActionType = ActionEnum.CANCEL,
-                    Entity = EntityEnum.BOOKINGDETAIL.ToString(),
-                    Data = new HistoryLogDescription
+                var fakeNewData = oldData;
+                fakeNewData.Status = BookingStatusEnum.CANCEL.ToString();
+                _historyLogService.Write(Guid.NewGuid(),
+                    new HistoryLog
                     {
-                        ModelId = oldData.Id,
-                        OldData = JsonConvert.SerializeObject(oldData),
-                        NewData = JsonConvert.SerializeObject(fakeNewData)
-                    }
-                }, context);
+                        ActionType = ActionEnum.CANCEL,
+                        Entity = EntityEnum.BOOKINGDETAIL.ToString(),
+                        Data = new HistoryLogDescription
+                        {
+                            ModelId = oldData.Id,
+                            OldData = JsonConvert.SerializeObject(oldData),
+                            NewData = JsonConvert.SerializeObject(fakeNewData)
+                        }
+                    }, context);
+            }
+            return new ServiceResultModel
+            {
+                Success = result
+            };
+        }
+
+        public async Task<ServiceResultModel> UpdateMatch(CalendarEvent eventInfo)
+        {
+            var context = _contextService.GetContext();
+            if (context is null)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
+                };
+            }
+
+            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
+            if (!hasPermission)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
+                };
+            }
+
+            var oldData = await _bookingDetailRepository.GetById(eventInfo.Id.ToString());
+            if (oldData is null)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.NOT_EXISTS,
+                    Message = _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig)
+                };
+            }
+
+            var result = await _bookingDetailRepository.UpdateMatch(eventInfo);
+            if (result)
+            {
+                await _notificationService.Insert<BookingDetail>(context, NotificationTypeEnum.UPDATEMATCH, new BookingDetail()
+                {
+                    MatchCode = oldData.MatchCode
+                });
+
+                var fakeNewData = oldData;
+                fakeNewData.TeamA = eventInfo.TeamA;
+                fakeNewData.TeamB = eventInfo.TeamB;
+                fakeNewData.Note = eventInfo.Note;
+                fakeNewData.Deposite = eventInfo.Deposite;
+                _historyLogService.Write(Guid.NewGuid(),
+                    new HistoryLog
+                    {
+                        ActionType = ActionEnum.UPDATE,
+                        Entity = EntityEnum.BOOKINGDETAIL.ToString(),
+                        Data = new HistoryLogDescription
+                        {
+                            ModelId = oldData.Id,
+                            OldData = JsonConvert.SerializeObject(oldData),
+                            NewData = JsonConvert.SerializeObject(fakeNewData)
+                        }
+                    }, context);
             }
             return new ServiceResultModel
             {
@@ -144,6 +210,16 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
+        public async Task<List<BookingDetail>> GetByBookingId(Guid bookingId)
+        {
+            return await _bookingDetailRepository.GetByBookingId(bookingId);
+        }
+
+        public async Task<List<BookingDetail>> GetInRangeDate(Guid accountId, DateTime startDate, DateTime endDate)
+        {
+            return await _bookingDetailRepository.GetInRangeDate(accountId, startDate, endDate);
+        }
+
         public List<BookingDetail> GetMatchDates(DateTime startDate, DateTime endDate)
         {
             var lstBookingDetail = new List<BookingDetail>();
@@ -164,13 +240,13 @@ namespace BPHN.BusinessLayer.ImpServices
             var lstBookingDetail = new List<BookingDetail>();
             while (startDate <= endDate)
             {
-                if((int)startDate.DayOfWeek == weekendays)
+                if ((int)startDate.DayOfWeek == weekendays)
                 {
                     lstBookingDetail.Add(new BookingDetail
                     {
                         MatchDate = startDate
                     });
-                    startDate= startDate.AddDays(7);
+                    startDate = startDate.AddDays(7);
                 }
                 else
                 {
@@ -179,73 +255,6 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             return lstBookingDetail;
-        }
-
-        public async Task<ServiceResultModel> UpdateMatch(CalendarEvent eventInfo)
-        {
-            var context = _contextService.GetContext();
-            if (context is null)
-            {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
-            }
-
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
-            if(!hasPermission)
-            {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
-            }
-
-            var oldData = await _bookingDetailRepository.GetById(eventInfo.Id.ToString());
-            if(oldData is null)
-            {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.NOT_EXISTS,
-                    Message = _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig)
-                };
-            }
-
-            var result = await _bookingDetailRepository.UpdateMatch(eventInfo);
-            if(result)
-            {
-
-                var fakeNewData = oldData;
-                fakeNewData.TeamA = eventInfo.TeamA;
-                fakeNewData.TeamB = eventInfo.TeamB;
-                fakeNewData.Note = eventInfo.Note;
-                fakeNewData.Deposite = eventInfo.Deposite;
-
-                await _notificationService.Insert<BookingDetail>(context, NotificationTypeEnum.UPDATEMATCH, new BookingDetail() {
-                    MatchCode = oldData.MatchCode
-                });
-
-                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
-                {
-                    ActionType = ActionEnum.UPDATE,
-                    Entity = EntityEnum.BOOKINGDETAIL.ToString(),
-                    Data = new HistoryLogDescription
-                    {
-                        ModelId = oldData.Id,
-                        OldData = JsonConvert.SerializeObject(oldData),
-                        NewData = JsonConvert.SerializeObject(fakeNewData)
-                    }
-                }, context);
-            }
-            return new ServiceResultModel
-            {
-                Success = result
-            };
         }
     }
 }

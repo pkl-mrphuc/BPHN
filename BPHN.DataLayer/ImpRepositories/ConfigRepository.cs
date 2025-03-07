@@ -1,5 +1,6 @@
 ﻿using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
+using BPHN.ModelLayer.Others;
 using Dapper;
 using Microsoft.Extensions.Options;
 
@@ -10,11 +11,6 @@ namespace BPHN.DataLayer.ImpRepositories
         public ConfigRepository(IOptions<AppSettings> appSettings) : base(appSettings)
         {
 
-        }
-
-        public async Task<List<Config>> GetConfigs(Guid accountId, string? key = null)
-        {
-            return !string.IsNullOrWhiteSpace(key) ? await GetConfigsByKey(accountId, key) : await GetConfigs(accountId);
         }
 
         public async Task<bool> Save(List<Config> configs)
@@ -53,7 +49,7 @@ namespace BPHN.DataLayer.ImpRepositories
             return true;
         }
 
-        private async Task<List<Config>> GetConfigs(Guid accountId)
+        public async Task<List<Config>> GetConfigs(Guid accountId)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
@@ -66,17 +62,56 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        private async Task<List<Config>> GetConfigsByKey(Guid accountId, string key)
+        public async Task<Dictionary<string, string>> GetByKey(Guid accountId, params string[] keys)
+        {
+            var where = BuildWhere(new List<WhereCondition>
+            {
+                new WhereCondition
+                {
+                    Column = "c.AccountId",
+                    Operator = "=",
+                    Value = accountId.ToString()
+                },
+                new WhereCondition
+                {
+                    Column = "c.Key",
+                    Operator = "in",
+                    Values = keys
+                }
+            });
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var configs = (await connection.QueryAsync<Config>($"select c.Key, c.Value from configs c where {where.filter}", where.param)).ToDictionary(x => x.Key, x => x.Value);
+                return keys.ToDictionary(x => x, x => configs.TryGetValue(x, out var value) ? value : string.Empty);
+            }
+        }
+
+        public async Task<Config> GetByKey(Guid accountId, string key)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var configs = (await connection.QueryAsync<Config>(Query.CONFIG__GET_BY_KEY, new Dictionary<string, object>
+                var config = (await connection.QueryFirstOrDefaultAsync<Config>(Query.CONFIG__GET_ALL, new Dictionary<string, object>
                 {
                     { "@accountId", accountId },
                     { "@key", key }
-                })).ToList();
-                return configs;
+                }));
+                return config;
+            }
+        }
+
+        public async Task<string> GetValueByKey(Guid accountId, string key)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var config = (await connection.QueryFirstOrDefaultAsync<string>(Query.CONFIG__GET_ALL, new Dictionary<string, object>
+                {
+                    { "@accountId", accountId },
+                    { "@key", key }
+                }));
+                return config;
             }
         }
     }

@@ -11,7 +11,7 @@ namespace BPHN.DataLayer.ImpRepositories
         {
         }
 
-        public async Task<List<Permission>> GetPermissions(Guid accountId)
+        public async Task<IEnumerable<Permission>> GetPermissions(Guid accountId)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
@@ -19,11 +19,11 @@ namespace BPHN.DataLayer.ImpRepositories
                 {
                     { "@accountId", accountId }
                 });
-                return lstPermission.ToList();
+                return lstPermission ?? Enumerable.Empty<Permission>();
             }
         }
 
-        public async Task<bool> Save(List<Permission> permissions)
+        public async Task<bool> Save(IEnumerable<Permission> permissions)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {

@@ -13,9 +13,22 @@ namespace BPHN.DataLayer.ImpRepositories
                 
         }
 
+        public async Task<List<Pitch>> GetAll(string accountId)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var lstPitch = await connection.QueryAsync<Pitch>(Query.PITCH__GET_ALL, new Dictionary<string, object>
+                {
+                    { "@accountId", accountId },
+                    { "@status", ActiveStatusEnum.ACTIVE.ToString() },
+                });
+                return lstPitch?.ToList() ?? new List<Pitch>();
+            }
+        }
+
         public async Task<Pitch?> GetById(Guid id)
         {
-            if(id.Equals(Guid.Empty)) return null;
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();

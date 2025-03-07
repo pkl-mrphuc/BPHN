@@ -12,7 +12,7 @@
         public Guid? ParentId { get; set; }
         public string Token { get; set; }
         public string RefreshToken { get; set; }
-        public List<Guid> RelationIds { get; set; }
+        public IEnumerable<Guid> RelationIds { get; set; }
         public string AvatarUrl { get; set; }
     }
 }

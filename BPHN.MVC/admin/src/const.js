@@ -25,7 +25,9 @@ export const ConfigKeyEnum = {
     DARKMODE: 'DarkMode',
     LANGUAGE: 'Language',
     FORMATDATE: 'FormatDate',
-    MULTIUSER: 'MultiUser'
+    MULTIUSER: 'MultiUser',
+    SYSTEMEMAIL: 'SystemEmail',
+    SECRETEMAIL: 'SecretEmail'
 };
 
 export const FunctionTypeEnum = {

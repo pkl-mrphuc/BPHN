@@ -19,5 +19,6 @@ namespace BPHN.BusinessLayer.IServices
         Task<ServiceResultModel> GetInstance(string id);
         Task<ServiceResultModel> Refresh();
         ServiceResultModel RefreshToken(string refreshToken);
+        Task<IEnumerable<Guid>> GetRelationIds(Guid id);
     }
 }

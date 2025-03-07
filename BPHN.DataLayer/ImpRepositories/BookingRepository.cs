@@ -41,13 +41,13 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public async Task<List<Booking>> GetById(string id)
+        public async Task<List<Booking>> GetByIds(string ids)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
                 var dic = new Dictionary<string, object>();
-                var lstId = id.Split(";").ToList();
+                var lstId = ids.Split(";").ToList();
                 var lstParam = new List<string>();
                 for (int i = 0; i < lstId.Count; i++)
                 {
@@ -207,7 +207,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 if (affect > 0)
                 {
                     dic = new Dictionary<string, object?>();
-                    var rows = new List<string>(); 
+                    var rows = new List<string>();
                     for (int i = 0; i < data.BookingDetails.Count; i++)
                     {
                         var item = data.BookingDetails[i];
@@ -391,6 +391,18 @@ namespace BPHN.DataLayer.ImpRepositories
                                             return item;
                                         }).ToList();
                 return lstBooking;
+            }
+        }
+
+        public async Task<Booking> GetById(string id)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                return await connection.QueryFirstOrDefaultAsync<Booking>(Query.BOOKING__GET_BY_ID, new Dictionary<string, object>
+                {
+                    { "@id", id }
+                });
             }
         }
     }

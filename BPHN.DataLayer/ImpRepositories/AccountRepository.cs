@@ -220,24 +220,16 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public async Task<List<Guid>> GetRelationIds(Guid id)
+        public async Task<IEnumerable<Guid>> GetRelationIds(Guid id)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                string query = @"   select distinct * from (
-                                                                select Id from accounts where ParentId = @id
-                                                                union                                    
-                                                                select Id from accounts where Id = @id
-                                                                union                                    
-                                                                select ParentId as Id from accounts where Id = @id
-                                                                union                                    
-                                                                (select b.Id as Id from accounts a inner join accounts b on a.ParentId = b.ParentId where a.Id = @id)
-                                                            ) ids where Id is not null";
-                var dic = new Dictionary<string, object>();
-                dic.Add("@id", id);
-                var result = await connection.QueryAsync<Guid>(query, dic);
-                return result.ToList();
+                var result = await connection.QueryAsync<Guid>(Query.ACCOUNT__GET_RELATION_IDS, new Dictionary<string, object>
+                {
+                    { "@id", id }
+                });
+                return result ?? Enumerable.Empty<Guid>();
             }
         }
 
