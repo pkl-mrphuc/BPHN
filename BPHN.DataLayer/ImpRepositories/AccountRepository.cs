@@ -23,10 +23,10 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var query = "select count(*) from accounts where UserName = @userName";
-                var dic = new Dictionary<string, object>();
-                dic.Add("@userName", userName);
-                var affect = await connection.QuerySingleAsync<int>(query, dic);
+                var affect = await connection.QuerySingleAsync<int>(Query.ACCOUNT__CHECK_EXIST_USERNAME, new Dictionary<string, object>
+                {
+                    { "@userName", userName }
+                });
                 return affect > 0 ? true : false;
             }
         }
@@ -36,10 +36,10 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var query = "select * from accounts where UserName = @userName";
-                var dic = new Dictionary<string, object>();
-                dic.Add("@userName", userName);
-                var account = await connection.QueryFirstOrDefaultAsync<Account>(query, dic);
+                var account = await connection.QueryFirstOrDefaultAsync<Account>(Query.ACCOUNT__GET_BY_USERNAME, new Dictionary<string, object>
+                {
+                    { "@userName", userName }
+                });
                 return account;
             }
         }
@@ -49,19 +49,10 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var query = @"select    UserName, 
-                                        FullName, 
-                                        Gender, 
-                                        PhoneNumber, 
-                                        Email, 
-                                        Id, 
-                                        Role, 
-                                        Status, 
-                                        ParentId 
-                                        from accounts where Id = @id";
-                Dictionary<string, object> dic = new Dictionary<string, object>();
-                dic.Add("@id", id);
-                var account = await connection.QueryFirstOrDefaultAsync<Account>(query, dic);
+                var account = await connection.QueryFirstOrDefaultAsync<Account>(Query.ACCOUNT__GET_BY_ID, new Dictionary<string, object>
+                {
+                    { "@id", id }
+                });
                 return account;
             }
         }
@@ -134,10 +125,10 @@ namespace BPHN.DataLayer.ImpRepositories
                                                                 select * from accounts where {whereQuery} and PhoneNumber like @where
                                                                 union 
                                                                 select * from accounts where Role = {whereQuery} and FulLName like @where) as ac";
-                
+
                 dic.Add("@where", $"%{txtSearch}%");
             }
-            else 
+            else
             {
                 query = $"select UserName, FullName, Gender, PhoneNumber, Email, Id, Role, Status, ModifiedDate from accounts where {whereQuery} order by ModifiedDate desc limit @offSet, @pageSize";
                 countQuery = $"select count(*) from accounts where {whereQuery}";
@@ -202,7 +193,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 var totalRecordCurrentPage = 0;
                 if (totalRecord > 0)
                 {
-                    if(pageIndex == totalPage)
+                    if (pageIndex == totalPage)
                     {
                         totalRecordCurrentPage = totalRecord - ((pageIndex - 1) * pageSize);
                     }
@@ -220,11 +211,11 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                string query = @"update accounts set Password = @password where Id = @id";
-                var dic = new Dictionary<string, object>();
-                dic.Add("@id", id);
-                dic.Add("@password", password);
-                var affect = await connection.ExecuteAsync(query, dic);
+                var affect = await connection.ExecuteAsync(Query.ACCOUNT__UPDATE_PASSWORD, new Dictionary<string, object>
+                {
+                    { "@id", id },
+                    { "@password", password }
+                });
                 return affect > 0 ? true : false;
             }
         }
@@ -255,8 +246,7 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                string query = @"select Id, UserName, Email from accounts";
-                var lstAccount = await connection.QueryAsync<Account>(query);
+                var lstAccount = await connection.QueryAsync<Account>(Query.ACCOUNT__GET_ALL);
                 return lstAccount.ToList();
             }
         }
@@ -267,10 +257,10 @@ namespace BPHN.DataLayer.ImpRepositories
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret1);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] 
-                { 
-                    new Claim("id", id), 
-                    new Claim("expiredTime", DateTime.UtcNow.AddDays(7).Ticks.ToString()) 
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim("id", id),
+                    new Claim("expiredTime", DateTime.UtcNow.AddDays(7).Ticks.ToString())
                 }),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
@@ -283,12 +273,12 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                string query = @"update accounts set Token = @token, RefreshToken = @refreshToken where Id = @id";
-                var dic = new Dictionary<string, object>();
-                dic.Add("@id", id);
-                dic.Add("@token", token);
-                dic.Add("@refreshToken", refreshToken);
-                connection.Execute(query, dic);
+                connection.Execute(Query.ACCOUNT__UPDATE_TOKEN, new Dictionary<string, object>()
+                {
+                    { "@id", id},
+                    { "@token", token},
+                    { "@refreshToken", refreshToken }
+                });
             }
         }
 

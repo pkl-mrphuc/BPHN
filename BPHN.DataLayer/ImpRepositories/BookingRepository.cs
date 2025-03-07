@@ -22,7 +22,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 dic.Add("@nameDetail", data.NameDetail);
                 dic.Add("@timeFrameInfoId", data.TimeFrameInfoId);
                 dic.Add("@status0", BookingStatusEnum.SUCCESS.ToString());
-                
+
                 var lstParam = new List<string>();
                 for (int i = 0; i < data.BookingDetails.Count; i++)
                 {
@@ -34,7 +34,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 var query = $@"select bd.* from booking_details bd 
                                 inner join bookings b on b.Id = bd.BookingId 
                                 where bd.Status in (@status0) and b.PitchId = @pitchId and b.NameDetail = @nameDetail and b.TimeFrameInfoId = @timeFrameInfoId and bd.MatchDate in ({where})";
-                
+
 
                 var lstBooking = await connection.QueryFirstOrDefaultAsync<BookingDetail>(query, dic);
                 return lstBooking != null ? false : true;
@@ -48,8 +48,8 @@ namespace BPHN.DataLayer.ImpRepositories
                 connection.Open();
                 var dic = new Dictionary<string, object>();
                 var lstId = id.Split(";").ToList();
-                var lstParam = new List<string>();  
-                for(int i = 0; i < lstId.Count; i++)
+                var lstParam = new List<string>();
+                for (int i = 0; i < lstId.Count; i++)
                 {
                     var param = $"@id{i}";
                     dic.Add(param, lstId[i]);
@@ -126,7 +126,7 @@ namespace BPHN.DataLayer.ImpRepositories
                                                                             union 
                                                                             (select b.* from bookings b inner join pitchs p on b.PitchId = p.Id where b.AccountId in @accountId and p.Name like @txtSearch)
                                                                         ) as bs";
-                
+
                 dic.Add("@accountId", relationIds);
                 dic.Add("@txtSearch", $"%{txtSearch}%");
                 var totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
@@ -140,9 +140,9 @@ namespace BPHN.DataLayer.ImpRepositories
                 dic.Add("@pageSize", pageSize);
 
                 var lstBooking = (await connection.QueryAsync<Booking>(query, dic)).ToList();
-                if(hasBookingDetail)
+                if (hasBookingDetail)
                 {
-                    
+
                     var lstBookingId = new List<string>();
                     dic = new Dictionary<string, object>();
                     for (int i = 0; i < lstBooking.Count; i++)
@@ -206,29 +206,31 @@ namespace BPHN.DataLayer.ImpRepositories
                 int affect = await connection.ExecuteAsync(query, dic, transaction);
                 if (affect > 0)
                 {
+                    dic = new Dictionary<string, object?>();
+                    var rows = new List<string>(); 
                     for (int i = 0; i < data.BookingDetails.Count; i++)
                     {
                         var item = data.BookingDetails[i];
-                        query = @"insert into booking_details(Id, MatchDate, BookingId, Status, Deposite, TeamA, Note, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
-                                value (@id, @matchDate, @bookingId, @status, @deposite, @teamA, @note, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
-                        dic = new Dictionary<string, object?>();
-                        dic.Add("@id", item.Id);
-                        dic.Add("@matchDate", item.MatchDate);
-                        dic.Add("@bookingId", item.BookingId);
-                        dic.Add("@status", item.Status);
-                        dic.Add("@deposite", item.Deposite);
-                        dic.Add("@createdDate", item.CreatedDate);
-                        dic.Add("@createdBy", item.CreatedBy);
-                        dic.Add("@modifiedBy", item.ModifiedBy);
-                        dic.Add("@modifiedDate", item.ModifiedDate);
-                        dic.Add("@teamA", item.TeamA);
-                        dic.Add("@note", item.Note);
-                        affect = await connection.ExecuteAsync(query, dic, transaction);
-                        if(affect <= 0)
-                        {
-                            transaction.Rollback();
-                            return false;
-                        }
+                        dic.Add($"@id{i}", item.Id);
+                        dic.Add($"@matchDate{i}", item.MatchDate);
+                        dic.Add($"@bookingId{i}", item.BookingId);
+                        dic.Add($"@status{i}", item.Status);
+                        dic.Add($"@deposite{i}", item.Deposite);
+                        dic.Add($"@createdDate{i}", item.CreatedDate);
+                        dic.Add($"@createdBy{i}", item.CreatedBy);
+                        dic.Add($"@modifiedBy{i}", item.ModifiedBy);
+                        dic.Add($"@modifiedDate{i}", item.ModifiedDate);
+                        dic.Add($"@teamA{i}", item.TeamA);
+                        dic.Add($"@note{i}", item.Note);
+                        rows.Add($"(@id{i}, @matchDate{i}, @bookingId{i}, @status{i}, @deposite{i}, @teamA{i}, @note{i}, @createdDate{i}, @createdBy{i}, @modifiedDate{i}, @modifiedBy{i})");
+                    }
+
+                    query = $"insert into booking_details(Id, MatchDate, BookingId, Status, Deposite, TeamA, Note, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy) values {string.Join(",", rows)}";
+                    affect = await connection.ExecuteAsync(query, dic, transaction);
+                    if (affect <= 0)
+                    {
+                        transaction.Rollback();
+                        return false;
                     }
 
                     transaction.Commit();
