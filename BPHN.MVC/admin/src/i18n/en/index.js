@@ -16,6 +16,7 @@ const en = {
     Username: "Username",
     Password: "Password",
     LoginForm: "Login form",
+    ServiceForm: "Service form",
     Submit: "Submit",
     UsernameEmptyMesg: "Username is not empty.",
     PasswordEmptyMesg: "Password is not empty.",
