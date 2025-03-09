@@ -23,7 +23,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = appSettings.GetValue<string>("RedisCacheUrl");
+	options.Configuration = appSettings.GetValue<string>("RedisCacheUrl");
 });
 builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
@@ -41,6 +41,7 @@ builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IBookingDetailService, BookingDetailService>();
 builder.Services.AddScoped<ITimeFrameInfoRepository, TimeFrameInfoRepository>();
+builder.Services.AddScoped<ITimeFrameInfoService, TimeFrameInfoService>();
 builder.Services.AddScoped<IBookingDetailRepository, BookingDetailRepository>();
 builder.Services.AddScoped<IBookingDetailService, BookingDetailService>();
 builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
@@ -59,53 +60,53 @@ builder.Services.AddSingleton<IMailBuilder, DeclineBookingMailBuilder>();
 builder.Services.AddSingleton<IMailBuilder, ApprovalBookingMailBuilder>();
 builder.Services.AddSingleton(new MapperConfiguration(mc =>
 {
-    mc.AddProfile(new MappingProfiles());
+	mc.AddProfile(new MappingProfiles());
 }).CreateMapper());
 builder.Services.AddMvc(options => options.ModelValidatorProviders.Clear());
 builder.Services.AddControllers();
 
 Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.File("C://bphn/log-.txt", outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}", rollingInterval: RollingInterval.Day)
-                .CreateLogger();
+				.MinimumLevel.Debug()
+				.WriteTo.File("C://bphn/log-.txt", outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}", rollingInterval: RollingInterval.Day)
+				.CreateLogger();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
 {
-    option.AddSecurityDefinition(name: "Bearer", securityScheme: new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Description = "Enter the Bearer Authorization string as following: `Bearer Generated-JWT-Token`",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
-    option.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
-            },
-            new List<string>()
-        }
-    });
+	option.AddSecurityDefinition(name: "Bearer", securityScheme: new OpenApiSecurityScheme
+	{
+		Name = "Authorization",
+		Description = "Enter the Bearer Authorization string as following: `Bearer Generated-JWT-Token`",
+		In = ParameterLocation.Header,
+		Type = SecuritySchemeType.ApiKey,
+		Scheme = "Bearer"
+	});
+	option.AddSecurityRequirement(new OpenApiSecurityRequirement
+	{
+		{
+			new OpenApiSecurityScheme
+			{
+				Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+			},
+			new List<string>()
+		}
+	});
 });
 builder.Services.AddSignalR();
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+	options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+	options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+	options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
-    .AddCookie()
-    .AddGoogle(googleOptions =>
-    {
-        googleOptions.ClientId = "1069130122771-l2vls4cofg16runiou4hlaq3n3s74b0i.apps.googleusercontent.com";
-        googleOptions.ClientSecret = "hq542hbiI9zifILsWchgT8xS";
-        googleOptions.CallbackPath = "/signin-google"; // This should match the redirect URI set in the Google Console
-    });
+	.AddCookie()
+	.AddGoogle(googleOptions =>
+	{
+		googleOptions.ClientId = "1069130122771-l2vls4cofg16runiou4hlaq3n3s74b0i.apps.googleusercontent.com";
+		googleOptions.ClientSecret = "hq542hbiI9zifILsWchgT8xS";
+		googleOptions.CallbackPath = "/signin-google"; // This should match the redirect URI set in the Google Console
+	});
 
 var app = builder.Build();
 
