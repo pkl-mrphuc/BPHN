@@ -30,8 +30,8 @@ namespace BPHN.WebAPI.Controllers
 			return Ok(await _accountService.Login(_mapper.Map<Account>(request)));
 		}
 
-		//[Permission(FunctionTypeEnum.ADDUSER)]
-		//[ApiAuthorize]
+		[Permission(FunctionTypeEnum.ADDUSER)]
+		[ApiAuthorize]
 		[Route("register")]
 		[HttpPost]
 		public async Task<IActionResult> RegisterForTenant([FromBody] InsertAccountRequest request)

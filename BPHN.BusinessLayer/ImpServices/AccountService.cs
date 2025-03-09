@@ -22,6 +22,7 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IConfigService _configService;
         private readonly INotificationService _notificationService;
         private readonly IFileService _fileService;
+		private readonly IPermissionService _permissionService;
         public AccountService(
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
@@ -31,6 +32,7 @@ namespace BPHN.BusinessLayer.ImpServices
             IHistoryLogService historyLogService,
             IConfigService configService,
             INotificationService notificationService,
+			IPermissionService permissionService,
             IFileService fileService) : base(serviceProvider, appSettings)
         {
             _accountRepository = accountRepository;
@@ -40,6 +42,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _configService = configService;
             _notificationService = notificationService;
             _fileService = fileService;
+			_permissionService = permissionService;
         }
 
 		public async Task<ServiceResultModel> ChangePassword(Account account)
@@ -123,7 +126,7 @@ namespace BPHN.BusinessLayer.ImpServices
 				};
 			}
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTUSER);
+            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTUSER);
             if (!hasPermission || (context.Role != RoleEnum.ADMIN && !await _configService.AllowMultiUser(context.Id)))
             {
                 return new ServiceResultModel
@@ -240,7 +243,7 @@ namespace BPHN.BusinessLayer.ImpServices
 				};
 			}
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTUSER);
+            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTUSER);
             if (!hasPermission || (context.Role != RoleEnum.ADMIN && !await _configService.AllowMultiUser(context.Id)))
             {
                 return new ServiceResultModel
@@ -513,7 +516,7 @@ namespace BPHN.BusinessLayer.ImpServices
 				};
 			}
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.ADDUSER);
+            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.ADDUSER);
             if (!hasPermission || (context.Role != RoleEnum.ADMIN && !await _configService.AllowMultiUser(context.Id)))
             {
                 return new ServiceResultModel
@@ -552,7 +555,7 @@ namespace BPHN.BusinessLayer.ImpServices
             account.ModifiedBy = context.FullName;
             account.ModifiedDate = DateTime.Now;
             account.Role = RoleEnum.TENANT;
-            account.Permissions = _permissionService.GetDefaultPermissions(account.Id, context);
+            //account.Permissions = _permissionService.GetDefaultPermissions(account.Id, context);
             if (context.Role == RoleEnum.TENANT)
             {
                 account.ParentId = context.Id;
@@ -565,7 +568,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var resultRegister = await _accountRepository.RegisterForTenant(account);
-            var _ = await _permissionService.SavePermissions(account.Id, account.Permissions);
+            //var _ = await _permissionService.SavePermissions(account.Id, account.Permissions);
             if (resultRegister)
             {
                 await _notificationService.Insert<Account>(context, NotificationTypeEnum.INSERTACCOUNT, new Account

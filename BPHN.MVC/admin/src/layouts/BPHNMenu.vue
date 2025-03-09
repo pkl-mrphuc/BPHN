@@ -8,7 +8,8 @@ import {
   VideoCameraFilled,
   User,
   Histogram,
-  Finished
+  Finished,
+  Notebook
 } from "@element-plus/icons-vue";
 import { useStore } from "vuex";
 import { computed, ref } from "vue";
@@ -78,6 +79,15 @@ const goTo = (link) => {
         <template #title>
           <router-link class="text-decoration-none" to="/invoices">
             <span>{{ t("Invoices") }}</span>
+          </router-link>
+        </template>
+      </el-menu-item>
+
+      <el-menu-item>
+        <el-icon @click="goTo('services')"><Notebook /></el-icon>
+        <template #title>
+          <router-link class="text-decoration-none" to="/services">
+            <span>{{ t("Services") }}</span>
           </router-link>
         </template>
       </el-menu-item>

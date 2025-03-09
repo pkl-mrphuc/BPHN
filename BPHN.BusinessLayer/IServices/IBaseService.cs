@@ -6,6 +6,5 @@ namespace BPHN.BusinessLayer.IServices
     {
         bool ValidateModelByAttribute(object model, params string[] ignoreProperties);
         string BuildLinkDescription(Guid historyLogId);
-        Task<bool> IsValidPermission(Guid accountId, FunctionTypeEnum functionType);
     }
 }

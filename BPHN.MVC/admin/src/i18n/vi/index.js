@@ -109,6 +109,8 @@ const vi = {
     Overview: 'Tổng quan',
     InvoicesTitle: 'Danh sách hóa đơn',
     Invoices: 'Danh sách hóa đơn',
+    Services: 'Dịch vụ',
+    ServicesTitle: 'Dịch vụ',
     TenantForm: 'Tài khoản',
     Male: 'Nam',
     Female: 'Nữ',

@@ -12,7 +12,6 @@ namespace BPHN.BusinessLayer.ImpServices
     public class BaseService : IBaseService
     {
         protected readonly IContextService _contextService;
-        protected readonly IPermissionService _permissionService;
         protected readonly ICacheService _cacheService;
         protected readonly IResourceService _resourceService;
         protected readonly IGlobalVariableService _globalVariableService;
@@ -22,7 +21,6 @@ namespace BPHN.BusinessLayer.ImpServices
         public BaseService(IServiceProvider provider, IOptions<AppSettings> appSettings)
         {
             _contextService = provider.GetRequiredService<IContextService>();
-            _permissionService = provider.GetRequiredService<IPermissionService>();
             _cacheService = provider.GetRequiredService<ICacheService>();
             _resourceService = provider.GetRequiredService<IResourceService>();
             _globalVariableService = provider.GetRequiredService<IGlobalVariableService>();
@@ -114,25 +112,5 @@ namespace BPHN.BusinessLayer.ImpServices
             return description;
         }
 
-        public async Task<bool> IsValidPermission(Guid accountId, FunctionTypeEnum functionType)
-        {
-            var permissions = await _permissionService.GetAll(accountId);
-            if (permissions is null)
-            {
-                return false;
-            }
-
-            var result = permissions.FirstOrDefault(item => item.FunctionType == (int)functionType && item.Allow) is not null;
-            if (!result)
-            {
-                var context = _contextService.GetContext();
-                if (context?.Id == accountId && context?.Role == RoleEnum.ADMIN && (functionType == FunctionTypeEnum.VIEWLISTUSER || functionType == FunctionTypeEnum.ADDUSER || functionType == FunctionTypeEnum.EDITUSER))
-                {
-                    return true;
-                }
-            }
-
-            return result;
-        }
     }
 }

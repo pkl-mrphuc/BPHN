@@ -236,5 +236,26 @@ namespace BPHN.BusinessLayer.ImpServices
                 },
             };
         }
+
+        public async Task<bool> IsValidPermission(Guid accountId, FunctionTypeEnum functionType)
+        {
+            var permissions = await GetAll(accountId);
+            if (permissions is null)
+            {
+                return false;
+            }
+
+            var result = permissions.FirstOrDefault(item => item.FunctionType == (int)functionType && item.Allow) is not null;
+            if (!result)
+            {
+                var context = _contextService.GetContext();
+                if (context?.Id == accountId && context?.Role == RoleEnum.ADMIN && (functionType == FunctionTypeEnum.VIEWLISTUSER || functionType == FunctionTypeEnum.ADDUSER || functionType == FunctionTypeEnum.EDITUSER))
+                {
+                    return true;
+                }
+            }
+
+            return result;
+        }
     }
 }

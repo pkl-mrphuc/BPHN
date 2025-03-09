@@ -19,6 +19,7 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly INotificationService _notificationService;
         private readonly IAccountService _accountService;
         private readonly IEmailService _mailService;
+        private readonly IPermissionService _permissionService;
         public BookingService(
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
@@ -29,6 +30,7 @@ namespace BPHN.BusinessLayer.ImpServices
             INotificationService notificationService,
             ITimeFrameInfoService timeFrameInfoService,
             IAccountService accountService,
+            IPermissionService permissionService,
             IEmailService mailService) : base(serviceProvider, appSettings)
         {
             _bookingRepository = bookingRepository;
@@ -39,6 +41,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _notificationService = notificationService;
             _accountService = accountService;
             _mailService = mailService;
+            _permissionService = permissionService;
         }
 
         public async Task<ServiceResultModel> CheckFreeTimeFrame(Booking data)
@@ -54,8 +57,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermissionAdd = await IsValidPermission(context.Id, FunctionTypeEnum.ADDBOOKING);
-            var hasPermissionEdit = await IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
+            var hasPermissionAdd = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.ADDBOOKING);
+            var hasPermissionEdit = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
             if (!hasPermissionAdd && !hasPermissionEdit)
             {
                 return new ServiceResultModel
@@ -103,8 +106,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermissionAdd = await IsValidPermission(context.Id, FunctionTypeEnum.ADDBOOKING);
-            var hasPermissionEdit = await IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
+            var hasPermissionAdd = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.ADDBOOKING);
+            var hasPermissionEdit = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
             if (!hasPermissionAdd && !hasPermissionEdit)
             {
                 return new ServiceResultModel
@@ -212,7 +215,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
+            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
             if (!hasPermission)
             {
                 return new ServiceResultModel
@@ -247,7 +250,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
+            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
             if (!hasPermission)
             {
                 return new ServiceResultModel
@@ -316,7 +319,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
+            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
             if (!hasPermission)
             {
                 return new ServiceResultModel
@@ -351,7 +354,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
+            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
             if (!hasPermission)
             {
                 return new ServiceResultModel
@@ -386,7 +389,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.ADDBOOKING);
+            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.ADDBOOKING);
             if (!hasPermission)
             {
                 return new ServiceResultModel
@@ -612,7 +615,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
+            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
             if (!hasPermission)
             {
                 return new ServiceResultModel

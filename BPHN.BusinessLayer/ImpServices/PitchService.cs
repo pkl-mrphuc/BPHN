@@ -16,6 +16,8 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IFileService _fileService;
         private readonly ITimeFrameInfoService _timeFrameInfoService;
         private readonly INotificationService _notificationService;
+        private readonly IPermissionService _permissionService; 
+
         public PitchService(
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
@@ -23,6 +25,7 @@ namespace BPHN.BusinessLayer.ImpServices
             IHistoryLogService historyLogService,
             IFileService fileService,
             INotificationService notificationService,
+            IPermissionService permissionService,
             ITimeFrameInfoService timeFrameInfoService) : base(serviceProvider, appSettings)
         {
             _pitchRepository = pitchRepository;
@@ -30,6 +33,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _fileService = fileService;
             _timeFrameInfoService = timeFrameInfoService;
             _notificationService = notificationService;
+            _permissionService = permissionService;
         }
 
 
@@ -65,7 +69,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     };
                 }
 
-                var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
+                var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
                 if (!hasPermission)
                 {
                     return new ServiceResultModel
@@ -259,7 +263,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     };
                 }
 
-                var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
+                var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
                 if (!hasPermission)
                 {
                     return new ServiceResultModel
@@ -345,7 +349,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.ADDPITCH);
+            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.ADDPITCH);
             if (!hasPermission)
             {
                 return new ServiceResultModel
@@ -428,7 +432,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDITPITCH);
+            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.EDITPITCH);
             if (!hasPermission)
             {
                 return new ServiceResultModel

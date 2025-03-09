@@ -13,16 +13,19 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IBookingDetailRepository _bookingDetailRepository;
         private readonly INotificationService _notificationService;
         private readonly IHistoryLogService _historyLogService;
+        private readonly IPermissionService _permissionService;
         public BookingDetailService(
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
             INotificationService notificationService,
             IHistoryLogService historyLogService,
+            IPermissionService permissionService,
             IBookingDetailRepository bookingDetailRepository) : base(serviceProvider, appSettings)
         {
             _bookingDetailRepository = bookingDetailRepository;
             _notificationService = notificationService;
             _historyLogService = historyLogService;
+            _permissionService = permissionService;
         }
 
         public async Task<ServiceResultModel> Cancel(string id)
@@ -38,7 +41,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
+            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
             if (!hasPermission)
             {
                 return new ServiceResultModel
@@ -102,7 +105,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
+            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
             if (!hasPermission)
             {
                 return new ServiceResultModel
@@ -169,7 +172,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKINGDETAIL);
+            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKINGDETAIL);
             if (!hasPermission)
             {
                 return new ServiceResultModel

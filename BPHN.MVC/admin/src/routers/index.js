@@ -11,6 +11,7 @@ import HistoryLogs from "@/components/BPHNHistoryLogs.vue";
 import Tenants from "@/components/BPHNTenants.vue";
 import Overview from "@/components/BPHNOverview.vue";
 import Invoices from "@/components/BPHNInvoices.vue";
+import Services from "@/components/BPHNServices.vue";
 
 const routes = [
   {
@@ -49,7 +50,14 @@ const routes = [
         path: "/invoices",
         component: Invoices,
         meta: {
-          title: "InvoiceTitle"
+          title: "InvoicesTitle"
+        }
+      },
+      {
+        path: "/services",
+        component: Services,
+        meta: {
+          title: "ServicesTitle"
         }
       },
       {
