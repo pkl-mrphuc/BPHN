@@ -40,7 +40,13 @@ export const FunctionTypeEnum = {
     ADDUSER: 6,
     EDITUSER: 7,
     VIEWLISTUSER: 8,
-    VIEWLISTBOOKINGDETAIL: 9
+    VIEWLISTBOOKINGDETAIL: 9,
+    ADDINVOICE: 10,
+    EDITINVOICE: 11,
+    VIEWLISTINVOICE: 12,
+    ADDSERVICE: 13,
+    EDITSERVICE: 14,
+    VIEWLISTSERVICE: 15
 };
 
 export const NotificationTypeEnum =

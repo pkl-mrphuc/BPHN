@@ -194,6 +194,28 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
+                    FunctionType = (int)FunctionTypeEnum.VIEWLISTBOOKINGDETAIL,
+                    Allow = false,
+                    CreatedBy = context.FullName,
+                    CreatedDate = DateTime.Now,
+                    ModifiedBy = context.FullName,
+                    ModifiedDate = DateTime.Now
+                },
+                new Permission
+                {
+                    Id = Guid.NewGuid(),
+                    AccountId = accountId,
+                    FunctionType = (int)FunctionTypeEnum.VIEWLISTBOOKINGDETAIL,
+                    Allow = false,
+                    CreatedBy = context.FullName,
+                    CreatedDate = DateTime.Now,
+                    ModifiedBy = context.FullName,
+                    ModifiedDate = DateTime.Now
+                },
+                new Permission
+                {
+                    Id = Guid.NewGuid(),
+                    AccountId = accountId,
                     FunctionType = (int)FunctionTypeEnum.ADDUSER,
                     Allow = false,
                     CreatedBy = context.FullName,
@@ -216,7 +238,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
-                    FunctionType = (int)FunctionTypeEnum.VIEWLISTUSER,
+                    FunctionType = (int)FunctionTypeEnum.ADDINVOICE,
                     Allow = false,
                     CreatedBy = context.FullName,
                     CreatedDate = DateTime.Now,
@@ -227,7 +249,51 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
-                    FunctionType = (int)FunctionTypeEnum.VIEWLISTBOOKINGDETAIL,
+                    FunctionType = (int)FunctionTypeEnum.EDITINVOICE,
+                    Allow = false,
+                    CreatedBy = context.FullName,
+                    CreatedDate = DateTime.Now,
+                    ModifiedBy = context.FullName,
+                    ModifiedDate = DateTime.Now
+                },
+                new Permission
+                {
+                    Id = Guid.NewGuid(),
+                    AccountId = accountId,
+                    FunctionType = (int)FunctionTypeEnum.VIEWLISTINVOICE,
+                    Allow = false,
+                    CreatedBy = context.FullName,
+                    CreatedDate = DateTime.Now,
+                    ModifiedBy = context.FullName,
+                    ModifiedDate = DateTime.Now
+                },
+                new Permission
+                {
+                    Id = Guid.NewGuid(),
+                    AccountId = accountId,
+                    FunctionType = (int)FunctionTypeEnum.ADDSERVICE,
+                    Allow = false,
+                    CreatedBy = context.FullName,
+                    CreatedDate = DateTime.Now,
+                    ModifiedBy = context.FullName,
+                    ModifiedDate = DateTime.Now
+                },
+                new Permission
+                {
+                    Id = Guid.NewGuid(),
+                    AccountId = accountId,
+                    FunctionType = (int)FunctionTypeEnum.EDITSERVICE,
+                    Allow = false,
+                    CreatedBy = context.FullName,
+                    CreatedDate = DateTime.Now,
+                    ModifiedBy = context.FullName,
+                    ModifiedDate = DateTime.Now
+                },
+                new Permission
+                {
+                    Id = Guid.NewGuid(),
+                    AccountId = accountId,
+                    FunctionType = (int)FunctionTypeEnum.VIEWLISTSERVICE,
                     Allow = false,
                     CreatedBy = context.FullName,
                     CreatedDate = DateTime.Now,
