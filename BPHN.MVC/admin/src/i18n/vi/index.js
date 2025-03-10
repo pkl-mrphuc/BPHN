@@ -181,7 +181,12 @@ const vi = {
     UPDATEPITCH: 'Sửa thông tin sân bóng {name}',
     INSERTACCOUNT: 'Thêm mới tài khoản {name}',
     UPDATEACCOUNT: 'Cập nhật tài khoản {name}',
-    MatchInfo: 'Thông tin trận đấu'
+    MatchInfo: 'Thông tin trận đấu',
+    Code: 'Mã',
+    Name: 'Tên',
+    Quantity: 'Số lượng',
+    SalePrice: 'Giá bán',
+    PurchasePrice: 'Giá mua'
 }
 
 export default vi;

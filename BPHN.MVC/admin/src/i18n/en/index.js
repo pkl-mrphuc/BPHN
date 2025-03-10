@@ -181,6 +181,11 @@ const en = {
     UPDATEPITCH: 'Change stadium {name}',
     INSERTACCOUNT: 'Add account {name}',
     UPDATEACCOUNT: 'Change account {name}',
-    MatchInfo: 'Match information'
+    MatchInfo: 'Match information',
+    Code: 'Code',
+    Name: 'Name',
+    Quantity: 'Quantity',
+    SalePrice: 'Sale price',
+    PurchasePrice: 'Purchase price'
 }
 export default en;
