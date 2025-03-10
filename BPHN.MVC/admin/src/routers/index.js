@@ -22,7 +22,7 @@ const routes = [
         path: "/overview",
         component: Overview,
         meta: {
-          title: "OVerviewTitle"
+          title: "OverviewTitle"
         }
       },
       {

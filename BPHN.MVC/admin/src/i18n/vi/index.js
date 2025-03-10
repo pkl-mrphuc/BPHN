@@ -9,6 +9,8 @@ const vi = {
     FootballFieldTitle: "Sân bóng của tôi",
     ConfigurationsTitle: "Cấu hình",
     EmailEmptyMesg: "Email không được để trống.",
+    CodeItemEmptyMesg: "Mã hàng hóa không được để trống",
+    NameItemEmptyMesg: "Tên hàng hóa không được để trống",
     ForgotPasswordTitle: "Quên mật khẩu",
     SendRequest: "Gửi yêu cầu",
     BackToLogin: "Quay lại trang đăng nhập",

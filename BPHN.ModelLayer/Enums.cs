@@ -84,7 +84,9 @@
         INSERTPITCH = 6,
         UPDATEPITCH = 7,
         INSERTACCOUNT = 8,
-        UPDATEACCOUNT = 9
+        UPDATEACCOUNT = 9,
+        INSERTSERVICIE = 10,
+        UPDATESERVICE = 11
     }
 
     public enum EntityEnum
@@ -94,6 +96,7 @@
         PITCH = 2,
         ACCOUNT = 3,
         BOOKING = 4,
-        BOOKINGDETAIL = 5
+        BOOKINGDETAIL = 5,
+        SERVICE = 6
     }
 }

@@ -48,6 +48,8 @@ builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IItemRepository, ItemRepository>();
+builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddSingleton<IRabbitMQProducerService, RabbitMQProducerService>();
 builder.Services.AddSingleton<IResourceService, ResourceService>();

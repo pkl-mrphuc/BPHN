@@ -2,25 +2,69 @@
 import useToggleModal from "@/register-components/actionDialog";
 import { ColdDrink } from "@element-plus/icons-vue";
 import { useI18n } from "vue-i18n";
-import { ref, defineProps } from "vue";
+import { ref, defineProps, inject, defineEmits } from "vue";
 import { StatusEnum } from "@/const";
 import MaskNumberInput from "@/components/MaskNumberInput.vue";
+import { ElLoading, ElNotification } from "element-plus";
+import { useStore } from "vuex";
 
 const props = defineProps({
     data: Object,
     mode: String,
 });
+const emit = defineEmits(["callback"]);
 const { toggleModel } = useToggleModal();
 const { t } = useI18n();
+const store = useStore();
+const loadingOptions = inject("loadingOptions");
 const name = ref(props.data?.name);
 const code = ref(props.data?.code);
 const purchasePrice = ref(props.data?.purchasePrice ?? 0);
 const salePrice = ref(props.data?.salePrice ?? 0);
 const quantity = ref(props.data?.quantity ?? 0);
 const status = ref(props.data?.status ?? StatusEnum.ACTIVE);
+const running = ref(0);
 
 const save = () => {
-    console.log("x");
+    if (running.value > 0) return;
+    ++running.value;
+
+    setTimeout(() => {
+        running.value = 0;
+    }, 1000);
+
+    if (!code.value) {
+        ElNotification({ title: t("Notification"), message: t("CodeItemEmptyMesg"), type: "warning" });
+        return;
+    }
+    if (!name.value) {
+        ElNotification({ title: t("Notification"), message: t("NameItemEmptyMesg"), type: "warning" });
+        return;
+    }
+
+    const loading = ElLoading.service(loadingOptions);
+    let actionPath = "item/insert";
+    if (props.mode == "edit") actionPath = "item/update";
+    store.dispatch(actionPath, 
+    {
+        id: props.data?.id,
+        name: name.value,
+        code: code.value,
+        quantity: quantity.value,
+        status: status.value,
+        salePrice: salePrice.value,
+        purchasePrice: purchasePrice.value
+    })
+    .then((res) => {
+        loading.close();
+        if (res?.data?.success) {
+            emit("callback", res);
+            toggleModel();
+            ElNotification({ title: t("Notification"), message: t("SaveSuccess"), type: "success" });
+        } else {
+            ElNotification({ title: t("Notification"), message: t("ErrorMesg"), type: "error" });
+        }
+    });
 };
 </script>
 
@@ -47,7 +91,7 @@ const save = () => {
                                 <span class="text-danger">(*)</span>
                             </div>
                             <div class="mb-2 col-12 col-sm-12 col-md-8">
-                                <el-input v-model="code" maxlength="255" />
+                                <el-input v-model="code" maxlength="36" />
                             </div>
                         </div>
                         <div class="row">

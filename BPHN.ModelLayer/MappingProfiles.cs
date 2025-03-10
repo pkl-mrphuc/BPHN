@@ -40,6 +40,10 @@ namespace BPHN.WebAPI.Models
 
             CreateMap<TimeFrameInfo, TimeFrameInfoRespond>();
             CreateMap<TimeFrameInfoRequest, TimeFrameInfo>();
+
+            CreateMap<Item, ItemRespond>();
+            CreateMap<InsertItemRequest, Item>();
+            CreateMap<UpdateItemRequest, Item>();
         }
     }
 }

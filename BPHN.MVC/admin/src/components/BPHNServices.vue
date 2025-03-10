@@ -1,27 +1,34 @@
 <script setup>
 import { useI18n } from "vue-i18n";
+import { ref, onMounted, inject } from "vue";
+import { useStore } from "vuex";
 import { Refresh, Edit } from "@element-plus/icons-vue";
-import { ref, onMounted } from "vue";
 import useToggleModal from "@/register-components/actionDialog";
+import { ElLoading, ElNotification } from "element-plus";
 
 const { t } = useI18n();
 const { openModal, hasRole } = useToggleModal();
+const store = useStore();
+const loadingOptions = inject("loadingOptions");
 
-const lstService = ref([]);
+const lstItem = ref([]);
 const mode = ref("add");
-const objService = ref(null);
+const objItem = ref(null);
+const running = ref(0);
 
 const loadData = () => {
-  for (let index = 0; index < 100; index++) {
-    lstService.value.push({
-      id: index,
-      code: "HH"+ index,
-      name: "Hàng hóa "+index,
-      quantity: 1,
-      salePrice: 1000,
-      status: "ACTIVE"
-    });
+  if (running.value > 0) {
+    return;
   }
+  ++running.value;
+  store.dispatch("item/getAll", null).then((res) => {
+    if (res?.data?.data) {
+      lstItem.value = res.data.data;
+    }
+    setTimeout(() => {
+      running.value = 0;
+    }, 1000);
+  });
 };
 
 const addNew = () => {
@@ -35,8 +42,20 @@ const edit = (id) => {
 };
 
 const openForm = (id) => {
-  openModal("ServiceDialog");
-  objService.value = {id: id};
+  const loading = ElLoading.service(loadingOptions);
+  store.dispatch("item/getInstance", id).then((res) => {
+    if (res?.data?.data) {
+      openModal("ServiceDialog");
+      objItem.value = res.data.data;
+    } else {
+      ElNotification({
+        title: t("Notification"),
+        message: res?.data?.message ?? t("ErrorMesg"),
+        type: "error"
+      })
+    }
+    loading.close();
+  });
 };
 
 onMounted(() => {
@@ -58,7 +77,7 @@ onMounted(() => {
         </div>
       </div>
       <div>
-        <el-table :data="lstService" style="height: calc(100vh - 230px)" :empty-text="t('NoData')">
+        <el-table :data="lstItem" style="height: calc(100vh - 230px)" :empty-text="t('NoData')">
           <el-table-column :label="t('Status')" width="100">
             <template #default="scope">
               <el-tag type="success" size="small">{{ t(scope.row.status) }}</el-tag>
@@ -96,7 +115,7 @@ onMounted(() => {
   </section>
   <ServiceDialog
     v-if="hasRole('ServiceDialog')"
-    :data="objService"
+    :data="objItem"
     :mode="mode"
     @callback="loadData"
   >

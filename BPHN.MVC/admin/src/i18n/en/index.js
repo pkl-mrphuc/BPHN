@@ -9,6 +9,8 @@ const en = {
     FootballFieldTitle: "My stadiums",
     ConfigurationsTitle: "Configurations",
     EmailEmptyMesg: "Email is not empty.",
+    CodeItemEmptyMesg: "Code is not empty",
+    NameItemEmptyMesg: "Name is not empty",
     ForgotPasswordTitle: "Forgot password",
     SendRequest: "Send request",
     BackToLogin: "Back to login",
