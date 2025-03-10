@@ -9,5 +9,6 @@
         public double SalePrice { get; set; }
         public double PurchasePrice { get; set; }
         public string Status { get; set; }
+        public string Unit { get; set; }
     }
 }

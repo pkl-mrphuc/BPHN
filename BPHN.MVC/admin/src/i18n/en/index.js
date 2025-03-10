@@ -188,6 +188,11 @@ const en = {
     Name: 'Name',
     Quantity: 'Quantity',
     SalePrice: 'Sale price',
-    PurchasePrice: 'Purchase price'
+    PurchasePrice: 'Purchase price',
+    CustomerPhone: 'Customer phone',
+    CustomerName: 'Customer name',
+    Total: 'Total',
+    Unit: 'Unit',
+    ItemName: 'Item name'
 }
 export default en;

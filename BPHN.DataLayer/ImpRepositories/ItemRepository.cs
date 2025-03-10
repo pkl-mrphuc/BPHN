@@ -46,6 +46,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 {
                     { "@id", data.Id },
                     { "@accountId", data.AccountId },
+                    { "@unit", data.Unit },
                     { "@status", data.Status },
                     { "@code", data.Code },
                     { "@name", data.Name },
@@ -74,6 +75,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 {
                     { "@id", data.Id },
                     { "@status", data.Status },
+                    { "@unit", data.Unit },
                     { "@code", data.Code },
                     { "@name", data.Name },
                     { "@quantity", data.Quantity },

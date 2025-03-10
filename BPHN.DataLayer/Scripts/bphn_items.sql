@@ -28,6 +28,7 @@ CREATE TABLE `items` (
   `Status` varchar(255) NOT NULL,
   `Code` char(36) NOT NULL,
   `Name` varchar(255) NOT NULL,
+  `Unit` varchar(255) DEFAULT NULL,
   `Quantity` int NOT NULL DEFAULT 0,
   `SalePrice` double DEFAULT 0,
   `PurchasePrice` double DEFAULT 0,

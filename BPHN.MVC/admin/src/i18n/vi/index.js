@@ -188,7 +188,12 @@ const vi = {
     Name: 'Tên',
     Quantity: 'Số lượng',
     SalePrice: 'Giá bán',
-    PurchasePrice: 'Giá mua'
+    PurchasePrice: 'Giá mua',
+    CustomerPhone: 'SĐT',
+    CustomerName: 'Tên khách hàng',
+    Total: 'Tổng tiền',
+    Unit: 'ĐVT',
+    ItemName: 'Tên HH'
 }
 
 export default vi;

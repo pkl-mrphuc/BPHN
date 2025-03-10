@@ -89,6 +89,9 @@ onMounted(() => {
           <el-table-column :label="t('Name')" min-width="150">
             <template #default="scope">{{ scope.row.name}}</template>
           </el-table-column>
+          <el-table-column :label="t('Unit')" width="150">
+            <template #default="scope">{{ scope.row.unit}}</template>
+          </el-table-column>
           <el-table-column :label="t('Quantity')" min-width="50">
             <template #default="scope">{{ scope.row.quantity}}</template>
           </el-table-column>

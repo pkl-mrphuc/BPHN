@@ -22,6 +22,7 @@ const code = ref(props.data?.code);
 const purchasePrice = ref(props.data?.purchasePrice ?? 0);
 const salePrice = ref(props.data?.salePrice ?? 0);
 const quantity = ref(props.data?.quantity ?? 0);
+const unit = ref(props.data?.unit ?? "");
 const status = ref(props.data?.status ?? StatusEnum.ACTIVE);
 const running = ref(0);
 
@@ -53,7 +54,8 @@ const save = () => {
         quantity: quantity.value,
         status: status.value,
         salePrice: salePrice.value,
-        purchasePrice: purchasePrice.value
+        purchasePrice: purchasePrice.value,
+        unit: unit.value
     })
     .then((res) => {
         loading.close();
@@ -100,6 +102,12 @@ const save = () => {
                             </div>
                             <div class="mb-2 col-12 col-sm-12 col-md-8">
                                 <el-input v-model="name" maxlength="255" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-2 col-12 col-sm-12 col-md-4 fw-bold">{{ t("Unit") }}</div>
+                            <div class="mb-2 col-12 col-sm-12 col-md-8">
+                                <el-input v-model="unit" maxlength="255" />
                             </div>
                         </div>
                         <div class="row">
