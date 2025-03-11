@@ -61,3 +61,16 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.common-layout .el-header {
+  position: relative;
+  background-color: var(--el-color-primary-light-7);
+  color: var(--el-text-color-primary);
+}
+
+.common-layout .el-aside {
+  color: var(--el-text-color-primary);
+  background: var(--el-color-primary-light-8);
+}
+</style>

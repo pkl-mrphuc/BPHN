@@ -38,8 +38,8 @@ const goTo = (link) => {
 <template>
   <section>
     <el-menu class="el-menu-vertical-demo" :collapse="toggle">
-      <el-menu-item>
-        <el-icon @click="goTo('overview')"><Histogram /></el-icon>
+      <el-menu-item @click="goTo('overview')">
+        <el-icon><Histogram /></el-icon>
         <template #title>
           <router-link class="text-decoration-none" to="/overview">
             <span>{{ t("Overview") }}</span>
@@ -47,8 +47,8 @@ const goTo = (link) => {
         </template>
       </el-menu-item>
 
-      <el-menu-item>
-        <el-icon @click="goTo('bm')"><Ticket /></el-icon>
+      <el-menu-item @click="goTo('bm')">
+        <el-icon><Ticket /></el-icon>
         <template #title>
           <router-link class="text-decoration-none" to="/bm">
             <span>{{ t("BM") }}</span>
@@ -56,8 +56,8 @@ const goTo = (link) => {
         </template>
       </el-menu-item>
 
-      <el-menu-item>
-        <el-icon @click="goTo('calendar')"><Calendar /></el-icon>
+      <el-menu-item @click="goTo('calendar')">
+        <el-icon><Calendar /></el-icon>
         <template #title>
           <router-link class="text-decoration-none" to="/calendar">
             <span>{{ t("Calendar") }}</span>
@@ -65,8 +65,8 @@ const goTo = (link) => {
         </template>
       </el-menu-item>
 
-      <el-menu-item>
-        <el-icon @click="goTo('my-football-fields')"><MapLocation /></el-icon>
+      <el-menu-item @click="goTo('my-football-fields')">
+        <el-icon><MapLocation /></el-icon>
         <template #title>
           <router-link class="text-decoration-none" to="/my-football-fields">
             <span>{{ t("FootballField") }}</span>
@@ -74,8 +74,8 @@ const goTo = (link) => {
         </template>
       </el-menu-item>
 
-      <el-menu-item>
-        <el-icon @click="goTo('invoices')"><Finished /></el-icon>
+      <el-menu-item  @click="goTo('invoices')">
+        <el-icon><Finished /></el-icon>
         <template #title>
           <router-link class="text-decoration-none" to="/invoices">
             <span>{{ t("Invoices") }}</span>
@@ -83,8 +83,8 @@ const goTo = (link) => {
         </template>
       </el-menu-item>
 
-      <el-menu-item>
-        <el-icon @click="goTo('services')"><Notebook /></el-icon>
+      <el-menu-item @click="goTo('services')">
+        <el-icon><Notebook /></el-icon>
         <template #title>
           <router-link class="text-decoration-none" to="/services">
             <span>{{ t("Services") }}</span>
@@ -92,20 +92,17 @@ const goTo = (link) => {
         </template>
       </el-menu-item>
 
-      <el-menu-item v-if="equals(role, RoleEnum.ADMIN) || multiUser">
-        <el-icon @click="goTo('tenants')"><User /></el-icon>
+      <el-menu-item v-if="equals(role, RoleEnum.ADMIN) || multiUser" @click="goTo('tenants')">
+        <el-icon><User /></el-icon>
         <template #title>
-          <router-link
-            class="text-decoration-none"
-            to="/tenants"
-          >
+          <router-link class="text-decoration-none" to="/tenants">
             <span>{{ t("Accounts") }}</span>
           </router-link>
         </template>
       </el-menu-item>
 
-      <el-menu-item>
-        <el-icon @click="goTo('configuartions')"><Tools /></el-icon>
+      <el-menu-item @click="goTo('configuartions')">
+        <el-icon><Tools /></el-icon>
         <template #title>
           <router-link class="text-decoration-none" to="/configuartions">
             <span>{{ t("Configurations") }}</span>
@@ -113,8 +110,8 @@ const goTo = (link) => {
         </template>
       </el-menu-item>
 
-      <el-menu-item>
-        <el-icon @click="goTo('history-logs')"><VideoCameraFilled /></el-icon>
+      <el-menu-item @click="goTo('history-logs')">
+        <el-icon><VideoCameraFilled /></el-icon>
         <template #title>
           <router-link class="text-decoration-none" to="/history-logs">
             <span>{{ t("HistoryLog") }}</span>

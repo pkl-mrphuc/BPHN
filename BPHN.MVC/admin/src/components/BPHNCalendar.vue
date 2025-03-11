@@ -284,54 +284,30 @@ const expandModeClick = () => {
       <div class="d-flex flex-row align-items-center justify-content-between">
         <h3 class="fs-3">{{ t("Calendar") }} / {{ selectedDateDisplay }}</h3>
         <div class="d-flex flex-row">
-          <el-popover
-            placement="top-start"
-            :title="t('Note')"
-            width="250"
-            trigger="click"
-          >
+          <el-popover placement="top-start" :title="t('Note')" width="250" trigger="click">
             <template #reference>
-              <el-button
-                class="mx-1"
-                type="warning"
-                :icon="InfoFilled"
-                circle
-              />
+              <el-button class="mx-1" type="warning" :icon="InfoFilled" circle />
             </template>
-
             <div class="row mb-3 d-flex flex-row align-items-center">
               <div class="col-3 square bg-info"></div>
               <div class="col-9">
-                <div class="mx-3">
-                  {{ t("PENDING") }}
-                </div>
+                <div class="mx-3">{{ t("PENDING") }}</div>
               </div>
             </div>
-
             <div class="row mb-3 d-flex flex-row align-items-center">
               <div class="col-3 square bg-danger"></div>
               <div class="col-9">
-                <div class="mx-3">
-                  {{ t("HasCompetitor") }}
-                </div>
+                <div class="mx-3">{{ t("HasCompetitor") }}</div>
               </div>
             </div>
-
             <div class="row mb-3 d-flex flex-row align-items-center">
               <div class="col-3 square bg-primary"></div>
               <div class="col-9">
-                <div class="mx-3">
-                  {{ t("HasNotCompetitor") }}
-                </div>
+                <div class="mx-3">{{ t("HasNotCompetitor") }}</div>
               </div>
             </div>
           </el-popover>
-          <el-button
-            class="mx-1"
-            @click="expandModeClick"
-            :icon="FullScreen"
-            circle
-          ></el-button>
+          <el-button class="mx-1" @click="expandModeClick" :icon="FullScreen" circle></el-button>
           <div v-if="expandMode">
             <el-button-group class="mx-1">
               <el-button type="primary" @click="prev">
@@ -341,27 +317,21 @@ const expandModeClick = () => {
                 <el-icon><ArrowRight /></el-icon>
               </el-button>
             </el-button-group>
-            <el-button class="mx-1" type="primary" @click="today">{{
-              t("Today")
-            }}</el-button>
+            <el-button class="mx-1" type="primary" @click="today">{{ t("Today") }}</el-button>
           </div>
         </div>
       </div>
-      <div class="row" style="height: calc(100vh - 190px); overflow: scroll">
-        <div
-          v-if="!expandMode"
-          class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4"
-        >
+      <div class="row">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
           <el-calendar v-model="currentDate">
             <template #header="{}">
               <span></span>
             </template>
           </el-calendar>
         </div>
-        <div
-          class="col-12 col-sm-12 col-md-12 col-lg-12"
-          :class="!expandMode ? 'col-xl-8' : 'col-xl-12'"
-        >
+      </div>
+      <div class="row">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
           <div class="mx-2">
             <div id="calendarTimeGrid"></div>
           </div>
