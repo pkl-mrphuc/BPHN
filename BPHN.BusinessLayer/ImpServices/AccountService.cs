@@ -555,7 +555,7 @@ namespace BPHN.BusinessLayer.ImpServices
             account.ModifiedBy = context.FullName;
             account.ModifiedDate = DateTime.Now;
             account.Role = RoleEnum.TENANT;
-            //account.Permissions = _permissionService.GetDefaultPermissions(account.Id, context);
+            account.Permissions = _permissionService.GetDefaultPermissions(account.Id, context);
             if (context.Role == RoleEnum.TENANT)
             {
                 account.ParentId = context.Id;
@@ -568,7 +568,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var resultRegister = await _accountRepository.RegisterForTenant(account);
-            //var _ = await _permissionService.SavePermissions(account.Id, account.Permissions);
+            var _ = await _permissionService.SavePermissions(account.Id, account.Permissions);
             if (resultRegister)
             {
                 await _notificationService.Insert<Account>(context, NotificationTypeEnum.INSERTACCOUNT, new Account

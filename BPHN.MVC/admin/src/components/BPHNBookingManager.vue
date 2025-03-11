@@ -6,6 +6,7 @@ import {
   User,
   Delete,
   Checked,
+  Money
 } from "@element-plus/icons-vue";
 import useToggleModal from "@/register-components/actionDialog";
 import { useStore } from "vuex";
@@ -66,6 +67,11 @@ const approval = (id) => {
     }
     loading.close();
   });
+};
+
+const pay = (id) => {
+  openModal("InvoiceDialog");
+  console.log(id)
 };
 
 const loadData = () => {
@@ -285,7 +291,7 @@ onMounted(() => {
               </template>
             </el-table-column>
           </el-table-column>
-          <el-table-column fixed="right" width="50">
+          <el-table-column fixed="right" width="70">
             <template #default="scope">
               <div class="d-flex flex-row-reverse">
                 <el-button
@@ -316,6 +322,20 @@ onMounted(() => {
                   :icon="Checked"
                   size="small"
                 ></el-button>
+                <el-button
+                  :class="scope.row.bookingDetailId"
+                  @click="pay(scope.row.bookingDetailId)"
+                  type="success"
+                  circle
+                  :icon="Money"
+                  size="small"
+                  v-if="
+                    equals(
+                      scope.row.bookingDetailStatus,
+                      BookingStatusEnum.SUCCESS
+                    )
+                  "
+                ></el-button>
               </div>
             </template>
           </el-table-column>
@@ -343,4 +363,7 @@ onMounted(() => {
     :mode="mode"
     @callback="loadData"
   ></BookingDialog>
+  <InvoiceDialog
+    v-if="hasRole('InvoiceDialog')"
+  ></InvoiceDialog>
 </template>

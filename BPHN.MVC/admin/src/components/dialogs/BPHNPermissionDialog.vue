@@ -40,6 +40,18 @@ const functionName = (functionType) => {
       return t("VIEWLISTUSER");
     case FunctionTypeEnum.VIEWLISTBOOKINGDETAIL:
       return t("VIEWLISTBOOKINGDETAIL");
+    case FunctionTypeEnum.ADDINVOICE:
+      return t("ADDINVOICE");
+    case FunctionTypeEnum.EDITINVOICE:
+      return t("EDITINVOICE");
+    case FunctionTypeEnum.VIEWLISTINVOICE:
+      return t("VIEWLISTINVOICE");
+      case FunctionTypeEnum.ADDSERVICE:
+      return t("ADDSERVICE");
+    case FunctionTypeEnum.EDITSERVICE:
+      return t("EDITSERVICE");
+    case FunctionTypeEnum.VIEWLISTSERVICE:
+      return t("VIEWLISTSERVICE");
     default:
       return "";
   }
