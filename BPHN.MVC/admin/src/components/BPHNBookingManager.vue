@@ -24,7 +24,7 @@ const pageIndex = ref(1);
 const pageSize = ref(50);
 const totalRecord = ref(0);
 const txtSearch = ref("");
-const { dateToString, getWeekdays, equals } = useCommonFn();
+const { dateToString, getWeekdays, equals, fakeNumber } = useCommonFn();
 const lstBooking = ref([]);
 const running = ref(0);
 const mode = ref("");
@@ -284,9 +284,7 @@ onMounted(() => {
             </el-table-column>
             <el-table-column :label="t('Deposite')">
               <template #default="scope">
-                <span v-if="scope.row.deposit > 0">{{
-                  scope.row.deposit
-                }}</span>
+                <span v-if="scope.row.deposit > 0">{{ fakeNumber(scope.row.deposit) }}</span>
                 <span v-else></span>
               </template>
             </el-table-column>

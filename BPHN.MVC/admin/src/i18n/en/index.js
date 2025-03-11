@@ -193,6 +193,12 @@ const en = {
     CustomerName: 'Customer name',
     Total: 'Total',
     Unit: 'Unit',
-    ItemName: 'Item name'
+    ItemName: 'Item name',
+    CustomerType: 'Customer type',
+    RetailCustomer: 'Retail customer',
+    BookingCustomer: 'Booking customer',
+    PaymentType: 'Payment type',
+    BankPayment: 'Bank payment',
+    CashPayment: 'Cash payment'
 }
 export default en;

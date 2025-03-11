@@ -193,7 +193,13 @@ const vi = {
     CustomerName: 'Tên khách hàng',
     Total: 'Tổng tiền',
     Unit: 'ĐVT',
-    ItemName: 'Tên HH'
+    ItemName: 'Tên HH',
+    CustomerType: 'Loại khách hàng',
+    RetailCustomer: 'Khách lẻ',
+    BookingCustomer: 'Khách đặt sân',
+    PaymentType: 'Hình thức thanh toán',
+    BankPayment: 'Chuyển khoản',
+    CashPayment: 'Tiền mặt'
 }
 
 export default vi;

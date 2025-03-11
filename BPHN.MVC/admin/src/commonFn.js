@@ -89,6 +89,58 @@ export default function useCommonFn() {
         return number;
     }
 
+    const fakeNumber = (number, numberDecimal = 0, separateThousand = ".", prefix = "", suffixes = "", separateDecimal = ",") => {
+        let fake = `${number}`;
+        let thousand = ``;
+        let decimal = ``;
+        fake.split(".").forEach((value, index) => {
+            if (index == 0) thousand = value;
+            else decimal = value;
+        });
+
+        let increament = 0;
+        if (!decimal) {
+            for (let i = 0; i < numberDecimal; i++) {
+                decimal += "0";
+            }
+        } else {
+            if (decimal.length <= numberDecimal) {
+                decimal = (decimal - "0") * Math.pow(10, numberDecimal - decimal.length);
+            } else {
+                let hasIncreament = decimal.slice(numberDecimal, numberDecimal + 1) - "0" >= 5;
+                decimal = decimal.slice(0, numberDecimal);
+                if (hasIncreament) {
+                    increament = 1;
+                    for (let i = decimal.length - 1; i >= 0; i--) {
+                        let digit = decimal[i] - "0";
+                        digit = digit + increament;
+                        if (digit == 10) {
+                            increament = 1;
+                            digit = 0;
+                        } else {
+                            increament = 0;
+                        }
+                        decimal = decimal.slice(0, i) + (digit + "") + decimal.slice(i + 1);
+                    }
+                }
+            }
+        }
+        thousand = thousand - "0" + increament + "";
+        thousand = thousand.split("").reverse().join("");
+        thousand = thousand
+            .match(/.{1,3}/g)
+            .join(separateThousand)
+            .split("")
+            .reverse()
+            .join("");
+
+        if (numberDecimal === 0) {
+            if (thousand === "0") return "";
+            return `${prefix}${thousand}${suffixes}`;
+        }
+        return `${prefix}${thousand}${separateDecimal}${decimal}${suffixes}`;
+    }
+
     return {
         sameDate,
         newDate,
@@ -99,6 +151,7 @@ export default function useCommonFn() {
         ticks,
         equals,
         isEmail,
-        padToFive
+        padToFive,
+        fakeNumber
     }
 }

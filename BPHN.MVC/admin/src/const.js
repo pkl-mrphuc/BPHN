@@ -62,3 +62,13 @@ export const NotificationTypeEnum =
     INSERTACCOUNT: 8,
     UPDATEACCOUNT: 9
 }
+
+export const CustomerTypeEnum = {
+    RETAIL: 0,
+    BOOKING: 1
+}
+
+export const PaymentTypeEnum = {
+    BANK: 0,
+    CASH: 1
+}

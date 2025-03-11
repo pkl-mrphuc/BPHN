@@ -131,14 +131,7 @@ const approval = () => {
           {{ t("Deposite") }}
         </el-col>
         <el-col :span="17">
-          <mask-number-input
-            :value="deposite"
-            @value="
-              (value) => {
-                deposite = value;
-              }
-            "
-          ></mask-number-input>
+          <mask-number-input :numberDecimal="0" :value="deposite" @value="(value) => { deposite = value; }"></mask-number-input>
         </el-col>
       </el-form-item>
       <el-form-item>

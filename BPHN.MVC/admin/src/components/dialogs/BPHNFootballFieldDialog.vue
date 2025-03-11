@@ -406,17 +406,7 @@ const isValidNameDetail = () => {
                 :min-width="160"
               >
                 <template #default="scope">
-                  <mask-number-input
-                    v-if="equals(scope.row.key, 'Price')"
-                    :value="item.price"
-                    @value="
-                      (value) => {
-                        item.price = value;
-                      }
-                    "
-                    class="w-100"
-                  ></mask-number-input>
-
+                  <mask-number-input :numberDecimal="0" v-if="equals(scope.row.key, 'Price')" :value="item.price" @value="(value) => { item.price = value; }" class="w-100"></mask-number-input>
                   <el-time-picker
                     v-if="equals(scope.row.key, 'TimeBegin')"
                     v-model="item.timeBegin"

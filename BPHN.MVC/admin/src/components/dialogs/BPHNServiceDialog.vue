@@ -113,13 +113,13 @@ const save = () => {
                         <div class="row">
                             <div class="mb-2 col-12 col-sm-12 col-md-4 fw-bold">{{ t("PurchasePrice") }}</div>
                             <div class="mb-2 col-12 col-sm-12 col-md-8">
-                                <mask-number-input :value="purchasePrice" @value="(value) => { purchasePrice = value; }"></mask-number-input>
+                                <mask-number-input :numberDecimal="0" :value="purchasePrice" @value="(value) => { purchasePrice = value; }"></mask-number-input>
                             </div>
                         </div>
                         <div class="row">
                             <div class="mb-2 col-12 col-sm-12 col-md-4 fw-bold">{{ t("SalePrice") }}</div>
                             <div class="mb-2 col-12 col-sm-12 col-md-8">
-                                <mask-number-input :value="salePrice" @value="(value) => { salePrice = value; }"></mask-number-input>
+                                <mask-number-input :numberDecimal="0" :value="salePrice" @value="(value) => { salePrice = value; }"></mask-number-input>
                             </div>
                         </div>
                         <div class="row">
