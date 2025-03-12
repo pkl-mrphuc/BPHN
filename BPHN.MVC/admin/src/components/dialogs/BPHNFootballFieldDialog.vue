@@ -289,29 +289,17 @@ const isValidNameDetail = () => {
   <Dialog :title="t('FootballFieldForm')">
     <template #body>
       <el-form>
-        <div class="row">
-          <div class="mb-2 col-12 col-sm-12 col-md-8">
+        <div class="row mb-2 ">
+          <div class="col-12 col-sm-12 col-md-9">
             <div class="mx-2">
-              <el-input
-                v-model="name"
-                :placeholder="t('NameFootballField')"
-                maxlength="500"
-                ref="inpName"
-              />
+              <el-input v-model="name" :placeholder="t('NameFootballField')" maxlength="500" ref="inpName" />
             </div>
           </div>
-          <div class="mb-2 col-12 col-sm-12 col-md-4">
+          <div class="col-12 col-sm-12 col-md-3">
             <div class="mx-2">
-              <el-select
-                v-model="status"
-                :placeholder="t('StatusFootballField')"
-                class="w-100"
-              >
+              <el-select v-model="status" :placeholder="t('StatusFootballField')" class="w-100">
                 <el-option :label="t('Active')" :value="StatusEnum.ACTIVE" />
-                <el-option
-                  :label="t('Inactive')"
-                  :value="StatusEnum.INACTIVE"
-                />
+                <el-option :label="t('Inactive')" :value="StatusEnum.INACTIVE" />
               </el-select>
             </div>
           </div>
@@ -319,52 +307,33 @@ const isValidNameDetail = () => {
         <div class="row mb-2">
           <div class="col-11">
             <div class="mx-2">
-              <el-input
-                v-model="address"
-                :placeholder="t('Address')"
-                maxlength="500"
-              />
+              <el-input v-model="address" :placeholder="t('Address')" maxlength="500"/>
             </div>
           </div>
-          <div class="col-1 d-flex flex-row align-items-center">
-            <el-icon size="24" class="pointer"><LocationInformation /></el-icon>
+          <div class="col-1 d-flex flex-row-reverse align-items-center">
+            <div class="mx-2">
+              <el-icon size="24" class="pointer"><LocationInformation /></el-icon>
+            </div>
           </div>
         </div>
         <div class="row">
-          <div
-            class="col-12 col-sm-12 col-md-4 mb-2 d-flex flex-column align-items-center justify-content-center"
-          >
-            <div>{{ t("QuantityFootballField") }}</div>
-            <el-input-number
-              id="inpQuantity"
-              class="inpQuantity"
-              v-model="quantity"
-              :min="1"
-              :max="100"
-            />
+          <div class="col-12 col-sm-12 col-md-4 mb-2">
+            <div class="mx-2 d-flex flex-column align-items-start justify-content-center">
+              <div class="mb-1"><b>{{ t("QuantityFootballField") }}</b></div>
+              <el-input-number id="inpQuantity" class="inpQuantity w-100" v-model="quantity" :min="1" :max="100"/>
+            </div>
           </div>
-          <div
-            class="col-12 col-sm-12 col-md-4 mb-2 d-flex flex-column align-items-center justify-content-center"
-          >
-            <div>{{ t("MinutesPerMatch") }}</div>
-            <el-input-number
-              v-model="minutesPerMatch"
-              :min="30"
-              :max="1440"
-              :step="30"
-            />
+          <div class="col-12 col-sm-12 col-md-4 mb-2">
+            <div class="mx-2 d-flex flex-column align-items-start justify-content-center">
+              <div class="mb-1"><b>{{ t("MinutesPerMatch") }}</b></div>
+              <el-input-number v-model="minutesPerMatch" :min="30" :max="1440" :step="30" class="w-100" />
+            </div>
           </div>
-          <div
-            class="col-12 col-sm-12 col-md-4 mb-2 d-flex flex-column align-items-center justify-content-center"
-          >
-            <div>{{ t("TimeSlotPerDay") }}</div>
-            <el-input-number
-              id="inpTimeSlot"
-              class="inpTimeSlot"
-              v-model="timeSlotPerDay"
-              :min="1"
-              :max="maxTimeSlot"
-            />
+          <div class="col-12 col-sm-12 col-md-4 mb-2">
+            <div class="mx-2 d-flex flex-column align-items-start justify-content-center">
+              <div class="mb-1"><b>{{ t("TimeSlotPerDay") }}</b></div>
+              <el-input-number id="inpTimeSlot" class="inpTimeSlot w-100" v-model="timeSlotPerDay" :min="1" :max="maxTimeSlot"/>
+            </div>
           </div>
         </div>
         <el-tabs type="border-card">
@@ -375,18 +344,9 @@ const isValidNameDetail = () => {
                   <span>{{ scope.row.name }}</span>
                 </template>
               </el-table-column>
-
-              <el-table-column
-                v-for="(item, index) in lstDetail"
-                :key="index"
-                :label="nameDetail(index + 1)"
-                :min-width="160"
-              >
+              <el-table-column v-for="(item, index) in lstDetail" :key="index" :label="nameDetail(index + 1)" :min-width="160">
                 <template #default="scope">
-                  <el-input
-                    v-if="equals(scope.row.key, 'Name')"
-                    v-model="lstDetail[index]"
-                  />
+                  <el-input v-if="equals(scope.row.key, 'Name')" v-model="lstDetail[index]" />
                 </template>
               </el-table-column>
             </el-table>
@@ -398,28 +358,11 @@ const isValidNameDetail = () => {
                   <span>{{ scope.row.name }}</span>
                 </template>
               </el-table-column>
-
-              <el-table-column
-                v-for="item in lstTimeFrame"
-                :key="item"
-                :label="item.name"
-                :min-width="160"
-              >
+              <el-table-column v-for="item in lstTimeFrame" :key="item" :label="item.name" :min-width="160">
                 <template #default="scope">
                   <mask-number-input :numberDecimal="0" v-if="equals(scope.row.key, 'Price')" :value="item.price" @value="(value) => { item.price = value; }" class="w-100"></mask-number-input>
-                  <el-time-picker
-                    v-if="equals(scope.row.key, 'TimeBegin')"
-                    v-model="item.timeBegin"
-                    class="w-100"
-                    @change="changeTimeBegin(item)"
-                  />
-
-                  <el-time-picker
-                    v-if="equals(scope.row.key, 'TimeEnd')"
-                    v-model="item.timeEnd"
-                    class="w-100"
-                    @change="changeTimeEnd(item)"
-                  />
+                  <el-time-picker v-if="equals(scope.row.key, 'TimeBegin')" v-model="item.timeBegin" class="w-100" @change="changeTimeBegin(item)" />
+                  <el-time-picker v-if="equals(scope.row.key, 'TimeEnd')" v-model="item.timeEnd" class="w-100" @change="changeTimeEnd(item)" />
                 </template>
               </el-table-column>
             </el-table>
@@ -429,9 +372,7 @@ const isValidNameDetail = () => {
     </template>
     <template #foot>
       <span class="d-flex flex-row-reverse">
-        <el-button type="primary" @click="save" class="ml-2">{{
-          t("Save")
-        }}</el-button>
+        <el-button type="primary" @click="save" class="ml-2">{{ t("Save") }}</el-button>
         <el-button @click="toggleModel">{{ t("Close") }}</el-button>
       </span>
     </template>
