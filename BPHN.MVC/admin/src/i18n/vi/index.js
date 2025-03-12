@@ -6,6 +6,7 @@ const vi = {
     Configurations: "Cấu hình",
     BMTitle: "Danh sách đặt sân",
     CalendarTitle: "Lịch đặt sân",
+    CalendarForDate: "Lịch ngày",
     FootballFieldTitle: "Sân bóng của tôi",
     ConfigurationsTitle: "Cấu hình",
     EmailEmptyMesg: "Email không được để trống.",
