@@ -5,6 +5,7 @@ using BPHN.ModelLayer;
 using BPHN.ModelLayer.ObjectQueues;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Serilog;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -42,75 +43,85 @@ namespace BPHN.BusinessLayer.ImpServices
 
         private async Task Handle(string dataJson)
         {
-            if (string.IsNullOrWhiteSpace(dataJson))
+            try
             {
-                throw new Exception("Input Empty");
-            }
-
-            var sendMail = JsonConvert.DeserializeObject<SendMailParameter>(dataJson);
-
-            if (sendMail is null)
-            {
-                throw new Exception("Input Empty");
-            }
-
-            var parameterType = sendMail.ParameterType;
-            var data = JsonConvert.DeserializeObject(dataJson, parameterType);
-            IMailBuilder builder;
-            switch (sendMail.MailType)
-            {
-                case MailTypeEnum.FORTGOTPASSWORD:
-                    builder = new ForgotPasswordMailBuilder(_, _keyGenerator);
-                    break;
-                case MailTypeEnum.SETPASSWORD:
-                    builder = new SetPasswordMailBuilder(_, _keyGenerator);
-                    break;
-                case MailTypeEnum.APPROVALBOOKING:
-                    builder = new ApprovalBookingMailBuilder(_);
-                    break;
-                case MailTypeEnum.DECLINEBOOKING:
-                    builder = new DeclineBookingMailBuilder(_);
-                    break;
-                default:
-                    throw new Exception("GetInstance Fail");
-            }
-
-            var body = await builder.BuildBody(data);
-
-            if (string.IsNullOrWhiteSpace(body))
-            {
-                throw new Exception("Build Body Fail");
-            }
-
-            var message = new MailMessage(
-                from: _appSettings.MailConfiguration.Mail,
-                to: sendMail.ReceiverAddress,
-                subject: builder.BuildSubject(data),
-                body: body
-            );
-            message.BodyEncoding = Encoding.UTF8;
-            message.SubjectEncoding = Encoding.UTF8;
-            message.IsBodyHtml = true;
-            message.Sender = new MailAddress(_appSettings.MailConfiguration.Mail, _appSettings.MailConfiguration.DisplayName);
-            if (sendMail.HasAttachmentFile)
-            {
-                var files = builder.BuildAttachments(data);
-                for (int i = 0; i < files.Count; i++)
+                if (string.IsNullOrWhiteSpace(dataJson))
                 {
-                    message.Attachments.Add(files[i]);
+                    throw new Exception("Input Empty");
+                }
+
+                var sendMail = JsonConvert.DeserializeObject<SendMailParameter>(dataJson);
+
+                if (sendMail is null)
+                {
+                    throw new Exception("Input Empty");
+                }
+
+                var parameterType = sendMail.ParameterType;
+                var data = JsonConvert.DeserializeObject(dataJson, parameterType);
+                IMailBuilder builder;
+                switch (sendMail.MailType)
+                {
+                    case MailTypeEnum.FORTGOTPASSWORD:
+                        builder = new ForgotPasswordMailBuilder(_, _keyGenerator);
+                        break;
+                    case MailTypeEnum.SETPASSWORD:
+                        builder = new SetPasswordMailBuilder(_, _keyGenerator);
+                        break;
+                    case MailTypeEnum.APPROVALBOOKING:
+                        builder = new ApprovalBookingMailBuilder(_);
+                        break;
+                    case MailTypeEnum.DECLINEBOOKING:
+                        builder = new DeclineBookingMailBuilder(_);
+                        break;
+                    default:
+                        throw new Exception("GetInstance Fail");
+                }
+
+                var body = await builder.BuildBody(data);
+
+                if (string.IsNullOrWhiteSpace(body))
+                {
+                    throw new Exception("Build Body Fail");
+                }
+
+                var from = !string.IsNullOrWhiteSpace(sendMail.From) ? sendMail.From : _appSettings.MailConfiguration.Mail;
+                var secret = !string.IsNullOrWhiteSpace(sendMail.Secret) ? sendMail.Secret : _appSettings.MailConfiguration.Password;
+                var message = new MailMessage(
+                    from: from,
+                    to: sendMail.ReceiverAddress,
+                    subject: builder.BuildSubject(data),
+                    body: body
+                );
+                message.BodyEncoding = Encoding.UTF8;
+                message.SubjectEncoding = Encoding.UTF8;
+                message.IsBodyHtml = true;
+                message.Sender = new MailAddress(from, _appSettings.MailConfiguration.DisplayName);
+                if (sendMail.HasAttachmentFile)
+                {
+                    var files = builder.BuildAttachments(data);
+                    for (int i = 0; i < files.Count; i++)
+                    {
+                        message.Attachments.Add(files[i]);
+                    }
+                }
+
+                using (var client = new SmtpClient(_appSettings.MailConfiguration.Host))
+                {
+                    client.Port = _appSettings.MailConfiguration.Port;
+                    client.UseDefaultCredentials = false;
+                    client.Credentials = new NetworkCredential(from, secret);
+                    client.EnableSsl = true;
+                    client.DeliveryMethod = SmtpDeliveryMethod.Network;
+
+                    client.Send(message);
                 }
             }
-
-            using (var client = new SmtpClient(_appSettings.MailConfiguration.Host))
+            catch (Exception ex)
             {
-                client.Port = _appSettings.MailConfiguration.Port;
-                client.UseDefaultCredentials = false;
-                client.Credentials = new NetworkCredential(_appSettings.MailConfiguration.Mail, _appSettings.MailConfiguration.Password);
-                client.EnableSsl = true;
-                client.DeliveryMethod = SmtpDeliveryMethod.Network;
-
-                client.Send(message);
+                Log.Error($"Handle mail error: {ex.Message}");
             }
+            
         }
     }
 }
