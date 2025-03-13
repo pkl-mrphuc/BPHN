@@ -86,25 +86,16 @@ const handleChange = (row) => {
   total.value = sum();
 };
 
-const add = (row) => {
-  console.log(row.id);
-  lstRow.value.push(defaultRow());
+const add = (i) => {
+  lstRow.value.splice(i + 1, 0, defaultRow());
   total.value = sum();
 };
 
-const remove = (row) => {
-  let temp = [];
-  for (let i = 0; i < lstRow.value.length; i++) {
-    const element = lstRow.value[i];
-    if(element.id != row.id) {
-      temp.push(element);
-    }
+const remove = (i) => {
+  lstRow.value.splice(i, 1);
+  if (lstRow.value.length == 0) {
+    lstRow.value.push(defaultRow());
   }
-  if (temp.length == 0) {
-    temp.push(defaultRow());
-  }
-
-  lstRow.value = temp;
   total.value = sum();
 };
 
@@ -176,7 +167,7 @@ onMounted(() => {
       <el-table class="mb-3" :data="lstRow" style="height: 100%" :empty-text="t('NoData')">
         <el-table-column label="" width="50">
           <template #default="scope">
-            <el-button circle :icon="Plus" size="small" @click="add(scope.row)" type="secondary"></el-button>
+            <el-button circle :icon="Plus" size="small" @click="add(scope.$index)" type="secondary"></el-button>
           </template>
         </el-table-column>
         <el-table-column :label="t('ItemName')" min-width="150">
@@ -202,8 +193,7 @@ onMounted(() => {
         <el-table-column label="" width="70" fixed="right">
           <template #default="scope">
             <div class="d-flex flex-row-reverse">
-              <el-button circle :icon="Delete" size="small" class="mr-2" @click="remove(scope.row)"
-                type="danger"></el-button>
+              <el-button circle :icon="Delete" size="small" class="mr-2" @click="remove(scope.$index)" type="danger"></el-button>
             </div>
           </template>
         </el-table-column>

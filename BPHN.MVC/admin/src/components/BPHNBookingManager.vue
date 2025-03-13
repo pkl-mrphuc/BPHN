@@ -153,55 +153,23 @@ onMounted(() => {
 <template>
   <section>
     <div class="container">
-      <div
-        class="row mb-3 d-flex flex-row align-items-center justify-content-between"
-      >
-        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">
-          {{ t("BookingManager") }}
-        </h3>
+      <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
+        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("BookingManager") }}</h3>
         <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row">
-          <el-input
-            v-model="txtSearch"
-            :placeholder="t('SearchBy')"
-            :suffix-icon="Search"
-            @keyup.enter="loadData"
-            class="w-100"
-          />
+          <el-input v-model="txtSearch" :placeholder="t('SearchBy')" :suffix-icon="Search" @keyup.enter="loadData" class="w-100"/>
           <el-button @click="loadData" class="ml-2">
             <el-icon><Refresh /></el-icon>
           </el-button>
-          <el-button type="primary" @click="addNew" class="ml-2">{{
-            t("AddNew")
-          }}</el-button>
+          <el-button type="primary" @click="addNew" class="ml-2">{{ t("AddNew") }}</el-button>
         </div>
       </div>
       <div class="body">
-        <el-table
-          :data="lstBooking"
-          :empty-text="t('NoData')"
-          style="height: calc(100vh - 300px)"
-        >
+        <el-table :data="lstBooking" :empty-text="t('NoData')" style="height: calc(100vh - 300px)">
           <el-table-column :label="t('Status')" min-width="100">
             <template #default="scope">
-              <el-tag
-                type="success"
-                size="small"
-                v-if="
-                  equals(scope.row.bookingStatus, BookingStatusEnum.SUCCESS)
-                "
-                >{{ t(scope.row.bookingStatus) }}</el-tag
-              >
-              <el-tag
-                type="info"
-                size="small"
-                v-else-if="
-                  equals(scope.row.bookingStatus, BookingStatusEnum.PENDING)
-                "
-                >{{ t(scope.row.bookingStatus) }}</el-tag
-              >
-              <el-tag type="danger" size="small" v-else>{{
-                t(scope.row.bookingStatus)
-              }}</el-tag>
+              <el-tag type="success" size="small" v-if="equals(scope.row.bookingStatus, BookingStatusEnum.SUCCESS)">{{ t(scope.row.bookingStatus) }}</el-tag>
+              <el-tag type="info" size="small" v-else-if="equals(scope.row.bookingStatus, BookingStatusEnum.PENDING)">{{ t(scope.row.bookingStatus) }}</el-tag>
+              <el-tag type="danger" size="small" v-else>{{ t(scope.row.bookingStatus) }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column :label="t('BookingDate')" min-width="120">
@@ -211,40 +179,17 @@ onMounted(() => {
           </el-table-column>
           <el-table-column :label="t('BookingUser')" min-width="150">
             <template #default="scope">
-              <span
-                ><el-icon :title="scope.row.email"><User /></el-icon>
-                {{ scope.row.phoneNumber }}</span
-              >
+              <span>
+                <el-icon :title="scope.row.email"><User /></el-icon>{{ scope.row.phoneNumber }}
+              </span>
             </template>
           </el-table-column>
           <el-table-column :label="t('MatchInfo')">
             <el-table-column :label="t('Status')" prop="status" min-width="100">
               <template #default="scope">
-                <el-tag
-                  type="success"
-                  size="small"
-                  v-if="
-                    equals(
-                      scope.row.bookingDetailStatus,
-                      BookingStatusEnum.SUCCESS
-                    )
-                  "
-                  >{{ t(scope.row.bookingDetailStatus) }}</el-tag
-                >
-                <el-tag
-                  type="info"
-                  size="small"
-                  v-else-if="
-                    equals(
-                      scope.row.bookingDetailStatus,
-                      BookingStatusEnum.PENDING
-                    )
-                  "
-                  >{{ t(scope.row.bookingDetailStatus) }}</el-tag
-                >
-                <el-tag type="danger" v-else size="small">{{
-                  t(scope.row.bookingDetailStatus)
-                }}</el-tag>
+                <el-tag type="success" size="small" v-if="equals(scope.row.bookingDetailStatus, BookingStatusEnum.SUCCESS)">{{ t(scope.row.bookingDetailStatus) }}</el-tag>
+                <el-tag type="info" size="small" v-else-if="equals(scope.row.bookingDetailStatus, BookingStatusEnum.PENDING)">{{ t(scope.row.bookingDetailStatus) }}</el-tag>
+                <el-tag type="danger" v-else size="small">{{ t(scope.row.bookingDetailStatus) }}</el-tag>
               </template>
             </el-table-column>
             <el-table-column :label="t('Infrastructure')" min-width="200">
@@ -254,9 +199,7 @@ onMounted(() => {
             </el-table-column>
             <el-table-column :label="t('TimeFrame')" min-width="200">
               <template #default="scope">
-                <span class="text-truncate">{{
-                  scope.row.timeFrameInfoName
-                }}</span>
+                <span class="text-truncate">{{ scope.row.timeFrameInfoName }}</span>
               </template>
             </el-table-column>
             <el-table-column :label="t('NameDetail')" min-width="120">
@@ -264,20 +207,12 @@ onMounted(() => {
                 <span class="text-truncate">{{ scope.row.nameDetail }}</span>
               </template>
             </el-table-column>
-            <el-table-column
-              :label="t('Weekdays')"
-              prop="weekendays"
-              min-width="120"
-            >
+            <el-table-column :label="t('Weekdays')" prop="weekendays" min-width="120">
               <template #default="scope">
                 {{ t(getWeekdays(scope.row.weekendays)) }}
               </template>
             </el-table-column>
-            <el-table-column
-              :label="t('MatchDate')"
-              prop="matchDate"
-              min-width="120"
-            >
+            <el-table-column :label="t('MatchDate')" prop="matchDate" min-width="120">
               <template #default="scope">
                 {{ dateToString(scope.row.matchDate, formatDate) }}
               </template>
@@ -292,48 +227,9 @@ onMounted(() => {
           <el-table-column fixed="right" width="70">
             <template #default="scope">
               <div class="d-flex flex-row-reverse">
-                <el-button
-                  :class="scope.row.bookingDetailId"
-                  @click="cancel(scope.row.bookingDetailId)"
-                  type="danger"
-                  circle
-                  :icon="Delete"
-                  size="small"
-                  v-if="
-                    !equals(
-                      scope.row.bookingDetailStatus,
-                      BookingStatusEnum.CANCEL
-                    ) &&
-                    !equals(
-                      scope.row.bookingDetailStatus,
-                      BookingStatusEnum.PENDING
-                    )
-                  "
-                ></el-button>
-                <el-button
-                  @click="approval(scope.row.bookingId)"
-                  type="warning"
-                  v-if="
-                    equals(scope.row.bookingStatus, BookingStatusEnum.PENDING)
-                  "
-                  circle
-                  :icon="Checked"
-                  size="small"
-                ></el-button>
-                <el-button
-                  :class="scope.row.bookingDetailId"
-                  @click="pay(scope.row.bookingDetailId)"
-                  type="success"
-                  circle
-                  :icon="Money"
-                  size="small"
-                  v-if="
-                    equals(
-                      scope.row.bookingDetailStatus,
-                      BookingStatusEnum.SUCCESS
-                    )
-                  "
-                ></el-button>
+                <el-button :class="scope.row.bookingDetailId" @click="cancel(scope.row.bookingDetailId)" type="danger" circle :icon="Delete" size="small" v-if=" !equals( scope.row.bookingDetailStatus, BookingStatusEnum.CANCEL) && !equals(scope.row.bookingDetailStatus, BookingStatusEnum.PENDING)"></el-button>
+                <el-button @click="approval(scope.row.bookingId)" type="warning" v-if="equals(scope.row.bookingStatus, BookingStatusEnum.PENDING)" circle :icon="Checked" size="small" ></el-button>
+                <el-button :class="scope.row.bookingDetailId" @click="pay(scope.row.bookingDetailId)" type="success" circle :icon="Money" size="small" v-if=" equals( scope.row.bookingDetailStatus, BookingStatusEnum.SUCCESS)"></el-button>
               </div>
             </template>
           </el-table-column>
@@ -355,13 +251,6 @@ onMounted(() => {
       </div>
     </div>
   </section>
-  <BookingDialog
-    v-if="hasRole('BookingDialog')"
-    :data="objBooking"
-    :mode="mode"
-    @callback="loadData"
-  ></BookingDialog>
-  <InvoiceDialog
-    v-if="hasRole('InvoiceDialog')"
-  ></InvoiceDialog>
+  <BookingDialog v-if="hasRole('BookingDialog')" :data="objBooking" :mode="mode" @callback="loadData"></BookingDialog>
+  <InvoiceDialog v-if="hasRole('InvoiceDialog')"></InvoiceDialog>
 </template>

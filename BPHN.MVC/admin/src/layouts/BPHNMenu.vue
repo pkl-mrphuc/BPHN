@@ -124,7 +124,7 @@ const goTo = (link) => {
 
 <style scoped>
 .el-menu-vertical-demo {
-  height: calc(100vh - 60px - 1px);
   overflow-y: scroll;
+  height: 100vh;
 }
 </style>

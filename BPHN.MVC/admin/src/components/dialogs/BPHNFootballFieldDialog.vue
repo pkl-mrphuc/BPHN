@@ -15,47 +15,28 @@ import { useStore } from "vuex";
 import { ElLoading, ElNotification } from "element-plus";
 import useCommonFn from "@/commonFn";
 import { StatusEnum } from "@/const";
-import { LocationInformation } from "@element-plus/icons-vue";
+import { LocationInformation, Plus, Delete } from "@element-plus/icons-vue";
 import MaskNumberInput from "../MaskNumberInput.vue";
 
 const props = defineProps({
   data: Object,
   mode: String,
 });
-const { newDate, ticks, equals } = useCommonFn();
+const { newDate, ticks } = useCommonFn();
 const emit = defineEmits(["callback"]);
-const loadingOptions = inject("loadingOptions");
 const { t } = useI18n();
-const store = useStore();
 const { toggleModel } = useToggleModal();
-const lstConfigTimeFrame = ref([
-  {
-    name: t("Price"),
-    key: "Price",
-  },
-  {
-    name: t("TimeBegin"),
-    key: "TimeBegin",
-  },
-  {
-    name: t("TimeEnd"),
-    key: "TimeEnd",
-  },
-]);
-const lstConfigInfo = ref([
-  {
-    name: t("NameFootballField"),
-    key: "Name",
-  },
-]);
+
+const loadingOptions = inject("loadingOptions");
+const store = useStore();
 const quantity = ref(props.data?.quantity ?? 1);
 const minutesPerMatch = ref(props.data?.minutesPerMatch ?? 90);
 const timeSlotPerDay = ref(props.data?.timeSlotPerDay ?? 1);
 const name = ref(props.data?.name ?? "");
 const address = ref(props.data?.address ?? "");
 const status = ref(props.data?.status ?? StatusEnum.ACTIVE);
-const lstTimeFrame = ref(props.data?.timeFrameInfos);
-const lstDetail = ref(props.data?.listNameDetails);
+const lstTimeFrame = ref(props.data?.timeFrameInfos ?? []);
+const lstDetail = ref(props.data?.listNameDetails ?? []);
 const inpName = ref(null);
 const maxTimeSlot = computed(() => {
   return 1440 / minutesPerMatch.value;
@@ -71,46 +52,23 @@ const nameTimeFrame = (sortOrder) => {
 
 const save = () => {
   if (!name.value) {
-    ElNotification({
-      title: t("Notification"),
-      message: t("NameFootballFieldEmptyMesg"),
-      type: "warning",
-    });
+    ElNotification({ title: t("Notification"), message: t("NameFootballFieldEmptyMesg"), type: "warning", });
     return;
   }
   if (!address.value) {
-    ElNotification({
-      title: t("Notification"),
-      message: t("AddressFootballFieldEmptyMesg"),
-      type: "warning",
-    });
+    ElNotification({ title: t("Notification"), message: t("AddressFootballFieldEmptyMesg"), type: "warning", });
     return;
   }
-  if (
-    timeSlotPerDay.value != lstTimeFrame.value.length ||
-    timeSlotPerDay.value > maxTimeSlot.value
-  ) {
-    ElNotification({
-      title: t("Notification"),
-      message: t("TimeSlotInvalidMesg"),
-      type: "warning",
-    });
+  if (timeSlotPerDay.value != lstTimeFrame.value.length || timeSlotPerDay.value > maxTimeSlot.value) {
+    ElNotification({ title: t("Notification"), message: t("TimeSlotInvalidMesg"), type: "warning", });
     return;
   }
   if (!isValidNameDetail()) {
-    ElNotification({
-      title: t("Notification"),
-      message: t("NameDetailsEmptyMesg"),
-      type: "warning",
-    });
+    ElNotification({ title: t("Notification"), message: t("NameDetailsEmptyMesg"), type: "warning", });
     return;
   }
   if (hasConflictTimeFrame()) {
-    ElNotification({
-      title: t("Notification"),
-      message: t("ConfictTimeFrame"),
-      type: "warning",
-    });
+    ElNotification({ title: t("Notification"), message: t("ConfictTimeFrame"), type: "warning", });
     return;
   }
 
@@ -135,17 +93,9 @@ const save = () => {
       if (res.data?.success) {
         emit("callback", res);
         toggleModel();
-        ElNotification({
-          title: t("Notification"),
-          message: t("SaveSuccess"),
-          type: "success",
-        });
+        ElNotification({ title: t("Notification"), message: t("SaveSuccess"), type: "success", });
       } else {
-        ElNotification({
-          title: t("Notification"),
-          message: res?.data?.message ?? t("ErrorMesg"),
-          type: "error",
-        });
+        ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error", });
       }
     });
 };
@@ -155,11 +105,7 @@ onMounted(() => {
     inpName.value.focus();
     setReadonlyInputField();
     addEvent("inpTimeSlot", decreaseTimeFrameInfosFn, increaseTimeFrameInfosFn);
-    addEvent(
-      "inpQuantity",
-      decreaseListNameDetailsFn,
-      increaseListNameDetailsFn
-    );
+    addEvent("inpQuantity", decreaseListNameDetailsFn, increaseListNameDetailsFn);
   });
 });
 
@@ -182,55 +128,41 @@ const addEvent = (name, callbackDecreaseFn, callbackIncreaseFn) => {
 };
 
 const decreaseTimeFrameInfosFn = () => {
-  if (
-    lstTimeFrame.value &&
-    Array.isArray(lstTimeFrame.value) &&
-    lstTimeFrame.value.length > 0
-  ) {
-    lstTimeFrame.value.pop();
+  lstTimeFrame.value.pop();
+  if (lstTimeFrame.value.length == 0) {
+    lstTimeFrame.value.push(defaultTimeFrame());
   }
 };
 
 const increaseTimeFrameInfosFn = () => {
   if (lstTimeFrame.value && Array.isArray(lstTimeFrame.value)) {
     let lastItem = lstTimeFrame.value[lstTimeFrame.value.length - 1];
-
-    let id = uuidv4();
     let sortOrder = lastItem.sortOrder + 1;
-    let name = nameTimeFrame(sortOrder);
 
-    let now = new Date();
-    let timeBegin = new Date(now.setSeconds(0));
-    let timeEnd = new Date(
-      timeBegin.getTime() + minutesPerMatch.value * 60 * 1000
-    );
+    let timeBegin = new Date(1999, 11, 10, 0, 0, 0);
+    let timeEnd = new Date(timeBegin.getTime() + minutesPerMatch.value * 60 * 1000);
     lstTimeFrame.value.push({
-      id: id,
+      id: uuidv4(),
       sortOrder: sortOrder,
-      name: name,
+      name: nameTimeFrame(sortOrder),
       price: 0,
       timeBegin: timeBegin,
       timeEnd: timeEnd,
       timeBeginTick: ticks(timeBegin),
-      timeEndTick: ticks(timeEnd),
+      timeEndTick: ticks(timeEnd)
     });
   }
 };
 
 const decreaseListNameDetailsFn = () => {
-  if (
-    lstDetail.value &&
-    Array.isArray(lstDetail.value) &&
-    lstDetail.value.length > 0
-  ) {
-    lstDetail.value.pop();
+  lstDetail.value.pop();
+  if (lstDetail.value.length == 0) {
+    lstDetail.value.push(nameDetail(1));
   }
 };
 
 const increaseListNameDetailsFn = () => {
-  if (lstDetail.value && Array.isArray(lstDetail.value)) {
-    lstDetail.value.push("");
-  }
+  lstDetail.value.push(nameDetail(lstDetail.value.length + 1));
 };
 
 const changeTimeBegin = (item) => {
@@ -240,10 +172,7 @@ const changeTimeBegin = (item) => {
 };
 
 const changeTimeEnd = (item) => {
-  item.timeBegin = newDate(
-    item.timeEnd,
-    -1 * minutesPerMatch.value * 60 * 1000
-  );
+  item.timeBegin = newDate(item.timeEnd, -1 * minutesPerMatch.value * 60 * 1000);
   item.timeBeginTick = ticks(item.timeBegin);
   item.timeEndTick = ticks(item.timeEnd);
 };
@@ -282,6 +211,49 @@ const isValidNameDetail = () => {
   }
   return true;
 };
+
+const addDetail = (i) => {
+  lstDetail.value.splice(i + 1, 0, nameDetail(lstDetail.value.length + 1));
+  quantity.value ++;
+};
+
+const removeDetail = (i) => {
+  lstDetail.value.splice(i, 1);
+  quantity.value --;
+  if (lstDetail.value.length == 0) {
+    lstDetail.value.push(nameDetail(1));
+    quantity.value ++;
+  }
+};
+
+const addTimeFrame = (i) => {
+  lstTimeFrame.value.splice(i + 1, 0, defaultTimeFrame(lstTimeFrame.value.length + 1));
+  timeSlotPerDay.value ++;
+};
+
+const removeTimeFrame = (i) => {
+  lstTimeFrame.value.splice(i, 1);
+  timeSlotPerDay.value --;
+  if (lstTimeFrame.value.length == 0) {
+    lstTimeFrame.value.push(defaultTimeFrame(1));
+    timeSlotPerDay.value ++;
+  }
+};
+
+const defaultTimeFrame = (sortOrder) => {
+  let timeBegin = new Date(1999, 11, 10, 0, 0, 0);
+  let timeEnd = new Date(timeBegin.getTime() + minutesPerMatch.value * 60 * 1000);
+  return {
+    id: uuidv4,
+    sortOrder: sortOrder,
+    name: nameTimeFrame(sortOrder),
+    price: 0,
+    timeBegin: timeBegin,
+    timeEnd: timeEnd,
+    timeBeginTick: ticks(timeBegin),
+    timeEndTick: ticks(timeEnd),
+  };
+};
 </script>
 
 
@@ -289,29 +261,17 @@ const isValidNameDetail = () => {
   <Dialog :title="t('FootballFieldForm')">
     <template #body>
       <el-form>
-        <div class="row">
-          <div class="mb-2 col-12 col-sm-12 col-md-8">
+        <div class="row mb-2 ">
+          <div class="col-12 col-sm-12 col-md-9">
             <div class="mx-2">
-              <el-input
-                v-model="name"
-                :placeholder="t('NameFootballField')"
-                maxlength="500"
-                ref="inpName"
-              />
+              <el-input v-model="name" :placeholder="t('NameFootballField')" maxlength="500" ref="inpName" />
             </div>
           </div>
-          <div class="mb-2 col-12 col-sm-12 col-md-4">
+          <div class="col-12 col-sm-12 col-md-3">
             <div class="mx-2">
-              <el-select
-                v-model="status"
-                :placeholder="t('StatusFootballField')"
-                class="w-100"
-              >
+              <el-select v-model="status" :placeholder="t('StatusFootballField')" class="w-100">
                 <el-option :label="t('Active')" :value="StatusEnum.ACTIVE" />
-                <el-option
-                  :label="t('Inactive')"
-                  :value="StatusEnum.INACTIVE"
-                />
+                <el-option :label="t('Inactive')" :value="StatusEnum.INACTIVE" />
               </el-select>
             </div>
           </div>
@@ -319,107 +279,80 @@ const isValidNameDetail = () => {
         <div class="row mb-2">
           <div class="col-11">
             <div class="mx-2">
-              <el-input
-                v-model="address"
-                :placeholder="t('Address')"
-                maxlength="500"
-              />
+              <el-input v-model="address" :placeholder="t('Address')" maxlength="500"/>
             </div>
           </div>
-          <div class="col-1 d-flex flex-row align-items-center">
-            <el-icon size="24" class="pointer"><LocationInformation /></el-icon>
+          <div class="col-1 d-flex flex-row-reverse align-items-center">
+            <div class="mx-2">
+              <el-icon size="24" class="pointer"><LocationInformation /></el-icon>
+            </div>
           </div>
         </div>
         <div class="row">
-          <div
-            class="col-12 col-sm-12 col-md-4 mb-2 d-flex flex-column align-items-center justify-content-center"
-          >
-            <div>{{ t("QuantityFootballField") }}</div>
-            <el-input-number
-              id="inpQuantity"
-              class="inpQuantity"
-              v-model="quantity"
-              :min="1"
-              :max="100"
-            />
+          <div class="col-12 col-sm-12 col-md-4 mb-2">
+            <div class="mx-2 d-flex flex-column align-items-start justify-content-center">
+              <div class="mb-1"><b>{{ t("QuantityFootballField") }}</b></div>
+              <el-input-number id="inpQuantity" class="inpQuantity w-100" v-model="quantity" :min="1" :max="100"/>
+            </div>
           </div>
-          <div
-            class="col-12 col-sm-12 col-md-4 mb-2 d-flex flex-column align-items-center justify-content-center"
-          >
-            <div>{{ t("MinutesPerMatch") }}</div>
-            <el-input-number
-              v-model="minutesPerMatch"
-              :min="30"
-              :max="1440"
-              :step="30"
-            />
+          <div class="col-12 col-sm-12 col-md-4 mb-2">
+            <div class="mx-2 d-flex flex-column align-items-start justify-content-center">
+              <div class="mb-1"><b>{{ t("MinutesPerMatch") }}</b></div>
+              <el-input-number v-model="minutesPerMatch" :min="30" :max="1440" :step="30" class="w-100" />
+            </div>
           </div>
-          <div
-            class="col-12 col-sm-12 col-md-4 mb-2 d-flex flex-column align-items-center justify-content-center"
-          >
-            <div>{{ t("TimeSlotPerDay") }}</div>
-            <el-input-number
-              id="inpTimeSlot"
-              class="inpTimeSlot"
-              v-model="timeSlotPerDay"
-              :min="1"
-              :max="maxTimeSlot"
-            />
+          <div class="col-12 col-sm-12 col-md-4 mb-2">
+            <div class="mx-2 d-flex flex-column align-items-start justify-content-center">
+              <div class="mb-1"><b>{{ t("TimeSlotPerDay") }}</b></div>
+              <el-input-number id="inpTimeSlot" class="inpTimeSlot w-100" v-model="timeSlotPerDay" :min="1" :max="maxTimeSlot"/>
+            </div>
           </div>
         </div>
         <el-tabs type="border-card">
           <el-tab-pane :label="t('FootballFieldInfo')">
-            <el-table :data="lstConfigInfo" class="w-100">
-              <el-table-column label="" width="200">
+            <el-table :data="lstDetail" class="w-100">
+              <el-table-column label="" width="36">
                 <template #default="scope">
-                  <span>{{ scope.row.name }}</span>
+                  <el-button circle :icon="Plus" size="small" @click="addDetail(scope.$index)" type="secondary"></el-button>
                 </template>
               </el-table-column>
-
-              <el-table-column
-                v-for="(item, index) in lstDetail"
-                :key="index"
-                :label="nameDetail(index + 1)"
-                :min-width="160"
-              >
+              <el-table-column :label="t('NameFootballField')" :min-width="160">
                 <template #default="scope">
-                  <el-input
-                    v-if="equals(scope.row.key, 'Name')"
-                    v-model="lstDetail[index]"
-                  />
+                  <el-input v-model="lstDetail[scope.$index]" />
+                </template>
+              </el-table-column>
+              <el-table-column label="" width="36">
+                <template #default="scope">
+                  <el-button circle :icon="Delete" size="small" @click="removeDetail(scope.$index)" type="danger"></el-button>
                 </template>
               </el-table-column>
             </el-table>
           </el-tab-pane>
           <el-tab-pane :label="t('TimeFrameInfo')">
-            <el-table :data="lstConfigTimeFrame" class="w-100">
-              <el-table-column label="" width="200">
+            <el-table :data="lstTimeFrame" class="w-100">
+              <el-table-column label="" width="36">
                 <template #default="scope">
-                  <span>{{ scope.row.name }}</span>
+                  <el-button circle :icon="Plus" size="small" @click="addTimeFrame(scope.$index)" type="secondary"></el-button>
                 </template>
               </el-table-column>
-
-              <el-table-column
-                v-for="item in lstTimeFrame"
-                :key="item"
-                :label="item.name"
-                :min-width="160"
-              >
+              <el-table-column :label="t('TimeBegin')" width="130">
                 <template #default="scope">
-                  <mask-number-input :numberDecimal="0" v-if="equals(scope.row.key, 'Price')" :value="item.price" @value="(value) => { item.price = value; }" class="w-100"></mask-number-input>
-                  <el-time-picker
-                    v-if="equals(scope.row.key, 'TimeBegin')"
-                    v-model="item.timeBegin"
-                    class="w-100"
-                    @change="changeTimeBegin(item)"
-                  />
-
-                  <el-time-picker
-                    v-if="equals(scope.row.key, 'TimeEnd')"
-                    v-model="item.timeEnd"
-                    class="w-100"
-                    @change="changeTimeEnd(item)"
-                  />
+                  <el-time-picker v-model="scope.row.timeBegin" class="w-100" @change="changeTimeBegin(scope.row)" />
+                </template>
+              </el-table-column>
+              <el-table-column :label="t('TimeEnd')" width="130">
+                <template #default="scope">
+                  <el-time-picker v-model="scope.row.timeEnd" class="w-100" @change="changeTimeEnd(scope.row)" />
+                </template>
+              </el-table-column>
+              <el-table-column :label="t('Price')">
+                <template #default="scope">
+                  <mask-number-input :numberDecimal="0" :value="scope.row.price" @value="(value) => { scope.row.price = value; }" class="w-100"></mask-number-input>
+                </template>
+              </el-table-column>
+              <el-table-column label="" width="36">
+                <template #default="scope">
+                  <el-button circle :icon="Delete" size="small" @click="removeTimeFrame(scope.$index)" type="danger"></el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -429,9 +362,7 @@ const isValidNameDetail = () => {
     </template>
     <template #foot>
       <span class="d-flex flex-row-reverse">
-        <el-button type="primary" @click="save" class="ml-2">{{
-          t("Save")
-        }}</el-button>
+        <el-button type="primary" @click="save" class="ml-2">{{ t("Save") }}</el-button>
         <el-button @click="toggleModel">{{ t("Close") }}</el-button>
       </span>
     </template>

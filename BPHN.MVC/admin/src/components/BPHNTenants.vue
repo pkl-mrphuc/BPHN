@@ -128,103 +128,51 @@ onMounted(() => {
 <template>
   <section>
     <div class="container">
-      <div
-        class="row mb-3 d-flex flex-row align-items-center justify-content-between"
-      >
-        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">
-          {{ t("Accounts") }}
-        </h3>
+      <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
+        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("Accounts") }}</h3>
         <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row">
-          <el-input
-            class="ml-2"
-            v-model="txtSearch"
-            :placeholder="t('Search')"
-            :suffix-icon="Search"
-            @keyup.enter="loadData"
-          />
+          <el-input class="ml-2" v-model="txtSearch" :placeholder="t('Search')" :suffix-icon="Search" @keyup.enter="loadData"/>
           <el-button @click="loadData" class="ml-2">
             <el-icon><Refresh /></el-icon>
           </el-button>
-          <el-button type="primary" @click="addNew" class="ml-2">{{
-            t("AddNew")
-          }}</el-button>
+          <el-button type="primary" @click="addNew" class="ml-2">{{ t("AddNew") }}</el-button>
         </div>
       </div>
       <div>
-        <el-table
-          :data="lstAccount"
-          style="height: calc(100vh - 300px)"
-          :empty-text="t('NoData')"
-        >
+        <el-table :data="lstAccount" style="height: calc(100vh - 300px)" :empty-text="t('NoData')">
           <el-table-column :label="t('Status')" width="150">
             <template #default="scope">
-              <el-tag
-                type="success"
-                size="small"
-                v-if="equals(scope.row.status, StatusEnum.ACTIVE)"
-                >{{ t("Active") }}</el-tag
-              >
-              <el-tag type="danger" size="small" v-else>{{
-                t("Inactive")
-              }}</el-tag>
+              <el-tag type="success" size="small" v-if="equals(scope.row.status, StatusEnum.ACTIVE)">{{ t("Active") }}</el-tag>
+              <el-tag type="danger" size="small" v-else>{{ t("Inactive") }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column :label="t('Username')" min-width="150">
             <template #default="scope">
-              <span class="text-truncate" :title="scope.row.userName">{{
-                scope.row.userName
-              }}</span>
+              <span class="text-truncate" :title="scope.row.userName">{{ scope.row.userName }}</span>
             </template>
           </el-table-column>
           <el-table-column :label="t('FullName')" min-width="150">
             <template #default="scope">
-              <span class="text-truncate" :title="scope.row.fullName">{{
-                scope.row.fullName
-              }}</span>
+              <span class="text-truncate" :title="scope.row.fullName">{{ scope.row.fullName }}</span>
             </template>
           </el-table-column>
           <el-table-column :label="t('Gender')">
             <template #default="scope">
-              <el-tag
-                type="success"
-                size="small"
-                v-if="equals(scope.row.gender, GenderEnum.MALE)"
-                >{{ t("Male") }}</el-tag
-              >
-              <el-tag
-                type="danger"
-                size="small"
-                v-else-if="equals(scope.row.gender, GenderEnum.FEMALE)"
-                >{{ t("Female") }}</el-tag
-              >
+              <el-tag type="success" size="small" v-if="equals(scope.row.gender, GenderEnum.MALE)">{{ t("Male") }}</el-tag>
+              <el-tag type="danger" size="small" v-else-if="equals(scope.row.gender, GenderEnum.FEMALE)">{{ t("Female") }}</el-tag>
               <el-tag type="info" size="small" v-else>{{ t("Other") }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column :label="t('PhoneNumber')" min-width="150">
             <template #default="scope">
-              <span class="text-truncate" :title="scope.row.phoneNumber">{{
-                scope.row.phoneNumber
-              }}</span>
+              <span class="text-truncate" :title="scope.row.phoneNumber">{{ scope.row.phoneNumber }}</span>
             </template>
           </el-table-column>
           <el-table-column label="" min-width="100" fixed="right">
             <template #default="scope">
               <div class="d-flex flex-row-reverse">
-                <el-button
-                  circle
-                  :icon="CircleCheck"
-                  size="small"
-                  @click="permission(scope.row.id)"
-                  type="info"
-                ></el-button>
-                <el-button
-                  circle
-                  :icon="Edit"
-                  size="small"
-                  class="mr-2"
-                  @click="edit(scope.row.id)"
-                  type="primary"
-                ></el-button>
+                <el-button circle :icon="CircleCheck" size="small" @click="permission(scope.row.id)" type="info"></el-button>
+                <el-button circle :icon="Edit" size="small" class="mr-2" @click="edit(scope.row.id)" type="primary"></el-button>
               </div>
             </template>
           </el-table-column>

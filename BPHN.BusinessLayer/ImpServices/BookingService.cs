@@ -20,6 +20,7 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IAccountService _accountService;
         private readonly IEmailService _mailService;
         private readonly IPermissionService _permissionService;
+        private readonly IConfigService _configService;
         public BookingService(
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
@@ -31,7 +32,8 @@ namespace BPHN.BusinessLayer.ImpServices
             ITimeFrameInfoService timeFrameInfoService,
             IAccountService accountService,
             IPermissionService permissionService,
-            IEmailService mailService) : base(serviceProvider, appSettings)
+            IEmailService mailService,
+            IConfigService configService) : base(serviceProvider, appSettings)
         {
             _bookingRepository = bookingRepository;
             _historyLogService = historyLogService;
@@ -42,6 +44,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _accountService = accountService;
             _mailService = mailService;
             _permissionService = permissionService;
+            _configService = configService;
         }
 
         public async Task<ServiceResultModel> CheckFreeTimeFrame(Booking data)
@@ -665,6 +668,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 var pitch = await _pitchService.GetById(oldData.PitchId ?? Guid.Empty);
                 var frame = await _timeFrameInfoService.GetById(oldData.TimeFrameInfoId ?? Guid.Empty);
                 var matchDate = data.BookingDetails.Select(item => item.MatchDate.ToString("dd/MM/yyyy")).FirstOrDefault();
+                var configs = await _configService.GetByKey(context.Id, "SystemEmail", "SecretEmail");
 
                 if (status == BookingStatusEnum.CANCEL)
                 {
@@ -675,7 +679,9 @@ namespace BPHN.BusinessLayer.ImpServices
                             MailType = MailTypeEnum.DECLINEBOOKING,
                             ParameterType = typeof(DeclineBookingParameter),
                             PhoneNumber = data.PhoneNumber,
-                            Reason = ""
+                            Reason = "",
+                            From = configs["SystemEmail"],
+                            Secret = configs["SecretEmail"]
                         });
 
                     await _notificationService.Insert<Booking>(context, NotificationTypeEnum.DECLINEBOOKING, new Booking()
@@ -700,7 +706,9 @@ namespace BPHN.BusinessLayer.ImpServices
                             StadiumName = pitch?.Name ?? string.Empty,
                             TimeFrameInfo = frame is not null ? $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}" : string.Empty,
                             Price = frame?.Price.ToString() ?? string.Empty,
-                            MatchDate = matchDate ?? string.Empty
+                            MatchDate = matchDate ?? string.Empty,
+                            From = configs["SystemEmail"],
+                            Secret = configs["SecretEmail"]
                         });
 
                     await _notificationService.Insert<Booking>(context, NotificationTypeEnum.APPROVALBOOKING, new Booking

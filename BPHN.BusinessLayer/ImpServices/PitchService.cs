@@ -168,22 +168,11 @@ namespace BPHN.BusinessLayer.ImpServices
             }
             else
             {
-                var cacheResult = await _cacheService.GetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.PITCH, id));
-                if (!string.IsNullOrWhiteSpace(cacheResult))
+                Guid.TryParse(id, out var pitchId);
+                data = await _pitchRepository.GetById(pitchId);
+                if (data is not null)
                 {
-                    data = JsonConvert.DeserializeObject<Pitch>(cacheResult);
-                }
-
-                if (data is null)
-                {
-                    Guid pitchId = Guid.Empty;
-                    Guid.TryParse(id, out pitchId);
-                    data = await _pitchRepository.GetById(pitchId);
-                    if (data is not null)
-                    {
-                        data.TimeFrameInfos = await _timeFrameInfoService.GetByPitchId(data.Id);
-                        await _cacheService.SetAsync(_cacheService.GetKeyCache(context.Id, EntityEnum.PITCH, id), JsonConvert.SerializeObject(data));
-                    }
+                    data.TimeFrameInfos = await _timeFrameInfoService.GetByPitchId(data.Id);
                 }
 
                 if (data is null)
@@ -202,8 +191,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     data.ListNameDetails = lstNameDetails;
                 }
 
-                if (data.TimeSlotPerDay != data.TimeFrameInfos.Count ||
-                    data.Quantity != data.ListNameDetails.Count)
+                if (data.TimeSlotPerDay != data.TimeFrameInfos.Count || data.Quantity != data.ListNameDetails.Count)
                 {
                     return new ServiceResultModel
                     {
@@ -377,10 +365,12 @@ namespace BPHN.BusinessLayer.ImpServices
             pitch.ModifiedDate = DateTime.Now;
             pitch.ManagerId = context.Id;
 
-            pitch.TimeFrameInfos = pitch.TimeFrameInfos.Select(item =>
+            pitch.TimeFrameInfos = pitch.TimeFrameInfos.Select((item, i) =>
             {
                 item.PitchId = pitch.Id;
                 item.Id = item.Id.Equals(Guid.Empty) ? Guid.NewGuid() : item.Id;
+                item.Name = $"Khung {(i + 1)}";
+                item.SortOrder = i + 1;
                 item.CreatedDate = DateTime.Now;
                 item.ModifiedDate = DateTime.Now;
                 item.CreatedBy = context.FullName;
@@ -459,10 +449,12 @@ namespace BPHN.BusinessLayer.ImpServices
             pitch.ModifiedDate = DateTime.Now;
             pitch.NameDetails = string.Join(";", pitch.ListNameDetails.ToArray());
 
-            pitch.TimeFrameInfos = pitch.TimeFrameInfos.Select(item =>
+            pitch.TimeFrameInfos = pitch.TimeFrameInfos.Select((item, i) =>
             {
                 item.PitchId = pitch.Id;
                 item.Id = item.Id.Equals(Guid.Empty) ? Guid.NewGuid() : item.Id;
+                item.Name = $"Khung {(i + 1)}";
+                item.SortOrder = i + 1;
                 item.CreatedDate = DateTime.Now;
                 item.ModifiedDate = DateTime.Now;
                 item.CreatedBy = context.FullName;

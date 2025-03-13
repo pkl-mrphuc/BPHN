@@ -88,30 +88,17 @@ onMounted(() => {
 <template>
   <section>
     <div class="container">
-      <div
-        class="row mb-3 d-flex flex-row align-items-center justify-content-between"
-      >
-        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">
-          {{ t("HistoryLog") }}
-        </h3>
-        <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row">
-          <el-input
-            v-model="txtSearch"
-            :placeholder="t('Search')"
-            :suffix-icon="Search"
-            @keyup.enter="loadData"
-          />
+      <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
+        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("HistoryLog") }}</h3>
+        <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row-reverse">
           <el-button @click="loadData" class="ml-2">
             <el-icon><Refresh /></el-icon>
           </el-button>
+          <el-input v-model="txtSearch" :placeholder="t('Search')" :suffix-icon="Search" @keyup.enter="loadData"/>
         </div>
       </div>
       <div>
-        <el-table
-          :data="lstHistoryLog"
-          style="height: calc(100vh - 300px)"
-          :empty-text="t('NoData')"
-        >
+        <el-table :data="lstHistoryLog" style="height: calc(100vh - 300px)" :empty-text="t('NoData')">
           <el-table-column :label="t('CreatedDate')" width="200">
             <template #default="scope">
               {{ dateToString(scope.row.createdDate, formatDate, true) }}
@@ -139,13 +126,7 @@ onMounted(() => {
           </el-table-column>
           <el-table-column :label="t('Description')" min-width="150">
             <template v-slot="scope">
-              <el-button
-                v-if="scope.row.id == scope.row.description"
-                type="danger"
-                @click="goToViewDetail(scope.row.id)"
-                link
-                >{{ t("ViewDetail") }}</el-button
-              >
+              <el-button v-if="scope.row.id == scope.row.description" type="danger" @click="goToViewDetail(scope.row.id)" link >{{ t("ViewDetail") }}</el-button>
               <span v-else v-html="scope.row.description"></span>
             </template>
           </el-table-column>

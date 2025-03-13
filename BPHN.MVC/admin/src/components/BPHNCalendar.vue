@@ -284,7 +284,33 @@ const expandModeClick = () => {
     <div class="container">
       <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
         <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("CalendarForDate") }} {{ selectedDateDisplay }}</h3>
-        <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row-reverse">
+          <div>
+            <el-button-group class="mx-1">
+              <el-button type="primary" @click="prev">
+                <el-icon><ArrowLeft /></el-icon>
+              </el-button>
+              <el-button type="primary" @click="next">
+                <el-icon><ArrowRight /></el-icon>
+              </el-button>
+            </el-button-group>
+            <el-button class="mx-1" type="primary" @click="today">{{ t("Today") }}</el-button>
+          </div>
+          <el-popover placement="top-start" width="500" trigger="click">
+            <template #reference>
+              <el-button class="mx-1" type="secondary" :icon="DatePick" circle />
+            </template>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                <el-calendar v-model="currentDate">
+                  <template #header="{}">
+                    <span></span>
+                  </template>
+                </el-calendar>
+              </div>
+            </div>
+          </el-popover>
+          <el-button class="mx-1" v-if="false" @click="expandModeClick" :icon="FullScreen" circle></el-button>
           <el-popover placement="top-start" :title="t('Note')" width="250" trigger="click">
             <template #reference>
               <el-button class="mx-1" type="warning" :icon="InfoFilled" circle />
@@ -308,32 +334,6 @@ const expandModeClick = () => {
               </div>
             </div>
           </el-popover>
-          <el-button class="mx-1" v-if="false" @click="expandModeClick" :icon="FullScreen" circle></el-button>
-          <el-popover placement="top-start" width="500" trigger="click">
-            <template #reference>
-              <el-button class="mx-1" type="secondary" :icon="DatePick" circle />
-            </template>
-            <div class="row">
-              <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                <el-calendar v-model="currentDate">
-                  <template #header="{}">
-                    <span></span>
-                  </template>
-                </el-calendar>
-              </div>
-            </div>
-          </el-popover>
-          <div>
-            <el-button-group class="mx-1">
-              <el-button type="primary" @click="prev">
-                <el-icon><ArrowLeft /></el-icon>
-              </el-button>
-              <el-button type="primary" @click="next">
-                <el-icon><ArrowRight /></el-icon>
-              </el-button>
-            </el-button-group>
-            <el-button class="mx-1" type="primary" @click="today">{{ t("Today") }}</el-button>
-          </div>
         </div>
       </div>
       <div class="row">
