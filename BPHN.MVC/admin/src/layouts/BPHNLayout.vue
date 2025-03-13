@@ -1,3 +1,8 @@
+<script setup>
+import { ref } from "vue";
+const drawer = ref(true);
+</script>
+
 <template>
   <div class="common-layout">
     <el-container>
@@ -5,14 +10,17 @@
         <bphn-header></bphn-header>
       </el-header>
       <el-container>
-        <el-aside class="w-auto">
+        <el-drawer v-model="drawer" direction="ltr" :withHeader="false">
           <bphn-menu></bphn-menu>
-        </el-aside>
+        </el-drawer>
         <el-main class="main-layout">
           <router-view />
         </el-main>
       </el-container>
     </el-container>
+    <div style="position: absolute;left: 0;bottom: 0;z-index: 100;">
+      <div style="width: 20px;height: 20px;background-color: red;" @click="drawer = true"></div>
+    </div>
   </div>
 </template>
 
@@ -69,8 +77,17 @@ export default {
   color: var(--el-text-color-primary);
 }
 
-.common-layout .el-aside {
+.common-layout :deep(.el-drawer) {
   color: var(--el-text-color-primary);
   background: var(--el-color-primary-light-8);
+  width: 64px !important;
+  height: calc(100vh - 60px - 1px);
+  left: 0;
+  bottom: 0;
+  top: unset;
+  padding: 0;
+}
+.common-layout :deep(.el-drawer__body) {
+  padding: 0;
 }
 </style>
