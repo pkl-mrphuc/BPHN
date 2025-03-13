@@ -10,6 +10,7 @@ import historyLog from "@/stores/modules/historyLog";
 import permission from "@/stores/modules/permission";
 import notification from "@/stores/modules/notification";
 import item from "@/stores/modules/item";
+import invoice from "@/stores/modules/invoice";
 
 export default createStore({
   modules: {
@@ -22,7 +23,8 @@ export default createStore({
     historyLog,
     permission,
     notification,
-    item
+    item,
+    invoice
   },
   plugins: [
     createPersistedState({

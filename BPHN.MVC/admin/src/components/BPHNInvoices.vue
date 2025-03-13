@@ -1,18 +1,37 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
+import { useStore } from "vuex";
 import { Refresh, Edit } from "@element-plus/icons-vue";
 import useToggleModal from "@/register-components/actionDialog";
+import useCommonFn from "@/commonFn";
 
+const store = useStore();
 const { t } = useI18n();
 const { openModal, hasRole } = useToggleModal();
+const { dateToString, fakeNumber } = useCommonFn();
 
 const lstInvoice = ref([]);
 const mode = ref("add");
 const objInvoice = ref(null);
+const running = ref(0);
+
+const formatDate = computed(() => {
+  return store.getters["config/getFormatDate"];
+});
 
 const loadData = () => {
-  lstInvoice.value = [];
+  if (running.value > 0) return;
+  ++running.value;
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
+  
+  store.dispatch("invoice/getAll", null).then((res) => {
+    if (res?.data?.data) {
+      lstInvoice.value = res.data.data;
+    }
+  });
 };
 
 const addNew = () => {
@@ -54,16 +73,16 @@ onMounted(() => {
             <template #default="scope">{{ scope.row.status}}</template>
           </el-table-column>
           <el-table-column :label="t('Date')" width="120">
-            <template #default="scope">{{ t(scope.row.date) }}</template>
+            <template #default="scope">{{ dateToString(scope.row.date, formatDate) }}</template>
           </el-table-column>
           <el-table-column :label="t('CustomerPhone')" width="150">
-            <template #default="scope">{{ t(scope.row.customerPhone) }}</template>
+            <template #default="scope">{{ scope.row.customerPhone }}</template>
           </el-table-column>
           <el-table-column :label="t('CustomerName')">
-            <template #default="scope">{{ t(scope.row.customerName) }}</template>
+            <template #default="scope">{{ scope.row.customerName }}</template>
           </el-table-column>
           <el-table-column :label="t('Total')" width="150">
-            <template #default="scope">{{ scope.row.total}}</template>
+            <template #default="scope">{{ fakeNumber(scope.row.total) }}</template>
           </el-table-column>
           <el-table-column label="" width="70" fixed="right">
             <template #default="scope">

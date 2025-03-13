@@ -17,17 +17,16 @@ const objItem = ref(null);
 const running = ref(0);
 
 const loadData = () => {
-  if (running.value > 0) {
-    return;
-  }
+  if (running.value > 0) return;
   ++running.value;
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
+  
   store.dispatch("item/getAll", null).then((res) => {
     if (res?.data?.data) {
       lstItem.value = res.data.data;
     }
-    setTimeout(() => {
-      running.value = 0;
-    }, 1000);
   });
 };
 

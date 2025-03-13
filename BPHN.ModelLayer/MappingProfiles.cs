@@ -44,6 +44,8 @@ namespace BPHN.WebAPI.Models
             CreateMap<Item, ItemRespond>();
             CreateMap<InsertItemRequest, Item>();
             CreateMap<UpdateItemRequest, Item>();
+
+            CreateMap<Invoice, InvoiceRespond>();
         }
     }
 }
