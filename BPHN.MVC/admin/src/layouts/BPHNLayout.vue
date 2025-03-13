@@ -1,6 +1,14 @@
 <script setup>
-import { ref } from "vue";
-const drawer = ref(true);
+import { computed } from "vue";
+
+const store = useStore();
+const drawer = computed(() => {
+  return store.getters["account/getDrawer"];
+});
+
+const handleClose = () => {
+  store.commit("account/setDrawer", false);
+};
 </script>
 
 <template>
@@ -10,7 +18,7 @@ const drawer = ref(true);
         <bphn-header></bphn-header>
       </el-header>
       <el-container>
-        <el-drawer v-model="drawer" direction="ltr" :withHeader="false">
+        <el-drawer v-model="drawer" :before-close="handleClose" direction="ltr" :withHeader="false">
           <bphn-menu></bphn-menu>
         </el-drawer>
         <el-main class="main-layout">
@@ -18,9 +26,6 @@ const drawer = ref(true);
         </el-main>
       </el-container>
     </el-container>
-    <div style="position: absolute;left: 0;bottom: 0;z-index: 100;">
-      <div style="width: 20px;height: 20px;background-color: red;" @click="drawer = true"></div>
-    </div>
   </div>
 </template>
 
@@ -73,18 +78,10 @@ export default {
 <style scoped>
 .common-layout .el-header {
   position: relative;
-  background-color: var(--el-color-primary-light-7);
-  color: var(--el-text-color-primary);
 }
 
 .common-layout :deep(.el-drawer) {
-  color: var(--el-text-color-primary);
-  background: var(--el-color-primary-light-8);
   width: 64px !important;
-  height: calc(100vh - 60px - 1px);
-  left: 0;
-  bottom: 0;
-  top: unset;
   padding: 0;
 }
 .common-layout :deep(.el-drawer__body) {

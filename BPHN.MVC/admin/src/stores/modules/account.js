@@ -1,7 +1,8 @@
 import AccountAPI from "@/apis/AccountAPI";
 
 const state = {
-    context: null
+    context: null,
+    drawer: false
 };
 
 const getters = {
@@ -58,6 +59,10 @@ const getters = {
     getAvatarUrl: (state) => {
         if (!state.context) return "";
         return state.context.avatarUrl;
+    },
+
+    getDrawer: (state) => {
+        return state.drawer;
     }
 };
 
@@ -68,6 +73,10 @@ const mutations = {
 
     setAvatarUrl: (state, payload) => {
         state.context.avatarUrl = payload;
+    },
+
+    setDrawer: (state, payload) => {
+        state.drawer = payload;
     }
 };
 

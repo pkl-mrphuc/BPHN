@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
-import { SwitchButton, Refresh, Avatar, Bell } from "@element-plus/icons-vue";
+import { SwitchButton, Refresh, Avatar, Bell, Expand } from "@element-plus/icons-vue";
 import useToggleModal from "@/register-components/actionDialog";
 import { useRouter } from "vue-router";
 import NotificationCard from "@/components/NotificationCard.vue";
@@ -26,11 +26,7 @@ onMounted(() => {
 
   connection.on("PushNotification", function (type, model) {
     hasNewNoti.value = true;
-    ElNotification({
-      title: t("Notification"),
-      message: getMessage(type, model),
-      duration: 0,
-    });
+    ElNotification({ title: t("Notification"), message: getMessage(type, model), duration: 0 });
   });
 });
 
@@ -95,21 +91,22 @@ const markRead = () => {
   }
   hasNewNoti.value = false;
 };
+
+const toggle = () => {
+  store.commit("account/setDrawer", true);
+};
 </script>
 
 <template>
-  <section
-    class="h-100 d-flex flex-row align-items-center justify-content-between"
-  >
-    <h1 class="fs-1 m-0 pointer text-decoration-underline" @click="goToHome">
-      BPHN
-    </h1>
+  <section class="h-100 d-flex flex-row align-items-center justify-content-between">
+    <div @click="goToHome" class="pointer d-flex flex-row align-items-center justify-content-between">
+      <el-button @click="toggle" class="mr-4" circle :icon="Expand" size="large"></el-button>
+      <img id="logo" src="../assets/images/logo.png" alt="">
+      <h4 class="fs-2 m-0">BPHN</h4>
+    </div>
     <div class="d-flex flex-row align-items-center">
-      <p class="account pointer">
-        {{ t("Hello") }}
-        <span class="mx-1 text-decoration-underline" @click="showAccountInfo">{{
-          fullname
-        }}</span>
+      <p class="account pointer">{{ t("Hello") }}
+        <span class="mx-1 text-decoration-underline" @click="showAccountInfo">{{ fullname }}</span>
       </p>
       <div class="mx-1 pointer account-sm" @click="showAccountInfo">
         <el-icon size="24"><Avatar /></el-icon>
@@ -121,34 +118,26 @@ const markRead = () => {
               <el-icon size="24" @click="markRead"><Bell /></el-icon>
             </el-badge>
           </template>
-          <notification-card
-            v-for="item in lstNotification"
-            :key="item"
-            :data="item"
-          ></notification-card>
-          <el-empty
-            v-if="lstNotification.length == 0"
-            :description="t('NoData')"
-          />
+          <notification-card v-for="item in lstNotification" :key="item" :data="item" ></notification-card>
+          <el-empty v-if="lstNotification.length == 0" :description="t('NoData')" />
         </el-popover>
       </div>
       <div class="mx-1 pointer" @click="refresh">
         <el-icon size="24"><Refresh /></el-icon>
       </div>
-      <el-button
-        class="mx-1 pointer"
-        type="info"
-        :icon="SwitchButton"
-        circle
-        @click="logout"
-      >
-      </el-button>
+      <el-button class="mx-1 pointer" type="info" :icon="SwitchButton" circle @click="logout"></el-button>
     </div>
   </section>
   <AccountInfoDialog v-if="hasRole('AccountInfoDialog')"> </AccountInfoDialog>
 </template>
 
 <style scoped>
+
+#logo {
+  margin-top: 9px;
+  height: 50px;
+}
+
 .account {
   display: none;
 }
