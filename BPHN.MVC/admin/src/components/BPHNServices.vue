@@ -41,17 +41,19 @@ const edit = (id) => {
 };
 
 const openForm = (id) => {
+  if (running.value > 0) return;
+  ++running.value;
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
+
   const loading = ElLoading.service(loadingOptions);
   store.dispatch("item/getInstance", id).then((res) => {
     if (res?.data?.data) {
       openModal("ServiceDialog");
       objItem.value = res.data.data;
     } else {
-      ElNotification({
-        title: t("Notification"),
-        message: res?.data?.message ?? t("ErrorMesg"),
-        type: "error"
-      })
+      ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error" });
     }
     loading.close();
   });

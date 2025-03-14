@@ -21,12 +21,9 @@ const imgAvatar = ref(null);
 
 const status = computed(() => {
   switch (props.status) {
-    case StatusEnum.ACTIVE:
-      return t("Active");
-    case StatusEnum.INACTIVE:
-      return t("Inactive");
+    case StatusEnum.ACTIVE: return t("Active");
+    default: return t("Inactive");
   }
-  return t("Inactive");
 });
 
 const edit = () => {
@@ -41,7 +38,8 @@ const changeHdfFile = (event) => {
   let files = event.target.files;
   if (files?.length > 0) {
     readImageFile(files[0]);
-    store.dispatch("file/upload", {
+    store.dispatch("file/upload", 
+    {
       file: files[0],
       id: props.id,
     });
@@ -60,54 +58,19 @@ const readImageFile = (file) => {
 
 <template>
   <el-card :body-style="{ padding: '0px' }">
-    <img
-      v-if="props.avatarUrl"
-      ref="imgAvatar"
-      :src="props.avatarUrl"
-      height="300"
-      class="image"
-    />
-    <img
-      v-else
-      height="300"
-      ref="imgAvatar"
-      src="../assets/images/football-field.png"
-      class="image"
-    />
+    <img v-if="props.avatarUrl" ref="imgAvatar" :src="props.avatarUrl" height="300" class="image"/>
+    <img v-else height="300" ref="imgAvatar" src="../assets/images/football-field.png" class="image"/>
 
     <div style="padding: 14px">
       <h3 style="margin: 5px 0px">{{ props.name }}</h3>
       <div class="row">
-        <status-dot
-          :status="props.status"
-          :message="status"
-          class="col-9"
-        ></status-dot>
+        <status-dot :status="props.status" :message="status" class="col-9"></status-dot>
         <div class="col-3 d-flex flex-row-reverse align-items-center">
-          <el-button
-            :icon="Edit"
-            circle
-            size="small"
-            type="primary"
-            @click="edit"
-          ></el-button>
-          <el-button
-            :icon="UploadFilled"
-            circle
-            size="small"
-            class="mr-2"
-            @click="upload"
-          ></el-button>
+          <el-button :icon="Edit" circle size="small" type="primary" @click="edit"></el-button>
+          <el-button :icon="UploadFilled" circle size="small" class="mr-2" @click="upload"></el-button>
         </div>
         <!-- hdf = hidden field -->
-        <input
-          type="file"
-          hidden
-          accept="image/*"
-          @change="changeHdfFile"
-          name="hdfFile"
-          ref="hdfFile"
-        />
+        <input type="file" hidden accept="image/*" @change="changeHdfFile" name="hdfFile" ref="hdfFile"/>
       </div>
     </div>
   </el-card>

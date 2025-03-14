@@ -200,6 +200,7 @@ const en = {
     BookingCustomer: 'Booking customer',
     PaymentType: 'Payment type',
     BankPayment: 'Bank payment',
-    CashPayment: 'Cash payment'
+    CashPayment: 'Cash payment',
+    DraftInvoice: 'Draft invoice'
 }
 export default en;

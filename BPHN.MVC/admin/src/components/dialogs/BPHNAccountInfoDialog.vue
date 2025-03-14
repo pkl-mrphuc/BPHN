@@ -38,12 +38,9 @@ const phoneNumber = computed(() => {
 const gender = computed(() => {
   let gender = store.getters["account/getGender"];
   switch (gender) {
-    case GenderEnum.MALE:
-      return t("Male");
-    case GenderEnum.FEMALE:
-      return t("Female");
-    default:
-      return t("Other");
+    case GenderEnum.MALE: return t("Male");
+    case GenderEnum.FEMALE: return t("Female");
+    default: return t("Other");
   }
 });
 
@@ -54,49 +51,33 @@ const avatarUrl = computed(() => {
 const changePassword = () => {
   if (running.value > 0) return;
   ++running.value;
-  const loading = ElLoading.service(loadingOptions);
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
 
+  const loading = ElLoading.service(loadingOptions);
   if (!password.value || !passwordAgain.value) {
-    ElNotification({
-      title: t("Notification"),
-      message: t("PasswordEmptyMesg"),
-      type: "warning",
-    });
+    ElNotification({ title: t("Notification"), message: t("PasswordEmptyMesg"), type: "warning", });
     return;
   }
   if (password.value != passwordAgain.value) {
-    ElNotification({
-      title: t("Notification"),
-      message: t("NoMatchPasswordMesg"),
-      type: "warning",
-    });
+    ElNotification({ title: t("Notification"), message: t("NoMatchPasswordMesg"), type: "warning", });
     return;
   }
 
-  let data = {
+  store.dispatch("account/changePassword", 
+  {
     id: store.getters["account/getAccountId"],
     password: password.value,
-  };
-  store.dispatch("account/changePassword", data).then((res) => {
+  })
+  .then((res) => {
     loading.close();
     if (res?.data?.success) {
-      ElNotification({
-        title: t("Notification"),
-        message: t("SaveSuccess"),
-        type: "success",
-      });
+      ElNotification({ title: t("Notification"), message: t("SaveSuccess"), type: "success", });
       router.push("login");
     } else {
-      ElNotification({
-        title: t("Notification"),
-        message: res?.data?.message ?? t("ErrorMesg"),
-        type: "error",
-      });
+      ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error", });
     }
-
-    setTimeout(() => {
-      running.value = 0;
-    }, 1000);
   });
 };
 
@@ -108,20 +89,18 @@ const changeHdfFile = (event) => {
   let files = event.target.files;
   if (files?.length > 0) {
     readImageFile(files[0]);
-    store.dispatch("file/upload", {
+    store.dispatch("file/upload", 
+    {
       file: files[0],
       id: store.getters["account/getAccountId"],
-    }).then((res) => {
+    })
+    .then((res) => {
       if (res?.data?.success) {
         fetch(res.data.data).then(() => {
           store.commit("account/setAvatarUrl", res.data.data);
         });
       } else {
-        ElNotification({
-          title: t("Notification"),
-          message: res?.data?.message ?? t("ErrorMesg"),
-          type: "error",
-        });
+        ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error", });
       }
     });
   }
@@ -144,8 +123,7 @@ const readImageFile = (file) => {
         <div class="row">
           <div class="d-flex flex-row justify-content-center mb-3 col-12 col-sm-12 col-md-3 pointer" @click="upload">
             <img v-if="avatarUrl" ref="imgAvatar" :src="avatarUrl" height="120" width="120" class="image" />
-            <img v-else height="120" width="120" ref="imgAvatar" src="../../assets/images/avatar-default.png"
-              class="image" />
+            <img v-else height="120" width="120" ref="imgAvatar" src="../../assets/images/avatar-default.png" class="image" />
 
             <!-- hdf = hidden field -->
             <input type="file" hidden accept="image/*" @change="changeHdfFile" name="hdfFile" ref="hdfFile" />
@@ -156,9 +134,7 @@ const readImageFile = (file) => {
                 <div class="mx-3">{{ t("Username") }}</div>
               </div>
               <div class="col-6">
-                <div class="mx-3">
-                  {{ userName }}
-                </div>
+                <div class="mx-3">{{ userName }}</div>
               </div>
             </div>
             <div class="row mb-3">
@@ -166,9 +142,7 @@ const readImageFile = (file) => {
                 <div class="mx-3">{{ t("FullName") }}</div>
               </div>
               <div class="col-6">
-                <div class="mx-3">
-                  {{ fullName }}
-                </div>
+                <div class="mx-3">{{ fullName }}</div>
               </div>
             </div>
             <div class="row mb-3">
@@ -176,9 +150,7 @@ const readImageFile = (file) => {
                 <div class="mx-3">{{ t("Gender") }}</div>
               </div>
               <div class="col-6">
-                <div class="mx-3">
-                  {{ gender }}
-                </div>
+                <div class="mx-3">{{ gender }}</div>
               </div>
             </div>
             <div class="row mb-3">
@@ -186,9 +158,7 @@ const readImageFile = (file) => {
                 <div class="mx-3">{{ t("PhoneNumber") }}</div>
               </div>
               <div class="col-6">
-                <div class="mx-3">
-                  {{ phoneNumber }}
-                </div>
+                <div class="mx-3">{{ phoneNumber }}</div>
               </div>
             </div>
             <div class="row mb-3">
@@ -196,9 +166,7 @@ const readImageFile = (file) => {
                 <div class="mx-3">{{ t("Email") }}</div>
               </div>
               <div class="col-6">
-                <div class="mx-3">
-                  {{ email }}
-                </div>
+                <div class="mx-3">{{ email }}</div>
               </div>
             </div>
             <div class="row mb-3">
@@ -211,9 +179,7 @@ const readImageFile = (file) => {
             </div>
             <div class="row mb-3" v-if="showSetPassword">
               <div class="col-6 fw-bold d-flex flex-row align-items-center justify-content-end">
-                <div class="mx-3">
-                  {{ t("Password") }}
-                </div>
+                <div class="mx-3">{{ t("Password") }}</div>
               </div>
               <div class="col-6">
                 <div class="mx-3">
@@ -223,9 +189,7 @@ const readImageFile = (file) => {
             </div>
             <div class="row mb-3" v-if="showSetPassword">
               <div class="col-6 fw-bold d-flex flex-row align-items-center justify-content-end">
-                <div class="mx-3">
-                  {{ t("PasswordAgain") }}
-                </div>
+                <div class="mx-3">{{ t("PasswordAgain") }}</div>
               </div>
               <div class="col-6">
                 <div class="mx-3">

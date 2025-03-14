@@ -34,36 +34,42 @@ const formatDate = computed(() => {
 });
 
 const addNew = () => {
+  if (running.value > 0) return;
+  ++running.value;
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
+
   const loading = ElLoading.service(loadingOptions);
-  store.dispatch("booking/getInstance", "").then((res) => {
+  store.dispatch("booking/getInstance", "")
+  .then((res) => {
     if (res?.data?.data) {
       mode.value = "add";
       openModal("BookingDialog");
       objBooking.value = res.data.data;
     } else {
-      ElNotification({
-        title: t("Notification"),
-        message: res?.data?.message ?? t("ErrorMesg"),
-        type: "error",
-      });
+      ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error", });
     }
     loading.close();
   });
 };
 
 const approval = (id) => {
+  if (running.value > 0) return;
+  ++running.value;
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
+
   const loading = ElLoading.service(loadingOptions);
-  store.dispatch("booking/getInstance", id).then((res) => {
+  store.dispatch("booking/getInstance", id)
+  .then((res) => {
     if (res?.data?.data) {
       mode.value = "approval";
       openModal("BookingDialog");
       objBooking.value = res.data.data;
     } else {
-      ElNotification({
-        title: t("Notification"),
-        message: res?.data?.message ?? t("ErrorMesg"),
-        type: "error",
-      });
+      ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error", });
     }
     loading.close();
   });
@@ -75,56 +81,48 @@ const pay = (id) => {
 };
 
 const loadData = () => {
-  if (running.value > 0) {
-    return;
-  }
+  if (running.value > 0) return;
   ++running.value;
-  store
-    .dispatch("booking/getPaging", {
-      pageIndex: pageIndex.value,
-      pageSize: pageSize.value,
-      hasBookingDetail: true,
-      txtSearch: txtSearch.value,
-      hasInactive: true,
-    })
-    .then((res) => {
-      if (res?.data?.data) {
-        lstBooking.value = res.data.data;
-      }
-      setTimeout(() => {
-        running.value = 0;
-      }, 1000);
-    });
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
 
-  store
-    .dispatch("booking/getCountPaging", {
-      pageIndex: pageIndex.value,
-      pageSize: pageSize.value,
-      txtSearch: txtSearch.value,
-    })
-    .then((res) => {
-      if (res?.data?.data) {
-        let result = res.data.data;
-        totalRecord.value = result.totalAllRecords;
-      }
-    });
+  store.dispatch("booking/getPaging", 
+  {
+    pageIndex: pageIndex.value,
+    pageSize: pageSize.value,
+    hasBookingDetail: true,
+    txtSearch: txtSearch.value,
+    hasInactive: true,
+  })
+  .then((res) => {
+    if (res?.data?.data) {
+      lstBooking.value = res.data.data;
+    }
+  });
+
+  store.dispatch("booking/getCountPaging", 
+  {
+    pageIndex: pageIndex.value,
+    pageSize: pageSize.value,
+    txtSearch: txtSearch.value,
+  })
+  .then((res) => {
+    if (res?.data?.data) {
+      let result = res.data.data;
+      totalRecord.value = result.totalAllRecords;
+    }
+  });
 };
 
 const cancel = (id) => {
-  store.dispatch("bookingDetail/cancel", id).then((res) => {
+  store.dispatch("bookingDetail/cancel", id)
+  .then((res) => {
     if (res?.data?.success) {
       loadData();
-      ElNotification({
-        title: t("Notification"),
-        message: t("SaveSuccess"),
-        type: "success",
-      });
+      ElNotification({ title: t("Notification"), message: t("SaveSuccess"), type: "success", });
     } else {
-      ElNotification({
-        title: t("Notification"),
-        message: res?.data?.message ?? t("ErrorMesg"),
-        type: "error",
-      });
+      ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error", });
     }
   });
 };

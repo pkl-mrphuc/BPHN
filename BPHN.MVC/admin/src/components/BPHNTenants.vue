@@ -25,37 +25,36 @@ const mode = ref("add");
 const accountId = ref(null);
 
 const loadData = () => {
-  if (running.value > 0) {
-    return;
-  }
+  if (running.value > 0) return;
   ++running.value;
-  store
-    .dispatch("account/getPaging", {
-      pageIndex: pageIndex.value,
-      pageSize: pageSize.value,
-      txtSearch: txtSearch.value,
-    })
-    .then((res) => {
-      if (res?.data?.data) {
-        lstAccount.value = res.data.data;
-      }
-      setTimeout(() => {
-        running.value = 0;
-      }, 1000);
-    });
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
 
-  store
-    .dispatch("account/getCountPaging", {
-      pageIndex: pageIndex.value,
-      pageSize: pageSize.value,
-      txtSearch: txtSearch.value,
-    })
-    .then((res) => {
-      if (res?.data?.data) {
-        let result = res.data.data;
-        totalRecord.value = result.totalAllRecords;
-      }
-    });
+  store.dispatch("account/getPaging", 
+  {
+    pageIndex: pageIndex.value,
+    pageSize: pageSize.value,
+    txtSearch: txtSearch.value,
+  })
+  .then((res) => {
+    if (res?.data?.data) {
+      lstAccount.value = res.data.data;
+    }
+  });
+
+  store.dispatch("account/getCountPaging", 
+  {
+    pageIndex: pageIndex.value,
+    pageSize: pageSize.value,
+    txtSearch: txtSearch.value,
+  })
+  .then((res) => {
+    if (res?.data?.data) {
+      let result = res.data.data;
+      totalRecord.value = result.totalAllRecords;
+    }
+  });
 };
 
 const prevClick = () => {
@@ -85,6 +84,12 @@ const edit = (id) => {
 };
 
 const permission = (id) => {
+  if (running.value > 0) return;
+  ++running.value;
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
+
   const loading = ElLoading.service(loadingOptions);
   store.dispatch("permission/get", id).then((res) => {
     if (res?.data?.data) {
@@ -92,28 +97,26 @@ const permission = (id) => {
       lstPermission.value = res.data.data;
       accountId.value = id;
     } else {
-      ElNotification({
-        title: t("Notification"),
-        message: res?.data?.message ?? t("ErrorMesg"),
-        type: "error",
-      });
+      ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error", });
     }
     loading.close();
   });
 };
 
 const openForm = (id) => {
+  if (running.value > 0) return;
+  ++running.value;
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
+
   const loading = ElLoading.service(loadingOptions);
   store.dispatch("account/getInstance", id).then((res) => {
     if (res?.data?.data) {
       openModal("TenantDialog");
       objTenant.value = res.data.data;
     } else {
-      ElNotification({
-        title: t("Notification"),
-        message: res?.data?.message ?? t("ErrorMesg"),
-        type: "error",
-      });
+      ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error", });
     }
     loading.close();
   });
@@ -194,17 +197,6 @@ onMounted(() => {
       </div>
     </div>
   </section>
-  <TenantDialog
-    v-if="hasRole('TenantDialog')"
-    :data="objTenant"
-    :mode="mode"
-    @callback="loadData"
-  >
-  </TenantDialog>
-  <PermissionDialog
-    v-if="hasRole('PermissionDialog')"
-    :data="lstPermission"
-    :accountId="accountId"
-  >
-  </PermissionDialog>
+  <TenantDialog v-if="hasRole('TenantDialog')" :data="objTenant" :mode="mode" @callback="loadData"></TenantDialog>
+  <PermissionDialog v-if="hasRole('PermissionDialog')" :data="lstPermission" :accountId="accountId"></PermissionDialog>
 </template>

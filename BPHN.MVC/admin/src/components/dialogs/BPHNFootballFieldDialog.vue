@@ -38,6 +38,7 @@ const status = ref(props.data?.status ?? StatusEnum.ACTIVE);
 const lstTimeFrame = ref(props.data?.timeFrameInfos ?? []);
 const lstDetail = ref(props.data?.listNameDetails ?? []);
 const inpName = ref(null);
+const running = ref(0);
 const maxTimeSlot = computed(() => {
   return 1440 / minutesPerMatch.value;
 });
@@ -51,6 +52,12 @@ const nameTimeFrame = (sortOrder) => {
 };
 
 const save = () => {
+  if (running.value > 0) return;
+  ++running.value;
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
+
   if (!name.value) {
     ElNotification({ title: t("Notification"), message: t("NameFootballFieldEmptyMesg"), type: "warning", });
     return;
@@ -73,31 +80,28 @@ const save = () => {
   }
 
   const loading = ElLoading.service(loadingOptions);
-
-  let actionPath = "pitch/insert";
-  if (props.mode == "edit") actionPath = "pitch/update";
-  store
-    .dispatch(actionPath, {
-      id: props.data?.id,
-      name: name.value,
-      address: address.value,
-      minutesPerMatch: minutesPerMatch.value,
-      quantity: quantity.value,
-      timeSlotPerDay: timeSlotPerDay.value,
-      status: status.value,
-      timeFrameInfos: lstTimeFrame.value,
-      listNameDetails: lstDetail.value,
-    })
-    .then((res) => {
-      loading.close();
-      if (res.data?.success) {
-        emit("callback", res);
-        toggleModel();
-        ElNotification({ title: t("Notification"), message: t("SaveSuccess"), type: "success", });
-      } else {
-        ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error", });
-      }
-    });
+  store .dispatch(props.mode == "edit" ? "pitch/update" : "pitch/insert", 
+  {
+    id: props.data?.id,
+    name: name.value,
+    address: address.value,
+    minutesPerMatch: minutesPerMatch.value,
+    quantity: quantity.value,
+    timeSlotPerDay: timeSlotPerDay.value,
+    status: status.value,
+    timeFrameInfos: lstTimeFrame.value,
+    listNameDetails: lstDetail.value,
+  })
+  .then((res) => {
+    loading.close();
+    if (res.data?.success) {
+      emit("callback", res);
+      toggleModel();
+      ElNotification({ title: t("Notification"), message: t("SaveSuccess"), type: "success", });
+    } else {
+      ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error", });
+    }
+  });
 };
 
 onMounted(() => {

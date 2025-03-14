@@ -29,7 +29,6 @@ const running = ref(0);
 const save = () => {
     if (running.value > 0) return;
     ++running.value;
-
     setTimeout(() => {
         running.value = 0;
     }, 1000);
@@ -44,9 +43,7 @@ const save = () => {
     }
 
     const loading = ElLoading.service(loadingOptions);
-    let actionPath = "item/insert";
-    if (props.mode == "edit") actionPath = "item/update";
-    store.dispatch(actionPath, 
+    store.dispatch(props.mode == "edit" ? "item/update" : "item/insert", 
     {
         id: props.data?.id,
         name: name.value,

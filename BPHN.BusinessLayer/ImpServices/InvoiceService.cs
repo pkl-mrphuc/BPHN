@@ -1,9 +1,10 @@
 ﻿using BPHN.BusinessLayer.IServices;
-using BPHN.DataLayer.ImpRepositories;
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
+using BPHN.ModelLayer.Others;
 using BPHN.ModelLayer.Responses;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
@@ -11,14 +12,20 @@ namespace BPHN.BusinessLayer.ImpServices
     {
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IPermissionService _permissionService;
+        private readonly INotificationService _notificationService;
+        private readonly IHistoryLogService _historyLogService;
         public InvoiceService(
-            IServiceProvider provider, 
+            IServiceProvider provider,
             IOptions<AppSettings> appSettings,
             IPermissionService permissionService,
-            IInvoiceRepository invoiceRepository) : base(provider, appSettings)
+            IInvoiceRepository invoiceRepository,
+            INotificationService notificationService,
+            IHistoryLogService historyLogService) : base(provider, appSettings)
         {
             _permissionService = permissionService;
             _invoiceRepository = invoiceRepository;
+            _notificationService = notificationService;
+            _historyLogService = historyLogService;
         }
 
         public async Task<ServiceResultModel> GetInstance(string id)
@@ -58,12 +65,17 @@ namespace BPHN.BusinessLayer.ImpServices
                         Message = _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig)
                     };
                 }
+
+                if (!string.IsNullOrWhiteSpace(data.Detail))
+                {
+                    data.Items = JsonConvert.DeserializeObject<List<InvoiceItem>>(data.Detail);
+                }
             }
 
             return new ServiceResultModel
             {
                 Success = true,
-                Data = _mapper.Map<InvoiceRespond>(data)
+                Data = _mapper.Map<GetSingleInvoiceRespond>(data)
             };
         }
 
@@ -96,6 +108,156 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 Success = true,
                 Data = _mapper.Map<List<InvoiceRespond>>(lstInvoice)
+            };
+        }
+
+        public async Task<ServiceResultModel> Insert(Invoice data)
+        {
+            var context = _contextService.GetContext();
+            if (context is null)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
+                };
+            }
+
+            var hasPermissionAdd = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.ADDINVOICE);
+            if (!hasPermissionAdd)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
+                };
+            }
+
+            var isValid = ValidateModelByAttribute(data, "Id") || data.Items == null || data.Items.Count() == 0;
+            if (!isValid)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.EMPTY_INPUT,
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
+                };
+            }
+
+            data.Id = Guid.NewGuid();
+            data.Status = InvoiceStatusEnum.DRAFT.ToString();
+            data.Detail = JsonConvert.SerializeObject(data.Items);
+            data.Date = DateTime.Now;
+            data.AccountId = context.Id;
+            data.CreatedBy = context.FullName;
+            data.CreatedDate = DateTime.Now;
+            data.ModifiedBy = context.FullName;
+            data.ModifiedDate = DateTime.Now;
+
+            var insertResult = await _invoiceRepository.Insert(data);
+            if (insertResult)
+            {
+                await _notificationService.Insert(context, NotificationTypeEnum.INSERTINVOICE, new Invoice
+                {
+                    CustomerType = data.CustomerType,
+                    CustomerName = data.CustomerName,
+                    CustomerPhone = data.CustomerPhone,
+                    Total = data.Total
+                });
+
+                _historyLogService.Write(Guid.NewGuid(), new HistoryLog
+                {
+                    ActionType = ActionEnum.INSERT,
+                    Entity = EntityEnum.INVOICE.ToString(),
+                    Data = new HistoryLogDescription
+                    {
+                        ModelId = data.Id,
+                        NewData = JsonConvert.SerializeObject(data)
+                    }
+                }, context);
+            }
+
+            return new ServiceResultModel
+            {
+                Success = true,
+                Data = insertResult
+            };
+        }
+
+        public async Task<ServiceResultModel> Update(Invoice data)
+        {
+            var context = _contextService.GetContext();
+            if (context is null)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
+                };
+            }
+
+            var hasPermissionEdit = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.EDITINVOICE);
+            if (!hasPermissionEdit)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
+                };
+            }
+
+            var isValid = ValidateModelByAttribute(data) || data.Items == null || data.Items.Count() == 0;
+            if (!isValid)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.EMPTY_INPUT,
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
+                };
+            }
+
+            data.ModifiedBy = context.FullName;
+            data.ModifiedDate = DateTime.Now;
+            data.AccountId = context.Id;
+            data.Date = DateTime.Now;
+            data.Detail = JsonConvert.SerializeObject(data.Items);
+
+            var oldInvoice = await _invoiceRepository.GetById(data.Id);
+            var updateResult = await _invoiceRepository.Update(data);
+            if (updateResult)
+            {
+                await _notificationService.Insert(context, NotificationTypeEnum.UPDATEINVOICE, new Invoice
+                {
+                    CustomerType = data.CustomerType,
+                    CustomerName = data.CustomerName,
+                    CustomerPhone = data.CustomerPhone,
+                    Total = data.Total
+                });
+
+                _historyLogService.Write(Guid.NewGuid(),
+                    new HistoryLog
+                    {
+                        ActionType = ActionEnum.UPDATE,
+                        Entity = EntityEnum.INVOICE.ToString(),
+                        Data = new HistoryLogDescription
+                        {
+                            ModelId = data.Id,
+                            OldData = JsonConvert.SerializeObject(oldInvoice),
+                            NewData = JsonConvert.SerializeObject(data)
+                        }
+                    }, context);
+            }
+
+
+            return new ServiceResultModel
+            {
+                Success = true,
+                Data = updateResult
             };
         }
     }

@@ -72,3 +72,7 @@ export const PaymentTypeEnum = {
     BANK: 0,
     CASH: 1
 }
+
+export const InvoiceStatusEnum = {
+    DRAFT: "DRAFT"
+}

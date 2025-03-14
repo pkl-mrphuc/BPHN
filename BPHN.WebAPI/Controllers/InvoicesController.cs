@@ -35,24 +35,24 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _invoiceService.GetInstance(id));
         }
 
-        //[Permission(FunctionTypeEnum.ADDSERVICE)]
-        //[ApiAuthorize]
-        //[HttpPost]
-        //[Route("insert")]
-        //public async Task<IActionResult> Insert([FromBody] InsertItemRequest request)
-        //{
-        //    Log.Debug($"Item/Insert start: {JsonConvert.SerializeObject(request)}");
-        //    return Ok(await _itemService.Insert(_mapper.Map<Item>(request)));
-        //}
+        [Permission(FunctionTypeEnum.ADDINVOICE)]
+        [ApiAuthorize]
+        [HttpPost]
+        [Route("insert")]
+        public async Task<IActionResult> Insert([FromBody] InsertInvoiceRequest request)
+        {
+            Log.Debug($"Invoice/Insert start: {JsonConvert.SerializeObject(request)}");
+            return Ok(await _invoiceService.Insert(_mapper.Map<Invoice>(request)));
+        }
 
-        //[Permission(FunctionTypeEnum.EDITSERVICE)]
-        //[ApiAuthorize]
-        //[HttpPost]
-        //[Route("update")]
-        //public async Task<IActionResult> Update([FromBody] UpdateItemRequest request)
-        //{
-        //    Log.Debug($"Item/Update start: {JsonConvert.SerializeObject(request)}");
-        //    return Ok(await _itemService.Update(_mapper.Map<Item>(request)));
-        //}
+        [Permission(FunctionTypeEnum.EDITINVOICE)]
+        [ApiAuthorize]
+        [HttpPost]
+        [Route("update")]
+        public async Task<IActionResult> Update([FromBody] UpdateInvoiceRequest request)
+        {
+            Log.Debug($"Invoice/Update start: {JsonConvert.SerializeObject(request)}");
+            return Ok(await _invoiceService.Update(_mapper.Map<Invoice>(request)));
+        }
     }
 }

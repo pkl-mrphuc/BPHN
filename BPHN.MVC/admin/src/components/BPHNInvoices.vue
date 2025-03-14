@@ -1,11 +1,13 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, inject } from "vue";
 import { useStore } from "vuex";
 import { Refresh, Edit } from "@element-plus/icons-vue";
 import useToggleModal from "@/register-components/actionDialog";
 import useCommonFn from "@/commonFn";
+import { ElLoading, ElNotification } from "element-plus";
 
+const loadingOptions = inject("loadingOptions");
 const store = useStore();
 const { t } = useI18n();
 const { openModal, hasRole } = useToggleModal();
@@ -45,13 +47,21 @@ const edit = (id) => {
 };
 
 const openForm = (id) => {
-  openModal("InvoiceDialog");
-  console.log(id)
+  const loading = ElLoading.service(loadingOptions);
+  store.dispatch("invoice/getInstance", id).then((res) => {
+    if (res?.data?.data) {
+      openModal("InvoiceDialog");
+      objInvoice.value = res.data.data;
+    } else {
+      ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error" });
+    }
+    loading.close();
+  });
 };
 
 onMounted(() => {
   loadData();
-});
+}); 
 </script>
 
 
@@ -87,14 +97,7 @@ onMounted(() => {
           <el-table-column label="" width="70" fixed="right">
             <template #default="scope">
               <div class="d-flex flex-row-reverse">
-                <el-button
-                  circle
-                  :icon="Edit"
-                  size="small"
-                  class="mr-2"
-                  @click="edit(scope.row.id)"
-                  type="primary"
-                ></el-button>
+                <el-button circle :icon="Edit" size="small" class="mr-2" @click="edit(scope.row.id)" type="primary"></el-button>
               </div>
             </template>
           </el-table-column>
@@ -102,11 +105,5 @@ onMounted(() => {
       </div>
     </div>
   </section>
-  <InvoiceDialog
-    v-if="hasRole('InvoiceDialog')"
-    :data="objInvoice"
-    :mode="mode"
-    @callback="loadData"
-  >
-  </InvoiceDialog>
+  <InvoiceDialog v-if="hasRole('InvoiceDialog')" :data="objInvoice" :mode="mode" @callback="loadData"></InvoiceDialog>
 </template>

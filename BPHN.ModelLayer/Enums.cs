@@ -53,6 +53,11 @@
         CANCEL = 2
     }
 
+    public enum  InvoiceStatusEnum
+    {
+        DRAFT = 0
+    }
+
     public enum FunctionTypeEnum
     {
         ADDPITCH = 0,
@@ -86,7 +91,9 @@
         INSERTACCOUNT = 8,
         UPDATEACCOUNT = 9,
         INSERTSERVICIE = 10,
-        UPDATESERVICE = 11
+        UPDATESERVICE = 11,
+        INSERTINVOICE = 12,
+        UPDATEINVOICE = 13
     }
 
     public enum EntityEnum
@@ -97,6 +104,19 @@
         ACCOUNT = 3,
         BOOKING = 4,
         BOOKINGDETAIL = 5,
-        SERVICE = 6
+        SERVICE = 6,
+        INVOICE = 7
+    }
+
+    public enum CustomerTypeEnum 
+    {
+        RETAIL = 0,
+        BOOKING = 1
+    }
+
+    public enum PaymentTypeEnum
+    {
+        BANK = 0,
+        CASH = 1
     }
 }

@@ -31,17 +31,19 @@ const edit = (id) => {
 };
 
 const openForm = (id) => {
+  if (running.value > 0) return;
+  ++running.value;
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
+
   const loading = ElLoading.service(loadingOptions);
   store.dispatch("pitch/getInstance", id).then((res) => {
     if (res?.data?.data) {
       openModal("FootballFieldDialog");
       objStadium.value = res.data.data;
     } else {
-      ElNotification({
-        title: t("Notification"),
-        message: res?.data?.message ?? t("ErrorMesg"),
-        type: "error"
-      })
+      ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error" })
     }
     loading.close();
   });
@@ -50,22 +52,23 @@ const openForm = (id) => {
 const loadData = () => {
   if (running.value > 0) return;
   ++running.value;
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
+
   const loading = ElLoading.service(loadingOptions);
-  store
-    .dispatch("pitch/getPaging", {
-      accountId: store.getters["account/getAccountId"],
-      hasDetail: false,
-      hasInactive: true,
-      pageIndex: 1,
-      pageSize: 1000
-    })
-    .then((res) => {
-      loading.close();
-      setTimeout(() => {
-        running.value = 0;
-      }, 1000);
-      lstStadium.value = res?.data?.data ?? [];
-    });
+  store.dispatch("pitch/getPaging", 
+  {
+    accountId: store.getters["account/getAccountId"],
+    hasDetail: false,
+    hasInactive: true,
+    pageIndex: 1,
+    pageSize: 1000
+  })
+  .then((res) => {
+    loading.close();
+    lstStadium.value = res?.data?.data ?? [];
+  });
 };
 </script>
 

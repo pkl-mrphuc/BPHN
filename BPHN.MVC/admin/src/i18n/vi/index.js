@@ -200,7 +200,8 @@ const vi = {
     BookingCustomer: 'Khách đặt sân',
     PaymentType: 'Hình thức thanh toán',
     BankPayment: 'Chuyển khoản',
-    CashPayment: 'Tiền mặt'
+    CashPayment: 'Tiền mặt',
+    DraftInvoice: 'HĐ nháp'
 }
 
 export default vi;
