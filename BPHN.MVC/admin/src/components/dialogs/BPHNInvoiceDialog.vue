@@ -26,7 +26,7 @@ const customerType = ref(props.data?.customerType ?? CustomerTypeEnum.RETAIL);
 const paymentType = ref(props.data?.paymentType ?? PaymentTypeEnum.BANK);
 const customerName = ref(props.data?.customerName ?? "");
 const customerPhone = ref(props.data?.customerPhone ?? "");
-const total = ref(0);
+const total = ref(props.data?.total ?? 0);
 const currentRow = ref(null);
 const lstRow = ref((props.data?.items ?? []).length != 0 ? props.data.items : [{
   id: 1,
