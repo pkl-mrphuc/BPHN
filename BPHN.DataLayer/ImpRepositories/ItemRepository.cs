@@ -24,6 +24,20 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
+        public async Task<IEnumerable<Item>> GetItems(Guid accountId, string txtSearch)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var items = (await connection.QueryAsync<Item>(Query.ITEM__GET_MANY, new Dictionary<string, object>
+                {
+                    { "@accountId", accountId },
+                    { "@key", $"%{txtSearch.Trim()}%" }
+                }));
+                return items?.ToList() ?? Enumerable.Empty<Item>();
+            }
+        }
+
         public async Task<Item> GetById(Guid id)
         {
             using (var connection = ConnectDB(GetConnectionString()))

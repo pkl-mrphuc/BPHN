@@ -15,9 +15,9 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly INotificationService _notificationService;
         private readonly IHistoryLogService _historyLogService;
         public ItemService(
-            IServiceProvider provider, 
-            IOptions<AppSettings> appSettings, 
-            IItemRepository itemRepository, 
+            IServiceProvider provider,
+            IOptions<AppSettings> appSettings,
+            IItemRepository itemRepository,
             IPermissionService permissionService,
             INotificationService notificationService,
             IHistoryLogService historyLogService) : base(provider, appSettings)
@@ -75,7 +75,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task<ServiceResultModel> GetItems()
+        public async Task<ServiceResultModel> GetItems(string txtSearch)
         {
             var context = _contextService.GetContext();
             if (context is null)
@@ -99,7 +99,16 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var lstItem = await _itemRepository.GetAll(context.Id);
+            IEnumerable<Item> lstItem;
+            if (string.IsNullOrWhiteSpace(txtSearch))
+            {
+                lstItem = await _itemRepository.GetAll(context.Id);
+            }
+            else
+            {
+                lstItem = await _itemRepository.GetItems(context.Id, txtSearch);
+            }
+
             return new ServiceResultModel
             {
                 Success = true,

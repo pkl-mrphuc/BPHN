@@ -172,6 +172,8 @@ const vi = {
     PERMISSION: 'Phân quyền',
     PITCH: 'Sân bóng',
     ACCOUNT: 'Tài khoản',
+    INVOICE: 'Hóa đơn',
+    SERVICE: 'HH/Dịch vụ',
     BOOKING: 'Đặt sân',
     BOOKINGDETAIL: 'Trận đấu',
     CANCELBOOKINGDETAIL: 'Hủy sân trận đấu {code}',
@@ -201,7 +203,9 @@ const vi = {
     PaymentType: 'Hình thức thanh toán',
     BankPayment: 'Chuyển khoản',
     CashPayment: 'Tiền mặt',
-    DraftInvoice: 'HĐ nháp'
+    DraftInvoice: 'HĐ nháp',
+    ACTIVE: 'Đang sử dụng',
+    INACTIVE: 'Ngừng sử dụng'
 }
 
 export default vi;

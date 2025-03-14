@@ -5,7 +5,7 @@ namespace BPHN.ModelLayer
     public class Item : BaseModel
     {
         public Guid AccountId { get; set; }
-        public string Status { get; set; }
+        public string Status { get; set; } = ActiveStatusEnum.ACTIVE.ToString();
         [Required]
         [MaxLength(36)]
         public string Code { get; set; }

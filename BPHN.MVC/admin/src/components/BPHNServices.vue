@@ -5,16 +5,20 @@ import { useStore } from "vuex";
 import { Refresh, Edit } from "@element-plus/icons-vue";
 import useToggleModal from "@/register-components/actionDialog";
 import { ElLoading, ElNotification } from "element-plus";
+import useCommonFn from "@/commonFn";
+import { StatusEnum } from "@/const";
 
 const { t } = useI18n();
 const { openModal, hasRole } = useToggleModal();
 const store = useStore();
-const loadingOptions = inject("loadingOptions");
+const { fakeNumber, equals } = useCommonFn();
 
+const loadingOptions = inject("loadingOptions");
 const lstItem = ref([]);
 const mode = ref("add");
 const objItem = ref(null);
 const running = ref(0);
+const txtSearch = ref("");
 
 const loadData = () => {
   if (running.value > 0) return;
@@ -23,7 +27,7 @@ const loadData = () => {
     running.value = 0;
   }, 1000);
   
-  store.dispatch("item/getAll", null).then((res) => {
+  store.dispatch("item/getAll", txtSearch.value).then((res) => {
     if (res?.data?.data) {
       lstItem.value = res.data.data;
     }
@@ -75,31 +79,33 @@ onMounted(() => {
           <el-button @click="loadData" class="ml-2">
             <el-icon><Refresh /></el-icon>
           </el-button>
+          <el-input v-model="txtSearch" :placeholder="t('Search')" :suffix-icon="Search" @keyup.enter="loadData"/>
         </div>
       </div>
       <div>
         <el-table :data="lstItem" style="height: calc(100vh - 230px)" :empty-text="t('NoData')">
-          <el-table-column :label="t('Status')" width="100">
+          <el-table-column :label="t('Status')" width="150">
             <template #default="scope">
-              <el-tag type="success" size="small">{{ t(scope.row.status) }}</el-tag>
+              <el-tag v-if="equals(scope.row.status, StatusEnum.ACTIVE)" type="success" size="small">{{ t(scope.row.status) }}</el-tag>
+              <el-tag v-else type="danger" size="small">{{ t(scope.row.status) }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column :label="t('Code')" width="150">
-            <template #default="scope">{{ scope.row.code}}</template>
+          <el-table-column :label="t('Code')" width="200">
+            <template #default="scope">{{ scope.row.code }}</template>
           </el-table-column>
-          <el-table-column :label="t('Name')" min-width="150">
-            <template #default="scope">{{ scope.row.name}}</template>
+          <el-table-column :label="t('Name')" width="400">
+            <template #default="scope">{{ scope.row.name }}</template>
           </el-table-column>
-          <el-table-column :label="t('Unit')" width="150">
-            <template #default="scope">{{ scope.row.unit}}</template>
+          <el-table-column :label="t('Unit')" width="100">
+            <template #default="scope">{{ scope.row.unit }}</template>
           </el-table-column>
-          <el-table-column :label="t('Quantity')" min-width="50">
-            <template #default="scope">{{ scope.row.quantity}}</template>
+          <el-table-column :label="t('Quantity')" width="120">
+            <template #default="scope">{{ scope.row.quantity }}</template>
           </el-table-column>
-          <el-table-column :label="t('SalePrice')" min-width="50">
-            <template #default="scope">{{ scope.row.salePrice}}</template>
+          <el-table-column :label="t('SalePrice')" width="120">
+            <template #default="scope">{{ fakeNumber(scope.row.salePrice) }}</template>
           </el-table-column>
-          <el-table-column label="" width="70" fixed="right">
+          <el-table-column label="" fixed="right">
             <template #default="scope">
               <div class="d-flex flex-row-reverse">
                 <el-button
@@ -117,11 +123,5 @@ onMounted(() => {
       </div>
     </div>
   </section>
-  <ServiceDialog
-    v-if="hasRole('ServiceDialog')"
-    :data="objItem"
-    :mode="mode"
-    @callback="loadData"
-  >
-  </ServiceDialog>
+  <ServiceDialog v-if="hasRole('ServiceDialog')" :data="objItem" :mode="mode" @callback="loadData"></ServiceDialog>
 </template>
