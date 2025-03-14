@@ -165,7 +165,7 @@ onMounted(() => {
               <div class="col-4 fw-bold d-flex flex-row align-items-center justify-content-start">{{ t("Status") }}</div>
               <div class="col-8">
                 <el-select v-model="status" class="w-100">
-                  <el-option :value="InvoiceStatusEnum.DRAFT" :label="t('DraftInvoice')" />
+                  <el-option :value="InvoiceStatusEnum.DRAFT" :label="t('DRAFT')" />
                 </el-select>
               </div>
             </div>

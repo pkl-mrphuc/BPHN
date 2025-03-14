@@ -203,9 +203,10 @@ const vi = {
     PaymentType: 'Hình thức thanh toán',
     BankPayment: 'Chuyển khoản',
     CashPayment: 'Tiền mặt',
-    DraftInvoice: 'HĐ nháp',
+    DRAFT: 'HĐ nháp',
     ACTIVE: 'Đang sử dụng',
-    INACTIVE: 'Ngừng sử dụng'
+    INACTIVE: 'Ngừng sử dụng',
+    Filter: 'Lọc',
 }
 
 export default vi;

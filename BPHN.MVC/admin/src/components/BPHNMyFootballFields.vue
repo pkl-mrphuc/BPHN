@@ -76,8 +76,8 @@ const loadData = () => {
   <section>
     <div class="container">
       <div class="row d-flex flex-row align-items-center justify-content-between">
-        <h3 class="fs-3 col-4 col-sm-4 col-md-4 col-lg-8">{{ t("MyFootballFields") }}</h3>
-        <div class="col-8 col-sm-8 col-md-8 col-lg-4 d-flex flex-row-reverse">
+        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("MyFootballFields") }}</h3>
+        <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row-reverse">
           <el-button type="primary" @click="addNew" class="ml-2">{{ t("AddNew") }}</el-button>
           <el-button @click="loadData">
             <el-icon><Refresh /></el-icon>

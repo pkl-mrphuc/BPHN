@@ -2,21 +2,23 @@
 import { useI18n } from "vue-i18n";
 import { ref, onMounted, computed, inject } from "vue";
 import { useStore } from "vuex";
-import { Refresh, Edit } from "@element-plus/icons-vue";
+import { Filter, Edit, Search } from "@element-plus/icons-vue";
 import useToggleModal from "@/register-components/actionDialog";
 import useCommonFn from "@/commonFn";
 import { ElLoading, ElNotification } from "element-plus";
+import { CustomerTypeEnum, InvoiceStatusEnum, PaymentTypeEnum } from "@/const";
+
+const { t } = useI18n();
+const { openModal, hasRole } = useToggleModal();
+const { dateToString, fakeNumber, equals } = useCommonFn();
 
 const loadingOptions = inject("loadingOptions");
 const store = useStore();
-const { t } = useI18n();
-const { openModal, hasRole } = useToggleModal();
-const { dateToString, fakeNumber } = useCommonFn();
-
 const lstInvoice = ref([]);
 const mode = ref("add");
 const objInvoice = ref(null);
 const running = ref(0);
+const visible = ref(false);
 
 const formatDate = computed(() => {
   return store.getters["config/getFormatDate"];
@@ -59,6 +61,11 @@ const openForm = (id) => {
   });
 };
 
+const filter = () => {
+  visible.value = true;
+  loadData();
+};
+
 onMounted(() => {
   loadData();
 }); 
@@ -69,20 +76,38 @@ onMounted(() => {
   <section>
     <div class="container">
       <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
-        <h3 class="fs-3 col-4 col-sm-4 col-md-4 col-lg-8">{{ t("Invoices") }}</h3>
-        <div class="col-8 col-sm-8 col-md-8 col-lg-4 d-flex flex-row-reverse">
+        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("Invoices") }}</h3>
+        <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row-reverse">
           <el-button type="primary" @click="addNew" class="ml-2">{{ t("AddNew") }}</el-button>
-          <el-button @click="loadData" class="ml-2">
-            <el-icon><Refresh /></el-icon>
-          </el-button>
+          <el-popover :visible="visible" placement="bottom" :width="400">
+            <div></div>
+            <div class="d-flex flex-row align-items-center justify-content-end">
+              <el-button size="small" text @click="visible = false">{{ t('Cancel') }}</el-button>
+              <el-button size="small" type="primary" @click="visible = false">{{ t('Filter') }}</el-button>
+            </div>
+            <template #reference>
+              <el-button @click="filter" class="ml-2">
+                <el-icon><Filter /></el-icon>
+              </el-button>
+            </template>
+          </el-popover>
+          <el-input v-model="txtSearch" :placeholder="t('Search')" :suffix-icon="Search" @keyup.enter="loadData"/>
         </div>
       </div>
       <div>
         <el-table :data="lstInvoice" style="height: calc(100vh - 230px)" :empty-text="t('NoData')">
-          <el-table-column :label="t('Status')" width="100">
-            <template #default="scope">{{ scope.row.status}}</template>
+          <el-table-column :label="t('Status')" width="120">
+            <template #default="scope">
+              <el-tag v-if="equals(scope.row.status, InvoiceStatusEnum.DRAFT)" type="info" size="small">{{ t(scope.row.status) }}</el-tag>
+              <el-tag v-else type="success" size="small">{{ t(scope.row.status) }}</el-tag>
+            </template>
           </el-table-column>
-          <el-table-column :label="t('Date')" width="120">
+          <el-table-column :label="t('CustomerType')" width="200">
+            <template #default="scope">
+              {{ equals(scope.row.customerType, CustomerTypeEnum.RETAIL) ? t('RetailCustomer') : t('BookingCustomer') }}
+            </template>
+          </el-table-column>
+          <el-table-column :label="t('Date')" width="200">
             <template #default="scope">{{ dateToString(scope.row.date, formatDate) }}</template>
           </el-table-column>
           <el-table-column :label="t('CustomerPhone')" width="150">
@@ -91,7 +116,12 @@ onMounted(() => {
           <el-table-column :label="t('CustomerName')">
             <template #default="scope">{{ scope.row.customerName }}</template>
           </el-table-column>
-          <el-table-column :label="t('Total')" width="150">
+          <el-table-column :label="t('PaymentType')">
+            <template #default="scope">
+              {{ equals(scope.row.paymentType, PaymentTypeEnum.BANK) ? t('BankPayment') : t('CashPayment') }}
+            </template>
+          </el-table-column>
+          <el-table-column :label="t('Total')">
             <template #default="scope">{{ fakeNumber(scope.row.total) }}</template>
           </el-table-column>
           <el-table-column label="" width="70" fixed="right">

@@ -203,8 +203,9 @@ const en = {
     PaymentType: 'Payment type',
     BankPayment: 'Bank payment',
     CashPayment: 'Cash payment',
-    DraftInvoice: 'Draft invoice',
+    DRAFT: 'Draft invoice',
     ACTIVE: 'Active',
-    INACTIVE: 'Inactive'
+    INACTIVE: 'Inactive',
+    Filter: 'Filter',
 }
 export default en;

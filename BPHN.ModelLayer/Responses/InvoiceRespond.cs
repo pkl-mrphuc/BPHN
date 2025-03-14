@@ -8,5 +8,7 @@
         public string CustomerPhone { get; set; }
         public string CustomerName { get; set; }
         public double Total { get; set; }
+        public PaymentTypeEnum PaymentType { get; set; }
+        public CustomerTypeEnum CustomerType { get; set; }
     }
 }
