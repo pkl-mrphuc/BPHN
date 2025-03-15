@@ -86,7 +86,7 @@ const vi = {
     InputTimeFrameEmptyMesg: "Vui lòng nhập đầy đủ thông tin sân bóng, khung giờ trước khi kiểm tra",
     SearchBy: "Tìm kiếm theo sđt, email, tên sân",
     MatchDate: "Ngày diễn ra",
-    deposit: "Cọc",
+    Deposit: "Cọc",
     Cancel: "Hủy",
     Status: "Trạng thái",
     BookingDate: "Ngày đặt",
@@ -209,6 +209,8 @@ const vi = {
     Filter: 'Lọc',
     AVAILABLE: 'Còn hàng',
     UNAVAILABLE: 'Hết hàng',
+    DEPOSITED: 'Đã cọc',
+    NOTDEPOSIT: 'Chưa cọc'
 }
 
 export default vi;

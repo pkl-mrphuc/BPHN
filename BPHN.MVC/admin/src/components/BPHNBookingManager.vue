@@ -13,7 +13,7 @@ import { useStore } from "vuex";
 import { ElLoading, ElNotification } from "element-plus";
 import { inject, ref, onMounted, computed } from "vue";
 import useCommonFn from "@/commonFn";
-import { BookingStatusEnum, CustomerTypeEnum } from "@/const";
+import { BookingStatusEnum, CustomerTypeEnum, DepositStatusEnum } from "@/const";
 
 const { t } = useI18n();
 const { openModal, hasRole } = useToggleModal();
@@ -34,10 +34,12 @@ const checked1 = ref(false);
 const checked2 = ref(false);
 const checked3 = ref(false);
 const checked4 = ref(false);
+const checked5 = ref(false);
 const status = ref(BookingStatusEnum.SUCCESS);
 const bookingDate = ref(new Date());
 const weekendays = ref(1);
 const matchDate = ref(new Date());
+const deposit = ref(DepositStatusEnum.DEPOSITED);
 
 const formatDate = computed(() => {
   return store.getters["config/getFormatDate"];
@@ -142,6 +144,11 @@ const loadData = () => {
     hasBookingDetail: true,
     txtSearch: txtSearch.value,
     hasInactive: true,
+    status: checked1.value ? status.value : "",
+    bookingDate: checked2.value ? dateToString(bookingDate.value, "yyyy-MM-dd") : "",
+    weekendays: checked3.value ? weekendays.value : "",
+    matchDate: checked4.value ? dateToString(matchDate.value, "yyyy-MM-dd") : "",
+    deposit: checked5.value ? deposit.value : "",
   })
   .then((res) => {
     if (res?.data?.data) {
@@ -238,6 +245,13 @@ onMounted(() => {
               <div v-if="checked4 == true">
                 <el-date-picker v-model="matchDate" class="w-100"></el-date-picker>
               </div>
+              <el-checkbox v-model="checked5" :label="t('Deposit')" size="large" />
+              <div v-if="checked5 == true">
+                <el-select v-model="deposit" class="w-100">
+                  <el-option :value="DepositStatusEnum.DEPOSITED" :label="t(DepositStatusEnum.DEPOSITED)" />
+                  <el-option :value="DepositStatusEnum.NOTDEPOSIT" :label="t(DepositStatusEnum.NOTDEPOSIT)" />
+                </el-select>
+              </div>
             </div>
             <div class="d-flex flex-row align-items-center justify-content-end">
               <el-button size="small" text @click="visible = false">{{ t('Cancel') }}</el-button>
@@ -306,7 +320,7 @@ onMounted(() => {
                 {{ dateToString(scope.row.matchDate, formatDate) }}
               </template>
             </el-table-column>
-            <el-table-column :label="t('deposit')">
+            <el-table-column :label="t('Deposit')">
               <template #default="scope">
                 <span v-if="scope.row.deposit > 0">{{ fakeNumber(scope.row.deposit) }}</span>
                 <span v-else></span>

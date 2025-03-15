@@ -14,6 +14,11 @@ export const QuantityStatusEnum = {
     UNAVAILABLE: 'UNAVAILABLE'
 };
 
+export const DepositStatusEnum = {
+    DEPOSITED: 'DEPOSITED',
+    NOTDEPOSIT: 'NOTDEPOSIT'
+};
+
 export const GenderEnum = {
     MALE: 'MALE',
     FEMALE: 'FEMALE',
