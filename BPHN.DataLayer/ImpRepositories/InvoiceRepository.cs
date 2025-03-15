@@ -40,7 +40,7 @@ namespace BPHN.DataLayer.ImpRepositories
             {
                 conditions.Add(new WhereCondition
                 {
-                    Column = "CustomerName",
+                    Column = "CustomerPhone",
                     Operator = "like",
                     Value = $"%{txtSearch}%",
                 });
