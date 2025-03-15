@@ -20,10 +20,10 @@ namespace BPHN.WebAPI.Controllers
         [ApiAuthorize]
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> GetInvoices()
+        public async Task<IActionResult> GetInvoices(string txtSearch, string status, int? customerType, DateTime? date, int? paymentType)
         {
-            Log.Debug($"Invoice/GetInvoices start:");
-            return Ok(await _invoiceService.GetInvoices());
+            Log.Debug($"Invoice/GetInvoices start: txtSearch: {txtSearch}, status: {status}, customerType: {customerType}, date: {date?.ToString("dd/MM/yyyy")}, paymentType: {paymentType}");
+            return Ok(await _invoiceService.GetInvoices(txtSearch, status, customerType, date, paymentType));
         }
 
         [ApiAuthorize]

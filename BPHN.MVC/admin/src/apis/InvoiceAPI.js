@@ -5,8 +5,8 @@ class InvoiceAPI {
 
     }
 
-    async getAll() {
-        let requestUrl = `${process.env.VUE_APP_API_URL}/invoices`;
+    async getAll(data) {
+        let requestUrl = `${process.env.VUE_APP_API_URL}/invoices?txtSearch=${data.txtSearch}&status=${data.status}&customerType=${data.customerType}&date=${data.date}&paymentType=${data.paymentType}`;
         return await axios.get(requestUrl);
     }
 

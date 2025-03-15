@@ -19,6 +19,15 @@ const mode = ref("add");
 const objInvoice = ref(null);
 const running = ref(0);
 const visible = ref(false);
+const checked1 = ref(false);
+const checked2 = ref(false);
+const checked3 = ref(false);
+const checked4 = ref(false);
+const txtSearch = ref("");
+const status = ref(InvoiceStatusEnum.DRAFT);
+const customerType = ref(CustomerTypeEnum.RETAIL);
+const date = ref(new Date());
+const paymentType = ref(PaymentTypeEnum.BANK);
 
 const formatDate = computed(() => {
   return store.getters["config/getFormatDate"];
@@ -31,7 +40,15 @@ const loadData = () => {
     running.value = 0;
   }, 1000);
   
-  store.dispatch("invoice/getAll", null).then((res) => {
+  store.dispatch("invoice/getAll", 
+  {
+    txtSearch: txtSearch.value,
+    status: checked1.value ? status.value : "",
+    customerType: checked2.value ? customerType.value : "",
+    date: checked3.value ? dateToString(date.value, "yyyy-MM-dd") : "",
+    paymentType: checked4.value ? paymentType.value : ""
+  })
+  .then((res) => {
     if (res?.data?.data) {
       lstInvoice.value = res.data.data;
     }
@@ -62,7 +79,6 @@ const openForm = (id) => {
 };
 
 const filter = () => {
-  visible.value = false;
   loadData();
 };
 
@@ -84,17 +100,26 @@ onMounted(() => {
               <el-checkbox v-model="checked1" :label="t('Status')" size="large" />
               <div v-if="checked1 == true">
                 <el-select v-model="status" class="w-100">
-                  <el-option :label="t('ACTIVE')" :value="StatusEnum.ACTIVE" />
-                  <el-option :label="t('INACTIVE')" :value="StatusEnum.INACTIVE" />
+                  <el-option :value="InvoiceStatusEnum.DRAFT" :label="t('DRAFT')" />
                 </el-select>
               </div>
-              <el-checkbox v-model="checked2" :label="t('Code')" size="large" />
+              <el-checkbox v-model="checked2" :label="t('CustomerType')" size="large" />
               <div v-if="checked2 == true">
-                <el-input v-model="code" maxlength="36" />
+                <el-select v-model="customerType" class="w-100">
+                  <el-option :value="CustomerTypeEnum.RETAIL" :label="t('RetailCustomer')" />
+                  <el-option :value="CustomerTypeEnum.BOOKING" :label="t('BookingCustomer')" />
+                </el-select>
               </div>
-              <el-checkbox v-model="checked3" :label="t('Unit')" size="large" />
+              <el-checkbox v-model="checked3" :label="t('Date')" size="large" />
               <div v-if="checked3 == true">
-                <el-input v-model="unit" maxlength="255" />
+                <el-date-picker type="date" class="w-100" v-model="date"/>
+              </div>
+              <el-checkbox v-model="checked4" :label="t('PaymentType')" size="large" />
+              <div v-if="checked4 == true">
+                <el-select v-model="paymentType" class="w-100">
+                  <el-option :value="PaymentTypeEnum.BANK" :label="t('BankPayment')" />
+                  <el-option :value="PaymentTypeEnum.CASH" :label="t('CashPayment')" />
+                </el-select>
               </div>
             </div>
             <div class="d-flex flex-row align-items-center justify-content-end">

@@ -1,5 +1,6 @@
 ﻿using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
+using BPHN.ModelLayer.Others;
 using Dapper;
 using Microsoft.Extensions.Options;
 
@@ -24,15 +25,73 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public async Task<IEnumerable<Invoice>> GetInvoices(Guid accountId)
+        public async Task<IEnumerable<Invoice>> GetInvoices(Guid accountId, string txtSearch, string status, int? customerType, DateTime? date, int? paymentType)
         {
+            var conditions = new List<WhereCondition>
+            {
+                new WhereCondition
+                {
+                    Column = "AccountId",
+                    Operator = "=",
+                    Value = accountId.ToString(),
+                }
+            };
+            if (!string.IsNullOrWhiteSpace(txtSearch))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "CustomerName",
+                    Operator = "like",
+                    Value = $"%{txtSearch}%",
+                });
+            }
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "Status",
+                    Operator = "=",
+                    Value = status,
+                });
+            }
+            if (customerType.HasValue)
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "CustomerType",
+                    Operator = "=",
+                    Value = customerType.Value,
+                });
+            }
+            if (date.HasValue)
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "Date",
+                    Operator = ">=",
+                    Value = date.Value.ToString("yyyy-MM-dd 00:00:00"),
+                });
+                conditions.Add(new WhereCondition
+                {
+                    Column = "Date",
+                    Operator = "<=",
+                    Value = date.Value.ToString("yyyy-MM-dd 23:59:59")
+                });
+            }
+            if (paymentType.HasValue)
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "PaymentType",
+                    Operator = "=",
+                    Value = paymentType.Value,
+                });
+            }
+            var where = BuildWhere(Query.INVOICE__GET_MANY, conditions);
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var invoices = (await connection.QueryAsync<Invoice>(Query.INVOICE__GET_ALL, new Dictionary<string, object>
-                {
-                    { "@accountId", accountId }
-                }));
+                var invoices = await connection.QueryAsync<Invoice>(where.query, where.param);
                 return invoices ?? Enumerable.Empty<Invoice>();
             }
         }

@@ -79,7 +79,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task<ServiceResultModel> GetInvoices()
+        public async Task<ServiceResultModel> GetInvoices(string txtSearch, string status, int? customerType, DateTime? date, int? paymentType)
         {
             var context = _contextService.GetContext();
             if (context is null)
@@ -103,7 +103,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var lstInvoice = await _invoiceRepository.GetInvoices(context.Id);
+            var lstInvoice = await _invoiceRepository.GetInvoices(context.Id, txtSearch, status, customerType, date, paymentType);
             return new ServiceResultModel
             {
                 Success = true,
