@@ -106,7 +106,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 !string.IsNullOrWhiteSpace(unit) ||
                 !string.IsNullOrWhiteSpace(quantity))
             {
-                lstItem = await _itemRepository.GetItems(context.Id, txtSearch);
+                lstItem = await _itemRepository.GetItems(context.Id, txtSearch, status, code, unit, quantity);
             }
             else
             {

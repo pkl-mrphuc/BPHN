@@ -119,4 +119,10 @@
         BANK = 0,
         CASH = 1
     }
+
+    public enum QuantityStatusEnum 
+    {
+        AVAILABLE = 0,
+        UNAVAILABLE = 1
+    }
 }

@@ -39,10 +39,10 @@ const loadData = () => {
   store.dispatch("item/getAll", 
   {
     txtSearch: txtSearch.value,
-    code: code.value,
-    unit: unit.value,
-    status: status.value,
-    quantity: quantityStatus.value
+    code: checked2.value ? code.value : "",
+    unit: checked3.value ? unit.value : "",
+    status: checked1.value ? status.value : "",
+    quantity: checked4.value ? quantityStatus.value : ""
   })
   .then((res) => {
     if (res?.data?.data) {
@@ -81,7 +81,6 @@ const openForm = (id) => {
 };
 
 const filter = () => {
-  visible.value = false;
   loadData();
 };
 
