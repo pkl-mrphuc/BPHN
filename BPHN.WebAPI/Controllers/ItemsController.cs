@@ -20,10 +20,10 @@ namespace BPHN.WebAPI.Controllers
         [ApiAuthorize]
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> GetItems(string txtSearch)
+        public async Task<IActionResult> GetItems(string txtSearch, string status, string code, string unit, string quantity)
         {
-            Log.Debug($"Item/GetItems start:");
-            return Ok(await _itemService.GetItems(txtSearch));
+            Log.Debug($"Item/GetItems start: txtSearch: {txtSearch}, status: {status}, code: {code}, unit: {unit}");
+            return Ok(await _itemService.GetItems(txtSearch, status, code, unit, quantity));
         }
 
         [ApiAuthorize]

@@ -62,7 +62,7 @@ const openForm = (id) => {
 };
 
 const filter = () => {
-  visible.value = true;
+  visible.value = false;
   loadData();
 };
 
@@ -79,15 +79,30 @@ onMounted(() => {
         <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("Invoices") }}</h3>
         <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row-reverse">
           <el-button type="primary" @click="addNew" class="ml-2">{{ t("AddNew") }}</el-button>
-          <el-popover :visible="visible" placement="bottom" :width="400">
-            <div></div>
+          <el-popover :visible="visible" placement="bottom" :width="300">
+            <div class="d-flex flex-column mb-3">
+              <el-checkbox v-model="checked1" :label="t('Status')" size="large" />
+              <div v-if="checked1 == true">
+                <el-select v-model="status" class="w-100">
+                  <el-option :label="t('ACTIVE')" :value="StatusEnum.ACTIVE" />
+                  <el-option :label="t('INACTIVE')" :value="StatusEnum.INACTIVE" />
+                </el-select>
+              </div>
+              <el-checkbox v-model="checked2" :label="t('Code')" size="large" />
+              <div v-if="checked2 == true">
+                <el-input v-model="code" maxlength="36" />
+              </div>
+              <el-checkbox v-model="checked3" :label="t('Unit')" size="large" />
+              <div v-if="checked3 == true">
+                <el-input v-model="unit" maxlength="255" />
+              </div>
+            </div>
             <div class="d-flex flex-row align-items-center justify-content-end">
               <el-button size="small" text @click="visible = false">{{ t('Cancel') }}</el-button>
-              <el-button size="small" type="primary" @click="visible = false">{{ t('Filter') }}</el-button>
+              <el-button size="small" type="primary" @click="filter">{{ t('Filter') }}</el-button>
             </div>
             <template #reference>
-              <el-button @click="filter" class="ml-2">
-                <el-icon><Filter /></el-icon>
+              <el-button @click="visible = true" :icon="Filter" class="ml-2">
               </el-button>
             </template>
           </el-popover>

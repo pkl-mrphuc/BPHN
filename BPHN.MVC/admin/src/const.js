@@ -9,6 +9,11 @@ export const StatusEnum = {
     INACTIVE: 'INACTIVE'
 };
 
+export const QuantityStatusEnum = {
+    AVAILABLE: 'AVAILABLE',
+    UNAVAILABLE: 'UNAVAILABLE'
+};
+
 export const GenderEnum = {
     MALE: 'MALE',
     FEMALE: 'FEMALE',

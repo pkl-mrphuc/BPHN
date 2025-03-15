@@ -6,8 +6,7 @@ class ItemAPI {
     }
 
     async getAll(data) {
-        console.log(data);
-        let requestUrl = `${process.env.VUE_APP_API_URL}/items?txtSearch=${data}`;
+        let requestUrl = `${process.env.VUE_APP_API_URL}/items?txtSearch=${data.txtSearch}&status=${data.status}&unit=${data.unit}&code=${data.code}&quantity=${data.quantity}`;
         return await axios.get(requestUrl);
     }
 

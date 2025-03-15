@@ -207,6 +207,8 @@ const vi = {
     ACTIVE: 'Đang sử dụng',
     INACTIVE: 'Ngừng sử dụng',
     Filter: 'Lọc',
+    AVAILABLE: 'Còn hàng',
+    UNAVAILABLE: 'Hết hàng',
 }
 
 export default vi;

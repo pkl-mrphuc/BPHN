@@ -75,7 +75,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task<ServiceResultModel> GetItems(string txtSearch)
+        public async Task<ServiceResultModel> GetItems(string txtSearch, string status, string code, string unit, string quantity)
         {
             var context = _contextService.GetContext();
             if (context is null)
@@ -100,13 +100,17 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             IEnumerable<Item> lstItem;
-            if (string.IsNullOrWhiteSpace(txtSearch))
+            if (!string.IsNullOrWhiteSpace(txtSearch) ||
+                !string.IsNullOrWhiteSpace(status) ||
+                !string.IsNullOrWhiteSpace(code) ||
+                !string.IsNullOrWhiteSpace(unit) ||
+                !string.IsNullOrWhiteSpace(quantity))
             {
-                lstItem = await _itemRepository.GetAll(context.Id);
+                lstItem = await _itemRepository.GetItems(context.Id, txtSearch);
             }
             else
             {
-                lstItem = await _itemRepository.GetItems(context.Id, txtSearch);
+                lstItem = await _itemRepository.GetAll(context.Id);
             }
 
             return new ServiceResultModel

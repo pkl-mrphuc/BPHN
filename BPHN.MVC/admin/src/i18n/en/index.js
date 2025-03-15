@@ -207,5 +207,7 @@ const en = {
     ACTIVE: 'Active',
     INACTIVE: 'Inactive',
     Filter: 'Filter',
+    AVAILABLE: 'Available',
+    UNAVAILABLE: 'Unavailable',
 }
 export default en;
