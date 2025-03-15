@@ -51,7 +51,15 @@ const loadAll = () => {
     running.value = 0;
   }, 1000);
 
-  store.dispatch("item/getAll", null).then((res) => {
+  store.dispatch("item/getAll", 
+  {
+    txtSearch: "",
+    status: "",
+    unit: "",
+    quantity: "",
+    code: ""
+  })
+  .then((res) => {
     if (res?.data?.data) {
       for (let i = 0; i < res.data.data.length; i++) {
         const element = res.data.data[i];
