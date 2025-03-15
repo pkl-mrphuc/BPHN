@@ -80,7 +80,10 @@
         public const string INVOICE__GET_ALL = "select Id, Status, Date, CustomerPhone, CustomerName, Total, PaymentType, CustomerType from invoices where AccountId = @accountId order by Date desc";
         public const string INVOICE__GET_MANY = "select Id, Status, Date, CustomerPhone, CustomerName, Total, PaymentType, CustomerType from invoices";
         public const string INVOICE__GET_BY_ID = "select * from invoices where Id = @id";
+        public const string INVOICE__GET_BY_BOOKING = "select i.* from invoice_bookingdetail ibd join invoices i on ibd.InvoiceId = i.Id where ibd.BookingDetailId = @id";
         public const string INVOICE__INSERT = "insert into invoices(Id, AccountId, CustomerType, CustomerName, CustomerPhone, PaymentType, Total, Detail, Date, Status, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy) values (@id, @accountId, @customerType, @customerName, @customerPhone, @paymentType, @total, @detail, @date, @status, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
         public const string INVOICE__UPDATE = "update invoices set CustomerType = @customerType, CustomerName = @customerName, CustomerPhone = @customerPhone, PaymentType = @paymentType, Total = @total, Detail = @detail, Date = @date, Status = @status, ModifiedDate = @modifiedDate, ModifiedBy = @modifiedBy where id = @id";
+
+        public const string INVOICE_BOOKING_DETAIL__INSERT = "insert into invoice_bookingdetail(Id, BookingDetailId, InvoiceId, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy) values(@id, @bookingDetailId, @invoiceId, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
     }
 }

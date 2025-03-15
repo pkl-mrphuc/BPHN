@@ -18,5 +18,6 @@ namespace BPHN.ModelLayer.Responses
         public Guid BookingDetailId { get; set; }
         public Guid BookingId { get; set; }
         public string MatchCode { get; set; }
+        public double Price { get; set; }
     }
 }

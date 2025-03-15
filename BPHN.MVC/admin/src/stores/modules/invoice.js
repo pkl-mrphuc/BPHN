@@ -21,6 +21,10 @@ const actions = {
         return InvoiceAPI.getInstance(id);
     }),
 
+    getByBooking: ((commit, id) => {
+        return InvoiceAPI.getByBooking(id);
+    }),
+
     insert: ((commit, data) => {
         return InvoiceAPI.insert(data);
     }),

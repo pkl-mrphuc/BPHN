@@ -23,5 +23,6 @@
         public Guid? PitchId { get; set; }
         public string PitchName { get; set; }
         public string NameDetail { get; set; }
+        public double Price { get; set; }
     }
 }

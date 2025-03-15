@@ -347,7 +347,8 @@ namespace BPHN.DataLayer.ImpRepositories
                                                 bd.MatchDate as MatchDate,
                                                 bd.Deposit as Deposit,
                                                 bd.BookingId as BookingId,
-                                                bd.Status as BookingDetailStatus
+                                                bd.Status as BookingDetailStatus,
+                                                tfi.Price as Price
                                                 from booking_details bd 
                                                 inner join (
 						                                    select * from bookings where AccountId in @accountId and PhoneNumber like @txtSearch

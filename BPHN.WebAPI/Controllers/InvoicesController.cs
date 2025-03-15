@@ -35,6 +35,15 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _invoiceService.GetInstance(id));
         }
 
+        [ApiAuthorize]
+        [Route("get/{bookingDetailId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetByBooking(string bookingDetailId)
+        {
+            Log.Debug($"Invoice/GetByBooking start: {bookingDetailId}");
+            return Ok(await _invoiceService.GetByBooking(bookingDetailId));
+        }
+
         [Permission(FunctionTypeEnum.ADDINVOICE)]
         [ApiAuthorize]
         [HttpPost]
@@ -42,7 +51,7 @@ namespace BPHN.WebAPI.Controllers
         public async Task<IActionResult> Insert([FromBody] InsertInvoiceRequest request)
         {
             Log.Debug($"Invoice/Insert start: {JsonConvert.SerializeObject(request)}");
-            return Ok(await _invoiceService.Insert(_mapper.Map<Invoice>(request)));
+            return Ok(await _invoiceService.Insert(_mapper.Map<Invoice>(request), request.BookingDetailId));
         }
 
         [Permission(FunctionTypeEnum.EDITINVOICE)]

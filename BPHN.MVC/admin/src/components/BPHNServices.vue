@@ -81,6 +81,7 @@ const openForm = (id) => {
 };
 
 const filter = () => {
+  visible.value = false;
   loadData();
 };
 

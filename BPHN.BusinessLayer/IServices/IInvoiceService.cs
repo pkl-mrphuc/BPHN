@@ -6,7 +6,8 @@ namespace BPHN.BusinessLayer.IServices
     {
         Task<ServiceResultModel> GetInvoices(string txtSearch, string status, int? customerType, DateTime? date, int? paymentType);
         Task<ServiceResultModel> GetInstance(string id);
-        Task<ServiceResultModel> Insert(Invoice data);
+        Task<ServiceResultModel> GetByBooking(string bookingDetailId);
+        Task<ServiceResultModel> Insert(Invoice data, Guid? bookingDetailId);
         Task<ServiceResultModel> Update(Invoice data);
     }
 }

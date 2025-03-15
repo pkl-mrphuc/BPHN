@@ -30,6 +30,14 @@ const running = ref(0);
 const mode = ref("");
 const visible = ref(false);
 const objInvoice = ref(null);
+const checked1 = ref(false);
+const checked2 = ref(false);
+const checked3 = ref(false);
+const checked4 = ref(false);
+const status = ref(BookingStatusEnum.SUCCESS);
+const bookingDate = ref(new Date());
+const weekendays = ref(1);
+const matchDate = ref(new Date());
 
 const formatDate = computed(() => {
   return store.getters["config/getFormatDate"];
@@ -78,15 +86,46 @@ const approval = (id) => {
 };
 
 const pay = (data) => {
-  openModal("InvoiceDialog");
-  console.log(data);
-  objInvoice.value = 
-  {
-    customerType: CustomerTypeEnum.BOOKING,
-    customerPhone: data.phoneNumber,
-    customerName: data.email,
-    deposit: data.deposit
-  };
+  store.dispatch("invoice/getByBooking", data.bookingDetailId)
+  .then((res) => {
+    console.log(res);
+    if(res?.data?.data) {
+      mode.value = "edit";
+      objInvoice.value = res.data.data;
+    }
+    else {
+      mode.value = "add";
+      objInvoice.value = 
+      {
+        customerType: CustomerTypeEnum.BOOKING,
+        customerPhone: data.phoneNumber,
+        customerName: data.email,
+        deposit: data.deposit,
+        total: data.price,
+        bookingDetailId: data.bookingDetailId,
+        items: 
+        [
+          {
+            id: 1,
+            itemName: "Thuê sân",
+            unit: "sân",
+            quantity: 1,
+            salePrice: data.price,
+            total: data.price
+          }, 
+          {
+            id: 2,
+            itemName: "",
+            unit: "",
+            quantity: 0,
+            salePrice: 0,
+            total: 0
+          }
+        ]
+      };
+    }
+    openModal("InvoiceDialog");
+  });
 };
 
 const loadData = () => {
@@ -137,7 +176,7 @@ const cancel = (id) => {
 };
 
 const filter = () => {
-  visible.value = true;
+  visible.value = false;
   loadData();
 };
 
@@ -169,14 +208,43 @@ onMounted(() => {
         <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("BookingManager") }}</h3>
         <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row">
           <el-input v-model="txtSearch" :placeholder="t('SearchBy')" :suffix-icon="Search" @keyup.enter="loadData" class="w-100"/>
-          <el-popover :visible="visible" placement="bottom" :width="400">
-            <div></div>
+          <el-popover :visible="visible" placement="bottom" :width="300">
+            <div class="d-flex flex-column mb-3">
+              <el-checkbox v-model="checked1" :label="t('Status')" size="large" />
+              <div v-if="checked1 == true">
+                <el-select v-model="status" class="w-100">
+                  <el-option :value="BookingStatusEnum.SUCCESS" :label="t(BookingStatusEnum.SUCCESS)" />
+                  <el-option :value="BookingStatusEnum.PENDING" :label="t(BookingStatusEnum.PENDING)" />
+                  <el-option :value="BookingStatusEnum.CANCEL" :label="t(BookingStatusEnum.CANCEL)" />
+                </el-select>
+              </div>
+              <el-checkbox v-model="checked2" :label="t('BookingDate')" size="large" />
+              <div v-if="checked2 == true">
+                <el-date-picker v-model="bookingDate" class="w-100"></el-date-picker>
+              </div>
+              <el-checkbox v-model="checked3" :label="t('Weekdays')" size="large" />
+              <div v-if="checked3 == true">
+                <el-select v-model="weekendays" class="w-100">
+                  <el-option :value="1" :label="t('Monday')">{{ t("Monday") }}</el-option>
+                  <el-option :value="2" :label="t('Tuesday')">{{ t("Tuesday") }}</el-option>
+                  <el-option :value="3" :label="t('Wednesday')">{{ t("Wednesday") }}</el-option>
+                  <el-option :value="4" :label="t('Thursday')">{{ t("Thursday") }}</el-option>
+                  <el-option :value="5" :label="t('Friday')">{{ t("Friday") }}</el-option>
+                  <el-option :value="6" :label="t('Saturday')">{{ t("Saturday") }}</el-option>
+                  <el-option :value="0" :label="t('Sunday')">{{ t("Sunday") }}</el-option>
+                </el-select>
+              </div>
+              <el-checkbox v-model="checked4" :label="t('MatchDate')" size="large" />
+              <div v-if="checked4 == true">
+                <el-date-picker v-model="matchDate" class="w-100"></el-date-picker>
+              </div>
+            </div>
             <div class="d-flex flex-row align-items-center justify-content-end">
               <el-button size="small" text @click="visible = false">{{ t('Cancel') }}</el-button>
-              <el-button size="small" type="primary" @click="visible = false">{{ t('Filter') }}</el-button>
+              <el-button size="small" type="primary" @click="filter">{{ t('Filter') }}</el-button>
             </div>
             <template #reference>
-              <el-button @click="filter" class="ml-2">
+              <el-button  @click="visible = true" class="ml-2">
                 <el-icon><Filter /></el-icon>
               </el-button>
             </template>
@@ -273,5 +341,5 @@ onMounted(() => {
     </div>
   </section>
   <BookingDialog v-if="hasRole('BookingDialog')" :data="objBooking" :mode="mode" @callback="loadData"></BookingDialog>
-  <InvoiceDialog v-if="hasRole('InvoiceDialog')" :data="objInvoice" :mode="'add'"></InvoiceDialog>
+  <InvoiceDialog v-if="hasRole('InvoiceDialog')" :data="objInvoice" :mode="mode"></InvoiceDialog>
 </template>
