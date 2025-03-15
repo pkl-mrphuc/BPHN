@@ -26,6 +26,7 @@ const customerType = ref(props.data?.customerType ?? CustomerTypeEnum.RETAIL);
 const paymentType = ref(props.data?.paymentType ?? PaymentTypeEnum.BANK);
 const customerName = ref(props.data?.customerName ?? "");
 const customerPhone = ref(props.data?.customerPhone ?? "");
+const deposit = ref(props.data?.deposit ?? 0);
 const total = ref(props.data?.total ?? 0);
 const currentRow = ref(null);
 const lstRow = ref((props.data?.items ?? []).length != 0 ? props.data.items : [{
@@ -244,11 +245,20 @@ onMounted(() => {
           </template>
         </el-table-column>
       </el-table>
-      <div class="mb-3">
+      <div>
+        <div class="row mb-2">
+          <div class="col-12 d-flex flex-row align-items-center justify-content-end">
+            <b>
+              <i class="mr-3">{{ t("Total") }}:</i>
+              <span>{{ total != 0 ? fakeNumber(total) : 0 }}</span>
+            </b>
+          </div>
+        </div>
         <div class="row">
           <div class="col-12 d-flex flex-row align-items-center justify-content-end">
             <b>
-              <i>{{ t("Total") }}: {{ fakeNumber(total) }}(đồng)</i>
+              <i class="mr-3">{{ t("Deposite") }}:</i>
+              <span>{{ deposit != 0 ? fakeNumber(deposit) : 0 }}</span>
             </b>
           </div>
         </div>

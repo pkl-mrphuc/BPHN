@@ -13,7 +13,7 @@ import { useStore } from "vuex";
 import { ElLoading, ElNotification } from "element-plus";
 import { inject, ref, onMounted, computed } from "vue";
 import useCommonFn from "@/commonFn";
-import { BookingStatusEnum } from "@/const";
+import { BookingStatusEnum, CustomerTypeEnum } from "@/const";
 
 const { t } = useI18n();
 const { openModal, hasRole } = useToggleModal();
@@ -29,6 +29,7 @@ const lstBooking = ref([]);
 const running = ref(0);
 const mode = ref("");
 const visible = ref(false);
+const objInvoice = ref(null);
 
 const formatDate = computed(() => {
   return store.getters["config/getFormatDate"];
@@ -76,9 +77,15 @@ const approval = (id) => {
   });
 };
 
-const pay = (id) => {
+const pay = (data) => {
   openModal("InvoiceDialog");
-  console.log(id)
+  objInvoice.value = 
+  {
+    customerType: CustomerTypeEnum.BOOKING,
+    customerPhone: data.phoneNumber,
+    customerName: data.email,
+    deposit: data.deposite
+  };
 };
 
 const loadData = () => {
@@ -232,7 +239,7 @@ onMounted(() => {
             </el-table-column>
             <el-table-column :label="t('Deposite')">
               <template #default="scope">
-                <span v-if="scope.row.deposit > 0">{{ fakeNumber(scope.row.deposit) }}</span>
+                <span v-if="scope.row.deposite > 0">{{ fakeNumber(scope.row.deposite) }}</span>
                 <span v-else></span>
               </template>
             </el-table-column>
@@ -242,7 +249,7 @@ onMounted(() => {
               <div class="d-flex flex-row-reverse">
                 <el-button class="ml-1" @click="cancel(scope.row.bookingDetailId)" type="danger" circle :icon="Delete" size="small" v-if=" !equals( scope.row.bookingDetailStatus, BookingStatusEnum.CANCEL) && !equals(scope.row.bookingDetailStatus, BookingStatusEnum.PENDING)"></el-button>
                 <el-button class="ml-1" @click="approval(scope.row.bookingId)" type="warning" v-if="equals(scope.row.bookingStatus, BookingStatusEnum.PENDING)" circle :icon="Checked" size="small" ></el-button>
-                <el-button class="ml-1" @click="pay(scope.row.bookingDetailId)" type="success" circle :icon="Money" size="small" v-if=" equals( scope.row.bookingDetailStatus, BookingStatusEnum.SUCCESS)"></el-button>
+                <el-button class="ml-1" @click="pay(scope.row)" type="success" circle :icon="Money" size="small" v-if=" equals( scope.row.bookingDetailStatus, BookingStatusEnum.SUCCESS)"></el-button>
               </div>
             </template>
           </el-table-column>
@@ -265,5 +272,5 @@ onMounted(() => {
     </div>
   </section>
   <BookingDialog v-if="hasRole('BookingDialog')" :data="objBooking" :mode="mode" @callback="loadData"></BookingDialog>
-  <InvoiceDialog v-if="hasRole('InvoiceDialog')"></InvoiceDialog>
+  <InvoiceDialog v-if="hasRole('InvoiceDialog')" :data="objInvoice" :mode="'add'"></InvoiceDialog>
 </template>
