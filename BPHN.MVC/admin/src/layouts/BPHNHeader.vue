@@ -99,10 +99,10 @@ const toggle = () => {
 
 <template>
   <section class="h-100 d-flex flex-row align-items-center justify-content-between">
-    <div @click="goToHome" class="pointer d-flex flex-row align-items-center justify-content-between">
+    <div class="pointer d-flex flex-row align-items-center justify-content-between">
       <el-button @click="toggle" class="mr-4" circle :icon="Expand" size="large"></el-button>
       <img id="logo" src="../assets/images/logo.png" alt="">
-      <h4 class="fs-2 m-0">BPHN</h4>
+      <h4 @click="goToHome" class="fs-2 m-0">BPHN</h4>
     </div>
     <div class="d-flex flex-row align-items-center">
       <p class="account pointer">{{ t("Hello") }}

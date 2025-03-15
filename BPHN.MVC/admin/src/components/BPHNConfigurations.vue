@@ -24,10 +24,7 @@ const running = ref(0);
 const { equals } = useCommonFn();
 
 const lstConfig = computed(() => {
-  if (
-    multiUser.value &&
-    (equals(role.value, RoleEnum.ADMIN) || equals(role.value, RoleEnum.TENANT))
-  ) {
+  if (multiUser.value && (equals(role.value, RoleEnum.ADMIN) || equals(role.value, RoleEnum.TENANT))) {
     return [
       {
         name: t("DarkMode"),
@@ -114,11 +111,7 @@ watch(getSystemEmail, (newValue) => {
 
 const useMultiUser = () => {
   if (multiUser.value) {
-    ElNotification({
-      title: t("Notification"),
-      message: t("ContactSupplier"),
-      type: "info",
-    });
+    ElNotification({ title: t("Notification"), message: t("ContactSupplier"), type: "info", });
     multiUser.value = false;
   }
 };
@@ -126,7 +119,12 @@ const useMultiUser = () => {
 const save = () => {
   if (running.value > 0) return;
   ++running.value;
-  let configs = [
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
+
+  store.dispatch("config/save", 
+  [
     {
       Key: ConfigKeyEnum.DARKMODE,
       Value: `${darkMode.value}`,
@@ -147,12 +145,7 @@ const save = () => {
       Key: ConfigKeyEnum.SYSTEMEMAIL,
       Value: `${email.value}`,
     }
-  ];
-  store.dispatch("config/save", configs);
-
-  setTimeout(() => {
-    running.value = 0;
-  }, 1000);
+  ]);
 };
 
 const connect = () => {
@@ -216,8 +209,5 @@ const connect = () => {
       </div>
     </div>
   </section>
-  <ConnectSystemEmailDialog 
-    v-if="hasRole('ConfigDialog')"
-    :data="objConnect">
-  </ConnectSystemEmailDialog>
+  <ConnectSystemEmailDialog  v-if="hasRole('ConfigDialog')" :data="objConnect"></ConnectSystemEmailDialog>
 </template>

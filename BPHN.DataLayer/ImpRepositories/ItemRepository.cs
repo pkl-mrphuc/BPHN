@@ -1,5 +1,6 @@
 ﻿using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
+using BPHN.ModelLayer.Others;
 using Dapper;
 using Microsoft.Extensions.Options;
 
@@ -20,6 +21,80 @@ namespace BPHN.DataLayer.ImpRepositories
                 {
                     { "@accountId", accountId }
                 }));
+                return items?.ToList() ?? Enumerable.Empty<Item>();
+            }
+        }
+
+        public async Task<IEnumerable<Item>> GetItems(Guid accountId, string txtSearch, string status, string code, string unit, string quantity)
+        {
+            var conditions = new List<WhereCondition>
+            {
+                new WhereCondition
+                {
+                    Column = "AccountId",
+                    Operator = "=",
+                    Value = accountId.ToString()
+                }
+            };
+            if (!string.IsNullOrWhiteSpace(txtSearch))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "Name",
+                    Operator = "=",
+                    Value = txtSearch
+                });
+            }
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "Status",
+                    Operator = "=",
+                    Value = status
+                });
+            }
+            if (!string.IsNullOrWhiteSpace(code))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "Code",
+                    Operator = "like",
+                    Value = $"%{code}%"
+                });
+            }
+            if (!string.IsNullOrWhiteSpace(unit))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "Unit",
+                    Operator = "like",
+                    Value = $"%{unit}%"
+                });
+            }
+            if (!string.IsNullOrWhiteSpace(quantity) && QuantityStatusEnum.AVAILABLE.ToString().Equals(quantity))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "Quantity",
+                    Operator = ">",
+                    Value = 0
+                });
+            }
+            if (!string.IsNullOrWhiteSpace(quantity) && QuantityStatusEnum.UNAVAILABLE.ToString().Equals(quantity))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "Quantity",
+                    Operator = "=",
+                    Value = 0
+                });
+            }
+            var where = BuildWhere(Query.ITEM__GET_MANY, conditions);
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var items = await connection.QueryAsync<Item>(where.query, where.param);
                 return items?.ToList() ?? Enumerable.Empty<Item>();
             }
         }

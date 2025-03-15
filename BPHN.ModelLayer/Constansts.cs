@@ -71,9 +71,16 @@
         public const string TIME_FRAME__GET_BY_LIST_PITCH_ID = "select Id, SortOrder, Name, TimeBegin, TimeEnd, Price, PitchId from time_frame_infos where PitchId in @pitchId order by SortOrder";
         public const string TIME_FRAME__GET_BY_ID = "select Id, SortOrder, Name, TimeBegin, TimeEnd, Price, PitchId from time_frame_infos where Id = @id";
 
-        public const string ITEM__GET_ALL = "select Id, Code, Name, Status, Quantity, SalePrice, Unit from items";
+        public const string ITEM__GET_ALL = "select * from items where AccountId = @accountId";
+        public const string ITEM__GET_MANY = "select * from items";
         public const string ITEM__GET_BY_ID = "select Id, Code, Name, Status, Quantity, SalePrice, PurchasePrice, Unit from items where id = @id";
         public const string ITEM__UPDATE_BY_ID = "update items set Unit = @unit, Status = @status, Code = @code, Name = @name, Quantity = @quantity, SalePrice = @salePrice, PurchasePrice = @purchasePrice, ModifiedBy = @modifiedBy, ModifiedDate = @modifiedDate where Id = @id";
         public const string ITEM__INSERT = "insert into items(Id, AccountId, Unit, Status, Code, Name, Quantity, SalePrice, PurchasePrice, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy) values (@id, @accountId, @unit, @status, @code, @name, @quantity, @salePrice, @purchasePrice, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
+
+        public const string INVOICE__GET_ALL = "select Id, Status, Date, CustomerPhone, CustomerName, Total, PaymentType, CustomerType from invoices where AccountId = @accountId order by Date desc";
+        public const string INVOICE__GET_MANY = "select Id, Status, Date, CustomerPhone, CustomerName, Total, PaymentType, CustomerType from invoices";
+        public const string INVOICE__GET_BY_ID = "select * from invoices where Id = @id";
+        public const string INVOICE__INSERT = "insert into invoices(Id, AccountId, CustomerType, CustomerName, CustomerPhone, PaymentType, Total, Detail, Date, Status, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy) values (@id, @accountId, @customerType, @customerName, @customerPhone, @paymentType, @total, @detail, @date, @status, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
+        public const string INVOICE__UPDATE = "update invoices set CustomerType = @customerType, CustomerName = @customerName, CustomerPhone = @customerPhone, PaymentType = @paymentType, Total = @total, Detail = @detail, Date = @date, Status = @status, ModifiedDate = @modifiedDate, ModifiedBy = @modifiedBy where id = @id";
     }
 }

@@ -26,11 +26,7 @@ const bookingId = ref(props.data?.bookingId ?? "");
 
 const save = () => {
   if (!teamA.value) {
-    ElNotification({
-      title: t("Notification"),
-      message: t("TeamAEmptyMesg"),
-      type: "warning",
-    });
+    ElNotification({ title: t("Notification"), message: t("TeamAEmptyMesg"), type: "warning", });
     return;
   }
 
@@ -44,22 +40,15 @@ const save = () => {
   store.dispatch("bookingDetail/updateMatch", data);
   emit("callback", data);
   toggleModel();
-  ElNotification({
-    title: t("Notification"),
-    message: t("SaveSuccess"),
-    type: "success",
-  });
+  ElNotification({ title: t("Notification"), message: t("SaveSuccess"), type: "success", });
 };
 
 const decline = () => {
   store.dispatch("booking/decline", bookingId.value).then((res) => {
     if (res?.data?.success) {
-      ElNotification({
-        title: t("Notification"),
-        message: t("SaveSuccess"),
-        type: "success",
-      });
-      emit("callback", {
+      ElNotification({ title: t("Notification"), message: t("SaveSuccess"), type: "success", });
+      emit("callback", 
+      {
         teamA: teamA.value,
         teamB: teamB.value,
         note: note.value,
@@ -68,24 +57,18 @@ const decline = () => {
       });
       toggleModel();
     } else {
-      ElNotification({
-        title: t("Notification"),
-        message: res?.data?.message ?? t("ErrorMesg"),
-        type: "error",
-      });
+      ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error", });
     }
   });
 };
 
 const approval = () => {
-  store.dispatch("booking/approval", bookingId.value).then((res) => {
+  store.dispatch("booking/approval", bookingId.value)
+  .then((res) => {
     if (res?.data?.success) {
-      ElNotification({
-        title: t("Notification"),
-        message: t("SaveSuccess"),
-        type: "success",
-      });
-      emit("callback", {
+      ElNotification({ title: t("Notification"), message: t("SaveSuccess"), type: "success", });
+      emit("callback", 
+      {
         teamA: teamA.value,
         teamB: teamB.value,
         note: note.value,
@@ -93,11 +76,7 @@ const approval = () => {
         status: BookingStatusEnum.SUCCESS,
       });
     } else {
-      ElNotification({
-        title: t("Notification"),
-        message: res?.data?.message ?? t("ErrorMesg"),
-        type: "error",
-      });
+      ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error", });
     }
   });
 };
@@ -107,37 +86,27 @@ const approval = () => {
   <Dialog :title="t('MatchInfoForm')">
     <template #body>
       <el-form-item>
-        <el-col :span="7" class="fw-bold">
-          {{ t("TeamA") }}<span class="text-danger">(*)</span>
+        <el-col :span="7" class="fw-bold">{{ t("TeamA") }}
+          <span class="text-danger">(*)</span>
         </el-col>
         <el-col :span="17">
-          <el-input
-            v-model="teamA"
-            maxlength="255"
-            :placeholder="t('ShouldContainPhoneNumber')"
-          />
+          <el-input v-model="teamA" maxlength="255" :placeholder="t('ShouldContainPhoneNumber')" />
         </el-col>
       </el-form-item>
       <el-form-item>
-        <el-col :span="7" class="fw-bold">
-          {{ t("TeamB") }}
-        </el-col>
+        <el-col :span="7" class="fw-bold">{{ t("TeamB") }}</el-col>
         <el-col :span="17">
           <el-input v-model="teamB" maxlength="255" />
         </el-col>
       </el-form-item>
       <el-form-item>
-        <el-col :span="7" class="fw-bold">
-          {{ t("Deposite") }}
-        </el-col>
+        <el-col :span="7" class="fw-bold">{{ t("Deposite") }}</el-col>
         <el-col :span="17">
           <mask-number-input :numberDecimal="0" :value="deposite" @value="(value) => { deposite = value; }"></mask-number-input>
         </el-col>
       </el-form-item>
       <el-form-item>
-        <el-col :span="7" class="fw-bold">
-          {{ t("Note") }}
-        </el-col>
+        <el-col :span="7" class="fw-bold">{{ t("Note") }}</el-col>
         <el-col :span="17">
           <el-input v-model="note" maxlength="500" :rows="3" type="textarea" />
         </el-col>
@@ -146,18 +115,8 @@ const approval = () => {
     <template #foot>
       <div class="d-flex flex-row justify-content-between">
         <div>
-          <el-button
-            v-if="equals(status, BookingStatusEnum.PENDING)"
-            type="danger"
-            @click="decline"
-            >{{ t("Decline") }}</el-button
-          >
-          <el-button
-            v-if="equals(status, BookingStatusEnum.PENDING)"
-            type="primary"
-            @click="approval"
-            >{{ t("Approval") }}</el-button
-          >
+          <el-button v-if="equals(status, BookingStatusEnum.PENDING)" type="danger" @click="decline">{{ t("Decline") }}</el-button>
+          <el-button v-if="equals(status, BookingStatusEnum.PENDING)" type="primary" @click="approval">{{ t("Approval") }}</el-button>
         </div>
         <div>
           <el-button @click="toggleModel">{{ t("Close") }}</el-button>

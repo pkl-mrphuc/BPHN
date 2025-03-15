@@ -8,22 +8,22 @@ using Newtonsoft.Json;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
-    public class ItemService : BaseService, IItemService
+    public class InvoiceService : BaseService, IInvoiceService
     {
-        private readonly IItemRepository _itemRepository;
+        private readonly IInvoiceRepository _invoiceRepository;
         private readonly IPermissionService _permissionService;
         private readonly INotificationService _notificationService;
         private readonly IHistoryLogService _historyLogService;
-        public ItemService(
+        public InvoiceService(
             IServiceProvider provider,
             IOptions<AppSettings> appSettings,
-            IItemRepository itemRepository,
             IPermissionService permissionService,
+            IInvoiceRepository invoiceRepository,
             INotificationService notificationService,
             IHistoryLogService historyLogService) : base(provider, appSettings)
         {
-            _itemRepository = itemRepository;
             _permissionService = permissionService;
+            _invoiceRepository = invoiceRepository;
             _notificationService = notificationService;
             _historyLogService = historyLogService;
         }
@@ -41,7 +41,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            if (!string.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out var itemId))
+            if (!string.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out var invoiceId))
             {
                 return new ServiceResultModel
                 {
@@ -51,12 +51,11 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var data = new Item();
+            var data = new Invoice();
             data.Id = Guid.NewGuid();
-            data.Status = ActiveStatusEnum.ACTIVE.ToString();
-            if (Guid.TryParse(id, out itemId))
+            if (Guid.TryParse(id, out invoiceId))
             {
-                data = await _itemRepository.GetById(itemId);
+                data = await _invoiceRepository.GetById(invoiceId);
                 if (data is null)
                 {
                     return new ServiceResultModel
@@ -66,16 +65,21 @@ namespace BPHN.BusinessLayer.ImpServices
                         Message = _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig)
                     };
                 }
+
+                if (!string.IsNullOrWhiteSpace(data.Detail))
+                {
+                    data.Items = JsonConvert.DeserializeObject<List<InvoiceItem>>(data.Detail);
+                }
             }
 
             return new ServiceResultModel
             {
                 Success = true,
-                Data = _mapper.Map<ItemRespond>(data)
+                Data = _mapper.Map<GetSingleInvoiceRespond>(data)
             };
         }
 
-        public async Task<ServiceResultModel> GetItems(string txtSearch, string status, string code, string unit, string quantity)
+        public async Task<ServiceResultModel> GetInvoices(string txtSearch, string status, int? customerType, DateTime? date, int? paymentType)
         {
             var context = _contextService.GetContext();
             if (context is null)
@@ -88,7 +92,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTSERVICE);
+            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTINVOICE);
             if (!hasPermission)
             {
                 return new ServiceResultModel
@@ -99,28 +103,15 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            IEnumerable<Item> lstItem;
-            if (!string.IsNullOrWhiteSpace(txtSearch) ||
-                !string.IsNullOrWhiteSpace(status) ||
-                !string.IsNullOrWhiteSpace(code) ||
-                !string.IsNullOrWhiteSpace(unit) ||
-                !string.IsNullOrWhiteSpace(quantity))
-            {
-                lstItem = await _itemRepository.GetItems(context.Id, txtSearch, status, code, unit, quantity);
-            }
-            else
-            {
-                lstItem = await _itemRepository.GetAll(context.Id);
-            }
-
+            var lstInvoice = await _invoiceRepository.GetInvoices(context.Id, txtSearch, status, customerType, date, paymentType);
             return new ServiceResultModel
             {
                 Success = true,
-                Data = _mapper.Map<List<ItemRespond>>(lstItem)
+                Data = _mapper.Map<List<InvoiceRespond>>(lstInvoice)
             };
         }
 
-        public async Task<ServiceResultModel> Insert(Item data)
+        public async Task<ServiceResultModel> Insert(Invoice data)
         {
             var context = _contextService.GetContext();
             if (context is null)
@@ -133,7 +124,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermissionAdd = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.ADDSERVICE);
+            var hasPermissionAdd = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.ADDINVOICE);
             if (!hasPermissionAdd)
             {
                 return new ServiceResultModel
@@ -144,7 +135,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var isValid = ValidateModelByAttribute(data, "Id");
+            var isValid = ValidateModelByAttribute(data, "Id") || data.Items == null || data.Items.Count() == 0;
             if (!isValid)
             {
                 return new ServiceResultModel
@@ -156,24 +147,30 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             data.Id = Guid.NewGuid();
+            data.Status = InvoiceStatusEnum.DRAFT.ToString();
+            data.Detail = JsonConvert.SerializeObject(data.Items);
+            data.Date = DateTime.Now;
             data.AccountId = context.Id;
             data.CreatedBy = context.FullName;
             data.CreatedDate = DateTime.Now;
             data.ModifiedBy = context.FullName;
             data.ModifiedDate = DateTime.Now;
 
-            var insertResult = await _itemRepository.Insert(data);
+            var insertResult = await _invoiceRepository.Insert(data);
             if (insertResult)
             {
-                await _notificationService.Insert<Item>(context, NotificationTypeEnum.INSERTSERVICIE, new Item
+                await _notificationService.Insert(context, NotificationTypeEnum.INSERTINVOICE, new Invoice
                 {
-                    Name = data.Name
+                    CustomerType = data.CustomerType,
+                    CustomerName = data.CustomerName,
+                    CustomerPhone = data.CustomerPhone,
+                    Total = data.Total
                 });
 
                 _historyLogService.Write(Guid.NewGuid(), new HistoryLog
                 {
                     ActionType = ActionEnum.INSERT,
-                    Entity = EntityEnum.SERVICE.ToString(),
+                    Entity = EntityEnum.INVOICE.ToString(),
                     Data = new HistoryLogDescription
                     {
                         ModelId = data.Id,
@@ -189,7 +186,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task<ServiceResultModel> Update(Item data)
+        public async Task<ServiceResultModel> Update(Invoice data)
         {
             var context = _contextService.GetContext();
             if (context is null)
@@ -202,7 +199,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermissionEdit = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.EDITSERVICE);
+            var hasPermissionEdit = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.EDITINVOICE);
             if (!hasPermissionEdit)
             {
                 return new ServiceResultModel
@@ -213,7 +210,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var isValid = ValidateModelByAttribute(data);
+            var isValid = ValidateModelByAttribute(data) || data.Items == null || data.Items.Count() == 0;
             if (!isValid)
             {
                 return new ServiceResultModel
@@ -227,25 +224,30 @@ namespace BPHN.BusinessLayer.ImpServices
             data.ModifiedBy = context.FullName;
             data.ModifiedDate = DateTime.Now;
             data.AccountId = context.Id;
+            data.Date = DateTime.Now;
+            data.Detail = JsonConvert.SerializeObject(data.Items);
 
-            var oldItem = await _itemRepository.GetById(data.Id);
-            var updateResult = await _itemRepository.Update(data);
+            var oldInvoice = await _invoiceRepository.GetById(data.Id);
+            var updateResult = await _invoiceRepository.Update(data);
             if (updateResult)
             {
-                await _notificationService.Insert<Item>(context, NotificationTypeEnum.UPDATESERVICE, new Item
+                await _notificationService.Insert(context, NotificationTypeEnum.UPDATEINVOICE, new Invoice
                 {
-                    Name = data.Name
+                    CustomerType = data.CustomerType,
+                    CustomerName = data.CustomerName,
+                    CustomerPhone = data.CustomerPhone,
+                    Total = data.Total
                 });
 
                 _historyLogService.Write(Guid.NewGuid(),
                     new HistoryLog
                     {
                         ActionType = ActionEnum.UPDATE,
-                        Entity = EntityEnum.SERVICE.ToString(),
+                        Entity = EntityEnum.INVOICE.ToString(),
                         Data = new HistoryLogDescription
                         {
                             ModelId = data.Id,
-                            OldData = JsonConvert.SerializeObject(oldItem),
+                            OldData = JsonConvert.SerializeObject(oldInvoice),
                             NewData = JsonConvert.SerializeObject(data)
                         }
                     }, context);

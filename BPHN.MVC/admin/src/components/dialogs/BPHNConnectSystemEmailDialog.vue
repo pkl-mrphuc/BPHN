@@ -22,6 +22,10 @@ const password = ref("");
 const connect = () => {
   if (running.value > 0) return;
   ++running.value;
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
+
   let configs = [
     {
       Key: ConfigKeyEnum.SYSTEMEMAIL,
@@ -33,10 +37,6 @@ const connect = () => {
     }
   ];
   store.dispatch("config/save", configs);
-
-  setTimeout(() => {
-    running.value = 0;
-  }, 1000);
 };
 </script>
 
@@ -48,9 +48,7 @@ const connect = () => {
           <div class="col-12 col-sm-12 col-md-9">
             <div class="row mb-3">
               <div class="col-6 fw-bold d-flex flex-row align-items-center justify-content-end">
-                <div class="mx-3">
-                  {{ t("Email") }}
-                </div>
+                <div class="mx-3">{{ t("Email") }}</div>
               </div>
               <div class="col-6">
                 <div class="mx-3">
@@ -60,9 +58,7 @@ const connect = () => {
             </div>
             <div class="row mb-3" >
               <div class="col-6 fw-bold d-flex flex-row align-items-center justify-content-end">
-                <div class="mx-3">
-                  {{ t("Password") }}
-                </div>
+                <div class="mx-3">{{ t("Password") }}</div>
               </div>
               <div class="col-6">
                 <div class="mx-3">
@@ -76,9 +72,7 @@ const connect = () => {
     </template>
     <template #foot>
       <div class="d-flex flex-row-reverse">
-        <el-button type="primary" @click="connect" class="ml-2">{{
-          t("Connect")
-        }}</el-button>
+        <el-button type="primary" @click="connect" class="ml-2">{{ t("Connect") }}</el-button>
         <el-button @click="toggleModel">{{ t("Close") }}</el-button>
       </div>
     </template>

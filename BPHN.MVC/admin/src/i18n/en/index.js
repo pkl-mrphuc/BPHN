@@ -172,6 +172,8 @@ const en = {
     PERMISSION: 'Permission',
     PITCH: 'Stadium',
     ACCOUNT: 'Account',
+    INVOICE: 'Invoice',
+    SERVICE: 'Items/Services',
     BOOKING: 'Booking',
     BOOKINGDETAIL: 'Match',
     CANCELBOOKINGDETAIL: 'Cancel match {code}',
@@ -200,6 +202,12 @@ const en = {
     BookingCustomer: 'Booking customer',
     PaymentType: 'Payment type',
     BankPayment: 'Bank payment',
-    CashPayment: 'Cash payment'
+    CashPayment: 'Cash payment',
+    DRAFT: 'Draft invoice',
+    ACTIVE: 'Active',
+    INACTIVE: 'Inactive',
+    Filter: 'Filter',
+    AVAILABLE: 'Available',
+    UNAVAILABLE: 'Unavailable',
 }
 export default en;

@@ -65,7 +65,8 @@ const filter = () => {
 onMounted(() => {
   localStorage.removeItem("LSTBLANK");
   store
-    .dispatch("booking/findBlank", {
+    .dispatch("booking/findBlank", 
+    {
       isRecurring: props.isRecurring,
       startDate: props.startDate,
       endDate: props.endDate,
@@ -97,69 +98,29 @@ onMounted(() => {
         <div class="row">
           <div class="col-12 col-sm-12 col-md-6 col-lg-3">
             <div class="m-1">
-              <el-select
-                class="w-100"
-                :placeholder="t('Infrastructure')"
-                v-model="pitchName"
-                @change="filter"
-              >
-                <el-option
-                  v-for="item in lstStadium"
-                  :key="item"
-                  :label="item"
-                  :value="item"
-                />
+              <el-select class="w-100" :placeholder="t('Infrastructure')" v-model="pitchName" @change="filter">
+                <el-option v-for="item in lstStadium" :key="item" :label="item" :value="item" />
               </el-select>
             </div>
           </div>
           <div class="col-12 col-sm-12 col-md-6 col-lg-3">
             <div class="m-1">
-              <el-select
-                class="w-100"
-                :placeholder="t('TimeFrame')"
-                v-model="timeFrameInfoName"
-                @change="filter"
-              >
-                <el-option
-                  v-for="item in lstTimeFrame"
-                  :key="item"
-                  :label="item"
-                  :value="item"
-                />
+              <el-select class="w-100" :placeholder="t('TimeFrame')" v-model="timeFrameInfoName" @change="filter">
+                <el-option v-for="item in lstTimeFrame" :key="item" :label="item" :value="item" />
               </el-select>
             </div>
           </div>
           <div class="col-12 col-sm-12 col-md-6 col-lg-3">
             <div class="m-1">
-              <el-select
-                class="w-100"
-                :placeholder="t('NameDetail')"
-                v-model="detailName"
-                @change="filter"
-              >
-                <el-option
-                  v-for="item in lstDetail"
-                  :key="item"
-                  :label="item"
-                  :value="item"
-                />
+              <el-select class="w-100" :placeholder="t('NameDetail')" v-model="detailName" @change="filter" >
+                <el-option v-for="item in lstDetail" :key="item" :label="item" :value="item" />
               </el-select>
             </div>
           </div>
           <div class="col-12 col-sm-12 col-md-6 col-lg-3">
             <div class="m-1">
-              <el-select
-                class="w-100"
-                :placeholder="t('Weekdays')"
-                v-model="weekdays"
-                @change="filter"
-              >
-                <el-option
-                  v-for="item in lstWeekday"
-                  :key="item"
-                  :label="item"
-                  :value="item"
-                />
+              <el-select class="w-100" :placeholder="t('Weekdays')" v-model="weekdays" @change="filter" >
+                <el-option v-for="item in lstWeekday" :key="item" :label="item" :value="item" />
               </el-select>
             </div>
           </div>
@@ -178,9 +139,7 @@ onMounted(() => {
         </el-table-column>
         <el-table-column :label="t('Weekdays')" width="80">
           <template #default="scope">
-            <span class="text-truncate">{{
-              t(getWeekdays(scope.row.weekendays))
-            }}</span>
+            <span class="text-truncate">{{ t(getWeekdays(scope.row.weekendays)) }}</span>
           </template>
         </el-table-column>
         <el-table-column :label="t('Infrastructure')" min-width="200">
@@ -200,9 +159,7 @@ onMounted(() => {
         </el-table-column>
         <el-table-column label="" width="100">
           <template #default="scope">
-            <el-button type="primary" @click="choose(scope.row.id)">{{
-              t("Choose")
-            }}</el-button>
+            <el-button type="primary" @click="choose(scope.row.id)">{{ t("Choose") }}</el-button>
           </template>
         </el-table-column>
       </el-table>

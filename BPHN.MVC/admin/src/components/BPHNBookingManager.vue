@@ -1,7 +1,7 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import {
-  Refresh,
+  Filter,
   Search,
   User,
   Delete,
@@ -13,7 +13,7 @@ import { useStore } from "vuex";
 import { ElLoading, ElNotification } from "element-plus";
 import { inject, ref, onMounted, computed } from "vue";
 import useCommonFn from "@/commonFn";
-import { BookingStatusEnum } from "@/const";
+import { BookingStatusEnum, CustomerTypeEnum } from "@/const";
 
 const { t } = useI18n();
 const { openModal, hasRole } = useToggleModal();
@@ -28,105 +28,116 @@ const { dateToString, getWeekdays, equals, fakeNumber } = useCommonFn();
 const lstBooking = ref([]);
 const running = ref(0);
 const mode = ref("");
+const visible = ref(false);
+const objInvoice = ref(null);
 
 const formatDate = computed(() => {
   return store.getters["config/getFormatDate"];
 });
 
 const addNew = () => {
+  if (running.value > 0) return;
+  ++running.value;
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
+
   const loading = ElLoading.service(loadingOptions);
-  store.dispatch("booking/getInstance", "").then((res) => {
+  store.dispatch("booking/getInstance", "")
+  .then((res) => {
     if (res?.data?.data) {
       mode.value = "add";
       openModal("BookingDialog");
       objBooking.value = res.data.data;
     } else {
-      ElNotification({
-        title: t("Notification"),
-        message: res?.data?.message ?? t("ErrorMesg"),
-        type: "error",
-      });
+      ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error", });
     }
     loading.close();
   });
 };
 
 const approval = (id) => {
+  if (running.value > 0) return;
+  ++running.value;
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
+
   const loading = ElLoading.service(loadingOptions);
-  store.dispatch("booking/getInstance", id).then((res) => {
+  store.dispatch("booking/getInstance", id)
+  .then((res) => {
     if (res?.data?.data) {
       mode.value = "approval";
       openModal("BookingDialog");
       objBooking.value = res.data.data;
     } else {
-      ElNotification({
-        title: t("Notification"),
-        message: res?.data?.message ?? t("ErrorMesg"),
-        type: "error",
-      });
+      ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error", });
     }
     loading.close();
   });
 };
 
-const pay = (id) => {
+const pay = (data) => {
   openModal("InvoiceDialog");
-  console.log(id)
+  objInvoice.value = 
+  {
+    customerType: CustomerTypeEnum.BOOKING,
+    customerPhone: data.phoneNumber,
+    customerName: data.email,
+    deposit: data.deposite
+  };
 };
 
 const loadData = () => {
-  if (running.value > 0) {
-    return;
-  }
+  if (running.value > 0) return;
   ++running.value;
-  store
-    .dispatch("booking/getPaging", {
-      pageIndex: pageIndex.value,
-      pageSize: pageSize.value,
-      hasBookingDetail: true,
-      txtSearch: txtSearch.value,
-      hasInactive: true,
-    })
-    .then((res) => {
-      if (res?.data?.data) {
-        lstBooking.value = res.data.data;
-      }
-      setTimeout(() => {
-        running.value = 0;
-      }, 1000);
-    });
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
 
-  store
-    .dispatch("booking/getCountPaging", {
-      pageIndex: pageIndex.value,
-      pageSize: pageSize.value,
-      txtSearch: txtSearch.value,
-    })
-    .then((res) => {
-      if (res?.data?.data) {
-        let result = res.data.data;
-        totalRecord.value = result.totalAllRecords;
-      }
-    });
+  store.dispatch("booking/getPaging", 
+  {
+    pageIndex: pageIndex.value,
+    pageSize: pageSize.value,
+    hasBookingDetail: true,
+    txtSearch: txtSearch.value,
+    hasInactive: true,
+  })
+  .then((res) => {
+    if (res?.data?.data) {
+      lstBooking.value = res.data.data;
+    }
+  });
+
+  store.dispatch("booking/getCountPaging", 
+  {
+    pageIndex: pageIndex.value,
+    pageSize: pageSize.value,
+    txtSearch: txtSearch.value,
+  })
+  .then((res) => {
+    if (res?.data?.data) {
+      let result = res.data.data;
+      totalRecord.value = result.totalAllRecords;
+    }
+  });
 };
 
 const cancel = (id) => {
-  store.dispatch("bookingDetail/cancel", id).then((res) => {
+  store.dispatch("bookingDetail/cancel", id)
+  .then((res) => {
     if (res?.data?.success) {
       loadData();
-      ElNotification({
-        title: t("Notification"),
-        message: t("SaveSuccess"),
-        type: "success",
-      });
+      ElNotification({ title: t("Notification"), message: t("SaveSuccess"), type: "success", });
     } else {
-      ElNotification({
-        title: t("Notification"),
-        message: res?.data?.message ?? t("ErrorMesg"),
-        type: "error",
-      });
+      ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error", });
     }
   });
+};
+
+const filter = () => {
+  visible.value = true;
+  loadData();
 };
 
 const prevClick = () => {
@@ -157,27 +168,36 @@ onMounted(() => {
         <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("BookingManager") }}</h3>
         <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row">
           <el-input v-model="txtSearch" :placeholder="t('SearchBy')" :suffix-icon="Search" @keyup.enter="loadData" class="w-100"/>
-          <el-button @click="loadData" class="ml-2">
-            <el-icon><Refresh /></el-icon>
-          </el-button>
+          <el-popover :visible="visible" placement="bottom" :width="400">
+            <div></div>
+            <div class="d-flex flex-row align-items-center justify-content-end">
+              <el-button size="small" text @click="visible = false">{{ t('Cancel') }}</el-button>
+              <el-button size="small" type="primary" @click="visible = false">{{ t('Filter') }}</el-button>
+            </div>
+            <template #reference>
+              <el-button @click="filter" class="ml-2">
+                <el-icon><Filter /></el-icon>
+              </el-button>
+            </template>
+          </el-popover>
           <el-button type="primary" @click="addNew" class="ml-2">{{ t("AddNew") }}</el-button>
         </div>
       </div>
       <div class="body">
         <el-table :data="lstBooking" :empty-text="t('NoData')" style="height: calc(100vh - 300px)">
-          <el-table-column :label="t('Status')" min-width="100">
+          <el-table-column :label="t('Status')" width="100">
             <template #default="scope">
               <el-tag type="success" size="small" v-if="equals(scope.row.bookingStatus, BookingStatusEnum.SUCCESS)">{{ t(scope.row.bookingStatus) }}</el-tag>
               <el-tag type="info" size="small" v-else-if="equals(scope.row.bookingStatus, BookingStatusEnum.PENDING)">{{ t(scope.row.bookingStatus) }}</el-tag>
               <el-tag type="danger" size="small" v-else>{{ t(scope.row.bookingStatus) }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column :label="t('BookingDate')" min-width="120">
+          <el-table-column :label="t('BookingDate')" width="120">
             <template #default="scope">
               {{ dateToString(scope.row.bookingDate, formatDate) }}
             </template>
           </el-table-column>
-          <el-table-column :label="t('BookingUser')" min-width="150">
+          <el-table-column :label="t('BookingUser')" min-width="120">
             <template #default="scope">
               <span>
                 <el-icon :title="scope.row.email"><User /></el-icon>{{ scope.row.phoneNumber }}
@@ -185,7 +205,7 @@ onMounted(() => {
             </template>
           </el-table-column>
           <el-table-column :label="t('MatchInfo')">
-            <el-table-column :label="t('Status')" prop="status" min-width="100">
+            <el-table-column :label="t('Status')" prop="status" width="100">
               <template #default="scope">
                 <el-tag type="success" size="small" v-if="equals(scope.row.bookingDetailStatus, BookingStatusEnum.SUCCESS)">{{ t(scope.row.bookingDetailStatus) }}</el-tag>
                 <el-tag type="info" size="small" v-else-if="equals(scope.row.bookingDetailStatus, BookingStatusEnum.PENDING)">{{ t(scope.row.bookingDetailStatus) }}</el-tag>
@@ -212,14 +232,14 @@ onMounted(() => {
                 {{ t(getWeekdays(scope.row.weekendays)) }}
               </template>
             </el-table-column>
-            <el-table-column :label="t('MatchDate')" prop="matchDate" min-width="120">
+            <el-table-column :label="t('MatchDate')" prop="matchDate" width="120">
               <template #default="scope">
                 {{ dateToString(scope.row.matchDate, formatDate) }}
               </template>
             </el-table-column>
             <el-table-column :label="t('Deposite')">
               <template #default="scope">
-                <span v-if="scope.row.deposit > 0">{{ fakeNumber(scope.row.deposit) }}</span>
+                <span v-if="scope.row.deposite > 0">{{ fakeNumber(scope.row.deposite) }}</span>
                 <span v-else></span>
               </template>
             </el-table-column>
@@ -227,9 +247,9 @@ onMounted(() => {
           <el-table-column fixed="right" width="70">
             <template #default="scope">
               <div class="d-flex flex-row-reverse">
-                <el-button :class="scope.row.bookingDetailId" @click="cancel(scope.row.bookingDetailId)" type="danger" circle :icon="Delete" size="small" v-if=" !equals( scope.row.bookingDetailStatus, BookingStatusEnum.CANCEL) && !equals(scope.row.bookingDetailStatus, BookingStatusEnum.PENDING)"></el-button>
-                <el-button @click="approval(scope.row.bookingId)" type="warning" v-if="equals(scope.row.bookingStatus, BookingStatusEnum.PENDING)" circle :icon="Checked" size="small" ></el-button>
-                <el-button :class="scope.row.bookingDetailId" @click="pay(scope.row.bookingDetailId)" type="success" circle :icon="Money" size="small" v-if=" equals( scope.row.bookingDetailStatus, BookingStatusEnum.SUCCESS)"></el-button>
+                <el-button class="ml-1" @click="cancel(scope.row.bookingDetailId)" type="danger" circle :icon="Delete" size="small" v-if=" !equals( scope.row.bookingDetailStatus, BookingStatusEnum.CANCEL) && !equals(scope.row.bookingDetailStatus, BookingStatusEnum.PENDING)"></el-button>
+                <el-button class="ml-1" @click="approval(scope.row.bookingId)" type="warning" v-if="equals(scope.row.bookingStatus, BookingStatusEnum.PENDING)" circle :icon="Checked" size="small" ></el-button>
+                <el-button class="ml-1" @click="pay(scope.row)" type="success" circle :icon="Money" size="small" v-if=" equals( scope.row.bookingDetailStatus, BookingStatusEnum.SUCCESS)"></el-button>
               </div>
             </template>
           </el-table-column>
@@ -252,5 +272,5 @@ onMounted(() => {
     </div>
   </section>
   <BookingDialog v-if="hasRole('BookingDialog')" :data="objBooking" :mode="mode" @callback="loadData"></BookingDialog>
-  <InvoiceDialog v-if="hasRole('InvoiceDialog')"></InvoiceDialog>
+  <InvoiceDialog v-if="hasRole('InvoiceDialog')" :data="objInvoice" :mode="'add'"></InvoiceDialog>
 </template>

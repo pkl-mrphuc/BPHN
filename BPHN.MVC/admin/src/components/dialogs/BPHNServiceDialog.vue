@@ -29,7 +29,6 @@ const running = ref(0);
 const save = () => {
     if (running.value > 0) return;
     ++running.value;
-
     setTimeout(() => {
         running.value = 0;
     }, 1000);
@@ -44,9 +43,7 @@ const save = () => {
     }
 
     const loading = ElLoading.service(loadingOptions);
-    let actionPath = "item/insert";
-    if (props.mode == "edit") actionPath = "item/update";
-    store.dispatch(actionPath, 
+    store.dispatch(props.mode == "edit" ? "item/update" : "item/insert", 
     {
         id: props.data?.id,
         name: name.value,
@@ -83,8 +80,8 @@ const save = () => {
                             <div class="mb-2 col-12 col-sm-12 col-md-4 fw-bold">{{ t("Status") }}</div>
                             <div class="col-12 col-sm-12 col-md-8">
                                 <el-select v-model="status" class="w-100 mb-2">
-                                    <el-option :label="t('Active')" :value="StatusEnum.ACTIVE" />
-                                    <el-option :label="t('Inactive')" :value="StatusEnum.INACTIVE" />
+                                    <el-option :label="t('ACTIVE')" :value="StatusEnum.ACTIVE" />
+                                    <el-option :label="t('INACTIVE')" :value="StatusEnum.INACTIVE" />
                                 </el-select>
                             </div>
                         </div>

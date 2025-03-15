@@ -81,10 +81,6 @@ export default {
 }
 
 .common-layout :deep(.el-drawer) {
-  width: 64px !important;
-  padding: 0;
-}
-.common-layout :deep(.el-drawer__body) {
-  padding: 0;
+  width: 300px !important;
 }
 </style>

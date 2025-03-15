@@ -1,30 +1,35 @@
 <script setup>
 import useToggleModal from "@/register-components/actionDialog";
-import { defineProps, ref, onMounted, defineEmits } from "vue";
+import { defineProps, ref, onMounted, defineEmits, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import { Delete, Plus } from "@element-plus/icons-vue";
 import { useStore } from "vuex";
-import { CustomerTypeEnum, PaymentTypeEnum } from "@/const";
+import { CustomerTypeEnum, PaymentTypeEnum, InvoiceStatusEnum } from "@/const";
 import useCommonFn from "@/commonFn";
+import { ElLoading, ElNotification } from "element-plus";
 
+const loadingOptions = inject("loadingOptions");
 const { t } = useI18n();
 const { toggleModel } = useToggleModal();
 const store = useStore();
 const emit = defineEmits(["callback"]);
 const { fakeNumber } = useCommonFn();
 const props = defineProps({
-  data: Array
+  data: Array,
+  mode: String
 });
 
 const running = ref(0);
 const lstItem = ref([]);
+const status = ref(props.data?.status ?? InvoiceStatusEnum.DRAFT);
 const customerType = ref(props.data?.customerType ?? CustomerTypeEnum.RETAIL);
 const paymentType = ref(props.data?.paymentType ?? PaymentTypeEnum.BANK);
 const customerName = ref(props.data?.customerName ?? "");
 const customerPhone = ref(props.data?.customerPhone ?? "");
-const total = ref(0);
+const deposit = ref(props.data?.deposit ?? 0);
+const total = ref(props.data?.total ?? 0);
 const currentRow = ref(null);
-const lstRow = ref(props.data?.items ?? [{
+const lstRow = ref((props.data?.items ?? []).length != 0 ? props.data.items : [{
   id: 1,
   itemName: "",
   unit: "",
@@ -43,12 +48,19 @@ const loadAll = () => {
     return;
   }
   ++running.value;
-
   setTimeout(() => {
     running.value = 0;
   }, 1000);
 
-  store.dispatch("item/getAll", null).then((res) => {
+  store.dispatch("item/getAll", 
+  {
+    txtSearch: "",
+    status: "",
+    unit: "",
+    quantity: "",
+    code: ""
+  })
+  .then((res) => {
     if (res?.data?.data) {
       for (let i = 0; i < res.data.data.length; i++) {
         const element = res.data.data[i];
@@ -64,6 +76,7 @@ const loadAll = () => {
 };
 
 const handleSelect = (item) => {
+  currentRow.value.itemId = item.id;
   currentRow.value.itemName = item.value;
   currentRow.value.unit = item.unit;
   currentRow.value.salePrice = item.salePrice;
@@ -78,7 +91,33 @@ const setItem = (row) => {
 };
 
 const save = () => {
-  emit("callback", []);
+  if (running.value > 0) return;
+    ++running.value;
+    setTimeout(() => {
+        running.value = 0;
+    }, 1000);
+
+    const loading = ElLoading.service(loadingOptions);
+    store.dispatch(props.mode == "edit" ? "invoice/update" : "invoice/insert", 
+    {
+      id: props.data?.id,
+      status: status.value,
+      customerType: customerType.value,
+      customerName: customerName.value,
+      customerPhone: customerPhone.value,
+      total: total.value,
+      items: lstRow.value
+    })
+    .then((res) => {
+        loading.close();
+        if (res?.data?.success) {
+            emit("callback", res);
+            toggleModel();
+            ElNotification({ title: t("Notification"), message: t("SaveSuccess"), type: "success" });
+        } else {
+            ElNotification({ title: t("Notification"), message: t("ErrorMesg"), type: "error" });
+        }
+    });
 };
 
 const handleChange = (row) => {
@@ -106,7 +145,7 @@ const sum = () => {
     sum += element.total;
   }
   return sum;
-}
+};
 
 const defaultRow = () => {
   return {
@@ -117,7 +156,7 @@ const defaultRow = () => {
     salePrice: 0,
     total: 0
   };
-}
+};
 
 onMounted(() => {
   loadAll();
@@ -131,6 +170,14 @@ onMounted(() => {
       <div class="container mb-3">
         <div class="row">
           <div class="col-12 col-sm-12 col-md-12">
+            <div class="row mb-3">
+              <div class="col-4 fw-bold d-flex flex-row align-items-center justify-content-start">{{ t("Status") }}</div>
+              <div class="col-8">
+                <el-select v-model="status" class="w-100">
+                  <el-option :value="InvoiceStatusEnum.DRAFT" :label="t('DRAFT')" />
+                </el-select>
+              </div>
+            </div>
             <div class="row mb-3">
               <div class="col-4 fw-bold d-flex flex-row align-items-center justify-content-start">{{ t("CustomerType") }}</div>
               <div class="col-8">
@@ -198,11 +245,20 @@ onMounted(() => {
           </template>
         </el-table-column>
       </el-table>
-      <div class="mb-3">
+      <div>
+        <div class="row mb-2">
+          <div class="col-12 d-flex flex-row align-items-center justify-content-end">
+            <b>
+              <i class="mr-3">{{ t("Total") }}:</i>
+              <span>{{ total != 0 ? fakeNumber(total) : 0 }}</span>
+            </b>
+          </div>
+        </div>
         <div class="row">
           <div class="col-12 d-flex flex-row align-items-center justify-content-end">
             <b>
-              <i>{{ t("Total") }}: {{ fakeNumber(total) }}(đồng)</i>
+              <i class="mr-3">{{ t("Deposite") }}:</i>
+              <span>{{ deposit != 0 ? fakeNumber(deposit) : 0 }}</span>
             </b>
           </div>
         </div>

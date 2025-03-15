@@ -31,17 +31,19 @@ const edit = (id) => {
 };
 
 const openForm = (id) => {
+  if (running.value > 0) return;
+  ++running.value;
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
+
   const loading = ElLoading.service(loadingOptions);
   store.dispatch("pitch/getInstance", id).then((res) => {
     if (res?.data?.data) {
       openModal("FootballFieldDialog");
       objStadium.value = res.data.data;
     } else {
-      ElNotification({
-        title: t("Notification"),
-        message: res?.data?.message ?? t("ErrorMesg"),
-        type: "error"
-      })
+      ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error" })
     }
     loading.close();
   });
@@ -50,22 +52,23 @@ const openForm = (id) => {
 const loadData = () => {
   if (running.value > 0) return;
   ++running.value;
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
+
   const loading = ElLoading.service(loadingOptions);
-  store
-    .dispatch("pitch/getPaging", {
-      accountId: store.getters["account/getAccountId"],
-      hasDetail: false,
-      hasInactive: true,
-      pageIndex: 1,
-      pageSize: 1000
-    })
-    .then((res) => {
-      loading.close();
-      setTimeout(() => {
-        running.value = 0;
-      }, 1000);
-      lstStadium.value = res?.data?.data ?? [];
-    });
+  store.dispatch("pitch/getPaging", 
+  {
+    accountId: store.getters["account/getAccountId"],
+    hasDetail: false,
+    hasInactive: true,
+    pageIndex: 1,
+    pageSize: 1000
+  })
+  .then((res) => {
+    loading.close();
+    lstStadium.value = res?.data?.data ?? [];
+  });
 };
 </script>
 
@@ -73,8 +76,8 @@ const loadData = () => {
   <section>
     <div class="container">
       <div class="row d-flex flex-row align-items-center justify-content-between">
-        <h3 class="fs-3 col-4 col-sm-4 col-md-4 col-lg-8">{{ t("MyFootballFields") }}</h3>
-        <div class="col-8 col-sm-8 col-md-8 col-lg-4 d-flex flex-row-reverse">
+        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("MyFootballFields") }}</h3>
+        <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row-reverse">
           <el-button type="primary" @click="addNew" class="ml-2">{{ t("AddNew") }}</el-button>
           <el-button @click="loadData">
             <el-icon><Refresh /></el-icon>

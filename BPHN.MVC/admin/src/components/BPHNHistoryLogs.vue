@@ -21,46 +21,41 @@ const formatDate = computed(() => {
 });
 
 const loadData = () => {
-  if (running.value > 0) {
-    return;
-  }
+  if (running.value > 0) return;
   ++running.value;
-  store
-    .dispatch("historyLog/getPaging", {
-      pageIndex: pageIndex.value,
-      pageSize: pageSize.value,
-      txtSearch: txtSearch.value,
-    })
-    .then((res) => {
-      if (res?.data?.data) {
-        lstHistoryLog.value = res.data.data;
-      }
-      setTimeout(() => {
-        running.value = 0;
-      }, 1000);
-    });
+  setTimeout(() => {
+    running.value = 0;
+  }, 1000);
 
-  store
-    .dispatch("historyLog/getCountPaging", {
-      pageIndex: pageIndex.value,
-      pageSize: pageSize.value,
-      txtSearch: txtSearch.value,
-    })
-    .then((res) => {
-      if (res?.data?.data) {
-        let result = res.data.data;
-        totalRecord.value = result.totalAllRecords;
-      }
-    });
+  store.dispatch("historyLog/getPaging", 
+  {
+    pageIndex: pageIndex.value,
+    pageSize: pageSize.value,
+    txtSearch: txtSearch.value,
+  })
+  .then((res) => {
+    if (res?.data?.data) {
+      lstHistoryLog.value = res.data.data;
+    }
+  });
+
+  store.dispatch("historyLog/getCountPaging", 
+  {
+    pageIndex: pageIndex.value,
+    pageSize: pageSize.value,
+    txtSearch: txtSearch.value,
+  })
+  .then((res) => {
+    if (res?.data?.data) {
+      let result = res.data.data;
+      totalRecord.value = result.totalAllRecords;
+    }
+  });
 };
 
 const goToViewDetail = (id) => {
   console.log(id);
-  ElNotification({
-    title: t("Notification"),
-    message: t("FeatureIsDeveloping"),
-    type: "info",
-  });
+  ElNotification({ title: t("Notification"), message: t("FeatureIsDeveloping"), type: "info", });
 };
 
 const prevClick = () => {

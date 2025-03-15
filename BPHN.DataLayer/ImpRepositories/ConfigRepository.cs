@@ -64,7 +64,7 @@ namespace BPHN.DataLayer.ImpRepositories
 
         public async Task<Dictionary<string, string>> GetByKey(Guid accountId, params string[] keys)
         {
-            var where = BuildWhere(new List<WhereCondition>
+            var where = BuildWhere("select c.Key, c.Value from configs c", new List<WhereCondition>
             {
                 new WhereCondition
                 {
@@ -82,7 +82,7 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var configs = (await connection.QueryAsync<Config>($"select c.Key, c.Value from configs c where {where.filter}", where.param)).ToDictionary(x => x.Key, x => x.Value);
+                var configs = (await connection.QueryAsync<Config>(where.query, where.param)).ToDictionary(x => x.Key, x => x.Value);
                 return keys.ToDictionary(x => x, x => configs.TryGetValue(x, out var value) ? value : string.Empty);
             }
         }

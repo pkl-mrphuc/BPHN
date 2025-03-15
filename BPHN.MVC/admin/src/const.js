@@ -9,6 +9,11 @@ export const StatusEnum = {
     INACTIVE: 'INACTIVE'
 };
 
+export const QuantityStatusEnum = {
+    AVAILABLE: 'AVAILABLE',
+    UNAVAILABLE: 'UNAVAILABLE'
+};
+
 export const GenderEnum = {
     MALE: 'MALE',
     FEMALE: 'FEMALE',
@@ -71,4 +76,8 @@ export const CustomerTypeEnum = {
 export const PaymentTypeEnum = {
     BANK: 0,
     CASH: 1
+}
+
+export const InvoiceStatusEnum = {
+    DRAFT: "DRAFT"
 }
