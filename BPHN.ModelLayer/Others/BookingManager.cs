@@ -6,7 +6,7 @@
         public int MatchCode { get; set; }
         public DateTime MatchDate { get; set; }
         public int Weekendays { get; set; }
-        public double Deposite { get; set; }
+        public double Deposit { get; set; }
         public Guid BookingId { get; set; }
         public string BookingDetailStatus { get; set; }
 

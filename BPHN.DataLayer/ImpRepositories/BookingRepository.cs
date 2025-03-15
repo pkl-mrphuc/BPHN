@@ -215,17 +215,17 @@ namespace BPHN.DataLayer.ImpRepositories
                         dic.Add($"@matchDate{i}", item.MatchDate);
                         dic.Add($"@bookingId{i}", item.BookingId);
                         dic.Add($"@status{i}", item.Status);
-                        dic.Add($"@deposite{i}", item.Deposite);
+                        dic.Add($"@deposit{i}", item.Deposit);
                         dic.Add($"@createdDate{i}", item.CreatedDate);
                         dic.Add($"@createdBy{i}", item.CreatedBy);
                         dic.Add($"@modifiedBy{i}", item.ModifiedBy);
                         dic.Add($"@modifiedDate{i}", item.ModifiedDate);
                         dic.Add($"@teamA{i}", item.TeamA);
                         dic.Add($"@note{i}", item.Note);
-                        rows.Add($"(@id{i}, @matchDate{i}, @bookingId{i}, @status{i}, @deposite{i}, @teamA{i}, @note{i}, @createdDate{i}, @createdBy{i}, @modifiedDate{i}, @modifiedBy{i})");
+                        rows.Add($"(@id{i}, @matchDate{i}, @bookingId{i}, @status{i}, @deposit{i}, @teamA{i}, @note{i}, @createdDate{i}, @createdBy{i}, @modifiedDate{i}, @modifiedBy{i})");
                     }
 
-                    query = $"insert into booking_details(Id, MatchDate, BookingId, Status, Deposite, TeamA, Note, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy) values {string.Join(",", rows)}";
+                    query = $"insert into booking_details(Id, MatchDate, BookingId, Status, Deposit, TeamA, Note, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy) values {string.Join(",", rows)}";
                     affect = await connection.ExecuteAsync(query, dic, transaction);
                     if (affect <= 0)
                     {
@@ -345,7 +345,7 @@ namespace BPHN.DataLayer.ImpRepositories
                                                 bd.Id as BookingDetailId,
                                                 bd.MatchCode as MatchCode,
                                                 bd.MatchDate as MatchDate,
-                                                bd.Deposite as Deposite,
+                                                bd.Deposit as Deposit,
                                                 bd.BookingId as BookingId,
                                                 bd.Status as BookingDetailStatus
                                                 from booking_details bd 

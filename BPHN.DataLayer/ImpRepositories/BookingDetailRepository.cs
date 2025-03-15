@@ -136,7 +136,7 @@ namespace BPHN.DataLayer.ImpRepositories
                     { "@teamA", eventInfo.TeamA},
                     { "@teamB", eventInfo.TeamB},
                     { "@note", eventInfo.Note},
-                    { "@deposite", eventInfo.Deposite},
+                    { "@deposit", eventInfo.Deposit},
                 });
                 return affect > 0 ? true : false;
             }

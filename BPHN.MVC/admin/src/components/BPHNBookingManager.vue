@@ -79,12 +79,13 @@ const approval = (id) => {
 
 const pay = (data) => {
   openModal("InvoiceDialog");
+  console.log(data);
   objInvoice.value = 
   {
     customerType: CustomerTypeEnum.BOOKING,
     customerPhone: data.phoneNumber,
     customerName: data.email,
-    deposit: data.deposite
+    deposit: data.deposit
   };
 };
 
@@ -237,9 +238,9 @@ onMounted(() => {
                 {{ dateToString(scope.row.matchDate, formatDate) }}
               </template>
             </el-table-column>
-            <el-table-column :label="t('Deposite')">
+            <el-table-column :label="t('deposit')">
               <template #default="scope">
-                <span v-if="scope.row.deposite > 0">{{ fakeNumber(scope.row.deposite) }}</span>
+                <span v-if="scope.row.deposit > 0">{{ fakeNumber(scope.row.deposit) }}</span>
                 <span v-else></span>
               </template>
             </el-table-column>

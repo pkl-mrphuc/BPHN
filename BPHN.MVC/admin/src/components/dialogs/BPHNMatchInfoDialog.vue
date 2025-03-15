@@ -21,7 +21,7 @@ const teamB = ref(props.data?.teamB ?? "");
 const note = ref(props.data?.note ?? "");
 const id = ref(props.data?.bookingDetailId ?? "");
 const status = ref(props.data?.status ?? "");
-const deposite = ref(props.data?.deposite ?? "");
+const deposit = ref(props.data?.deposit ?? "");
 const bookingId = ref(props.data?.bookingId ?? "");
 
 const save = () => {
@@ -35,7 +35,7 @@ const save = () => {
     teamA: teamA.value,
     teamB: teamB.value,
     note: note.value,
-    deposite: deposite.value,
+    deposit: deposit.value,
   };
   store.dispatch("bookingDetail/updateMatch", data);
   emit("callback", data);
@@ -52,7 +52,7 @@ const decline = () => {
         teamA: teamA.value,
         teamB: teamB.value,
         note: note.value,
-        deposite: deposite.value,
+        deposit: deposit.value,
         status: BookingStatusEnum.CANCEL,
       });
       toggleModel();
@@ -72,7 +72,7 @@ const approval = () => {
         teamA: teamA.value,
         teamB: teamB.value,
         note: note.value,
-        deposite: deposite.value,
+        deposit: deposit.value,
         status: BookingStatusEnum.SUCCESS,
       });
     } else {
@@ -100,9 +100,9 @@ const approval = () => {
         </el-col>
       </el-form-item>
       <el-form-item>
-        <el-col :span="7" class="fw-bold">{{ t("Deposite") }}</el-col>
+        <el-col :span="7" class="fw-bold">{{ t("deposit") }}</el-col>
         <el-col :span="17">
-          <mask-number-input :numberDecimal="0" :value="deposite" @value="(value) => { deposite = value; }"></mask-number-input>
+          <mask-number-input :numberDecimal="0" :value="deposit" @value="(value) => { deposit = value; }"></mask-number-input>
         </el-col>
       </el-form-item>
       <el-form-item>

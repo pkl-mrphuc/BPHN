@@ -27,7 +27,7 @@ CREATE TABLE `booking_details` (
   `MatchCode` int NOT NULL AUTO_INCREMENT,
   `MatchDate` datetime NOT NULL,
   `BookingId` char(36) NOT NULL,
-  `Deposite` double DEFAULT NULL,
+  `Deposit` double DEFAULT NULL,
   `Status` varchar(255) DEFAULT NULL,
   `CreatedDate` datetime DEFAULT NULL,
   `CreatedBy` varchar(255) DEFAULT NULL,

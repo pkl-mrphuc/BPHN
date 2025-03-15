@@ -7,7 +7,7 @@ namespace BPHN.ModelLayer
         public int MatchCode { get; set; }
         public DateTime MatchDate { get; set; }
         public int Weekendays { get; set; }
-        public double Deposite { get; set; }
+        public double Deposit { get; set; }
         [IgnoreLog]
         public Guid BookingId { get; set; }
         public string Status { get; set; }

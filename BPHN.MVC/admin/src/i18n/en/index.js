@@ -86,7 +86,7 @@ const en = {
     InputTimeFrameEmptyMesg: "Input time frame is not empty",
     SearchBy: "Search by phone number, email, name",
     MatchDate: "Matching date",
-    Deposite: "Deposite(thousand dong)",
+    deposit: "deposit(thousand dong)",
     Cancel: "Cancel",
     Status: "Status",
     BookingDate: "Booking date",
