@@ -26,8 +26,10 @@ const totalRecord = ref(0);
 const txtSearch = ref("");
 const { dateToString, getWeekdays, equals, fakeNumber } = useCommonFn();
 const lstBooking = ref([]);
+const lstPitch = ref([]);
+const lstFrameInfo = ref([]);
 const running = ref(0);
-const mode = ref("");
+const mode = ref(null);
 const visible = ref(false);
 const objInvoice = ref(null);
 const checked1 = ref(false);
@@ -35,11 +37,17 @@ const checked2 = ref(false);
 const checked3 = ref(false);
 const checked4 = ref(false);
 const checked5 = ref(false);
+const checked6 = ref(false);
+const checked7 = ref(false);
+const checked8 = ref(false);
 const status = ref(BookingStatusEnum.SUCCESS);
 const bookingDate = ref(new Date());
 const weekendays = ref(1);
 const matchDate = ref(new Date());
 const deposit = ref(DepositStatusEnum.DEPOSITED);
+const pitchId = ref(null);
+const timeFrameId = ref(null);
+const nameDetail = ref(null);
 
 const formatDate = computed(() => {
   return store.getters["config/getFormatDate"];
@@ -144,16 +152,17 @@ const loadData = () => {
     hasBookingDetail: true,
     txtSearch: txtSearch.value,
     hasInactive: true,
-    status: checked1.value ? status.value : "",
-    bookingDate: checked2.value ? dateToString(bookingDate.value, "yyyy-MM-dd") : "",
-    weekendays: checked3.value ? weekendays.value : "",
-    matchDate: checked4.value ? dateToString(matchDate.value, "yyyy-MM-dd") : "",
-    deposit: checked5.value ? deposit.value : "",
+    status: checked1.value ? status.value : null,
+    bookingDate: checked2.value ? dateToString(bookingDate.value, "yyyy-MM-dd") : null,
+    weekendays: checked3.value ? weekendays.value : null,
+    matchDate: checked4.value ? dateToString(matchDate.value, "yyyy-MM-dd") : null,
+    deposit: checked5.value ? deposit.value : null,
+    pitchId: checked6.value ? pitchId.value : null,
+    timeFrameId: checked7.value ? timeFrameId.value : null,
+    nameDetail: checked8.value ? nameDetail.value : null
   })
   .then((res) => {
-    if (res?.data?.data) {
-      lstBooking.value = res.data.data;
-    }
+    lstBooking.value = res?.data?.data ?? [];
   });
 
   store.dispatch("booking/getCountPaging", 
@@ -165,9 +174,19 @@ const loadData = () => {
   .then((res) => {
     if (res?.data?.data) {
       let result = res.data.data;
-      totalRecord.value = result.totalAllRecords;
+      totalRecord.value = result.result.totalAllRecords;
+      lstPitch.value = (result.lstPitch ?? []).map(function(x) { return { id: x.id, name: x.name, nameDetails: (x.nameDetails ?? "").split(';') } });
+      lstFrameInfo.value = (result.lstFrameInfo ?? []).map(function(x) { return { id: x.id, name: x.name, pitchId: x.pitchId } });
+      pitchId.value = lstPitch.value[0]?.id ?? null;
+      timeFrameId.value = lstFrameInfo.value.find(x => x.pitchId == pitchId.value)?.id;
+      nameDetail.value = (lstPitch.value.find(x => x.id == pitchId.value)?.nameDetails ?? [])[0] ?? null;
     }
   });
+};
+
+const handleSelect = () => {
+  timeFrameId.value = lstFrameInfo.value.find(x => x.pitchId == pitchId.value)?.id;
+  nameDetail.value = (lstPitch.value.find(x => x.id == pitchId.value)?.nameDetails ?? [])[0] ?? null;
 };
 
 const cancel = (id) => {
@@ -228,6 +247,24 @@ onMounted(() => {
               <el-checkbox v-model="checked2" :label="t('BookingDate')" size="large" />
               <div v-if="checked2 == true">
                 <el-date-picker v-model="bookingDate" class="w-100"></el-date-picker>
+              </div>
+              <el-checkbox v-model="checked6" :label="t('Infrastructure')" size="large" />
+              <div v-if="checked6 == true">
+                <el-select class="w-100" v-model="pitchId" @change="handleSelect">
+                  <el-option v-for="item in lstPitch" :key="item.id" :label="item.name" :value="item.id" />
+                </el-select>
+              </div>
+              <el-checkbox v-model="checked7" :label="t('TimeFrame')" size="large" />
+              <div v-if="checked7 == true">
+                <el-select class="w-100" v-model="timeFrameId">
+                  <el-option v-for="item in lstFrameInfo.filter(x => x.pitchId == pitchId)" :key="item.id" :label="item.name" :value="item.id" />
+                </el-select>
+              </div>
+              <el-checkbox v-model="checked8" :label="t('NameDetail')" size="large" />
+              <div v-if="checked8 == true">
+                <el-select class="w-100" v-model="nameDetail">
+                  <el-option v-for="item in (lstPitch.find(x => x.id == pitchId)?.nameDetails ?? [])" :key="item" :label="item" :value="item" />
+                </el-select>
               </div>
               <el-checkbox v-model="checked3" :label="t('Weekdays')" size="large" />
               <div v-if="checked3 == true">

@@ -61,122 +61,6 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public async Task<object> GetCountPaging(int pageIndex, int pageSize, Guid[] relationIds, string txtSearch)
-        {
-            using (var connection = ConnectDB(GetConnectionString()))
-            {
-                connection.Open();
-                var dic = new Dictionary<string, object>();
-                var countQuery = @"select distinct count(*) from (
-						                                                    select * from bookings where AccountId in @accountId and PhoneNumber like @txtSearch
-                                                                            union 
-                                                                            select * from bookings where AccountId in @accountId and Email like @txtSearch 
-                                                                            union 
-                                                                            select * from bookings where AccountId in @accountId and NameDetail like @txtSearch
-                                                                            union 
-                                                                            (select b.* from bookings b inner join pitchs p on b.PitchId = p.Id where b.AccountId in @accountId and p.Name like @txtSearch)
-                                                                        ) as bs";
-
-                dic.Add("@accountId", relationIds);
-                dic.Add("@txtSearch", $"%{txtSearch}%");
-                var totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
-                var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
-                var totalRecordCurrentPage = 0;
-                if (totalRecord > 0)
-                {
-                    if (pageIndex == totalPage)
-                    {
-                        totalRecordCurrentPage = totalRecord - ((pageIndex - 1) * pageSize);
-                    }
-                    else
-                    {
-                        totalRecordCurrentPage = pageSize;
-                    }
-                }
-                return new { TotalPage = totalPage, TotalRecordCurrentPage = totalRecordCurrentPage, TotalAllRecords = totalRecord };
-            }
-        }
-
-        public async Task<List<Booking>> GetPaging(int pageIndex, int pageSize, Guid[] relationIds, string txtSearch, bool hasBookingDetail = false)
-        {
-            using (var connection = ConnectDB(GetConnectionString()))
-            {
-                connection.Open();
-                var dic = new Dictionary<string, object>();
-                var query = @"select distinct   bs.*, 
-                                                p.Name as PitchName, 
-                                                concat('Khung ', date_format(TimeBegin,'%H:%i'), ' - ', date_format(TimeEnd,'%H:%i')) as TimeFrameInfoName 
-                                                from (
-						                                    select * from bookings where AccountId in @accountId and PhoneNumber like @txtSearch
-                                                            union 
-                                                            select * from bookings where AccountId in @accountId and Email like @txtSearch 
-                                                            union 
-                                                            select * from bookings where AccountId in @accountId and NameDetail like @txtSearch
-                                                            union 
-                                                            (select b.* from bookings b inner join pitchs p on b.PitchId = p.Id where b.AccountId in @accountId and p.Name like @txtSearch)
-                                                        ) as bs inner join pitchs p on bs.PitchId = p.Id
-                                                                inner join time_frame_infos tfi on p.Id = tfi.PitchId and tfi.Id = bs.TimeFrameInfoId order by bs.BookingDate desc
-                        limit @offSize, @pageSize";
-                var countQuery = @"select distinct count(*) from (
-						                                                    select * from bookings where AccountId in @accountId and PhoneNumber like @txtSearch
-                                                                            union 
-                                                                            select * from bookings where AccountId in @accountId and Email like @txtSearch 
-                                                                            union 
-                                                                            select * from bookings where AccountId in @accountId and NameDetail like @txtSearch
-                                                                            union 
-                                                                            (select b.* from bookings b inner join pitchs p on b.PitchId = p.Id where b.AccountId in @accountId and p.Name like @txtSearch)
-                                                                        ) as bs";
-
-                dic.Add("@accountId", relationIds);
-                dic.Add("@txtSearch", $"%{txtSearch}%");
-                var totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
-                var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
-                if (pageIndex > totalPage)
-                {
-                    pageIndex = 1;
-                }
-                var offSet = (pageIndex - 1) * pageSize;
-                dic.Add("@offSize", offSet);
-                dic.Add("@pageSize", pageSize);
-
-                var lstBooking = (await connection.QueryAsync<Booking>(query, dic)).ToList();
-                if (hasBookingDetail)
-                {
-
-                    var lstBookingId = new List<string>();
-                    dic = new Dictionary<string, object>();
-                    for (int i = 0; i < lstBooking.Count; i++)
-                    {
-                        dic.Add($"@where{i}", lstBooking[i].Id);
-                        lstBookingId.Add($"@where{i}");
-                    }
-
-                    var bookingIds = string.Join(",", lstBookingId.ToArray());
-
-                    if (lstBooking.Count > 0)
-                    {
-                        var queryDetail = $"select * from booking_details where 1 = 1 and BookingId in ( {bookingIds} )";
-
-                        var lstBookingDetail = (await connection.QueryAsync<BookingDetail>(queryDetail, dic)).ToList();
-                        for (int i = 0; i < lstBooking.Count; i++)
-                        {
-                            var booking = lstBooking[i];
-                            booking.BookingDetails = lstBookingDetail.Where(item => item.BookingId == booking.Id)
-                                                                    .Select(item =>
-                                                                    {
-                                                                        item.Weekendays = (int)item.MatchDate.DayOfWeek;
-                                                                        return item;
-                                                                    })
-                                                                    .OrderBy(item => item.MatchDate)
-                                                                    .ToList();
-                        }
-                    }
-                }
-
-                return lstBooking;
-            }
-        }
-
         public async Task<bool> Insert(Booking data)
         {
             using (var connection = ConnectDB(GetConnectionString()))
@@ -281,7 +165,7 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public async Task<object> GetCountPagingV1(int pageIndex, int pageSize, Guid[] relationIds, string txtSearch)
+        public async Task<object> GetCountPaging(int pageIndex, int pageSize, Guid[] relationIds, string txtSearch)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
@@ -318,7 +202,7 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public async Task<List<BookingManager>> GetPagingV1(int pageIndex, int pageSize, Guid[] relationIds, string txtSearch, bool hasBookingDetail = false)
+        public async Task<List<BookingManager>> GetPaging(int pageIndex, int pageSize, Guid[] relationIds, string txtSearch, bool hasBookingDetail = false)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {

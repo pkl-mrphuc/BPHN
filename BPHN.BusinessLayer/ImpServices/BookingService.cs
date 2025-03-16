@@ -5,6 +5,7 @@ using BPHN.ModelLayer.ObjectQueues;
 using BPHN.ModelLayer.Others;
 using BPHN.ModelLayer.Responses;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
 namespace BPHN.BusinessLayer.ImpServices
@@ -122,7 +123,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var lstResult = new List<Booking>();
-            var lstTimeFramesInADay = await GetAllTimeFrameInfoCanBookInADay(context.Id.ToString());
+            var lstTimeFramesInADay = await GetAllTimeFrameInfoCanBookInADay(context.Id);
 
             if (lstTimeFramesInADay.Count > 0)
             {
@@ -233,45 +234,17 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageSize > 100 || pageSize <= 0) pageSize = 50;
 
             var result = await _bookingRepository.GetCountPaging(pageIndex, pageSize, context.RelationIds.ToArray(), txtSearch);
+            var lstPitch = await _pitchService.GetAll(context.Id);
+            var lstFrameInfo = await _timeFrameInfoService.GetByListPitchId(lstPitch.Select(x => x.Id));
             return new ServiceResultModel
             {
                 Success = true,
-                Data = result
-            };
-        }
-
-        public async Task<ServiceResultModel> GetCountPagingV1(int pageIndex, int pageSize, string txtSearch)
-        {
-            var context = _contextService.GetContext();
-            if (context is null)
-            {
-                return new ServiceResultModel
+                Data = new
                 {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
-            }
-
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
-            if (!hasPermission)
-            {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
-            }
-
-            if (pageIndex < 0) pageIndex = 1;
-            if (pageSize > 100 || pageSize <= 0) pageSize = 50;
-
-            var result = await _bookingRepository.GetCountPagingV1(pageIndex, pageSize, context.RelationIds.ToArray(), txtSearch);
-            return new ServiceResultModel
-            {
-                Success = true,
-                Data = result
+                    result,
+                    lstPitch,
+                    lstFrameInfo,
+                }
             };
         }
 
@@ -337,41 +310,6 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageSize > 100 || pageSize <= 0) pageSize = 50;
 
             var lstBooking = await _bookingRepository.GetPaging(pageIndex, pageSize, context.RelationIds.ToArray(), txtSearch, hasBookingDetail);
-            return new ServiceResultModel
-            {
-                Success = true,
-                Data = _mapper.Map<List<BookingRespond>>(lstBooking)
-            };
-        }
-
-        public async Task<ServiceResultModel> GetPagingV1(int pageIndex, int pageSize, string txtSearch, bool hasBookingDetail = false)
-        {
-            var context = _contextService.GetContext();
-            if (context is null)
-            {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
-            }
-
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
-            if (!hasPermission)
-            {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
-            }
-
-            if (pageIndex < 0) pageIndex = 1;
-            if (pageSize > 100 || pageSize <= 0) pageSize = 50;
-
-            var lstBooking = await _bookingRepository.GetPagingV1(pageIndex, pageSize, context.RelationIds.ToArray(), txtSearch, hasBookingDetail);
             return new ServiceResultModel
             {
                 Success = true,
@@ -720,7 +658,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     });
                 }
 
-                _historyLogService.Write(Guid.NewGuid(), 
+                _historyLogService.Write(Guid.NewGuid(),
                     new HistoryLog
                     {
                         ActionType = ActionEnum.UPDATE,
@@ -741,12 +679,12 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        private async Task<List<Booking>> GetAllTimeFrameInfoCanBookInADay(string accountId)
+        private async Task<List<Booking>> GetAllTimeFrameInfoCanBookInADay(Guid accountId)
         {
             var lstBooking = new List<Booking>();
             var lstPitch = await _pitchService.GetAll(accountId);
             var now = DateTime.Now;
-            var lstFrameInfo = await _timeFrameInfoService.GetByListPitchId(lstPitch.Select(item => item.Id).ToList());
+            var lstFrameInfo = await _timeFrameInfoService.GetByListPitchId(lstPitch.Select(item => item.Id));
             var dicFrame = new Dictionary<Guid, List<TimeFrameInfo>>();
             foreach (var frame in lstFrameInfo)
             {

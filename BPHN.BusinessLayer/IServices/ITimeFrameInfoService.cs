@@ -6,6 +6,6 @@ namespace BPHN.BusinessLayer.IServices
     {
         Task<TimeFrameInfo?> GetById(Guid id);
         Task<List<TimeFrameInfo>> GetByPitchId(Guid pitchId);
-        Task<List<TimeFrameInfo>> GetByListPitchId(List<Guid> lstPitchId);
+        Task<List<TimeFrameInfo>> GetByListPitchId(IEnumerable<Guid> lstPitchId);
     }
 }

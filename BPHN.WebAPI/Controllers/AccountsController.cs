@@ -8,12 +8,10 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Serilog;
 
 namespace BPHN.WebAPI.Controllers
 {
-	public class AccountsController : BaseController
+    public class AccountsController : BaseController
 	{
 		private readonly IAccountService _accountService;
 		public AccountsController(IServiceProvider provider) : base(provider)
@@ -26,7 +24,6 @@ namespace BPHN.WebAPI.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Login([FromBody] LoginRequest request)
 		{
-			Log.Debug($"Account/Login start: {JsonConvert.SerializeObject(request)}");
 			return Ok(await _accountService.Login(_mapper.Map<Account>(request)));
 		}
 
@@ -36,7 +33,6 @@ namespace BPHN.WebAPI.Controllers
 		[HttpPost]
 		public async Task<IActionResult> RegisterForTenant([FromBody] InsertAccountRequest request)
 		{
-			Log.Debug($"Account/RegisterForTenant start: {JsonConvert.SerializeObject(request)}");
 			return Ok(await _accountService.RegisterForTenant(_mapper.Map<Account>(request)));
 		}
 
@@ -45,7 +41,6 @@ namespace BPHN.WebAPI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetInstance(string id)
 		{
-			Log.Debug($"Account/GetInstance start: {id}");
 			return Ok(await _accountService.GetInstance(id));
 		}
 
@@ -54,7 +49,6 @@ namespace BPHN.WebAPI.Controllers
 		[HttpGet]
 		public async Task<IActionResult> ResetPassword(string userName)
 		{
-			Log.Debug($"Account/ResetPassword start: {userName}");
 			return Ok(await _accountService.ResetPassword(userName));
 		}
 
@@ -63,7 +57,6 @@ namespace BPHN.WebAPI.Controllers
 		[HttpPost]
 		public async Task<IActionResult> SubmitSetPassword([FromBody] SetPasswordVm request)
 		{
-			Log.Debug($"Account/SubmitSetPassword start: {JsonConvert.SerializeObject(request)}");
 			return Ok(await _accountService.SubmitSetPassword(request.Code, request.Password, request.UserName));
 		}
 
@@ -72,7 +65,6 @@ namespace BPHN.WebAPI.Controllers
 		[HttpPost]
 		public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
 		{
-			Log.Debug($"Account/ChangePassword start: {JsonConvert.SerializeObject(request)}");
 			return Ok(await _accountService.ChangePassword(_mapper.Map<Account>(request)));
 		}
 
@@ -82,7 +74,6 @@ namespace BPHN.WebAPI.Controllers
 		[Route("paging")]
 		public async Task<IActionResult> GetPaging(int pageIndex, int pageSize, string txtSearch)
 		{
-			Log.Debug($"Account/GetPaging start: {JsonConvert.SerializeObject(new { PageIndex = pageIndex, PageSize = pageSize, TxtSearch = txtSearch })}");
 			return Ok(await _accountService.GetPaging(pageIndex, pageSize, txtSearch));
 		}
 
@@ -92,7 +83,6 @@ namespace BPHN.WebAPI.Controllers
 		[Route("count-paging")]
 		public async Task<IActionResult> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
 		{
-			Log.Debug($"Account/GetCountPaging start: {JsonConvert.SerializeObject(new { PageIndex = pageIndex, PageSize = pageSize, TxtSearch = txtSearch })}");
 			return Ok(await _accountService.GetCountPaging(pageIndex, pageSize, txtSearch));
 		}
 
@@ -101,7 +91,6 @@ namespace BPHN.WebAPI.Controllers
 		[Route("validate-token")]
 		public IActionResult ValidateToken(string token)
 		{
-			Log.Debug($"Account/ValidateToken start: {token}");
 			return Ok(_accountService.ValidateToken(token));
 		}
 
@@ -110,7 +99,6 @@ namespace BPHN.WebAPI.Controllers
 		[Route("refresh")]
 		public async Task<IActionResult> Refresh()
 		{
-			Log.Debug($"Account/Refresh start");
 			return Ok(await _accountService.Refresh());
 		}
 
@@ -119,7 +107,6 @@ namespace BPHN.WebAPI.Controllers
 		[Route("refresh-token")]
 		public IActionResult RefreshToken(string refreshToken)
 		{
-			Log.Debug($"Account/RefreshToken start: {refreshToken}");
 			return Ok(_accountService.RefreshToken(refreshToken));
 		}
 

@@ -24,7 +24,7 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public async Task<List<TimeFrameInfo>> GetByListPitchId(List<Guid> lstPitchId)
+        public async Task<List<TimeFrameInfo>> GetByListPitchId(IEnumerable<Guid> lstPitchId)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
