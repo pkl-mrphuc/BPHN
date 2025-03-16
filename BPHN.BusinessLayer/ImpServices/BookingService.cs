@@ -5,7 +5,6 @@ using BPHN.ModelLayer.ObjectQueues;
 using BPHN.ModelLayer.Others;
 using BPHN.ModelLayer.Responses;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
 namespace BPHN.BusinessLayer.ImpServices
@@ -206,7 +205,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
+        public async Task<ServiceResultModel> GetCountPaging(GetBookingPagingModel model)
         {
             var context = _contextService.GetContext();
             if (context is null)
@@ -230,10 +229,11 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            if (pageIndex < 0) pageIndex = 1;
-            if (pageSize > 100 || pageSize <= 0) pageSize = 50;
+            if (model.PageIndex < 0) model.PageIndex = 1;
+            if (model.PageSize > 100 || model.PageSize <= 0) model.PageSize = 50;
+            model.AccountId = context.ParentId ?? context.Id;
 
-            var result = await _bookingRepository.GetCountPaging(pageIndex, pageSize, context.RelationIds.ToArray(), txtSearch);
+            var result = await _bookingRepository.GetCountPaging(model);
             var lstPitch = await _pitchService.GetAll(context.Id);
             var lstFrameInfo = await _timeFrameInfoService.GetByListPitchId(lstPitch.Select(x => x.Id));
             return new ServiceResultModel
@@ -282,7 +282,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task<ServiceResultModel> GetPaging(int pageIndex, int pageSize, string txtSearch, bool hasBookingDetail = false)
+        public async Task<ServiceResultModel> GetPaging(GetBookingPagingModel model)
         {
             var context = _contextService.GetContext();
             if (context is null)
@@ -306,14 +306,15 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            if (pageIndex < 0) pageIndex = 1;
-            if (pageSize > 100 || pageSize <= 0) pageSize = 50;
+            if (model.PageIndex < 0) model.PageIndex = 1;
+            if (model.PageSize > 100 || model.PageSize <= 0) model.PageSize = 50;
+            model.AccountId = context.ParentId ?? context.Id;
 
-            var lstBooking = await _bookingRepository.GetPaging(pageIndex, pageSize, context.RelationIds.ToArray(), txtSearch, hasBookingDetail);
+            var lstBooking = await _bookingRepository.GetPaging(model);
             return new ServiceResultModel
             {
                 Success = true,
-                Data = _mapper.Map<List<BookingRespond>>(lstBooking)
+                Data = _mapper.Map<IEnumerable<BookingRespond>>(lstBooking)
             };
         }
 
@@ -373,7 +374,7 @@ namespace BPHN.BusinessLayer.ImpServices
             data.Id = data.Id.Equals(Guid.Empty) ? Guid.NewGuid() : data.Id;
             data.BookingDate = DateTime.Now;
             data.Status = BookingStatusEnum.SUCCESS.ToString();
-            data.AccountId = context.Id;
+            data.AccountId = context.ParentId ?? context.Id;
             data.CreatedDate = DateTime.Now;
             data.CreatedBy = context.FullName;
             data.ModifiedBy = context.FullName;

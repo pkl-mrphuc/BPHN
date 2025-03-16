@@ -28,7 +28,7 @@ namespace BPHN.DataLayer
             return query.ToString();
         }
 
-        public (Dictionary<string, object?> param, string query) BuildWhere(string preQuery, List<WhereCondition> filters)
+        public (Dictionary<string, object?> param, string query) BuildWhere(string preQuery, List<WhereCondition> filters, string? behindQuery = null)
         {
             var data = filters.Select((v, i) => new
             {
@@ -54,7 +54,7 @@ namespace BPHN.DataLayer
                 where.AddRange(data.Where(x => x.param1 != null).Select(x => x.where1));
             }
 
-            return (param.ToDictionary(x => x.param, x => x.val), $"{preQuery} where {string.Join(" and ", where)}");
+            return (param.ToDictionary(x => x.param, x => x.val), $"{preQuery} where {string.Join(" and ", where)} {(behindQuery ?? string.Empty)}");
         }
 
         public IDbConnection ConnectDB(string connectionString)

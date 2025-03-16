@@ -165,117 +165,277 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public async Task<object> GetCountPaging(int pageIndex, int pageSize, Guid[] relationIds, string txtSearch)
+        public async Task<object> GetCountPaging(GetBookingPagingModel model)
         {
+            var conditions = new List<WhereCondition>
+            {
+                new WhereCondition
+                {
+                    Column = "b.AccountId",
+                    Operator = "=",
+                    Value = model.AccountId
+                }
+            };
+            if (!string.IsNullOrWhiteSpace(model.TxtSearch))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "b.PhoneNumber",
+                    Operator = "like",
+                    Value = $"%{model.TxtSearch}%"
+                });
+            }
+            if (!string.IsNullOrWhiteSpace(model.Status))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "bd.Status",
+                    Operator = "=",
+                    Value = model.Status
+                });
+            }
+            if (model.BookingDate.HasValue)
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "b.BookingDate",
+                    Operator = ">=",
+                    Value = model.BookingDate.Value.ToString("yyyy-MM-dd 00:00:00")
+                });
+                conditions.Add(new WhereCondition
+                {
+                    Column = "b.BookingDate",
+                    Operator = "<=",
+                    Value = model.BookingDate.Value.ToString("yyyy-MM-dd 23:59:59")
+                });
+            }
+            if (model.MatchDate.HasValue)
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "bd.MatchDate",
+                    Operator = ">=",
+                    Value = model.MatchDate.Value.ToString("yyyy-MM-dd 00:00:00")
+                });
+                conditions.Add(new WhereCondition
+                {
+                    Column = "bd.MatchDate",
+                    Operator = "<=",
+                    Value = model.MatchDate.Value.ToString("yyyy-MM-dd 23:59:59")
+                });
+            }
+            if (DepositStatusEnum.DEPOSITED.ToString().Equals(model.Deposit))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "bd.Deposit",
+                    Operator = ">",
+                    Value = 0
+                });
+            }
+            if (DepositStatusEnum.NOTDEPOSIT.ToString().Equals(model.Deposit))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "bd.Deposit",
+                    Operator = "=",
+                    Value = 0
+                });
+            }
+            if (model.PitchId.HasValue)
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "b.PitchId",
+                    Operator = "=",
+                    Value = model.PitchId.Value
+                });
+            }
+            if (model.TimeFrameId.HasValue)
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "b.TimeFrameInfoId",
+                    Operator = "=",
+                    Value = model.TimeFrameId.Value
+                });
+            }
+            if (!string.IsNullOrWhiteSpace(model.NameDetail))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "b.NameDetail",
+                    Operator = "=",
+                    Value = model.NameDetail
+                });
+            }
+
+            var preQuery = @"select count(1) from booking_details bd 
+                                    inner join bookings b on b.Id = bd.BookingId 
+                                    inner join pitchs p on b.PitchId = p.Id";
+            var where = BuildWhere(preQuery, conditions);
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var dic = new Dictionary<string, object>();
-                var countQuery = @"select distinct count(1) from booking_details bd 
-                                                            inner join (
-						                                                    select * from bookings where AccountId in @accountId and PhoneNumber like @txtSearch
-                                                                            union 
-                                                                            select * from bookings where AccountId in @accountId and Email like @txtSearch 
-                                                                            union 
-                                                                            select * from bookings where AccountId in @accountId and NameDetail like @txtSearch
-                                                                            union 
-                                                                            (select b.* from bookings b inner join pitchs p on b.PitchId = p.Id where b.AccountId in @accountId and p.Name like @txtSearch)
-                                                                        ) as bs on bs.Id = bd.BookingId";
-
-                dic.Add("@accountId", relationIds);
-                dic.Add("@txtSearch", $"%{txtSearch}%");
-                var totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
-                var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
+                var totalRecord = await connection.QuerySingleAsync<int>(where.query, where.param);
+                var totalPage = totalRecord % model.PageSize == 0 ? totalRecord / model.PageSize : (totalRecord / model.PageSize) + 1;
                 var totalRecordCurrentPage = 0;
                 if (totalRecord > 0)
                 {
-                    if (pageIndex == totalPage)
+                    if (model.PageIndex == totalPage)
                     {
-                        totalRecordCurrentPage = totalRecord - ((pageIndex - 1) * pageSize);
+                        totalRecordCurrentPage = totalRecord - ((model.PageIndex - 1) * model.PageSize);
                     }
                     else
                     {
-                        totalRecordCurrentPage = pageSize;
+                        totalRecordCurrentPage = model.PageSize;
                     }
                 }
                 return new { TotalPage = totalPage, TotalRecordCurrentPage = totalRecordCurrentPage, TotalAllRecords = totalRecord };
             }
         }
 
-        public async Task<List<BookingManager>> GetPaging(int pageIndex, int pageSize, Guid[] relationIds, string txtSearch, bool hasBookingDetail = false)
+        public async Task<IEnumerable<BookingManager>> GetPaging(GetBookingPagingModel model)
         {
+            var conditions = new List<WhereCondition>
+            {
+                new WhereCondition
+                {
+                    Column = "b.AccountId",
+                    Operator = "=",
+                    Value = model.AccountId
+                }
+            };
+            if (!string.IsNullOrWhiteSpace(model.TxtSearch))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "b.PhoneNumber",
+                    Operator = "like",
+                    Value = $"%{model.TxtSearch}%"
+                });
+            }
+            if (!string.IsNullOrWhiteSpace(model.Status))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "bd.Status",
+                    Operator = "=",
+                    Value = model.Status
+                });
+            }
+            if (model.BookingDate.HasValue)
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "b.BookingDate",
+                    Operator = ">=",
+                    Value = model.BookingDate.Value.ToString("yyyy-MM-dd 00:00:00")
+                });
+                conditions.Add(new WhereCondition
+                {
+                    Column = "b.BookingDate",
+                    Operator = "<=",
+                    Value = model.BookingDate.Value.ToString("yyyy-MM-dd 23:59:59")
+                });
+            }
+            if (model.MatchDate.HasValue)
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "bd.MatchDate",
+                    Operator = ">=",
+                    Value = model.MatchDate.Value.ToString("yyyy-MM-dd 00:00:00")
+                });
+                conditions.Add(new WhereCondition
+                {
+                    Column = "bd.MatchDate",
+                    Operator = "<=",
+                    Value = model.MatchDate.Value.ToString("yyyy-MM-dd 23:59:59")
+                });
+            }
+            if (DepositStatusEnum.DEPOSITED.ToString().Equals(model.Deposit))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "bd.Deposit",
+                    Operator = ">",
+                    Value = 0
+                });
+            }
+            if (DepositStatusEnum.NOTDEPOSIT.ToString().Equals(model.Deposit))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "bd.Deposit",
+                    Operator = "=",
+                    Value = 0
+                });
+            }
+            if (model.PitchId.HasValue)
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "b.PitchId",
+                    Operator = "=",
+                    Value = model.PitchId.Value
+                });
+            }
+            if (model.TimeFrameId.HasValue)
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "b.TimeFrameInfoId",
+                    Operator = "=",
+                    Value = model.TimeFrameId.Value
+                });
+            }
+            if (!string.IsNullOrWhiteSpace(model.NameDetail)) {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "b.NameDetail",
+                    Operator = "=",
+                    Value = model.NameDetail
+                });
+            }
+
+            var preQuery = @"select distinct   
+                                b.BookingCode as BookingCode,
+                                b.PhoneNumber as PhoneNumber,
+                                b.Email as Email,
+                                b.IsRecurring as IsRecurring,
+                                b.BookingDate as BookingDate,
+                                b.StartDate as StartDate,
+                                b.EndDate as EndDate,
+                                b.Status as BookingStatus,
+                                b.TimeFrameInfoId as TimeFrameInfoId,
+                                b.PitchId as PitchId,
+                                b.NameDetail as NameDetail,
+                                p.Name as PitchName, 
+                                concat(date_format(TimeBegin,'%H:%i'), ' - ', date_format(TimeEnd,'%H:%i')) as TimeFrameInfoName,
+                                bd.Id as BookingDetailId,
+                                bd.MatchCode as MatchCode,
+                                bd.MatchDate as MatchDate,
+                                bd.Deposit as Deposit,
+                                bd.BookingId as BookingId,
+                                bd.Status as BookingDetailStatus,
+                                tfi.Price as Price,
+                                WEEKDAY(bd.MatchDate) as Weekendays
+                            from booking_details bd  
+                                inner join bookings b on b.Id = bd.BookingId
+                                inner join pitchs p on b.PitchId = p.Id
+                                inner join time_frame_infos tfi on tfi.Id = b.TimeFrameInfoId";
+            var behindQuery = "limit @offSize, @pageSize";
+            var where = BuildWhere(preQuery, conditions, behindQuery);
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var dic = new Dictionary<string, object>();
-                var query = @"select distinct   bs.BookingCode as BookingCode,
-                                                bs.PhoneNumber as PhoneNumber,
-                                                bs.Email as Email,
-                                                bs.IsRecurring as IsRecurring,
-                                                bs.BookingDate as BookingDate,
-                                                bs.StartDate as StartDate,
-                                                bs.EndDate as EndDate,
-                                                bs.Status as BookingStatus,
-                                                (CASE
-                                                    WHEN bd.Status = 'CANCEL' THEN 2
-                                                    WHEN bd.Status = 'SUCCESS' THEN 1
-                                                    ELSE 0
-                                                END) as StatusId,
-                                                bs.TimeFrameInfoId as TimeFrameInfoId,
-                                                bs.PitchId as PitchId,
-                                                bs.NameDetail as NameDetail,
-                                                p.Name as PitchName, 
-                                                concat('Khung ', date_format(TimeBegin,'%H:%i'), ' - ', date_format(TimeEnd,'%H:%i')) as TimeFrameInfoName,
-                                                bd.Id as BookingDetailId,
-                                                bd.MatchCode as MatchCode,
-                                                bd.MatchDate as MatchDate,
-                                                bd.Deposit as Deposit,
-                                                bd.BookingId as BookingId,
-                                                bd.Status as BookingDetailStatus,
-                                                tfi.Price as Price
-                                                from booking_details bd 
-                                                inner join (
-						                                    select * from bookings where AccountId in @accountId and PhoneNumber like @txtSearch
-                                                            union 
-                                                            select * from bookings where AccountId in @accountId and Email like @txtSearch 
-                                                            union 
-                                                            select * from bookings where AccountId in @accountId and NameDetail like @txtSearch
-                                                            union 
-                                                            (select b.* from bookings b inner join pitchs p on b.PitchId = p.Id where b.AccountId in @accountId and p.Name like @txtSearch)
-                                                        ) as bs on bs.Id = bd.BookingId
-                                                    inner join pitchs p on bs.PitchId = p.Id
-                                                    inner join time_frame_infos tfi on p.Id = tfi.PitchId and tfi.Id = bs.TimeFrameInfoId order by StatusId, bd.MatchDate desc
-                        limit @offSize, @pageSize";
-                var countQuery = @"select distinct count(1) from booking_details bd 
-                                                            inner join (
-						                                                    select * from bookings where AccountId in @accountId and PhoneNumber like @txtSearch
-                                                                            union 
-                                                                            select * from bookings where AccountId in @accountId and Email like @txtSearch 
-                                                                            union 
-                                                                            select * from bookings where AccountId in @accountId and NameDetail like @txtSearch
-                                                                            union 
-                                                                            (select b.* from bookings b inner join pitchs p on b.PitchId = p.Id where b.AccountId in @accountId and p.Name like @txtSearch)
-                                                                        ) as bs on bs.Id = bd.BookingId";
+                var dic = where.param;
+                dic.Add("@offSize", (model.PageIndex - 1) * model.PageSize);
+                dic.Add("@pageSize", model.PageSize);
 
-                dic.Add("@accountId", relationIds);
-                dic.Add("@txtSearch", $"%{txtSearch}%");
-                var totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
-                var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
-                if (pageIndex > totalPage)
-                {
-                    pageIndex = 1;
-                }
-                var offSet = (pageIndex - 1) * pageSize;
-                dic.Add("@offSize", offSet);
-                dic.Add("@pageSize", pageSize);
-
-                var lstBooking = (await connection.QueryAsync<BookingManager>(query, dic)).ToList();
-                lstBooking = lstBooking.Select(item =>
-                                        {
-                                            item.Weekendays = (int)item.MatchDate.DayOfWeek;
-                                            return item;
-                                        }).ToList();
-                return lstBooking;
+                var lstBooking = (await connection.QueryAsync<BookingManager>(where.query, dic));
+                return lstBooking ?? Enumerable.Empty<BookingManager>();
             }
         }
 

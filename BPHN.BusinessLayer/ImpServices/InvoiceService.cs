@@ -185,7 +185,7 @@ namespace BPHN.BusinessLayer.ImpServices
             data.Status = InvoiceStatusEnum.DRAFT.ToString();
             data.Detail = JsonConvert.SerializeObject(data.Items);
             data.Date = DateTime.Now;
-            data.AccountId = context.Id;
+            data.AccountId = context.ParentId ?? context.Id;
             data.CreatedBy = context.FullName;
             data.CreatedDate = DateTime.Now;
             data.ModifiedBy = context.FullName;
@@ -270,7 +270,6 @@ namespace BPHN.BusinessLayer.ImpServices
 
             data.ModifiedBy = context.FullName;
             data.ModifiedDate = DateTime.Now;
-            data.AccountId = context.Id;
             data.Date = DateTime.Now;
             data.Detail = JsonConvert.SerializeObject(data.Items);
 

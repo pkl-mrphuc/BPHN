@@ -84,7 +84,7 @@ const en = {
     Reserved: "Reserved",
     Free: "Free",
     InputTimeFrameEmptyMesg: "Input time frame is not empty",
-    SearchBy: "Search by phone number, email, name",
+    SearchBy: "Search by phone number",
     MatchDate: "Matching date",
     Deposit: "deposit(thousand dong)",
     Cancel: "Cancel",

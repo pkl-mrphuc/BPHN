@@ -52,20 +52,20 @@ namespace BPHN.WebAPI.Controllers
 
         [Permission(FunctionTypeEnum.VIEWLISTBOOKING)]
         [ApiAuthorize]
-        [HttpGet]
+        [HttpPost]
         [Route("paging")]
-        public async Task<IActionResult> GetPaging(int pageIndex, int pageSize, string txtSearch, bool hasBookingDetail = false)
+        public async Task<IActionResult> GetPaging([FromBody] GetBookingPagingRequest request)
         {
-            return Ok(await _bookingService.GetPaging(pageIndex, pageSize, txtSearch, hasBookingDetail));
+            return Ok(await _bookingService.GetPaging(_mapper.Map<GetBookingPagingModel>(request)));
         }
 
         [Permission(FunctionTypeEnum.VIEWLISTBOOKING)]
         [ApiAuthorize]
-        [HttpGet]
+        [HttpPost]
         [Route("count-paging")]
-        public async Task<IActionResult> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
+        public async Task<IActionResult> GetCountPaging([FromBody] GetBookingPagingRequest request)
         {
-            return Ok(await _bookingService.GetCountPaging(pageIndex, pageSize, txtSearch));
+            return Ok(await _bookingService.GetCountPaging(_mapper.Map<GetBookingPagingModel>(request)));
         }
 
         [Permission(FunctionTypeEnum.ADDBOOKING, FunctionTypeEnum.EDITBOOKING)]

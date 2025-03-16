@@ -84,7 +84,7 @@ const vi = {
     Reserved: "Đã được đặt",
     Free: "Trống",
     InputTimeFrameEmptyMesg: "Vui lòng nhập đầy đủ thông tin sân bóng, khung giờ trước khi kiểm tra",
-    SearchBy: "Tìm kiếm theo sđt, email, tên sân",
+    SearchBy: "Tìm kiếm theo sđt",
     MatchDate: "Ngày diễn ra",
     Deposit: "Cọc",
     Cancel: "Hủy",

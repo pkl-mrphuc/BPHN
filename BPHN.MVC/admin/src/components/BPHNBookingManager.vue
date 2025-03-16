@@ -34,7 +34,6 @@ const visible = ref(false);
 const objInvoice = ref(null);
 const checked1 = ref(false);
 const checked2 = ref(false);
-const checked3 = ref(false);
 const checked4 = ref(false);
 const checked5 = ref(false);
 const checked6 = ref(false);
@@ -42,7 +41,6 @@ const checked7 = ref(false);
 const checked8 = ref(false);
 const status = ref(BookingStatusEnum.SUCCESS);
 const bookingDate = ref(new Date());
-const weekendays = ref(1);
 const matchDate = ref(new Date());
 const deposit = ref(DepositStatusEnum.DEPOSITED);
 const pitchId = ref(null);
@@ -149,12 +147,9 @@ const loadData = () => {
   {
     pageIndex: pageIndex.value,
     pageSize: pageSize.value,
-    hasBookingDetail: true,
     txtSearch: txtSearch.value,
-    hasInactive: true,
     status: checked1.value ? status.value : null,
     bookingDate: checked2.value ? dateToString(bookingDate.value, "yyyy-MM-dd") : null,
-    weekendays: checked3.value ? weekendays.value : null,
     matchDate: checked4.value ? dateToString(matchDate.value, "yyyy-MM-dd") : null,
     deposit: checked5.value ? deposit.value : null,
     pitchId: checked6.value ? pitchId.value : null,
@@ -170,6 +165,13 @@ const loadData = () => {
     pageIndex: pageIndex.value,
     pageSize: pageSize.value,
     txtSearch: txtSearch.value,
+    status: checked1.value ? status.value : null,
+    bookingDate: checked2.value ? dateToString(bookingDate.value, "yyyy-MM-dd") : null,
+    matchDate: checked4.value ? dateToString(matchDate.value, "yyyy-MM-dd") : null,
+    deposit: checked5.value ? deposit.value : null,
+    pitchId: checked6.value ? pitchId.value : null,
+    timeFrameId: checked7.value ? timeFrameId.value : null,
+    nameDetail: checked8.value ? nameDetail.value : null
   })
   .then((res) => {
     if (res?.data?.data) {
@@ -177,16 +179,13 @@ const loadData = () => {
       totalRecord.value = result.result.totalAllRecords;
       lstPitch.value = (result.lstPitch ?? []).map(function(x) { return { id: x.id, name: x.name, nameDetails: (x.nameDetails ?? "").split(';') } });
       lstFrameInfo.value = (result.lstFrameInfo ?? []).map(function(x) { return { id: x.id, name: x.name, pitchId: x.pitchId } });
-      pitchId.value = lstPitch.value[0]?.id ?? null;
-      timeFrameId.value = lstFrameInfo.value.find(x => x.pitchId == pitchId.value)?.id;
-      nameDetail.value = (lstPitch.value.find(x => x.id == pitchId.value)?.nameDetails ?? [])[0] ?? null;
     }
   });
 };
 
 const handleSelect = () => {
-  timeFrameId.value = lstFrameInfo.value.find(x => x.pitchId == pitchId.value)?.id;
-  nameDetail.value = (lstPitch.value.find(x => x.id == pitchId.value)?.nameDetails ?? [])[0] ?? null;
+  timeFrameId.value = null;
+  nameDetail.value = null;
 };
 
 const cancel = (id) => {
@@ -264,18 +263,6 @@ onMounted(() => {
               <div v-if="checked8 == true">
                 <el-select class="w-100" v-model="nameDetail">
                   <el-option v-for="item in (lstPitch.find(x => x.id == pitchId)?.nameDetails ?? [])" :key="item" :label="item" :value="item" />
-                </el-select>
-              </div>
-              <el-checkbox v-model="checked3" :label="t('Weekdays')" size="large" />
-              <div v-if="checked3 == true">
-                <el-select v-model="weekendays" class="w-100">
-                  <el-option :value="1" :label="t('Monday')">{{ t("Monday") }}</el-option>
-                  <el-option :value="2" :label="t('Tuesday')">{{ t("Tuesday") }}</el-option>
-                  <el-option :value="3" :label="t('Wednesday')">{{ t("Wednesday") }}</el-option>
-                  <el-option :value="4" :label="t('Thursday')">{{ t("Thursday") }}</el-option>
-                  <el-option :value="5" :label="t('Friday')">{{ t("Friday") }}</el-option>
-                  <el-option :value="6" :label="t('Saturday')">{{ t("Saturday") }}</el-option>
-                  <el-option :value="0" :label="t('Sunday')">{{ t("Sunday") }}</el-option>
                 </el-select>
               </div>
               <el-checkbox v-model="checked4" :label="t('MatchDate')" size="large" />
