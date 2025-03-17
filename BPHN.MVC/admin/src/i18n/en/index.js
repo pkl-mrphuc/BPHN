@@ -211,5 +211,14 @@ const en = {
     UNAVAILABLE: 'Unavailable',
     DEPOSITED: 'Deposited',
     NOTDEPOSIT: 'Not deposit',
+    REVENUEDAY: 'Revenue on',
+    REVENUEMONTH: 'Monthly revenue',
+    REVENUEYEAR: 'Revenue',
+    REVENUEQUARTER: 'Revenue quarter',
+    TOTALBOOKINGYEAR: 'Total booking',
+    DiffToPreDay: 'Compared to the previous day',
+    DiffToPreMonth: 'Compared to the previous month',
+    DiffToPreYear: 'Compared to the previous year',
+    DiffToPreQuarter: 'Compared to the previous quarter'
 }
 export default en;

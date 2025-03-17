@@ -210,7 +210,16 @@ const vi = {
     AVAILABLE: 'Còn hàng',
     UNAVAILABLE: 'Hết hàng',
     DEPOSITED: 'Đã cọc',
-    NOTDEPOSIT: 'Chưa cọc'
+    NOTDEPOSIT: 'Chưa cọc',
+    REVENUEDAY: 'Doanh thu ngày',
+    REVENUEMONTH: 'Doanh thu tháng',
+    REVENUEYEAR: 'Doanh thu năm',
+    REVENUEQUARTER: 'Doanh thu quý',
+    TOTALBOOKINGYEAR: 'Tổng booking',
+    DiffToPreDay: 'So với hôm trước',
+    DiffToPreMonth: 'So với tháng trước',
+    DiffToPreYear: 'So với năm trước',
+    DiffToPreQuarter: 'So với quý trước'
 }
 
 export default vi;

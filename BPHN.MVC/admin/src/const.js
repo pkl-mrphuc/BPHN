@@ -86,3 +86,11 @@ export const PaymentTypeEnum = {
 export const InvoiceStatusEnum = {
     DRAFT: "DRAFT"
 }
+
+export const StatisticTypeEnum = {
+    REVENUEDAY: "REVENUEDAY",
+    REVENUEMONTH: "REVENUEMONTH",
+    REVENUEYEAR: "REVENUEYEAR",
+    REVENUEQUARTER: "REVENUEQUARTER",
+    TOTALBOOKINGYEAR: "TOTALBOOKINGYEAR"
+}

@@ -1,8 +1,11 @@
 <script setup>
+import StatisticCard from "@/components/StatisticCard.vue";
+import { BookingStatusEnum, StatisticTypeEnum } from "@/const";
 import { useI18n } from "vue-i18n";
-import { CaretTop } from "@element-plus/icons-vue";
-import { BookingStatusEnum } from "@/const";
+import useCommonFn from "@/commonFn";
+
 const { t } = useI18n();
+const { fakeNumber } = useCommonFn();
 </script>
 
 <template>
@@ -16,125 +19,61 @@ const { t } = useI18n();
             </div>
             <div class="row">
                 <div class="col-12 col-sm-12 col-md-12 col-lg-8">
-                    <div class="mr-4">
-                        <el-card class="mt-4 mb-4">
-                            <div class="row">
-                                <el-card class="col-12 col-sm-12 col-md-12 col-lg-4">
-                                    <el-statistic :value="98500">
-                                        <template #title>
-                                            <div class="d-flex flex-row align-items-center">
-                                                <h2 class="m-0">Doanh thu tháng 3</h2>
-                                            </div>
-                                        </template>
-                                    </el-statistic>
-                                    <div class="statistic-footer">
-                                        <div class="footer-item">
-                                            <span>than yesterday</span>
-                                            <span class="green">24%
-                                                <el-icon><CaretTop /></el-icon>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </el-card>
-                                <el-card class="col-12 col-sm-12 col-md-12 col-lg-6">
-                                    <div class="d-flex flex-row align-items-center justify-content-between">
-                                        <el-card>
-                                            <el-statistic :value="98500">
-                                                <template #title>
-                                                    <div class="d-flex flex-row align-items-center">
-                                                        <h2 class="m-0">{{ t(BookingStatusEnum.PENDING) }}</h2>
-                                                    </div>
-                                                </template>
-                                            </el-statistic>
-                                        </el-card>
-                                        <el-card>
-                                            <el-statistic :value="98500">
-                                                <template #title>
-                                                    <div class="d-flex flex-row align-items-center">
-                                                        <h2 class="m-0">{{ t(BookingStatusEnum.SUCCESS) }}</h2>
-                                                    </div>
-                                                </template>
-                                            </el-statistic>
-                                        </el-card>
-                                        <el-card>
-                                            <el-statistic :value="98500">
-                                                <template #title>
-                                                    <div class="d-flex flex-row align-items-center">
-                                                        <h2 class="m-0">{{ t(BookingStatusEnum.CANCEL) }}</h2>
-                                                    </div>
-                                                </template>
-                                            </el-statistic>
-                                        </el-card>
-                                    </div>
-                                </el-card>
-                                <el-card class="col-12 col-sm-12 col-md-12 col-lg-2">
-                                    <div class="d-flex flex-row justify-content-end">
-                                        <div class="d-flex flex-column">
-                                            <el-button text class="m-0">Chi tiết</el-button>
-                                            <el-button class="m-0" type="danger">Từ chối</el-button>
-                                            <el-button class="m-0" type="primary">Phê duyệt</el-button>
-                                        </div>
-                                    </div>
-                                </el-card>
-                            </div>
-                        </el-card>
-                        <el-card class="mt-4 mb-4">
-                            <div class="d-flex flex-row align-items-center justify-content-between mb-3">
-                                <div>
-                                    <h2 class="m-0">Doanh thu của bạn</h2>
-                                    <span>01/03/2025 - 31/03/2025</span>
+                    <div class="row">
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-4">
+                            <statistic-card :type="StatisticTypeEnum.TOTALBOOKINGYEAR" :time="2025" :value="14999"
+                                :pre-value="29343"></statistic-card>
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-6">
+                            <div class="h-100 d-flex flex-row align-items-center justify-content-between">
+                                <div class="d-flex flex-column align-items-center justify-content-center bcard">
+                                    <span class="bcard__status">{{ t(BookingStatusEnum.PENDING) }}</span>
+                                    <span class="bcard__data">{{ fakeNumber(1000) }}</span>
                                 </div>
-                                <el-button text class="m-0">Chi tiết</el-button>
-                            </div>
-                            <div class="row">
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-6">
-                                    <el-card></el-card>
+                                <div class="d-flex flex-column align-items-center justify-content-center bcard">
+                                    <span class="bcard__status">{{ t(BookingStatusEnum.SUCCESS) }}</span>
+                                    <span class="bcard__data">{{ fakeNumber(1000) }}</span>
                                 </div>
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-6">
-                                    <el-card></el-card>
+                                <div class="d-flex flex-column align-items-center justify-content-center bcard">
+                                    <span class="bcard__status">{{ t(BookingStatusEnum.CANCEL) }}</span>
+                                    <span class="bcard__data">{{ fakeNumber(1000) }}</span>
                                 </div>
                             </div>
-                        </el-card>
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-2">
+                            <div class="d-flex flex-row justify-content-end">
+                                <div class="d-flex flex-column">
+                                    <el-button text>Chi tiết</el-button>
+                                    <el-button type="danger">Từ chối</el-button>
+                                    <el-button type="primary">Phê duyệt</el-button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <!-- <div>
+                        <div class="d-flex flex-row align-items-center justify-content-between">
+                            <div>
+                                <h2 class="m-0">Doanh thu của bạn</h2>
+                                <span>01/03/2025 - 31/03/2025</span>
+                            </div>
+                            <el-button text class="m-0">Chi tiết</el-button>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-6">
+
+                            </div>
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-6">
+
+                            </div>
+                        </div>
+                    </div> -->
                 </div>
                 <div class="col-12 col-sm-12 col-md-12 col-lg-4">
                     <div class="d-flex flex-column">
-                        <div class="ml-4">
-                            <el-card class="mt-4 mb-4">
-                                <el-statistic :value="98500">
-                                    <template #title>
-                                        <div class="d-flex flex-row align-items-center">
-                                            <h2 class="m-0">Doanh thu tháng 3</h2>
-                                        </div>
-                                    </template>
-                                </el-statistic>
-                                <div class="statistic-footer">
-                                    <div class="footer-item">
-                                        <span>than yesterday</span>
-                                        <span class="green">24%
-                                            <el-icon><CaretTop /></el-icon>
-                                        </span>
-                                    </div>
-                                </div>
-                            </el-card>
-                            <el-card class="mt-4 mb-4">
-                                <el-statistic :value="98500">
-                                    <template #title>
-                                        <div class="d-flex flex-row align-items-center">
-                                            <h2 class="m-0">Tổng hóa đơn</h2>
-                                        </div>
-                                    </template>
-                                </el-statistic>
-                                <div class="statistic-footer">
-                                    <div class="footer-item">
-                                        <span>than yesterday</span>
-                                        <span class="green">24%
-                                            <el-icon><CaretTop /></el-icon>
-                                        </span>
-                                    </div>
-                                </div>
-                            </el-card>
-                        </div>
+                        <statistic-card :type="StatisticTypeEnum.REVENUEMONTH" :time="3" :value="100"
+                            :pre-value="1000"></statistic-card>
+                        <statistic-card :type="StatisticTypeEnum.REVENUEYEAR" :time="2025" :value="10000"
+                            :pre-value="1000"></statistic-card>
                     </div>
                 </div>
             </div>
@@ -143,44 +82,18 @@ const { t } = useI18n();
 </template>
 
 <style scoped>
-.el-statistic {
-    --el-statistic-content-font-size: 28px;
+.bcard {
+    background-color: #555555;
+    width: 114px;
+    height: 114px;
+    border-radius: 18px;
 }
-
-.statistic-card {
-    height: 100%;
-    padding: 20px;
-    border-radius: 4px;
-    background-color: var(--el-bg-color-overlay);
+.bcard__status {
+    font-size: 16px;
+    margin-bottom: 16px;
 }
-
-.statistic-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    font-size: 12px;
-    color: var(--el-text-color-regular);
-    margin-top: 16px;
-}
-
-.statistic-footer .footer-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.statistic-footer .footer-item span:last-child {
-    display: inline-flex;
-    align-items: center;
-    margin-left: 4px;
-}
-
-.green {
-    color: var(--el-color-success);
-}
-
-.red {
-    color: var(--el-color-error);
+.bcard__data {
+    font-size: 26px;
+    font-weight: 700;
 }
 </style>
