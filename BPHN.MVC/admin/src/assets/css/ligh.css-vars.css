@@ -4,6 +4,10 @@ html {
     color: #555555 !important;
 }
 
+html .el-card {
+    --el-card-bg-color: #f5f5f5 !important;
+}
+
 html #prev_icon {
     background-image: url("../images/prev.svg") !important;
     position: absolute;

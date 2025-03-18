@@ -18,6 +18,10 @@ html.dark .el-table {
     --el-table-header-bg-color: #262626 !important;
 }
 
+html.dark .el-card {
+    --el-card-bg-color: #121212 !important;
+}
+
 html.dark #prev_icon {
     background-image: url("../images/prev-dark.svg") !important;
     position: absolute;
