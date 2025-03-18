@@ -230,7 +230,7 @@ onMounted(() => {
   <section>
     <div class="container">
       <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
-        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("BookingManager") }}</h3>
+        <h3 class="col-12 col-sm-12 col-md-12 col-lg-8 fs-3 mt-1 mb-1">{{ t("BookingManager") }}</h3>
         <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row">
           <el-input v-model="txtSearch" :placeholder="t('SearchBy')" :suffix-icon="Search" @keyup.enter="loadData" class="w-100"/>
           <el-popover :visible="visible" placement="bottom" :width="300">
@@ -291,7 +291,7 @@ onMounted(() => {
         </div>
       </div>
       <div class="body">
-        <el-table :data="lstBooking" :empty-text="t('NoData')" style="height: calc(100vh - 300px)">
+        <el-table :data="lstBooking" :empty-text="t('NoData')" style="height: calc(100vh - 230px)">
           <el-table-column :label="t('Status')" width="100">
             <template #default="scope">
               <el-tag type="success" size="small" v-if="equals(scope.row.bookingStatus, BookingStatusEnum.SUCCESS)">{{ t(scope.row.bookingStatus) }}</el-tag>

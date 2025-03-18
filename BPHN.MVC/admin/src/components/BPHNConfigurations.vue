@@ -157,14 +157,14 @@ const connect = () => {
 <template>
   <section>
     <div class="container">
-      <div class="d-flex flex-row align-items-center justify-content-between">
-        <h3 class="fs-3">{{ t("Configurations") }}</h3>
+      <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
+        <h3 class="col-12 col-sm-12 col-md-12 col-lg-8 fs-3 mt-1 mb-1">{{ t("Configurations") }}</h3>
         <div>
           <el-button type="primary" @click="save">{{ t("Save") }}</el-button>
         </div>
       </div>
       <div>
-        <el-table :data="lstConfig" border style="height: calc(100vh - 190px)">
+        <el-table :data="lstConfig" border style="height: calc(100vh - 150px)">
           <el-table-column :label="t('Title')" width="200">
             <template #default="scope">
               <span>{{ t(scope.row.name) }}</span>

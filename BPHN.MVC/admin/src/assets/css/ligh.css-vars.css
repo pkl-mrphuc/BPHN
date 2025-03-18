@@ -1,15 +1,29 @@
 html {
-    --fc-border-color: #363637 !important;
-    --fc-today-bg-color: #18222c !important;
-    color: #555555 !important;
+    --fc-border-color: #363637;
+    --fc-today-bg-color: #18222c;
+    color: #555555;
+}
+
+html body {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    color: #f5f5f5;
+    background-color: #262626;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+html .el-menu-vertical-demo {
+    overflow-y: scroll;
+    border-right: 0 !important;
 }
 
 html .el-card {
-    --el-card-bg-color: #f5f5f5 !important;
+    --el-card-bg-color: #f5f5f5;
 }
 
 html #prev_icon {
-    background-image: url("../images/prev.svg") !important;
+    background-image: url("../images/prev.svg");
     position: absolute;
     top: 8px;
     left: 70px;
@@ -21,7 +35,7 @@ html #prev_icon {
 }
 
 html #next_icon {
-    background-image: url("../images/next.svg") !important;
+    background-image: url("../images/next.svg");
     position: absolute;
     top: 8px;
     right: 8px;

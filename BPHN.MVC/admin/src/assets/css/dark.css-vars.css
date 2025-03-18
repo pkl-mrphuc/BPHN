@@ -1,29 +1,45 @@
 html.dark {
-    --fc-border-color: #363637 !important;
-    --fc-today-bg-color: #18222c !important;
-    --el-text-color-secondary: #f5f5f5 !important;
-    background-color: #262626 !important;
-    color: #f5f5f5 !important;
+    --fc-border-color: #363637;
+    --fc-today-bg-color: #18222c;
+    --el-text-color-secondary: #f5f5f5;
+}
+
+html.dark body {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    color: #f5f5f5;
+    background-color: #262626;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+html.dark .el-menu-vertical-demo {
+    overflow-y: scroll;
+    border-right: 0 !important;
+}
+
+::-webkit-scrollbar {
+    width: 0px;
 }
 
 html.dark .el-header {
-    background-color: #121212 !important;
+    background-color: #121212;
 }
 
 html.dark .el-table__body-wrapper tr td.el-table-fixed-column--right {
-    background: #262626 !important;
+    background: #262626;
 }
 
 html.dark .el-table {
-    --el-table-header-bg-color: #262626 !important;
+    --el-table-header-bg-color: #262626;
 }
 
 html.dark .el-card {
-    --el-card-bg-color: #121212 !important;
+    --el-card-bg-color: #121212;
 }
 
 html.dark #prev_icon {
-    background-image: url("../images/prev-dark.svg") !important;
+    background-image: url("../images/prev-dark.svg");
     position: absolute;
     top: 8px;
     left: 70px;

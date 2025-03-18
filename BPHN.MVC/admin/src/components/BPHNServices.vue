@@ -95,7 +95,7 @@ onMounted(() => {
   <section>
     <div class="container">
       <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
-        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("Services") }}</h3>
+        <h3 class="col-12 col-sm-12 col-md-12 col-lg-8 fs-3 mt-1 mb-1">{{ t("Services") }}</h3>
         <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row-reverse">
           <el-button type="primary" @click="addNew" class="ml-2">{{ t("AddNew") }}</el-button>
           <el-popover :visible="visible" placement="bottom" :width="300">
@@ -135,7 +135,7 @@ onMounted(() => {
         </div>
       </div>
       <div>
-        <el-table :data="lstItem" border style="height: calc(100vh - 230px)" :empty-text="t('NoData')">
+        <el-table :data="lstItem" border style="height: calc(100vh - 170px)" :empty-text="t('NoData')">
           <el-table-column :label="t('Status')" width="150">
             <template #default="scope">
               <el-tag v-if="equals(scope.row.status, StatusEnum.ACTIVE)" type="success" size="small">{{
