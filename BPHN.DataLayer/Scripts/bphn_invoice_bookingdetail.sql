@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.38, for Win64 (x86_64)
 --
--- Host: localhost    Database: bphn
+-- Host: 127.0.0.1    Database: bphn
 -- ------------------------------------------------------
--- Server version	8.0.33
+-- Server version	9.0.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -16,30 +16,25 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `booking_details`
+-- Table structure for table `invoice_bookingdetail`
 --
 
-DROP TABLE IF EXISTS `booking_details`;
+DROP TABLE IF EXISTS `invoice_bookingdetail`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `booking_details` (
+CREATE TABLE `invoice_bookingdetail` (
   `Id` char(36) NOT NULL,
-  `MatchCode` int NOT NULL AUTO_INCREMENT,
-  `MatchDate` datetime NOT NULL,
-  `BookingId` char(36) NOT NULL,
-  `Deposit` double DEFAULT NULL,
-  `Status` varchar(255) DEFAULT NULL,
+  `InvoiceId` char(36) NOT NULL,
+  `BookingDetailId` char(36) NOT NULL,
   `CreatedDate` datetime DEFAULT NULL,
   `CreatedBy` varchar(255) DEFAULT NULL,
   `ModifiedDate` datetime DEFAULT NULL,
   `ModifiedBy` varchar(255) DEFAULT NULL,
-  `TeamA` varchar(255) DEFAULT NULL,
-  `TeamB` varchar(255) DEFAULT NULL,
-  `Note` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`Id`),
-  UNIQUE KEY `Code_UNIQUE` (`MatchCode`),
-  KEY `fk_3` (`BookingId`),
-  CONSTRAINT `fk_3` FOREIGN KEY (`BookingId`) REFERENCES `bookings` (`Id`)
+  KEY `booking_detail_idx` (`BookingDetailId`),
+  KEY `invoice_idx` (`InvoiceId`),
+  CONSTRAINT `booking_detail` FOREIGN KEY (`BookingDetailId`) REFERENCES `booking_details` (`Id`),
+  CONSTRAINT `invoice` FOREIGN KEY (`InvoiceId`) REFERENCES `invoices` (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -52,4 +47,4 @@ CREATE TABLE `booking_details` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-23 13:29:10
+-- Dump completed on 2025-03-15 23:43:38

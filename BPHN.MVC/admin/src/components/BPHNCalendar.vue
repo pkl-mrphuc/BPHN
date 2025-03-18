@@ -195,7 +195,7 @@ const getEventByDate = async (date) => {
           stadium: item.stadium,
           note: item.note ?? "",
           status: item.status ?? "",
-          deposite: item.deposite ?? 0
+          deposit: item.deposit ?? 0
         },
       });
     }
@@ -236,7 +236,7 @@ const loadEvent = (data) => {
     objEvent.value.event.setExtendedProp("teamA", data.teamA);
     objEvent.value.event.setExtendedProp("teamB", data.teamB);
     objEvent.value.event.setExtendedProp("note", data.note);
-    objEvent.value.event.setExtendedProp("deposite", data.deposite);
+    objEvent.value.event.setExtendedProp("deposit", data.deposit);
     objEvent.value.event.setExtendedProp("status", data.status);
   }
 };
@@ -283,7 +283,7 @@ const expandModeClick = () => {
   <section>
     <div class="container">
       <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
-        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("CalendarForDate") }} {{ selectedDateDisplay }}</h3>
+        <h3 class="col-12 col-sm-12 col-md-12 col-lg-8 fs-3 mt-1 mb-1">{{ t("CalendarForDate") }} {{ selectedDateDisplay }}</h3>
         <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row-reverse">
           <div>
             <el-button-group class="mx-1">

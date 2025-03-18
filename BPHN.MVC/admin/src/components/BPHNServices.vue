@@ -81,6 +81,7 @@ const openForm = (id) => {
 };
 
 const filter = () => {
+  visible.value = false;
   loadData();
 };
 
@@ -94,7 +95,7 @@ onMounted(() => {
   <section>
     <div class="container">
       <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
-        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("Services") }}</h3>
+        <h3 class="col-12 col-sm-12 col-md-12 col-lg-8 fs-3 mt-1 mb-1">{{ t("Services") }}</h3>
         <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row-reverse">
           <el-button type="primary" @click="addNew" class="ml-2">{{ t("AddNew") }}</el-button>
           <el-popover :visible="visible" placement="bottom" :width="300">
@@ -134,7 +135,7 @@ onMounted(() => {
         </div>
       </div>
       <div>
-        <el-table :data="lstItem" style="height: calc(100vh - 230px)" :empty-text="t('NoData')">
+        <el-table :data="lstItem" border style="height: calc(100vh - 170px)" :empty-text="t('NoData')">
           <el-table-column :label="t('Status')" width="150">
             <template #default="scope">
               <el-tag v-if="equals(scope.row.status, StatusEnum.ACTIVE)" type="success" size="small">{{
@@ -145,19 +146,19 @@ onMounted(() => {
           <el-table-column :label="t('Code')" width="120">
             <template #default="scope">{{ scope.row.code }}</template>
           </el-table-column>
-          <el-table-column :label="t('Name')" width="300">
+          <el-table-column :label="t('Name')">
             <template #default="scope">{{ scope.row.name }}</template>
           </el-table-column>
-          <el-table-column :label="t('Unit')" width="100">
+          <el-table-column :label="t('Unit')">
             <template #default="scope">{{ scope.row.unit }}</template>
           </el-table-column>
-          <el-table-column :label="t('Quantity')" width="120">
+          <el-table-column :label="t('Quantity')">
             <template #default="scope">{{ scope.row.quantity }}</template>
           </el-table-column>
-          <el-table-column :label="t('SalePrice')" width="120">
+          <el-table-column :label="t('SalePrice')">
             <template #default="scope">{{ fakeNumber(scope.row.salePrice) }}</template>
           </el-table-column>
-          <el-table-column label="" fixed="right">
+          <el-table-column label="" fixed="right" width="70">
             <template #default="scope">
               <div class="d-flex flex-row-reverse">
                 <el-button circle :icon="Edit" size="small" class="mr-2" @click="edit(scope.row.id)"

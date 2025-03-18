@@ -14,6 +14,11 @@ export const QuantityStatusEnum = {
     UNAVAILABLE: 'UNAVAILABLE'
 };
 
+export const DepositStatusEnum = {
+    DEPOSITED: 'DEPOSITED',
+    NOTDEPOSIT: 'NOTDEPOSIT'
+};
+
 export const GenderEnum = {
     MALE: 'MALE',
     FEMALE: 'FEMALE',
@@ -80,4 +85,12 @@ export const PaymentTypeEnum = {
 
 export const InvoiceStatusEnum = {
     DRAFT: "DRAFT"
+}
+
+export const StatisticTypeEnum = {
+    REVENUEDAY: "REVENUEDAY",
+    REVENUEMONTH: "REVENUEMONTH",
+    REVENUEYEAR: "REVENUEYEAR",
+    REVENUEQUARTER: "REVENUEQUARTER",
+    TOTALBOOKINGYEAR: "TOTALBOOKINGYEAR"
 }

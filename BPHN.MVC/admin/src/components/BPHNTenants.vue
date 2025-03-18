@@ -132,7 +132,7 @@ onMounted(() => {
   <section>
     <div class="container">
       <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
-        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("Accounts") }}</h3>
+        <h3 class="col-12 col-sm-12 col-md-12 col-lg-8 fs-3 mt-1 mb-1">{{ t("Accounts") }}</h3>
         <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row">
           <el-input class="ml-2" v-model="txtSearch" :placeholder="t('Search')" :suffix-icon="Search" @keyup.enter="loadData"/>
           <el-button @click="loadData" class="ml-2">
@@ -142,7 +142,7 @@ onMounted(() => {
         </div>
       </div>
       <div>
-        <el-table :data="lstAccount" style="height: calc(100vh - 300px)" :empty-text="t('NoData')">
+        <el-table :data="lstAccount" border style="height: calc(100vh - 170px)" :empty-text="t('NoData')">
           <el-table-column :label="t('Status')" width="150">
             <template #default="scope">
               <el-tag type="success" size="small" v-if="equals(scope.row.status, StatusEnum.ACTIVE)">{{ t("Active") }}</el-tag>

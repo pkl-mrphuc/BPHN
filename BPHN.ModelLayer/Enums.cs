@@ -125,4 +125,10 @@
         AVAILABLE = 0,
         UNAVAILABLE = 1
     }
+
+    public enum DepositStatusEnum
+    {
+        DEPOSITED = 0,
+        NOTDEPOSIT = 1
+    };
 }

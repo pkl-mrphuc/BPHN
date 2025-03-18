@@ -15,6 +15,11 @@ class InvoiceAPI {
         return await axios.get(requestUrl);
     }
 
+    async getByBooking(bookingDetailId) {
+        let requestUrl = `${process.env.VUE_APP_API_URL}/invoices/get/${bookingDetailId}`;
+        return await axios.get(requestUrl);
+    }
+
     async insert(data) {
         let requestUrl = `${process.env.VUE_APP_API_URL}/invoices/insert`;
         let requestParam = data;

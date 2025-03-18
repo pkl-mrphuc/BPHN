@@ -139,7 +139,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 fakeNewData.TeamA = eventInfo.TeamA;
                 fakeNewData.TeamB = eventInfo.TeamB;
                 fakeNewData.Note = eventInfo.Note;
-                fakeNewData.Deposite = eventInfo.Deposite;
+                fakeNewData.Deposit = eventInfo.Deposit;
                 _historyLogService.Write(Guid.NewGuid(),
                     new HistoryLog
                     {

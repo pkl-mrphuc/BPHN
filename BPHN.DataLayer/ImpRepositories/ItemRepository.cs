@@ -72,7 +72,7 @@ namespace BPHN.DataLayer.ImpRepositories
                     Value = $"%{unit}%"
                 });
             }
-            if (!string.IsNullOrWhiteSpace(quantity) && QuantityStatusEnum.AVAILABLE.ToString().Equals(quantity))
+            if (QuantityStatusEnum.AVAILABLE.ToString().Equals(quantity))
             {
                 conditions.Add(new WhereCondition
                 {
@@ -81,7 +81,7 @@ namespace BPHN.DataLayer.ImpRepositories
                     Value = 0
                 });
             }
-            if (!string.IsNullOrWhiteSpace(quantity) && QuantityStatusEnum.UNAVAILABLE.ToString().Equals(quantity))
+            if (QuantityStatusEnum.UNAVAILABLE.ToString().Equals(quantity))
             {
                 conditions.Add(new WhereCondition
                 {

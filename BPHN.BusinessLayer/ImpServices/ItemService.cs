@@ -156,7 +156,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             data.Id = Guid.NewGuid();
-            data.AccountId = context.Id;
+            data.AccountId = context.ParentId ?? context.Id;
             data.CreatedBy = context.FullName;
             data.CreatedDate = DateTime.Now;
             data.ModifiedBy = context.FullName;
@@ -165,7 +165,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var insertResult = await _itemRepository.Insert(data);
             if (insertResult)
             {
-                await _notificationService.Insert<Item>(context, NotificationTypeEnum.INSERTSERVICIE, new Item
+                await _notificationService.Insert(context, NotificationTypeEnum.INSERTSERVICIE, new Item
                 {
                     Name = data.Name
                 });
@@ -226,13 +226,12 @@ namespace BPHN.BusinessLayer.ImpServices
 
             data.ModifiedBy = context.FullName;
             data.ModifiedDate = DateTime.Now;
-            data.AccountId = context.Id;
 
             var oldItem = await _itemRepository.GetById(data.Id);
             var updateResult = await _itemRepository.Update(data);
             if (updateResult)
             {
-                await _notificationService.Insert<Item>(context, NotificationTypeEnum.UPDATESERVICE, new Item
+                await _notificationService.Insert(context, NotificationTypeEnum.UPDATESERVICE, new Item
                 {
                     Name = data.Name
                 });

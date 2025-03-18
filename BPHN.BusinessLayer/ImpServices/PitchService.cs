@@ -291,7 +291,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var resultPaging = await _pitchRepository.GetPaging(pageIndex, pageSize, lstWhere);
-            var lstFrameInfo = await _timeFrameInfoService.GetByListPitchId(resultPaging.Select(item => item.Id).ToList());
+            var lstFrameInfo = await _timeFrameInfoService.GetByListPitchId(resultPaging.Select(item => item.Id));
             var dicFrame = new Dictionary<Guid, List<TimeFrameInfo>>();
             var now = DateTime.Now;
             foreach (var frame in lstFrameInfo)
@@ -495,7 +495,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task<List<Pitch>> GetAll(string accountId)
+        public async Task<List<Pitch>> GetAll(Guid accountId)
         {
             return await _pitchRepository.GetAll(accountId);
         }

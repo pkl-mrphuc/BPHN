@@ -84,9 +84,9 @@ const en = {
     Reserved: "Reserved",
     Free: "Free",
     InputTimeFrameEmptyMesg: "Input time frame is not empty",
-    SearchBy: "Search by phone number, email, name",
+    SearchBy: "Search by phone number",
     MatchDate: "Matching date",
-    Deposite: "Deposite(thousand dong)",
+    Deposit: "deposit(thousand dong)",
     Cancel: "Cancel",
     Status: "Status",
     BookingDate: "Booking date",
@@ -209,5 +209,16 @@ const en = {
     Filter: 'Filter',
     AVAILABLE: 'Available',
     UNAVAILABLE: 'Unavailable',
+    DEPOSITED: 'Deposited',
+    NOTDEPOSIT: 'Not deposit',
+    REVENUEDAY: 'Revenue on',
+    REVENUEMONTH: 'Monthly revenue',
+    REVENUEYEAR: 'Revenue',
+    REVENUEQUARTER: 'Revenue quarter',
+    TOTALBOOKINGYEAR: 'Total booking',
+    DiffToPreDay: 'Compared to the previous day',
+    DiffToPreMonth: 'Compared to the previous month',
+    DiffToPreYear: 'Compared to the previous year',
+    DiffToPreQuarter: 'Compared to the previous quarter'
 }
 export default en;

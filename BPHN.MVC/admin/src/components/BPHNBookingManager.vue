@@ -13,7 +13,7 @@ import { useStore } from "vuex";
 import { ElLoading, ElNotification } from "element-plus";
 import { inject, ref, onMounted, computed } from "vue";
 import useCommonFn from "@/commonFn";
-import { BookingStatusEnum, CustomerTypeEnum } from "@/const";
+import { BookingStatusEnum, CustomerTypeEnum, DepositStatusEnum } from "@/const";
 
 const { t } = useI18n();
 const { openModal, hasRole } = useToggleModal();
@@ -26,10 +26,26 @@ const totalRecord = ref(0);
 const txtSearch = ref("");
 const { dateToString, getWeekdays, equals, fakeNumber } = useCommonFn();
 const lstBooking = ref([]);
+const lstPitch = ref([]);
+const lstFrameInfo = ref([]);
 const running = ref(0);
-const mode = ref("");
+const mode = ref(null);
 const visible = ref(false);
 const objInvoice = ref(null);
+const checked1 = ref(false);
+const checked2 = ref(false);
+const checked4 = ref(false);
+const checked5 = ref(false);
+const checked6 = ref(false);
+const checked7 = ref(false);
+const checked8 = ref(false);
+const status = ref(BookingStatusEnum.SUCCESS);
+const bookingDate = ref(new Date());
+const matchDate = ref(new Date());
+const deposit = ref(DepositStatusEnum.DEPOSITED);
+const pitchId = ref(null);
+const timeFrameId = ref(null);
+const nameDetail = ref(null);
 
 const formatDate = computed(() => {
   return store.getters["config/getFormatDate"];
@@ -78,14 +94,46 @@ const approval = (id) => {
 };
 
 const pay = (data) => {
-  openModal("InvoiceDialog");
-  objInvoice.value = 
-  {
-    customerType: CustomerTypeEnum.BOOKING,
-    customerPhone: data.phoneNumber,
-    customerName: data.email,
-    deposit: data.deposite
-  };
+  store.dispatch("invoice/getByBooking", data.bookingDetailId)
+  .then((res) => {
+    console.log(res);
+    if(res?.data?.data) {
+      mode.value = "edit";
+      objInvoice.value = res.data.data;
+    }
+    else {
+      mode.value = "add";
+      objInvoice.value = 
+      {
+        customerType: CustomerTypeEnum.BOOKING,
+        customerPhone: data.phoneNumber,
+        customerName: data.email,
+        deposit: data.deposit,
+        total: data.price,
+        bookingDetailId: data.bookingDetailId,
+        items: 
+        [
+          {
+            id: 1,
+            itemName: "Thuê sân",
+            unit: "sân",
+            quantity: 1,
+            salePrice: data.price,
+            total: data.price
+          }, 
+          {
+            id: 2,
+            itemName: "",
+            unit: "",
+            quantity: 0,
+            salePrice: 0,
+            total: 0
+          }
+        ]
+      };
+    }
+    openModal("InvoiceDialog");
+  });
 };
 
 const loadData = () => {
@@ -99,14 +147,17 @@ const loadData = () => {
   {
     pageIndex: pageIndex.value,
     pageSize: pageSize.value,
-    hasBookingDetail: true,
     txtSearch: txtSearch.value,
-    hasInactive: true,
+    status: checked1.value ? status.value : null,
+    bookingDate: checked2.value ? dateToString(bookingDate.value, "yyyy-MM-dd") : null,
+    matchDate: checked4.value ? dateToString(matchDate.value, "yyyy-MM-dd") : null,
+    deposit: checked5.value ? deposit.value : null,
+    pitchId: checked6.value ? pitchId.value : null,
+    timeFrameId: checked7.value ? timeFrameId.value : null,
+    nameDetail: checked8.value ? nameDetail.value : null
   })
   .then((res) => {
-    if (res?.data?.data) {
-      lstBooking.value = res.data.data;
-    }
+    lstBooking.value = res?.data?.data ?? [];
   });
 
   store.dispatch("booking/getCountPaging", 
@@ -114,13 +165,27 @@ const loadData = () => {
     pageIndex: pageIndex.value,
     pageSize: pageSize.value,
     txtSearch: txtSearch.value,
+    status: checked1.value ? status.value : null,
+    bookingDate: checked2.value ? dateToString(bookingDate.value, "yyyy-MM-dd") : null,
+    matchDate: checked4.value ? dateToString(matchDate.value, "yyyy-MM-dd") : null,
+    deposit: checked5.value ? deposit.value : null,
+    pitchId: checked6.value ? pitchId.value : null,
+    timeFrameId: checked7.value ? timeFrameId.value : null,
+    nameDetail: checked8.value ? nameDetail.value : null
   })
   .then((res) => {
     if (res?.data?.data) {
       let result = res.data.data;
-      totalRecord.value = result.totalAllRecords;
+      totalRecord.value = result.result.totalAllRecords;
+      lstPitch.value = (result.lstPitch ?? []).map(function(x) { return { id: x.id, name: x.name, nameDetails: (x.nameDetails ?? "").split(';') } });
+      lstFrameInfo.value = (result.lstFrameInfo ?? []).map(function(x) { return { id: x.id, name: x.name, pitchId: x.pitchId } });
     }
   });
+};
+
+const handleSelect = () => {
+  timeFrameId.value = null;
+  nameDetail.value = null;
 };
 
 const cancel = (id) => {
@@ -136,7 +201,7 @@ const cancel = (id) => {
 };
 
 const filter = () => {
-  visible.value = true;
+  visible.value = false;
   loadData();
 };
 
@@ -165,17 +230,59 @@ onMounted(() => {
   <section>
     <div class="container">
       <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
-        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("BookingManager") }}</h3>
+        <h3 class="col-12 col-sm-12 col-md-12 col-lg-8 fs-3 mt-1 mb-1">{{ t("BookingManager") }}</h3>
         <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row">
           <el-input v-model="txtSearch" :placeholder="t('SearchBy')" :suffix-icon="Search" @keyup.enter="loadData" class="w-100"/>
-          <el-popover :visible="visible" placement="bottom" :width="400">
-            <div></div>
+          <el-popover :visible="visible" placement="bottom" :width="300">
+            <div class="d-flex flex-column mb-3">
+              <el-checkbox v-model="checked1" :label="t('Status')" size="large" />
+              <div v-if="checked1 == true">
+                <el-select v-model="status" class="w-100">
+                  <el-option :value="BookingStatusEnum.SUCCESS" :label="t(BookingStatusEnum.SUCCESS)" />
+                  <el-option :value="BookingStatusEnum.PENDING" :label="t(BookingStatusEnum.PENDING)" />
+                  <el-option :value="BookingStatusEnum.CANCEL" :label="t(BookingStatusEnum.CANCEL)" />
+                </el-select>
+              </div>
+              <el-checkbox v-model="checked2" :label="t('BookingDate')" size="large" />
+              <div v-if="checked2 == true">
+                <el-date-picker v-model="bookingDate" class="w-100"></el-date-picker>
+              </div>
+              <el-checkbox v-model="checked6" :label="t('Infrastructure')" size="large" />
+              <div v-if="checked6 == true">
+                <el-select class="w-100" v-model="pitchId" @change="handleSelect">
+                  <el-option v-for="item in lstPitch" :key="item.id" :label="item.name" :value="item.id" />
+                </el-select>
+              </div>
+              <el-checkbox v-model="checked7" :label="t('TimeFrame')" size="large" />
+              <div v-if="checked7 == true">
+                <el-select class="w-100" v-model="timeFrameId">
+                  <el-option v-for="item in lstFrameInfo.filter(x => x.pitchId == pitchId)" :key="item.id" :label="item.name" :value="item.id" />
+                </el-select>
+              </div>
+              <el-checkbox v-model="checked8" :label="t('NameDetail')" size="large" />
+              <div v-if="checked8 == true">
+                <el-select class="w-100" v-model="nameDetail">
+                  <el-option v-for="item in (lstPitch.find(x => x.id == pitchId)?.nameDetails ?? [])" :key="item" :label="item" :value="item" />
+                </el-select>
+              </div>
+              <el-checkbox v-model="checked4" :label="t('MatchDate')" size="large" />
+              <div v-if="checked4 == true">
+                <el-date-picker v-model="matchDate" class="w-100"></el-date-picker>
+              </div>
+              <el-checkbox v-model="checked5" :label="t('Deposit')" size="large" />
+              <div v-if="checked5 == true">
+                <el-select v-model="deposit" class="w-100">
+                  <el-option :value="DepositStatusEnum.DEPOSITED" :label="t(DepositStatusEnum.DEPOSITED)" />
+                  <el-option :value="DepositStatusEnum.NOTDEPOSIT" :label="t(DepositStatusEnum.NOTDEPOSIT)" />
+                </el-select>
+              </div>
+            </div>
             <div class="d-flex flex-row align-items-center justify-content-end">
               <el-button size="small" text @click="visible = false">{{ t('Cancel') }}</el-button>
-              <el-button size="small" type="primary" @click="visible = false">{{ t('Filter') }}</el-button>
+              <el-button size="small" type="primary" @click="filter">{{ t('Filter') }}</el-button>
             </div>
             <template #reference>
-              <el-button @click="filter" class="ml-2">
+              <el-button  @click="visible = true" class="ml-2">
                 <el-icon><Filter /></el-icon>
               </el-button>
             </template>
@@ -184,7 +291,7 @@ onMounted(() => {
         </div>
       </div>
       <div class="body">
-        <el-table :data="lstBooking" :empty-text="t('NoData')" style="height: calc(100vh - 300px)">
+        <el-table :data="lstBooking" :empty-text="t('NoData')" style="height: calc(100vh - 230px)">
           <el-table-column :label="t('Status')" width="100">
             <template #default="scope">
               <el-tag type="success" size="small" v-if="equals(scope.row.bookingStatus, BookingStatusEnum.SUCCESS)">{{ t(scope.row.bookingStatus) }}</el-tag>
@@ -237,9 +344,9 @@ onMounted(() => {
                 {{ dateToString(scope.row.matchDate, formatDate) }}
               </template>
             </el-table-column>
-            <el-table-column :label="t('Deposite')">
+            <el-table-column :label="t('Deposit')">
               <template #default="scope">
-                <span v-if="scope.row.deposite > 0">{{ fakeNumber(scope.row.deposite) }}</span>
+                <span v-if="scope.row.deposit > 0">{{ fakeNumber(scope.row.deposit) }}</span>
                 <span v-else></span>
               </template>
             </el-table-column>
@@ -272,5 +379,5 @@ onMounted(() => {
     </div>
   </section>
   <BookingDialog v-if="hasRole('BookingDialog')" :data="objBooking" :mode="mode" @callback="loadData"></BookingDialog>
-  <InvoiceDialog v-if="hasRole('InvoiceDialog')" :data="objInvoice" :mode="'add'"></InvoiceDialog>
+  <InvoiceDialog v-if="hasRole('InvoiceDialog')" :data="objInvoice" :mode="mode"></InvoiceDialog>
 </template>

@@ -3,8 +3,6 @@ using BPHN.ModelLayer;
 using BPHN.ModelLayer.Attributes;
 using BPHN.ModelLayer.Requests;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Serilog;
 
 namespace BPHN.WebAPI.Controllers
 {
@@ -22,7 +20,6 @@ namespace BPHN.WebAPI.Controllers
         [Route("")]
         public async Task<IActionResult> GetItems(string txtSearch, string status, string code, string unit, string quantity)
         {
-            Log.Debug($"Item/GetItems start: txtSearch: {txtSearch}, status: {status}, code: {code}, unit: {unit}");
             return Ok(await _itemService.GetItems(txtSearch, status, code, unit, quantity));
         }
 
@@ -31,7 +28,6 @@ namespace BPHN.WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetInstance(string id)
         {
-            Log.Debug($"Item/GetInstance start: {id}");
             return Ok(await _itemService.GetInstance(id));
         }
 
@@ -41,7 +37,6 @@ namespace BPHN.WebAPI.Controllers
         [Route("insert")]
         public async Task<IActionResult> Insert([FromBody] InsertItemRequest request)
         {
-            Log.Debug($"Item/Insert start: {JsonConvert.SerializeObject(request)}");
             return Ok(await _itemService.Insert(_mapper.Map<Item>(request)));
         }
 
@@ -51,7 +46,6 @@ namespace BPHN.WebAPI.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] UpdateItemRequest request)
         {
-            Log.Debug($"Item/Update start: {JsonConvert.SerializeObject(request)}");
             return Ok(await _itemService.Update(_mapper.Map<Item>(request)));
         }
     }

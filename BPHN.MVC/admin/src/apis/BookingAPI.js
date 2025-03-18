@@ -23,13 +23,15 @@ class BookingAPI {
     }
 
     async getPaging(data) {
-        let requestUrl = `${process.env.VUE_APP_API_URL}/bookings/paging?pageIndex=${data.pageIndex}&pageSize=${data.pageSize}&txtSearch=${data.txtSearch}&hasBookingDetail=${data.hasBookingDetail}`;
-        return await axios.get(requestUrl);
+        let requestUrl = `${process.env.VUE_APP_API_URL}/bookings/paging`;
+        let requestParam = data;
+        return await axios.post(requestUrl, requestParam);
     }
 
     async getCountPaging(data) {
-        let requestUrl = `${process.env.VUE_APP_API_URL}/bookings/count-paging?pageIndex=${data.pageIndex}&pageSize=${data.pageSize}&txtSearch=${data.txtSearch}`;
-        return await axios.get(requestUrl);
+        let requestUrl = `${process.env.VUE_APP_API_URL}/bookings/count-paging`;
+        let requestParam = data;
+        return await axios.post(requestUrl, requestParam);
     }
 
     async findBlank(data) {

@@ -84,7 +84,7 @@ onMounted(() => {
   <section>
     <div class="container">
       <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
-        <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">{{ t("HistoryLog") }}</h3>
+        <h3 class="col-12 col-sm-12 col-md-12 col-lg-8 fs-3 mt-1 mb-1">{{ t("HistoryLog") }}</h3>
         <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row-reverse">
           <el-button @click="loadData" class="ml-2">
             <el-icon><Refresh /></el-icon>
@@ -93,7 +93,7 @@ onMounted(() => {
         </div>
       </div>
       <div>
-        <el-table :data="lstHistoryLog" style="height: calc(100vh - 300px)" :empty-text="t('NoData')">
+        <el-table :data="lstHistoryLog" border style="height: calc(100vh - 230px)" :empty-text="t('NoData')">
           <el-table-column :label="t('CreatedDate')" width="200">
             <template #default="scope">
               {{ dateToString(scope.row.createdDate, formatDate, true) }}

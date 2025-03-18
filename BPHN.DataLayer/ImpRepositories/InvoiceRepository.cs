@@ -25,6 +25,19 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
+        public async Task<Invoice> GetByBooking(Guid bookingDetailId)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var invoice = (await connection.QueryFirstOrDefaultAsync<Invoice>(Query.INVOICE__GET_BY_BOOKING, new Dictionary<string, object>
+                {
+                    { "@id", bookingDetailId }
+                }));
+                return invoice;
+            }
+        }
+
         public async Task<IEnumerable<Invoice>> GetInvoices(Guid accountId, string txtSearch, string status, int? customerType, DateTime? date, int? paymentType)
         {
             var conditions = new List<WhereCondition>
@@ -96,7 +109,7 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public async Task<bool> Insert(Invoice data)
+        public async Task<bool> Insert(Invoice data, InvoiceBookingDetail? _)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
@@ -118,6 +131,20 @@ namespace BPHN.DataLayer.ImpRepositories
                     { "@createdBy", data.CreatedBy },
                     { "@createdDate", data.CreatedDate }
                 }));
+
+                if (affect > 0 && _ is not null)
+                {
+                    affect = await connection.ExecuteAsync(Query.INVOICE_BOOKING_DETAIL__INSERT, new Dictionary<string, object?>
+                    {
+                        { "@id", _.Id },
+                        { "@bookingDetailId", _.BookingDetailId },
+                        { "@invoiceId", _.InvoiceId },
+                        { "@modifiedBy", _.ModifiedBy },
+                        { "@modifiedDate", _.ModifiedDate },
+                        { "@createdBy", _.CreatedBy },
+                        { "@createdDate", _.CreatedDate }
+                    });
+                }
                 if (affect == 0)
                 {
                     return false;

@@ -14,9 +14,10 @@ namespace BPHN.ModelLayer.Responses
         public string NameDetail { get; set; }
         public int Weekendays { get; set; }
         public DateTime MatchDate { get; set; }
-        public double Deposite { get; set; }
+        public double Deposit { get; set; }
         public Guid BookingDetailId { get; set; }
         public Guid BookingId { get; set; }
         public string MatchCode { get; set; }
+        public double Price { get; set; }
     }
 }

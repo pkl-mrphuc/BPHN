@@ -2,6 +2,7 @@
 {
     public sealed class InsertInvoiceRequest
     {
+        public Guid? BookingDetailId { get; set; }
         public string Status { get; set; }
         public int CustomerType { get; set; }
         public int PaymentType { get; set; }

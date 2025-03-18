@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Newtonsoft.Json;
-using Serilog;
 
 namespace BPHN.WebAPI.Controllers
 {
@@ -34,7 +32,6 @@ namespace BPHN.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetForgotPasswordBody([FromBody] MailVm<MailForgotPasswordVm> request)
         {
-            Log.Debug($"MailTemplate/GetForgotPasswordBody start: {JsonConvert.SerializeObject(request)}");
             var pathView = Path.Combine(_folderDir, "ForgotPassword.cshtml");
             var source = await RenderAsync<MailForgotPasswordVm>(pathView, request.Model, request.ViewBag);
             return Ok(source);
@@ -44,7 +41,6 @@ namespace BPHN.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetSetPasswordBody([FromBody] MailVm<MailSetPasswordVm> request)
         {
-            Log.Debug($"MailTemplate/GetSetPasswordBody start: {JsonConvert.SerializeObject(request)}");
             var pathView = Path.Combine(_folderDir, "SetPassword.cshtml");
             var source = await RenderAsync<MailSetPasswordVm>(pathView, request.Model, request.ViewBag);
             return Ok(source);
@@ -54,7 +50,6 @@ namespace BPHN.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetApprovalBookingBody([FromBody] MailVm<MailApprovalBookingVm> request)
         {
-            Log.Debug($"MailTemplate/GetApprovalBookingBody start: {JsonConvert.SerializeObject(request)}");
             var pathView = Path.Combine(_folderDir, "ApprovalBooking.cshtml");
             var source = await RenderAsync<MailApprovalBookingVm>(pathView, request.Model, request.ViewBag);
             return Ok(source);
@@ -64,7 +59,6 @@ namespace BPHN.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> GetDeclineBookingBody([FromBody] MailVm<MailDeclineBookingVm> request)
         {
-            Log.Debug($"MailTemplate/GetDeclineBookingBody start: {JsonConvert.SerializeObject(request)}");
             var pathView = Path.Combine(_folderDir, "DeclineBooking.cshtml");
             var source = await RenderAsync<MailDeclineBookingVm>(pathView, request.Model, request.ViewBag);
             return Ok(source);

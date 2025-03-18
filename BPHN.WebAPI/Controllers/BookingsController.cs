@@ -1,13 +1,10 @@
-﻿using AutoMapper;
-using BPHN.BusinessLayer.IServices;
+﻿using BPHN.BusinessLayer.IServices;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Attributes;
 using BPHN.ModelLayer.Others;
 using BPHN.ModelLayer.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Serilog;
 
 namespace BPHN.WebAPI.Controllers
 {
@@ -24,7 +21,6 @@ namespace BPHN.WebAPI.Controllers
         [Route("get-instance")]
         public async Task<IActionResult> GetInstance(string id)
         {
-            Log.Debug($"Booking/GetInstance start: {id}");
             return Ok(await _bookingService.GetInstance(id));
         }
 
@@ -34,7 +30,6 @@ namespace BPHN.WebAPI.Controllers
         [Route("insert")]
         public async Task<IActionResult> Insert([FromBody] InsertBookingRequest request)
         {
-            Log.Debug($"Booking/Insert start: {JsonConvert.SerializeObject(request)}");
             return Ok(await _bookingService.Insert(_mapper.Map<Booking>(request)));
         }
 
@@ -43,7 +38,6 @@ namespace BPHN.WebAPI.Controllers
         [Route("insert-booking-request")]
         public async Task<IActionResult> InsertBookingRequest([FromBody] BookingRequest request)
         {
-            Log.Debug($"Booking/InsertBookingRequest start: {JsonConvert.SerializeObject(request)}");
             return Ok(await _bookingService.InsertBookingRequest(request));
         }
 
@@ -53,28 +47,25 @@ namespace BPHN.WebAPI.Controllers
         [Route("check-time-frame")]
         public async Task<IActionResult> CheckFreeTimeFrame([FromBody] CheckFreeTimeFrameRequest request)
         {
-            Log.Debug($"Booking/CheckFreeTimeFrame start: {JsonConvert.SerializeObject(request)}");
             return Ok(await _bookingService.CheckFreeTimeFrame(_mapper.Map<Booking>(request)));
         }
 
         [Permission(FunctionTypeEnum.VIEWLISTBOOKING)]
         [ApiAuthorize]
-        [HttpGet]
+        [HttpPost]
         [Route("paging")]
-        public async Task<IActionResult> GetPaging(int pageIndex, int pageSize, string txtSearch, bool hasBookingDetail = false)
+        public async Task<IActionResult> GetPaging([FromBody] GetBookingPagingRequest request)
         {
-            Log.Debug($"Booking/GetPaging start: {JsonConvert.SerializeObject(new { PageIndex = pageIndex, PageSize = pageSize, TxtSearch = txtSearch, HasBookingDetail = hasBookingDetail })}");
-            return Ok(await _bookingService.GetPagingV1(pageIndex, pageSize, txtSearch, hasBookingDetail));
+            return Ok(await _bookingService.GetPaging(_mapper.Map<GetBookingPagingModel>(request)));
         }
 
         [Permission(FunctionTypeEnum.VIEWLISTBOOKING)]
         [ApiAuthorize]
-        [HttpGet]
+        [HttpPost]
         [Route("count-paging")]
-        public async Task<IActionResult> GetCountPaging(int pageIndex, int pageSize, string txtSearch)
+        public async Task<IActionResult> GetCountPaging([FromBody] GetBookingPagingRequest request)
         {
-            Log.Debug($"Booking/GetCountPaging start: {JsonConvert.SerializeObject(new { PageIndex = pageIndex, PageSize = pageSize, TxtSearch = txtSearch })}");
-            return Ok(await _bookingService.GetCountPagingV1(pageIndex, pageSize, txtSearch));
+            return Ok(await _bookingService.GetCountPaging(_mapper.Map<GetBookingPagingModel>(request)));
         }
 
         [Permission(FunctionTypeEnum.ADDBOOKING, FunctionTypeEnum.EDITBOOKING)]
@@ -83,7 +74,6 @@ namespace BPHN.WebAPI.Controllers
         [Route("find-blank")]
         public async Task<IActionResult> FindBlank([FromBody] FindBlankRequeset request)
         {
-            Log.Debug($"Booking/FindBlank start: {JsonConvert.SerializeObject(request)}");
             return Ok(await _bookingService.FindBlank(_mapper.Map<Booking>(request)));
         }
 
@@ -93,7 +83,6 @@ namespace BPHN.WebAPI.Controllers
         [Route("approval/{id}")]
         public async Task<IActionResult> Accept(string id)
         {
-            Log.Debug($"Booking/Accept start: {id}");
             return Ok(await _bookingService.Update(id, BookingStatusEnum.SUCCESS));
         }
 
@@ -103,7 +92,6 @@ namespace BPHN.WebAPI.Controllers
         [Route("decline/{id}")]
         public async Task<IActionResult> Decline(string id)
         {
-            Log.Debug($"Booking/Decline start: {id}");
             return Ok(await _bookingService.Update(id, BookingStatusEnum.CANCEL));
         }
     }

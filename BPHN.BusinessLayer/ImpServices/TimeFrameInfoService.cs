@@ -21,7 +21,7 @@ namespace BPHN.BusinessLayer.ImpServices
             return await _timeFrameInfoRepository.GetById(id);
         }
 
-        public async Task<List<TimeFrameInfo>> GetByListPitchId(List<Guid> lstPitchId)
+        public async Task<List<TimeFrameInfo>> GetByListPitchId(IEnumerable<Guid> lstPitchId)
         {
             return await _timeFrameInfoRepository.GetByListPitchId(lstPitchId);
         }

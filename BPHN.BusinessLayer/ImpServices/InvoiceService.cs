@@ -79,6 +79,41 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
+        public async Task<ServiceResultModel> GetByBooking(string id)
+        {
+            var context = _contextService.GetContext();
+            if (context is null)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
+                };
+            }
+
+            if (string.IsNullOrWhiteSpace(id) || !Guid.TryParse(id, out var bookingDetailId))
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.EMPTY_INPUT,
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
+                };
+            }
+
+            var data = await _invoiceRepository.GetByBooking(bookingDetailId);
+            if (data is not null && !string.IsNullOrWhiteSpace(data.Detail))
+            {
+                data.Items = JsonConvert.DeserializeObject<List<InvoiceItem>>(data.Detail);
+            }
+            return new ServiceResultModel
+            {
+                Success = true,
+                Data = _mapper.Map<GetSingleInvoiceRespond>(data)
+            };
+        }
+
         public async Task<ServiceResultModel> GetInvoices(string txtSearch, string status, int? customerType, DateTime? date, int? paymentType)
         {
             var context = _contextService.GetContext();
@@ -111,7 +146,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task<ServiceResultModel> Insert(Invoice data)
+        public async Task<ServiceResultModel> Insert(Invoice data, Guid? bookingDetailId)
         {
             var context = _contextService.GetContext();
             if (context is null)
@@ -150,13 +185,25 @@ namespace BPHN.BusinessLayer.ImpServices
             data.Status = InvoiceStatusEnum.DRAFT.ToString();
             data.Detail = JsonConvert.SerializeObject(data.Items);
             data.Date = DateTime.Now;
-            data.AccountId = context.Id;
+            data.AccountId = context.ParentId ?? context.Id;
             data.CreatedBy = context.FullName;
             data.CreatedDate = DateTime.Now;
             data.ModifiedBy = context.FullName;
             data.ModifiedDate = DateTime.Now;
 
-            var insertResult = await _invoiceRepository.Insert(data);
+            var _ = bookingDetailId.HasValue ? new InvoiceBookingDetail
+            {
+                Id = Guid.NewGuid(),
+                InvoiceId = data.Id,
+                BookingDetailId = bookingDetailId.Value,
+                CreatedBy = context.FullName,
+                CreatedDate = DateTime.Now,
+                ModifiedBy = context.FullName,
+                ModifiedDate = DateTime.Now,
+            } : null;
+
+
+            var insertResult = await _invoiceRepository.Insert(data, _);
             if (insertResult)
             {
                 await _notificationService.Insert(context, NotificationTypeEnum.INSERTINVOICE, new Invoice
@@ -223,7 +270,6 @@ namespace BPHN.BusinessLayer.ImpServices
 
             data.ModifiedBy = context.FullName;
             data.ModifiedDate = DateTime.Now;
-            data.AccountId = context.Id;
             data.Date = DateTime.Now;
             data.Detail = JsonConvert.SerializeObject(data.Items);
 

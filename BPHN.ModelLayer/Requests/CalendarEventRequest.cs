@@ -6,6 +6,6 @@
         public string TeamA { get; set; }
         public string TeamB { get; set; }
         public string Note { get; set; }
-        public double Deposite { get; set; }
+        public double Deposit { get; set; }
     }
 }

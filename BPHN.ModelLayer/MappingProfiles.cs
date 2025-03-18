@@ -17,6 +17,7 @@ namespace BPHN.WebAPI.Models
             CreateMap<CheckFreeTimeFrameRequest, Booking>();
             CreateMap<FindBlankRequeset, Booking>();
             CreateMap<InsertBookingRequest, Booking>();
+            CreateMap<GetBookingPagingRequest, GetBookingPagingModel>();
 
             CreateMap<InsertPitchRequest, Pitch>();
             CreateMap<UpdatePitchRequest, Pitch>();

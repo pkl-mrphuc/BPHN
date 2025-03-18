@@ -9,6 +9,7 @@
         public CustomerTypeEnum CustomerType { get; set; }
         public PaymentTypeEnum PaymentType { get; set; }
         public double Total { get; set; }
+        public Guid? BookingDetailId { get; set; }
         public IEnumerable<InvoiceItem> Items { get; set; }
     }
 }

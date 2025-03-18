@@ -1,4 +1,7 @@
 <script setup>
+import StatisticCard from "@/components/StatisticCard.vue";
+import StatisticBookingCard from "@/components/StatisticBookingCard.vue";
+import { BookingStatusEnum, StatisticTypeEnum } from "@/const";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
@@ -8,145 +11,61 @@ const { t } = useI18n();
     <section>
         <div class="container">
             <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
-                <h3 class="fs-3 col-12 col-sm-12 col-md-12 col-lg-8">
-                    {{ t("Overview") }}
-                </h3>
-                <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row">
+                <h3 class="col-12 col-sm-12 col-md-12 col-lg-8 fs-3 mt-1 mb-1">{{ t("Overview") }}</h3>
+                <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row-reverse">
+                    <el-button type="primary">Tùy chỉnh</el-button>
                 </div>
             </div>
-            <div>
-                <el-row :gutter="16">
-                    <el-col :span="8">
-                        <div class="statistic-card">
-                            <el-statistic :value="98500">
-                                <template #title>
-                                    <div style="display: inline-flex; align-items: center">
-                                        Booking chờ duyệt
-                                        <el-tooltip effect="dark"
-                                            content=""
-                                            placement="top">
-                                            <el-icon style="margin-left: 4px" :size="12">
-                                                <Warning />
-                                            </el-icon>
-                                        </el-tooltip>
-                                    </div>
-                                </template>
-                            </el-statistic>
-                            <div class="statistic-footer">
-                                <div class="footer-item">
-                                    <span></span>
-                                    <span class="green">
-                                        <el-icon>
-                                            <CaretTop />
-                                        </el-icon>
-                                    </span>
+            <div class="row">
+                <div class="col-12 col-sm-12 col-md-12 col-lg-9">
+                    <div class="mb-5 mr-5" id="booking">
+                        <div class="row">
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-3">
+                                <statistic-card :border="true" :type="StatisticTypeEnum.TOTALBOOKINGYEAR" :time="2025" :value="14999" :pre-value="29343"></statistic-card>
+                            </div>
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-5 d-flex flex-row align-items-center justify-content-around">
+                                <div>
+                                    <statistic-booking-card :type="BookingStatusEnum.PENDING" :value="1000"></statistic-booking-card>
+                                </div>
+                                <div>
+                                    <statistic-booking-card :type="BookingStatusEnum.SUCCESS" :value="1000"></statistic-booking-card>
+                                </div>
+                                <div>
+                                    <statistic-booking-card :type="BookingStatusEnum.CANCEL" :value="1000"></statistic-booking-card>
                                 </div>
                             </div>
-                        </div>
-                    </el-col>
-                    <el-col :span="8">
-                        <div class="statistic-card">
-                            <el-statistic :value="693700">
-                                <template #title>
-                                    <div style="display: inline-flex; align-items: center">
-                                        Doanh thu hôm nay
-                                        <el-tooltip effect="dark"
-                                            content=""
-                                            placement="top">
-                                            <el-icon style="margin-left: 4px" :size="12">
-                                                <Warning />
-                                            </el-icon>
-                                        </el-tooltip>
-                                    </div>
-                                </template>
-                            </el-statistic>
-                            <div class="statistic-footer">
-                                <div class="footer-item">
-                                    <span></span>
-                                    <span class="red">
-                                        <el-icon>
-                                            <CaretBottom />
-                                        </el-icon>
-                                    </span>
-                                </div>
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-4">
+
                             </div>
                         </div>
-                    </el-col>
-                    <el-col :span="8">
-                        <div class="statistic-card">
-                            <el-statistic :value="72000" title="New transactions today">
-                                <template #title>
-                                    <div style="display: inline-flex; align-items: center">
-                                        Doanh thu tháng 3
-                                    </div>
-                                </template>
-                            </el-statistic>
-                            <div class="statistic-footer">
-                                <div class="footer-item">
-                                    <span></span>
-                                    <span class="green">
-                                        <el-icon>
-                                            <CaretTop />
-                                        </el-icon>
-                                    </span>
-                                </div>
-                                <div class="footer-item">
-                                    <el-icon :size="14">
-                                        <ArrowRight />
-                                    </el-icon>
-                                </div>
-                            </div>
-                        </div>
-                    </el-col>
-                </el-row>
+                    </div>
+                    <div>
+                        <div class="mb-5 mr-5" style="height: 350px; background-color: #121212; border-radius: 20px;"></div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-12 col-md-12 col-lg-3">
+                    <div class="mb-5">
+                        <statistic-card :type="StatisticTypeEnum.REVENUEMONTH" :time="3" :value="100" :pre-value="1000"></statistic-card>
+                    </div>
+                    <div class="mb-5">
+                        <statistic-card :type="StatisticTypeEnum.REVENUEYEAR" :time="2025" :value="10000" :pre-value="1000"></statistic-card>
+                    </div>
+                    <div class="mb-5">
+                        <statistic-card :type="StatisticTypeEnum.REVENUEYEAR" :time="2025" :value="10000" :pre-value="1000"></statistic-card>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 </template>
 
 <style scoped>
-:global(h2#card-usage ~ .example .example-showcase) {
-    background-color: var(--el-fill-color) !important;
+html.dark #booking {
+    background-color: #121212; 
+    border-radius: 20px;
 }
-
-.el-statistic {
-    --el-statistic-content-font-size: 28px;
-}
-
-.statistic-card {
-    height: 100%;
-    padding: 20px;
-    border-radius: 4px;
-    background-color: var(--el-bg-color-overlay);
-}
-
-.statistic-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    font-size: 12px;
-    color: var(--el-text-color-regular);
-    margin-top: 16px;
-}
-
-.statistic-footer .footer-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.statistic-footer .footer-item span:last-child {
-    display: inline-flex;
-    align-items: center;
-    margin-left: 4px;
-}
-
-.green {
-    color: var(--el-color-success);
-}
-
-.red {
-    color: var(--el-color-error);
+html #booking {
+    background-color: #f5f5f5; 
+    border-radius: 20px;
 }
 </style>

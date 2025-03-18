@@ -1,11 +1,8 @@
-﻿using AutoMapper;
-using BPHN.BusinessLayer.IServices;
+﻿using BPHN.BusinessLayer.IServices;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Attributes;
 using BPHN.ModelLayer.Requests;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Serilog;
 
 namespace BPHN.WebAPI.Controllers
 {
@@ -22,7 +19,6 @@ namespace BPHN.WebAPI.Controllers
         [Route("{accountId}")]
         public async Task<IActionResult> GetPermissions(Guid accountId)
         {
-            Log.Debug($"Permission/GetPermissions start: {accountId}");
             return Ok(await _permissionService.GetPermissions(accountId));
         }
 
@@ -31,7 +27,6 @@ namespace BPHN.WebAPI.Controllers
         [Route("save/{accountId}")]
         public async Task<IActionResult> SavePermissions(Guid accountId, [FromBody] List<SavePermissionRequest> request)
         {
-            Log.Debug($"Permission/SavePermissions start: {JsonConvert.SerializeObject(new { AccountId = accountId, Permission = request })}");
             return Ok(await _permissionService.SavePermissions(accountId, _mapper.Map<List<Permission>>(request)));
         }
     }

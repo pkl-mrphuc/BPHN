@@ -1,37 +1,6 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-size: 14px;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.el-header {
-  padding: 0;
-  margin: 0;
-  border-bottom: 1px solid #cecece;
-}
-
-.el-main {
-  padding: 25px;
-}
-
-/* width */
-::-webkit-scrollbar {
-  width: 0px;
-}
-
-.main-layout {
-  height: calc(100vh - 60px);
-}
-
 :root {
   --fc-border-color: #ebeef5;
   --fc-today-bg-color: #ecf5ff;
-}
-
-html.dark {
-  --fc-border-color: #363637;
-  --fc-today-bg-color: #18222c;
 }
 
 .fc .fc-timegrid-slot {
@@ -139,50 +108,6 @@ html.dark {
   position: relative !important;
 }
 
-.el-calendar__header {
-  display: none !important;
-}
-
-.el-calendar__body {
-  padding: 0px !important;
-}
-
-.el-calendar-table .el-calendar-day {
-  height: 70px !important;
-}
-
 .fc-col-header  {
   position: relative;
-}
-
-#next_icon {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  display: block;
-  width: 24px;
-  height: 24px;
-  background-image: url("../images/next-dark.svg");
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-#prev_icon {
-  position: absolute;
-  top: 8px;
-  left: 70px;
-  display: block;
-  width: 24px;
-  height: 24px;
-  background-image: url("../images/prev-dark.svg");
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-html.dark #prev_icon {
-  background-image: url("../images/prev.svg") !important;
-}
-
-html.dark #next_icon {
-  background-image: url("../images/next.svg") !important;
 }

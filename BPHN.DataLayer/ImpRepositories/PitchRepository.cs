@@ -13,7 +13,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 
         }
 
-        public async Task<List<Pitch>> GetAll(string accountId)
+        public async Task<List<Pitch>> GetAll(Guid accountId)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
