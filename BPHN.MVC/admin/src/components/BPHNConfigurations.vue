@@ -164,7 +164,7 @@ const connect = () => {
         </div>
       </div>
       <div>
-        <el-table :data="lstConfig" style="height: calc(100vh - 190px)">
+        <el-table :data="lstConfig" border style="height: calc(100vh - 190px)">
           <el-table-column :label="t('Title')" width="200">
             <template #default="scope">
               <span>{{ t(scope.row.name) }}</span>

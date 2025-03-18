@@ -1,0 +1,29 @@
+html {
+    --fc-border-color: #363637 !important;
+    --fc-today-bg-color: #18222c !important;
+    color: #555555 !important;
+}
+
+html #prev_icon {
+    background-image: url("../images/prev.svg") !important;
+    position: absolute;
+    top: 8px;
+    left: 70px;
+    display: block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+html #next_icon {
+    background-image: url("../images/next.svg") !important;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+}

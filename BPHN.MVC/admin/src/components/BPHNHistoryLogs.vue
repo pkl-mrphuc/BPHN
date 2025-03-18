@@ -93,7 +93,7 @@ onMounted(() => {
         </div>
       </div>
       <div>
-        <el-table :data="lstHistoryLog" style="height: calc(100vh - 300px)" :empty-text="t('NoData')">
+        <el-table :data="lstHistoryLog" border style="height: calc(100vh - 300px)" :empty-text="t('NoData')">
           <el-table-column :label="t('CreatedDate')" width="200">
             <template #default="scope">
               {{ dateToString(scope.row.createdDate, formatDate, true) }}

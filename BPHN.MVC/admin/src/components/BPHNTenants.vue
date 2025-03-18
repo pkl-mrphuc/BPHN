@@ -142,7 +142,7 @@ onMounted(() => {
         </div>
       </div>
       <div>
-        <el-table :data="lstAccount" style="height: calc(100vh - 300px)" :empty-text="t('NoData')">
+        <el-table :data="lstAccount" border style="height: calc(100vh - 300px)" :empty-text="t('NoData')">
           <el-table-column :label="t('Status')" width="150">
             <template #default="scope">
               <el-tag type="success" size="small" v-if="equals(scope.row.status, StatusEnum.ACTIVE)">{{ t("Active") }}</el-tag>

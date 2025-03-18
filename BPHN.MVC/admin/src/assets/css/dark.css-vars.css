@@ -1,0 +1,43 @@
+html.dark {
+    --fc-border-color: #363637 !important;
+    --fc-today-bg-color: #18222c !important;
+    --el-text-color-secondary: #f5f5f5 !important;
+    background-color: #262626 !important;
+    color: #f5f5f5 !important;
+}
+
+html.dark .el-header {
+    background-color: #121212 !important;
+}
+
+html.dark .el-table__body-wrapper tr td.el-table-fixed-column--right {
+    background: #262626 !important;
+}
+
+html.dark .el-table {
+    --el-table-header-bg-color: #262626 !important;
+}
+
+html.dark #prev_icon {
+    background-image: url("../images/prev-dark.svg") !important;
+    position: absolute;
+    top: 8px;
+    left: 70px;
+    display: block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+html.dark #next_icon {
+    background-image: url("../images/next-dark.svg") !important;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+}
