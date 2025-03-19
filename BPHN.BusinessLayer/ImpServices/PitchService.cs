@@ -137,7 +137,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 var timeFrameInfos = new List<TimeFrameInfo>();
                 for (int i = 0; i < data.TimeSlotPerDay; i++)
                 {
-                    var timeBegin = DateTime.Now;
+                    var timeBegin = new DateTime(1999, 11, 10, 0, 0, 0);
                     var timeEnd = DateTime.Now;
                     var timeBeginSpan = new TimeSpan(timeBegin.Hour, timeBegin.Minute, 0);
                     timeBegin = timeBegin.Date.Add(timeBeginSpan);
@@ -216,6 +216,43 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 Success = true,
                 Data = _mapper.Map<PitchRespond>(data)
+            };
+        }
+
+        public async Task<ServiceResultModel> GetPitchs()
+        {
+            var context = _contextService.GetContext();
+            if (context is null)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
+                };
+            }
+
+            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
+            if (!hasPermission)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
+                };
+            }
+
+            var lstPitch = await GetAll(context.Id);
+            var lstFrameInfo = await _timeFrameInfoService.GetByListPitchId(lstPitch.Select(x => x.Id));
+            return new ServiceResultModel
+            {
+                Success = true,
+                Data = new
+                {
+                    lstPitch,
+                    lstFrameInfo
+                }
             };
         }
 

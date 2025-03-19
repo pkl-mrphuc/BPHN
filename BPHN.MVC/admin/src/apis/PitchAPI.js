@@ -56,6 +56,11 @@ class PitchAPI {
             return false;
         }
     }
+
+    async getAll() {
+        let requestUrl = `${process.env.VUE_APP_API_URL}/pitchs`;
+        return await axios.get(requestUrl);
+    }
 }
 
 export default new PitchAPI();

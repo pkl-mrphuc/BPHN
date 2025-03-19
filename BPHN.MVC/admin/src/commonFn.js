@@ -20,7 +20,16 @@ export default function useCommonFn() {
         }
         let hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
         let mintues = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
-        return `${hours}:${mintues}`;
+        return `${hours}:${mintues}:00`;
+    }
+
+    const numberToTime = (number) => {
+        let hours = Math.floor(number / 60);
+        let minutes = number % 60;
+
+        hours = hours < 10 ? `0${hours}` : hours;
+        minutes = minutes < 10 ? `0${minutes}` : minutes;
+        return `${hours}:${minutes}:00`;
     }
 
     const dateToString = (date, formatDate, hasTime = false) => {
@@ -152,6 +161,7 @@ export default function useCommonFn() {
         equals,
         isEmail,
         padToFive,
-        fakeNumber
+        fakeNumber,
+        numberToTime
     }
 }
