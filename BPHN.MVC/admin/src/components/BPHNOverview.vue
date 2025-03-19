@@ -21,7 +21,7 @@ const { t } = useI18n();
                     <div class="mb-5 mr-5" id="booking">
                         <div class="row">
                             <div class="col-12 col-sm-12 col-md-12 col-lg-3">
-                                <statistic-card :border="true" :type="StatisticTypeEnum.TOTALBOOKINGYEAR" :time="2025" :value="14999" :pre-value="29343"></statistic-card>
+                                <statistic-card :type="StatisticTypeEnum.TOTALBOOKINGYEAR" :time="2025" :value="14999" :pre-value="29343"></statistic-card>
                             </div>
                             <div class="col-12 col-sm-12 col-md-12 col-lg-5 d-flex flex-row align-items-center justify-content-around">
                                 <div>
