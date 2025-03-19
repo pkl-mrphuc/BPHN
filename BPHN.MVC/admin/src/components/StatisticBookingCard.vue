@@ -12,24 +12,23 @@ const props = defineProps({
 
 </script>
 <template>
-    <div class="d-flex flex-column align-items-center justify-content-center bcard">
-        <span class="bcard__status">{{ t(props.type) }}</span>
-        <span class="bcard__data">{{ fakeNumber(props.value ?? 0) }}</span>
+    <div class="d-flex flex-column align-items-center justify-content-center bphn-statistic2">
+        <span class="bphn-statistic2__status">{{ t(props.type) }}</span>
+        <span class="bphn-statistic2__data">{{ fakeNumber(props.value ?? 0) }}</span>
     </div>
 </template>
 
 <style scoped>
-.bcard {
-    background-color: #555555;
+.bphn-statistic2 {
     width: 114px;
     height: 114px;
     border-radius: 18px;
 }
-.bcard__status {
+.bphn-statistic2__status {
     font-size: 16px;
     margin-bottom: 16px;
 }
-.bcard__data {
+.bphn-statistic2__data {
     font-size: 26px;
     font-weight: 700;
 }
