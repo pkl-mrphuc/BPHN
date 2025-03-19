@@ -30,7 +30,7 @@ onMounted(() => {
   });
 });
 
-const getMessage = (type, model) => {
+const getMessage = (type, model) => { 
   model = JSON.parse(model);
   switch (type) {
     case NotificationTypeEnum.CANCELBOOKINGDETAIL:
