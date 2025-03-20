@@ -10,8 +10,7 @@ const props = defineProps({
   type: String,
   time: String,
   value: String,
-  preValue: String,
-  border: Boolean
+  preValue: String
 });
 
 const val = ref(props.value ?? 0);
@@ -61,7 +60,7 @@ const diffTo = () => {
 
 </script>
 <template>
-    <el-card :body-style="{ padding: '0px', 'border-right': border ? '1px solid #f5f5f5' : 'none' }">
+    <el-card :body-style="{ padding: '0px' }" class="bphn-statistic1">
         <el-statistic :value="fakeNumber(val)">
             <template #title>
                 <div class="d-flex flex-row align-items-center">

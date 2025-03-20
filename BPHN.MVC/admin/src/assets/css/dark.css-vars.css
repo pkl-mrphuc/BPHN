@@ -1,7 +1,7 @@
 html.dark {
     --fc-border-color: #363637;
     --fc-today-bg-color: #18222c;
-    --el-text-color-secondary: #f5f5f5;
+    --el-text-color-secondary: #f5f5f5 !important;
 }
 
 html.dark body {
@@ -20,6 +20,14 @@ html.dark .el-menu-vertical-demo {
 
 ::-webkit-scrollbar {
     width: 0px;
+}
+
+html.dark .bphn-statistic1 {
+    background-color: #121212;
+}
+
+html.dark .bphn-statistic2 {
+    background-color: #555555;
 }
 
 html.dark .el-header {

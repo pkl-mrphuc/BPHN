@@ -42,6 +42,15 @@ namespace BPHN.WebAPI.Controllers
         }
 
         [Permission(FunctionTypeEnum.VIEWLISTPITCH)]
+        [ApiAuthorize]
+        [Route("")]
+        [HttpGet]
+        public async Task<IActionResult> GetPitchs()
+        {
+            return Ok(await _pitchService.GetPitchs());
+        }
+
+        [Permission(FunctionTypeEnum.VIEWLISTPITCH)]
         [AllowAnonymous]
         [Route("paging")]
         [HttpGet]

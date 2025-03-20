@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Layout from "@/layouts/BPHNLayout.vue";
-import Calendar from "@/components/BPHNCalendar.vue";
+import Calendar from "@/components/BPHNCalendar1.vue";
 import LoginPage from "@/pages/BPHNLogin.vue";
 import ForgotPage from "@/pages/BPHNForgot.vue";
 import SetPasswordPage from "@/pages/BPHNSetPassword.vue";

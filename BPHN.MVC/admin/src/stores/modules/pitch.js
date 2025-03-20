@@ -31,7 +31,11 @@ const actions = {
 
     update: ((commit, data) => {
         return PitchAPI.update(data)
-    })
+    }),
+
+    getAll: ((commit, data) => {
+        return PitchAPI.getAll(data);
+    }),
 };
 
 export default {
