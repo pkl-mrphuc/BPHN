@@ -6,7 +6,7 @@ const en = {
     Configurations: "Configurations",
     BMTitle: "Booking manager",
     CalendarTitle: "Calendar",
-    CalendarForDate: "Calendar for",
+    MyCalendar: "My calendar",
     FootballFieldTitle: "My stadiums",
     ConfigurationsTitle: "Configurations",
     EmailEmptyMesg: "Email is not empty.",

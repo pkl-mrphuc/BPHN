@@ -77,7 +77,15 @@ export default {
 
 <style scoped>
 .common-layout .el-header {
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 100%;
+}
+
+.main-layout {
+  padding-top: calc(var(--el-main-padding) + 60px);
 }
 
 .common-layout :deep(.el-drawer) {

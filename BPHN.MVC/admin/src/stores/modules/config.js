@@ -8,7 +8,7 @@ const state = {
     loadedConfig: false,
     formatDate: process.env.VUE_APP_FORMAT_DATE,
     multiUser: false,
-    email: ""
+    email: "",
 };
 
 const getters = {
@@ -34,6 +34,10 @@ const getters = {
 
     getSystemEmail: (state) => {
         return state.email;
+    },
+
+    isMobile: () => {
+        return window.innerWidth < 768;
     }
 };
 
