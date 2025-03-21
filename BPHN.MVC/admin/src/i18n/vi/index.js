@@ -219,7 +219,8 @@ const vi = {
     DiffToPreDay: 'So với hôm trước',
     DiffToPreMonth: 'So với tháng trước',
     DiffToPreYear: 'So với năm trước',
-    DiffToPreQuarter: 'So với quý trước'
+    DiffToPreQuarter: 'So với quý trước',
+    Pick: 'Chọn sân'
 }
 
 export default vi;

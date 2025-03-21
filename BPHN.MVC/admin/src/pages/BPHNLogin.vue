@@ -18,24 +18,17 @@ onMounted(() => {
 
 const login = () => {
   if (!username.value) {
-    ElNotification({
-      title: t("Notification"),
-      message: t("UsernameEmptyMesg"),
-      type: "warning",
-    });
+    ElNotification({ title: t("Notification"), message: t("UsernameEmptyMesg"), type: "warning", });
     return;
   }
   if (!password.value) {
-    ElNotification({
-      title: t("Notification"),
-      message: t("PasswordEmptyMesg"),
-      type: "warning",
-    });
+    ElNotification({ title: t("Notification"), message: t("PasswordEmptyMesg"), type: "warning", });
     return;
   }
 
   store
-    .dispatch("account/login", {
+    .dispatch("account/login", 
+    {
       username: username.value,
       password: password.value,
     })
@@ -47,11 +40,7 @@ const login = () => {
           router.push("calendar");
         }
       } else {
-        ElNotification({
-          title: t("Notification"),
-          message: res?.data?.message ?? t("ErrorMesg"),
-          type: "error",
-        });
+        ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error", });
       }
     });
 };
@@ -62,55 +51,29 @@ const goToForgot = () => {
 </script>
 
 <template>
-  <div
-    style="width: 100vw; height: 100vh"
-    class="container p-3 d-flex flex-row align-items-center justify-content-center"
-  >
+  <div style="width: 100vw; height: 100vh"
+    class="container p-3 d-flex flex-row align-items-center justify-content-center">
     <div class="row w-75 w-sm-100 w-md-75 w-lg-50">
-      <div
-        class="col-12 col-sm-12 col-md-5 col-lg-6 d-flex flex-column align-items-center justify-content-center"
-      >
+      <div class="col-12 col-sm-12 col-md-5 col-lg-6 d-flex flex-column align-items-center justify-content-center">
         <h1 class="text-center text-uppercase">{{ t("BookingPitchHaNoi") }}</h1>
         <img class="img img-anime" src=".././assets/images/fb-anime.jpg" />
       </div>
 
-      <div
-        class="col-12 col-sm-12 col-md-7 col-lg-6 d-flex flex-column align-items-center justify-content-center"
-      >
+      <div class="col-12 col-sm-12 col-md-7 col-lg-6 d-flex flex-column align-items-center justify-content-center">
         <h2 class="text-center">{{ t("LoginForm") }}</h2>
         <div class="w-100 p-3">
           <el-form class="box_right__form">
             <el-form-item>
-              <el-input
-                v-model="username"
-                maxlength="255"
-                :placeholder="t('Username')"
-                tabindex="1"
-                ref="inpUsername"
-                @keyup.enter="login"
-              />
+              <el-input v-model="username" maxlength="255" :placeholder="t('Username')" tabindex="1" ref="inpUsername"
+                @keyup.enter="login" />
             </el-form-item>
             <el-form-item>
-              <el-input
-                v-model="password"
-                maxlength="500"
-                show-password
-                :placeholder="t('Password')"
-                type="password"
-                tabindex="2"
-                @keyup.enter="login"
-              />
+              <el-input v-model="password" maxlength="500" show-password :placeholder="t('Password')" type="password"
+                tabindex="2" @keyup.enter="login" />
             </el-form-item>
             <el-form-item>
-              <el-button
-                type="primary"
-                @click="login"
-                tabindex="3"
-                >{{ t("Submit") }}</el-button
-              >
-              <el-button type="info" link @click="goToForgot()" tabindex="4">{{
-                t("ForgotPasswordTitle")
-              }}</el-button>
+              <el-button type="info" link @click="goToForgot()" tabindex="4">{{ t("ForgotPasswordTitle") }}</el-button>
+              <el-button type="primary" @click="login" tabindex="3">{{ t("Submit") }}</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -120,5 +83,7 @@ const goToForgot = () => {
 </template>
 
 <style scoped>
-@import "@/assets/css/page.css";
+:deep(.el-form-item__content) {
+  justify-content: space-between;
+}
 </style>

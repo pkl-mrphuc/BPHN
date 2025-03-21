@@ -267,12 +267,12 @@ const defaultTimeFrame = (sortOrder) => {
       <el-form>
         <div class="row mb-2 ">
           <div class="col-12 col-sm-12 col-md-9">
-            <div class="mx-2">
+            <div class="mr-2">
               <el-input v-model="name" :placeholder="t('NameFootballField')" maxlength="500" ref="inpName" />
             </div>
           </div>
           <div class="col-12 col-sm-12 col-md-3">
-            <div class="mx-2">
+            <div class="ml-2">
               <el-select v-model="status" :placeholder="t('StatusFootballField')" class="w-100">
                 <el-option :label="t('Active')" :value="StatusEnum.ACTIVE" />
                 <el-option :label="t('Inactive')" :value="StatusEnum.INACTIVE" />
@@ -282,19 +282,19 @@ const defaultTimeFrame = (sortOrder) => {
         </div>
         <div class="row mb-2">
           <div class="col-11">
-            <div class="mx-2">
+            <div class="mr-2">
               <el-input v-model="address" :placeholder="t('Address')" maxlength="500"/>
             </div>
           </div>
           <div class="col-1 d-flex flex-row-reverse align-items-center">
-            <div class="mx-2">
+            <div class="ml-2">
               <el-icon size="24" class="pointer"><LocationInformation /></el-icon>
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col-12 col-sm-12 col-md-4 mb-2">
-            <div class="mx-2 d-flex flex-column align-items-start justify-content-center">
+            <div class="mr-2 d-flex flex-column align-items-start justify-content-center">
               <div class="mb-1"><b>{{ t("QuantityFootballField") }}</b></div>
               <el-input-number id="inpQuantity" class="inpQuantity w-100" v-model="quantity" :min="1" :max="100"/>
             </div>
@@ -306,7 +306,7 @@ const defaultTimeFrame = (sortOrder) => {
             </div>
           </div>
           <div class="col-12 col-sm-12 col-md-4 mb-2">
-            <div class="mx-2 d-flex flex-column align-items-start justify-content-center">
+            <div class="ml-2 d-flex flex-column align-items-start justify-content-center">
               <div class="mb-1"><b>{{ t("TimeSlotPerDay") }}</b></div>
               <el-input-number id="inpTimeSlot" class="inpTimeSlot w-100" v-model="timeSlotPerDay" :min="1" :max="maxTimeSlot"/>
             </div>

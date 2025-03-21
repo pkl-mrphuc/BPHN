@@ -219,6 +219,7 @@ const en = {
     DiffToPreDay: 'Compared to the previous day',
     DiffToPreMonth: 'Compared to the previous month',
     DiffToPreYear: 'Compared to the previous year',
-    DiffToPreQuarter: 'Compared to the previous quarter'
+    DiffToPreQuarter: 'Compared to the previous quarter',
+    Pick: 'Choose a facility'
 }
 export default en;
