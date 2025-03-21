@@ -14,6 +14,7 @@ import { ElLoading, ElNotification } from "element-plus";
 import { inject, ref, onMounted, computed } from "vue";
 import useCommonFn from "@/commonFn";
 import { BookingStatusEnum, CustomerTypeEnum, DepositStatusEnum } from "@/const";
+import router from "@/routers";
 
 const { t } = useI18n();
 const { openModal, hasRole } = useToggleModal();
@@ -49,6 +50,10 @@ const nameDetail = ref(null);
 
 const formatDate = computed(() => {
   return store.getters["config/getFormatDate"];
+});
+
+const isMobile = computed(() => {
+  return store.getters["config/isMobile"];
 });
 
 const addNew = () => {
@@ -221,6 +226,10 @@ const currentChange = () => {
   loadData();
 };
 
+const onBack = () => {
+  router.push("bm");
+};
+
 onMounted(() => {
   loadData();
 });
@@ -229,10 +238,82 @@ onMounted(() => {
 <template>
   <section>
     <div class="container">
-      <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
+      <el-page-header v-if="isMobile" class="mb-3" @back="onBack">
+        <template #content>
+          <span class="text-large font-600 mr-3">{{ t("BookingManager") }}</span>
+        </template>
+        <template #extra>
+          <div class="flex items-center">
+            <el-popover :visible="visible" placement="bottom" :width="300">
+              <div class="d-flex flex-column mb-3">
+                <el-checkbox v-model="checked1" :label="t('Status')" size="large" />
+                <div v-if="checked1 == true">
+                  <el-select v-model="status" class="w-100">
+                    <el-option :value="BookingStatusEnum.SUCCESS" :label="t(BookingStatusEnum.SUCCESS)" />
+                    <el-option :value="BookingStatusEnum.PENDING" :label="t(BookingStatusEnum.PENDING)" />
+                    <el-option :value="BookingStatusEnum.CANCEL" :label="t(BookingStatusEnum.CANCEL)" />
+                  </el-select>
+                </div>
+                <el-checkbox v-model="checked2" :label="t('BookingDate')" size="large" />
+                <div v-if="checked2 == true">
+                  <el-date-picker v-model="bookingDate" class="w-100"></el-date-picker>
+                </div>
+                <el-checkbox v-model="checked6" :label="t('Infrastructure')" size="large" />
+                <div v-if="checked6 == true">
+                  <el-select :no-data-text="t('NoData')" :placeholder="t('Infrastructure')" class="w-100"
+                    v-model="pitchId" @change="handleSelect">
+                    <el-option v-for="item in lstPitch" :key="item.id" :label="item.name" :value="item.id" />
+                  </el-select>
+                </div>
+                <el-checkbox v-model="checked7" :label="t('TimeFrame')" size="large" />
+                <div v-if="checked7 == true">
+                  <el-select :no-data-text="t('NoData')" :placeholder="t('TimeFrame')" class="w-100"
+                    v-model="timeFrameId">
+                    <el-option v-for="item in lstFrameInfo.filter(x => x.pitchId == pitchId)" :key="item.id"
+                      :label="item.name" :value="item.id" />
+                  </el-select>
+                </div>
+                <el-checkbox v-model="checked8" :label="t('NameDetail')" size="large" />
+                <div v-if="checked8 == true">
+                  <el-select :no-data-text="t('NoData')" :placeholder="t('NameDetail')" class="w-100"
+                    v-model="nameDetail">
+                    <el-option v-for="item in (lstPitch.find(x => x.id == pitchId)?.nameDetails ?? [])" :key="item"
+                      :label="item" :value="item" />
+                  </el-select>
+                </div>
+                <el-checkbox v-model="checked4" :label="t('MatchDate')" size="large" />
+                <div v-if="checked4 == true">
+                  <el-date-picker v-model="matchDate" class="w-100"></el-date-picker>
+                </div>
+                <el-checkbox v-model="checked5" :label="t('Deposit')" size="large" />
+                <div v-if="checked5 == true">
+                  <el-select v-model="deposit" class="w-100">
+                    <el-option :value="DepositStatusEnum.DEPOSITED" :label="t(DepositStatusEnum.DEPOSITED)" />
+                    <el-option :value="DepositStatusEnum.NOTDEPOSIT" :label="t(DepositStatusEnum.NOTDEPOSIT)" />
+                  </el-select>
+                </div>
+              </div>
+              <div class="d-flex flex-row align-items-center justify-content-end">
+                <el-button size="small" text @click="visible = false">{{ t('Cancel') }}</el-button>
+                <el-button size="small" type="primary" @click="filter">{{ t('Filter') }}</el-button>
+              </div>
+              <template #reference>
+                <el-button @click="visible = true">
+                  <el-icon>
+                    <Filter />
+                  </el-icon>
+                </el-button>
+              </template>
+            </el-popover>
+            <el-button type="primary" @click="addNew">{{ t("AddNew") }}</el-button>
+          </div>
+        </template>
+      </el-page-header>
+      <div v-else class="row mb-3 d-flex flex-row align-items-center justify-content-between">
         <h3 class="col-12 col-sm-12 col-md-12 col-lg-8 fs-3 mt-1 mb-1">{{ t("BookingManager") }}</h3>
         <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row">
-          <el-input v-model="txtSearch" :placeholder="t('SearchBy')" :suffix-icon="Search" @keyup.enter="loadData" class="w-100"/>
+          <el-input v-model="txtSearch" :placeholder="t('SearchBy')" :suffix-icon="Search" @keyup.enter="loadData"
+            class="w-100" />
           <el-popover :visible="visible" placement="bottom" :width="300">
             <div class="d-flex flex-column mb-3">
               <el-checkbox v-model="checked1" :label="t('Status')" size="large" />
@@ -249,20 +330,25 @@ onMounted(() => {
               </div>
               <el-checkbox v-model="checked6" :label="t('Infrastructure')" size="large" />
               <div v-if="checked6 == true">
-                <el-select :no-data-text="t('NoData')" :placeholder="t('Infrastructure')" class="w-100" v-model="pitchId" @change="handleSelect">
+                <el-select :no-data-text="t('NoData')" :placeholder="t('Infrastructure')" class="w-100"
+                  v-model="pitchId" @change="handleSelect">
                   <el-option v-for="item in lstPitch" :key="item.id" :label="item.name" :value="item.id" />
                 </el-select>
               </div>
               <el-checkbox v-model="checked7" :label="t('TimeFrame')" size="large" />
               <div v-if="checked7 == true">
-                <el-select :no-data-text="t('NoData')" :placeholder="t('TimeFrame')" class="w-100" v-model="timeFrameId">
-                  <el-option v-for="item in lstFrameInfo.filter(x => x.pitchId == pitchId)" :key="item.id" :label="item.name" :value="item.id" />
+                <el-select :no-data-text="t('NoData')" :placeholder="t('TimeFrame')" class="w-100"
+                  v-model="timeFrameId">
+                  <el-option v-for="item in lstFrameInfo.filter(x => x.pitchId == pitchId)" :key="item.id"
+                    :label="item.name" :value="item.id" />
                 </el-select>
               </div>
               <el-checkbox v-model="checked8" :label="t('NameDetail')" size="large" />
               <div v-if="checked8 == true">
-                <el-select :no-data-text="t('NoData')" :placeholder="t('NameDetail')" class="w-100" v-model="nameDetail">
-                  <el-option v-for="item in (lstPitch.find(x => x.id == pitchId)?.nameDetails ?? [])" :key="item" :label="item" :value="item" />
+                <el-select :no-data-text="t('NoData')" :placeholder="t('NameDetail')" class="w-100"
+                  v-model="nameDetail">
+                  <el-option v-for="item in (lstPitch.find(x => x.id == pitchId)?.nameDetails ?? [])" :key="item"
+                    :label="item" :value="item" />
                 </el-select>
               </div>
               <el-checkbox v-model="checked4" :label="t('MatchDate')" size="large" />
@@ -282,8 +368,10 @@ onMounted(() => {
               <el-button size="small" type="primary" @click="filter">{{ t('Filter') }}</el-button>
             </div>
             <template #reference>
-              <el-button  @click="visible = true" class="ml-2">
-                <el-icon><Filter /></el-icon>
+              <el-button @click="visible = true" class="ml-2">
+                <el-icon>
+                  <Filter />
+                </el-icon>
               </el-button>
             </template>
           </el-popover>
@@ -294,8 +382,10 @@ onMounted(() => {
         <el-table :data="lstBooking" :empty-text="t('NoData')" style="height: calc(100vh - 230px)">
           <el-table-column :label="t('Status')" width="100">
             <template #default="scope">
-              <el-tag type="success" size="small" v-if="equals(scope.row.bookingStatus, BookingStatusEnum.SUCCESS)">{{ t(scope.row.bookingStatus) }}</el-tag>
-              <el-tag type="info" size="small" v-else-if="equals(scope.row.bookingStatus, BookingStatusEnum.PENDING)">{{ t(scope.row.bookingStatus) }}</el-tag>
+              <el-tag type="success" size="small" v-if="equals(scope.row.bookingStatus, BookingStatusEnum.SUCCESS)">{{
+                t(scope.row.bookingStatus) }}</el-tag>
+              <el-tag type="info" size="small" v-else-if="equals(scope.row.bookingStatus, BookingStatusEnum.PENDING)">{{
+                t(scope.row.bookingStatus) }}</el-tag>
               <el-tag type="danger" size="small" v-else>{{ t(scope.row.bookingStatus) }}</el-tag>
             </template>
           </el-table-column>
@@ -307,15 +397,21 @@ onMounted(() => {
           <el-table-column :label="t('BookingUser')" min-width="120">
             <template #default="scope">
               <span>
-                <el-icon :title="scope.row.email"><User /></el-icon>{{ scope.row.phoneNumber }}
+                <el-icon :title="scope.row.email">
+                  <User />
+                </el-icon>{{ scope.row.phoneNumber }}
               </span>
             </template>
           </el-table-column>
           <el-table-column :label="t('MatchInfo')">
             <el-table-column :label="t('Status')" prop="status" width="100">
               <template #default="scope">
-                <el-tag type="success" size="small" v-if="equals(scope.row.bookingDetailStatus, BookingStatusEnum.SUCCESS)">{{ t(scope.row.bookingDetailStatus) }}</el-tag>
-                <el-tag type="info" size="small" v-else-if="equals(scope.row.bookingDetailStatus, BookingStatusEnum.PENDING)">{{ t(scope.row.bookingDetailStatus) }}</el-tag>
+                <el-tag type="success" size="small"
+                  v-if="equals(scope.row.bookingDetailStatus, BookingStatusEnum.SUCCESS)">{{
+                  t(scope.row.bookingDetailStatus) }}</el-tag>
+                <el-tag type="info" size="small"
+                  v-else-if="equals(scope.row.bookingDetailStatus, BookingStatusEnum.PENDING)">{{
+                  t(scope.row.bookingDetailStatus) }}</el-tag>
                 <el-tag type="danger" v-else size="small">{{ t(scope.row.bookingDetailStatus) }}</el-tag>
               </template>
             </el-table-column>
@@ -354,27 +450,23 @@ onMounted(() => {
           <el-table-column fixed="right" width="70">
             <template #default="scope">
               <div class="d-flex flex-row-reverse">
-                <el-button class="ml-1" @click="cancel(scope.row.bookingDetailId)" type="danger" circle :icon="Delete" size="small" v-if=" !equals( scope.row.bookingDetailStatus, BookingStatusEnum.CANCEL) && !equals(scope.row.bookingDetailStatus, BookingStatusEnum.PENDING)"></el-button>
-                <el-button class="ml-1" @click="approval(scope.row.bookingId)" type="warning" v-if="equals(scope.row.bookingStatus, BookingStatusEnum.PENDING)" circle :icon="Checked" size="small" ></el-button>
-                <el-button class="ml-1" @click="pay(scope.row)" type="success" circle :icon="Money" size="small" v-if=" equals( scope.row.bookingDetailStatus, BookingStatusEnum.SUCCESS)"></el-button>
+                <el-button class="ml-1" @click="cancel(scope.row.bookingDetailId)" type="danger" circle :icon="Delete"
+                  size="small"
+                  v-if=" !equals( scope.row.bookingDetailStatus, BookingStatusEnum.CANCEL) && !equals(scope.row.bookingDetailStatus, BookingStatusEnum.PENDING)"></el-button>
+                <el-button class="ml-1" @click="approval(scope.row.bookingId)" type="warning"
+                  v-if="equals(scope.row.bookingStatus, BookingStatusEnum.PENDING)" circle :icon="Checked"
+                  size="small"></el-button>
+                <el-button class="ml-1" @click="pay(scope.row)" type="success" circle :icon="Money" size="small"
+                  v-if=" equals( scope.row.bookingDetailStatus, BookingStatusEnum.SUCCESS)"></el-button>
               </div>
             </template>
           </el-table-column>
         </el-table>
       </div>
       <div class="p-3 d-flex flex-row align-items-center justify-content-end">
-        <el-pagination
-          background
-          v-model:current-page="pageIndex"
-          v-model:page-size="pageSize"
-          layout="sizes, prev, pager, next"
-          :total="totalRecord"
-          v-if="lstBooking.length > 0"
-          @prev-click="prevClick"
-          @next-click="nextClick"
-          @size-change="sizePageChange"
-          @current-change="currentChange"
-        />
+        <el-pagination background v-model:current-page="pageIndex" v-model:page-size="pageSize"
+          layout="sizes, prev, pager, next" :total="totalRecord" v-if="lstBooking.length > 0" @prev-click="prevClick"
+          @next-click="nextClick" @size-change="sizePageChange" @current-change="currentChange" />
       </div>
     </div>
   </section>

@@ -31,6 +31,7 @@ const multiUser = computed(() => {
 
 const goTo = (link) => {
   router.push(link);
+  store.commit("account/setDrawer", false);
 }
 </script>
 

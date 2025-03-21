@@ -1,12 +1,13 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import { Refresh, Search, Edit, CircleCheck } from "@element-plus/icons-vue";
-import { ref, onMounted, inject } from "vue";
+import { ref, onMounted, inject, computed } from "vue";
 import { useStore } from "vuex";
 import useToggleModal from "@/register-components/actionDialog";
 import { ElLoading, ElNotification } from "element-plus";
 import { StatusEnum, GenderEnum } from "@/const";
 import useCommonFn from "@/commonFn";
+import router from "@/routers";
 
 const loadingOptions = inject("loadingOptions");
 const { openModal, hasRole } = useToggleModal();
@@ -23,6 +24,14 @@ const objTenant = ref(null);
 const lstPermission = ref([]);
 const mode = ref("add");
 const accountId = ref(null);
+
+const isMobile = computed(() => {
+  return store.getters["config/isMobile"];
+});
+
+const onBack = () => {
+  router.push("bm");
+};
 
 const loadData = () => {
   if (running.value > 0) return;
@@ -131,12 +140,30 @@ onMounted(() => {
 <template>
   <section>
     <div class="container">
-      <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
+      <el-page-header v-if="isMobile" class="mb-3" @back="onBack">
+        <template #content>
+          <span class="text-large font-600 mr-3">{{ t("Accounts") }}</span>
+        </template>
+        <template #extra>
+          <div class="flex items-center">
+            <el-button @click="loadData" class="ml-2">
+              <el-icon>
+                <Refresh />
+              </el-icon>
+            </el-button>
+            <el-button type="primary" @click="addNew" class="ml-2">{{ t("AddNew") }}</el-button>
+          </div>
+        </template>
+      </el-page-header>
+      <div v-else class="row mb-3 d-flex flex-row align-items-center justify-content-between">
         <h3 class="col-12 col-sm-12 col-md-12 col-lg-8 fs-3 mt-1 mb-1">{{ t("Accounts") }}</h3>
         <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row">
-          <el-input class="ml-2" v-model="txtSearch" :placeholder="t('Search')" :suffix-icon="Search" @keyup.enter="loadData"/>
+          <el-input class="ml-2" v-model="txtSearch" :placeholder="t('Search')" :suffix-icon="Search"
+            @keyup.enter="loadData" />
           <el-button @click="loadData" class="ml-2">
-            <el-icon><Refresh /></el-icon>
+            <el-icon>
+              <Refresh />
+            </el-icon>
           </el-button>
           <el-button type="primary" @click="addNew" class="ml-2">{{ t("AddNew") }}</el-button>
         </div>
@@ -145,7 +172,8 @@ onMounted(() => {
         <el-table :data="lstAccount" border style="height: calc(100vh - 170px)" :empty-text="t('NoData')">
           <el-table-column :label="t('Status')" width="150">
             <template #default="scope">
-              <el-tag type="success" size="small" v-if="equals(scope.row.status, StatusEnum.ACTIVE)">{{ t("Active") }}</el-tag>
+              <el-tag type="success" size="small" v-if="equals(scope.row.status, StatusEnum.ACTIVE)">{{ t("Active")
+                }}</el-tag>
               <el-tag type="danger" size="small" v-else>{{ t("Inactive") }}</el-tag>
             </template>
           </el-table-column>
@@ -161,8 +189,10 @@ onMounted(() => {
           </el-table-column>
           <el-table-column :label="t('Gender')">
             <template #default="scope">
-              <el-tag type="success" size="small" v-if="equals(scope.row.gender, GenderEnum.MALE)">{{ t("Male") }}</el-tag>
-              <el-tag type="danger" size="small" v-else-if="equals(scope.row.gender, GenderEnum.FEMALE)">{{ t("Female") }}</el-tag>
+              <el-tag type="success" size="small" v-if="equals(scope.row.gender, GenderEnum.MALE)">{{ t("Male")
+                }}</el-tag>
+              <el-tag type="danger" size="small" v-else-if="equals(scope.row.gender, GenderEnum.FEMALE)">{{ t("Female")
+                }}</el-tag>
               <el-tag type="info" size="small" v-else>{{ t("Other") }}</el-tag>
             </template>
           </el-table-column>
@@ -174,26 +204,19 @@ onMounted(() => {
           <el-table-column label="" min-width="100" fixed="right">
             <template #default="scope">
               <div class="d-flex flex-row-reverse">
-                <el-button circle :icon="CircleCheck" size="small" @click="permission(scope.row.id)" type="info"></el-button>
-                <el-button circle :icon="Edit" size="small" class="mr-2" @click="edit(scope.row.id)" type="primary"></el-button>
+                <el-button circle :icon="CircleCheck" size="small" @click="permission(scope.row.id)"
+                  type="info"></el-button>
+                <el-button circle :icon="Edit" size="small" class="mr-2" @click="edit(scope.row.id)"
+                  type="primary"></el-button>
               </div>
             </template>
           </el-table-column>
         </el-table>
       </div>
       <div class="p-3 d-flex flex-row align-items-center justify-content-end">
-        <el-pagination
-          background
-          v-model:current-page="pageIndex"
-          v-model:page-size="pageSize"
-          layout="sizes, prev, pager, next"
-          :total="totalRecord"
-          v-if="lstAccount.length > 0"
-          @prev-click="prevClick"
-          @next-click="nextClick"
-          @size-change="sizePageChange"
-          @current-change="currentChange"
-        />
+        <el-pagination background v-model:current-page="pageIndex" v-model:page-size="pageSize"
+          layout="sizes, prev, pager, next" :total="totalRecord" v-if="lstAccount.length > 0" @prev-click="prevClick"
+          @next-click="nextClick" @size-change="sizePageChange" @current-change="currentChange" />
       </div>
     </div>
   </section>

@@ -30,6 +30,11 @@ html .el-dialog {
     --el-dialog-title-font-size: calc(var(--font-size-base)* 1.75);
 }
 
+html .el-dialog__header {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
 html .el-dialog__body {
     padding: 15px 20px;
 }
@@ -41,6 +46,11 @@ html .el-dialog__footer {
 
 html .el-dialog__title {
     font-weight: 700;
+}
+
+html .el-drawer {
+    height: calc(100vh - 60px) !important;
+    top: unset !important;
 }
 
 html .bphn-statistic1 {
