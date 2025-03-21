@@ -31,7 +31,7 @@ html .el-dialog {
 }
 
 html .el-dialog__body {
-    padding: 15px 0;
+    padding: 15px 20px;
 }
 
 html .el-dialog__title {
