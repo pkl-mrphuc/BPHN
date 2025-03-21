@@ -249,19 +249,19 @@ onMounted(() => {
               </div>
               <el-checkbox v-model="checked6" :label="t('Infrastructure')" size="large" />
               <div v-if="checked6 == true">
-                <el-select class="w-100" v-model="pitchId" @change="handleSelect">
+                <el-select :no-data-text="t('NoData')" :placeholder="t('Infrastructure')" class="w-100" v-model="pitchId" @change="handleSelect">
                   <el-option v-for="item in lstPitch" :key="item.id" :label="item.name" :value="item.id" />
                 </el-select>
               </div>
               <el-checkbox v-model="checked7" :label="t('TimeFrame')" size="large" />
               <div v-if="checked7 == true">
-                <el-select class="w-100" v-model="timeFrameId">
+                <el-select :no-data-text="t('NoData')" :placeholder="t('TimeFrame')" class="w-100" v-model="timeFrameId">
                   <el-option v-for="item in lstFrameInfo.filter(x => x.pitchId == pitchId)" :key="item.id" :label="item.name" :value="item.id" />
                 </el-select>
               </div>
               <el-checkbox v-model="checked8" :label="t('NameDetail')" size="large" />
               <div v-if="checked8 == true">
-                <el-select class="w-100" v-model="nameDetail">
+                <el-select :no-data-text="t('NoData')" :placeholder="t('NameDetail')" class="w-100" v-model="nameDetail">
                   <el-option v-for="item in (lstPitch.find(x => x.id == pitchId)?.nameDetails ?? [])" :key="item" :label="item" :value="item" />
                 </el-select>
               </div>

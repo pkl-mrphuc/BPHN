@@ -98,21 +98,21 @@ onMounted(() => {
         <div class="row">
           <div class="col-12 col-sm-12 col-md-6 col-lg-3">
             <div class="m-1">
-              <el-select class="w-100" :placeholder="t('Infrastructure')" v-model="pitchName" @change="filter">
+              <el-select class="w-100" :no-data-text="t('NoData')" :placeholder="t('Infrastructure')" v-model="pitchName" @change="filter">
                 <el-option v-for="item in lstStadium" :key="item" :label="item" :value="item" />
               </el-select>
             </div>
           </div>
           <div class="col-12 col-sm-12 col-md-6 col-lg-3">
             <div class="m-1">
-              <el-select class="w-100" :placeholder="t('TimeFrame')" v-model="timeFrameInfoName" @change="filter">
+              <el-select class="w-100" :no-data-text="t('NoData')" :placeholder="t('TimeFrame')" v-model="timeFrameInfoName" @change="filter">
                 <el-option v-for="item in lstTimeFrame" :key="item" :label="item" :value="item" />
               </el-select>
             </div>
           </div>
           <div class="col-12 col-sm-12 col-md-6 col-lg-3">
             <div class="m-1">
-              <el-select class="w-100" :placeholder="t('NameDetail')" v-model="detailName" @change="filter" >
+              <el-select class="w-100" :no-data-text="t('NoData')" :placeholder="t('NameDetail')" v-model="detailName" @change="filter" >
                 <el-option v-for="item in lstDetail" :key="item" :label="item" :value="item" />
               </el-select>
             </div>

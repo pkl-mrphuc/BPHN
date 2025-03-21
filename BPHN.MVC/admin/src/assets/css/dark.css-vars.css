@@ -46,6 +46,18 @@ html.dark .el-card {
     --el-card-bg-color: #121212;
 }
 
+html.dark .el-dialog {
+    --el-dialog-title-font-size: calc(var(--font-size-base)* 1.75);
+}
+
+html.dark .el-dialog__body {
+    padding: 15px 0;
+}
+
+html .el-dialog__title {
+    font-weight: 700;
+}
+
 html.dark #prev_icon {
     background-image: url("../images/prev-dark.svg");
     position: absolute;

@@ -84,7 +84,7 @@ onMounted(() => {
                 <div class="col-12 col-sm-12 col-md-12 col-lg-8">
                     <div class="d-flex flex-row align-items-center">
                         <h3 class="fs-3 mr-3 mb-1 mt-1">{{ t("MyCalendar") }}</h3>
-                        <el-select v-model="pitchId" @change="handleSelect">
+                        <el-select style="width: 150px;" :no-data-text="t('NoData')" :placeholder="t('Infrastructure')" v-model="pitchId" @change="handleSelect">
                             <el-option v-for="item in lstPitch" :key="item.id" :label="item.name" :value="item.id" />
                         </el-select>
                     </div>
@@ -150,8 +150,7 @@ onMounted(() => {
             <div class="row">
                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
                     <div class="row">
-                        <div class="col-12 col-sm-12 col-md-12 col-lg-6" v-for="(item, index) in lstNameDetail"
-                            :key="item" :label="item" :value="item">
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-6" v-for="(item, index) in lstNameDetail" :key="item" :label="item" :value="item">
                             <h2 class="m-0 mb-2">{{ item }}</h2>
                             <section :class="(!isMobile && index % 2 == 0 ? 'mb-5 mr-5' : 'mb-5')" :id="`calendarTimeGrid${index}`"></section>
                         </div>
@@ -159,6 +158,7 @@ onMounted(() => {
                 </div>
             </div>
         </div>
+        <el-empty :description="t('NoData')" v-if="lstPitch.length == 0" />
     </section>
 </template>
 
