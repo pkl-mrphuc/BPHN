@@ -34,6 +34,11 @@ html .el-dialog__body {
     padding: 15px 20px;
 }
 
+html .el-dialog__footer {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
 html .el-dialog__title {
     font-weight: 700;
 }

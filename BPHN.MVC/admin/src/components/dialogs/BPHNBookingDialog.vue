@@ -7,6 +7,7 @@ import {
   defineEmits,
   inject,
   nextTick,
+  computed
 } from "vue";
 import useToggleModal from "@/register-components/actionDialog";
 import useCommonFn from "@/commonFn";
@@ -38,6 +39,10 @@ const timeFrameInfoId = ref(props.data?.timeFrameInfoId ?? null);
 const phoneNumber = ref(props.data?.phoneNumber ?? null);
 const email = ref(props.data?.email ?? null);
 const inpPhoneNumber = ref(null);
+
+const isMobile = computed(() => {
+    return store.getters["config/isMobile"];
+});
 
 const showMakeRecurring = () => {
   if (isRecurring.value) {
@@ -259,21 +264,21 @@ onMounted(() => {
         </div>
         <div class="row">
           <div class="mb-2 col-12 col-sm-4">
-            <div class="mr-2">
+            <div :class="isMobile ? '' : 'mr-2'">
               <el-select :no-data-text="t('NoData')" class="w-100" :placeholder="t('Infrastructure')" v-model="pitchId" @change="changePitchId">
                 <el-option v-for="item in lstStadium" :key="item" :label="item.name" :value="item.id" />
               </el-select>
             </div>
           </div>
           <div class="mb-2 col-12 col-sm-4">
-            <div class="mx-2">
+            <div :class="isMobile ? '' : 'mx-2'">
               <el-select class="w-100" :placeholder="t('TimeFrame')" v-model="timeFrameInfoId">
                 <el-option v-for="item in lstTimeFrame" :key="item" :label="item.newName" :value="item.id" />
               </el-select>
             </div>
           </div>
           <div class="mb-2 col-12 col-sm-4">
-            <div class="ml-2">
+            <div :class="isMobile ? '' : 'ml-2'">
               <el-select class="w-100" :placeholder="t('NameDetail')" v-model="nameDetail">
                 <el-option v-for="item in lstDetail" :key="item" :label="item" :value="item"/>
               </el-select>
