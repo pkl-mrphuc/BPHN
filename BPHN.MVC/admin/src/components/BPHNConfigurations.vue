@@ -9,6 +9,7 @@ import useToggleModal from "@/register-components/actionDialog";
 import {
   Refresh
 } from "@element-plus/icons-vue";
+import router from "@/routers";
 
 const { openModal, hasRole } = useToggleModal();
 const store = useStore();
@@ -67,6 +68,10 @@ const lstConfig = computed(() => {
       }
     ];
   }
+});
+
+const isMobile = computed(() => {
+  return store.getters["config/isMobile"];
 });
 
 const getDarkMode = computed(() => {
@@ -152,12 +157,26 @@ const connect = () => {
   openModal("ConfigDialog");
   objConnect.value = email.value;
 };
+
+const onBack = () => {
+  router.push("bm");
+};
 </script>
 
 <template>
   <section>
     <div class="container">
-      <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
+      <el-page-header v-if="isMobile" class="mb-3" @back="onBack">
+        <template #content>
+          <span class="text-large font-600 mr-3">{{ t("Configurations") }}</span>
+        </template>
+        <template #extra>
+          <div class="flex items-center">
+            <el-button type="primary" @click="save">{{ t("Save") }}</el-button>
+          </div>
+        </template>
+      </el-page-header>
+      <div v-else class="row mb-3 d-flex flex-row align-items-center justify-content-between">
         <h3 class="col-12 col-sm-12 col-md-12 col-lg-8 fs-3 mt-1 mb-1">{{ t("Configurations") }}</h3>
         <div>
           <el-button type="primary" @click="save">{{ t("Save") }}</el-button>
@@ -182,7 +201,7 @@ const connect = () => {
                   <el-option value="en" label="English" />
                 </el-select>
               </div>
-              
+
               <div class="col-8 col-sm-8 col-md-6 col-lg-2">
                 <el-select v-if="equals(scope.row.key, ConfigKeyEnum.FORMATDATE)" v-model="formatDate" class="w-100">
                   <el-option value="yyyy-MM-dd" label="yyyy-MM-dd" />
@@ -192,22 +211,24 @@ const connect = () => {
               </div>
 
               <div class="col-8 col-sm-8 col-md-6 col-lg-2">
-                <el-switch v-if="equals(scope.row.key, ConfigKeyEnum.MULTIUSER)" v-model="multiUser" disabled @change="useMultiUser" />
+                <el-switch v-if="equals(scope.row.key, ConfigKeyEnum.MULTIUSER)" v-model="multiUser" disabled
+                  @change="useMultiUser" />
               </div>
-              
+
               <div class="col-8 col-sm-8 col-md-6 col-lg-2">
-                <el-input v-if="equals(scope.row.key, ConfigKeyEnum.SYSTEMEMAIL)" v-model="email" maxlength="225" class="w-100">
+                <el-input v-if="equals(scope.row.key, ConfigKeyEnum.SYSTEMEMAIL)" v-model="email" maxlength="225"
+                  class="w-100">
                   <template #append>
                     <el-button :icon="Refresh" @click="connect" />
                   </template>
                 </el-input>
               </div>
-              
+
             </template>
           </el-table-column>
         </el-table>
       </div>
     </div>
   </section>
-  <ConnectSystemEmailDialog  v-if="hasRole('ConfigDialog')" :data="objConnect"></ConnectSystemEmailDialog>
+  <ConnectSystemEmailDialog v-if="hasRole('ConfigDialog')" :data="objConnect"></ConnectSystemEmailDialog>
 </template>

@@ -39,6 +39,11 @@ const lstTimeFrame = ref(props.data?.timeFrameInfos ?? []);
 const lstDetail = ref(props.data?.listNameDetails ?? []);
 const inpName = ref(null);
 const running = ref(0);
+
+const isMobile = computed(() => {
+    return store.getters["config/isMobile"];
+});
+
 const maxTimeSlot = computed(() => {
   return 1440 / minutesPerMatch.value;
 });
@@ -267,12 +272,12 @@ const defaultTimeFrame = (sortOrder) => {
       <el-form>
         <div class="row mb-2 ">
           <div class="col-12 col-sm-12 col-md-9">
-            <div class="mr-2">
+            <div :class="isMobile ? '' : 'mr-2'">
               <el-input v-model="name" :placeholder="t('NameFootballField')" maxlength="500" ref="inpName" />
             </div>
           </div>
           <div class="col-12 col-sm-12 col-md-3">
-            <div class="ml-2">
+            <div :class="isMobile ? 'mt-2' : 'ml-2'">
               <el-select v-model="status" :placeholder="t('StatusFootballField')" class="w-100">
                 <el-option :label="t('Active')" :value="StatusEnum.ACTIVE" />
                 <el-option :label="t('Inactive')" :value="StatusEnum.INACTIVE" />
@@ -294,19 +299,19 @@ const defaultTimeFrame = (sortOrder) => {
         </div>
         <div class="row">
           <div class="col-12 col-sm-12 col-md-4 mb-2">
-            <div class="mr-2 d-flex flex-column align-items-start justify-content-center">
+            <div :class="isMobile ? '' : 'mr-2'" class="d-flex flex-column align-items-start justify-content-center">
               <div class="mb-1"><b>{{ t("QuantityFootballField") }}</b></div>
               <el-input-number id="inpQuantity" class="inpQuantity w-100" v-model="quantity" :min="1" :max="100"/>
             </div>
           </div>
           <div class="col-12 col-sm-12 col-md-4 mb-2">
-            <div class="mx-2 d-flex flex-column align-items-start justify-content-center">
+            <div :class="isMobile ? '' : 'mx-2'" class="d-flex flex-column align-items-start justify-content-center">
               <div class="mb-1"><b>{{ t("MinutesPerMatch") }}</b></div>
               <el-input-number v-model="minutesPerMatch" :min="30" :max="1440" :step="30" class="w-100" />
             </div>
           </div>
           <div class="col-12 col-sm-12 col-md-4 mb-2">
-            <div class="ml-2 d-flex flex-column align-items-start justify-content-center">
+            <div :class="isMobile ? '' : 'ml-2'" class="d-flex flex-column align-items-start justify-content-center">
               <div class="mb-1"><b>{{ t("TimeSlotPerDay") }}</b></div>
               <el-input-number id="inpTimeSlot" class="inpTimeSlot w-100" v-model="timeSlotPerDay" :min="1" :max="maxTimeSlot"/>
             </div>

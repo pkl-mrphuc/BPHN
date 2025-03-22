@@ -5,6 +5,7 @@ import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
 import useCommonFn from "@/commonFn";
 import { ElNotification } from "element-plus";
+import router from "@/routers";
 
 const { t } = useI18n();
 const store = useStore();
@@ -19,6 +20,14 @@ const { dateToString } = useCommonFn();
 const formatDate = computed(() => {
   return store.getters["config/getFormatDate"];
 });
+
+const isMobile = computed(() => {
+  return store.getters["config/isMobile"];
+});
+
+const onBack = () => {
+  router.push("bm");
+};
 
 const loadData = () => {
   if (running.value > 0) return;
@@ -83,13 +92,29 @@ onMounted(() => {
 <template>
   <section>
     <div class="container">
-      <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
+      <el-page-header v-if="isMobile" class="mb-3" @back="onBack">
+        <template #content>
+          <span class="text-large font-600 mr-3">{{ t("Configurations") }}</span>
+        </template>
+        <template #extra>
+          <div class="flex items-center">
+            <el-button @click="loadData" class="ml-2">
+              <el-icon>
+                <Refresh />
+              </el-icon>
+            </el-button>
+          </div>
+        </template>
+      </el-page-header>
+      <div v-else class="row mb-3 d-flex flex-row align-items-center justify-content-between">
         <h3 class="col-12 col-sm-12 col-md-12 col-lg-8 fs-3 mt-1 mb-1">{{ t("HistoryLog") }}</h3>
         <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row-reverse">
           <el-button @click="loadData" class="ml-2">
-            <el-icon><Refresh /></el-icon>
+            <el-icon>
+              <Refresh />
+            </el-icon>
           </el-button>
-          <el-input v-model="txtSearch" :placeholder="t('Search')" :suffix-icon="Search" @keyup.enter="loadData"/>
+          <el-input v-model="txtSearch" :placeholder="t('Search')" :suffix-icon="Search" @keyup.enter="loadData" />
         </div>
       </div>
       <div>
@@ -121,25 +146,17 @@ onMounted(() => {
           </el-table-column>
           <el-table-column :label="t('Description')" min-width="150">
             <template v-slot="scope">
-              <el-button v-if="scope.row.id == scope.row.description" type="danger" @click="goToViewDetail(scope.row.id)" link >{{ t("ViewDetail") }}</el-button>
+              <el-button v-if="scope.row.id == scope.row.description" type="danger"
+                @click="goToViewDetail(scope.row.id)" link>{{ t("ViewDetail") }}</el-button>
               <span v-else v-html="scope.row.description"></span>
             </template>
           </el-table-column>
         </el-table>
       </div>
       <div class="p-3 d-flex flex-row align-items-center justify-content-end">
-        <el-pagination
-          background
-          v-model:current-page="pageIndex"
-          v-model:page-size="pageSize"
-          layout="sizes, prev, pager, next"
-          :total="totalRecord"
-          v-if="lstHistoryLog.length > 0"
-          @prev-click="prevClick"
-          @next-click="nextClick"
-          @size-change="sizePageChange"
-          @current-change="currentChange"
-        />
+        <el-pagination background v-model:current-page="pageIndex" v-model:page-size="pageSize"
+          layout="sizes, prev, pager, next" :total="totalRecord" v-if="lstHistoryLog.length > 0" @prev-click="prevClick"
+          @next-click="nextClick" @size-change="sizePageChange" @current-change="currentChange" />
       </div>
     </div>
   </section>

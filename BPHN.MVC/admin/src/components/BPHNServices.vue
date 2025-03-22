@@ -1,12 +1,13 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { ref, onMounted, inject } from "vue";
+import { ref, onMounted, inject, computed } from "vue";
 import { useStore } from "vuex";
 import { Edit, Filter, Search } from "@element-plus/icons-vue";
 import useToggleModal from "@/register-components/actionDialog";
 import { ElLoading, ElNotification } from "element-plus";
 import useCommonFn from "@/commonFn";
 import { QuantityStatusEnum, StatusEnum } from "@/const";
+import router from "@/routers";
 
 const { t } = useI18n();
 const { openModal, hasRole } = useToggleModal();
@@ -28,6 +29,10 @@ const status = ref(StatusEnum.ACTIVE);
 const code = ref("");
 const unit = ref("");
 const quantityStatus = ref(QuantityStatusEnum.AVAILABLE);
+
+const isMobile = computed(() => {
+  return store.getters["config/isMobile"];
+});
 
 const loadData = () => {
   if (running.value > 0) return;
@@ -85,6 +90,10 @@ const filter = () => {
   loadData();
 };
 
+const onBack = () => {
+  router.push("bm");
+};
+
 onMounted(() => {
   loadData();
 });
@@ -94,7 +103,50 @@ onMounted(() => {
 <template>
   <section>
     <div class="container">
-      <div class="row mb-3 d-flex flex-row align-items-center justify-content-between">
+      <el-page-header v-if="isMobile" class="mb-3" @back="onBack">
+        <template #content>
+          <span class="text-large font-600 mr-3">{{ t("Services") }}</span>
+        </template>
+        <template #extra>
+          <div class="flex items-center">
+            <el-popover :visible="visible" placement="bottom" :width="300">
+              <div class="d-flex flex-column mb-3">
+                <el-checkbox v-model="checked1" :label="t('Status')" size="large" />
+                <div v-if="checked1 == true">
+                  <el-select v-model="status" class="w-100">
+                    <el-option :label="t('ACTIVE')" :value="StatusEnum.ACTIVE" />
+                    <el-option :label="t('INACTIVE')" :value="StatusEnum.INACTIVE" />
+                  </el-select>
+                </div>
+                <el-checkbox v-model="checked2" :label="t('Code')" size="large" />
+                <div v-if="checked2 == true">
+                  <el-input v-model="code" maxlength="36" />
+                </div>
+                <el-checkbox v-model="checked3" :label="t('Unit')" size="large" />
+                <div v-if="checked3 == true">
+                  <el-input v-model="unit" maxlength="255" />
+                </div>
+                <el-checkbox v-model="checked4" :label="t('Quantity')" size="large" />
+                <div v-if="checked4 == true">
+                  <el-select v-model="quantityStatus" class="w-100">
+                    <el-option :label="t('AVAILABLE')" :value="QuantityStatusEnum.AVAILABLE" />
+                    <el-option :label="t('UNAVAILABLE')" :value="QuantityStatusEnum.UNAVAILABLE" />
+                  </el-select>
+                </div>
+              </div>
+              <div class="d-flex flex-row align-items-center justify-content-end">
+                <el-button size="small" text @click="visible = false">{{ t('Cancel') }}</el-button>
+                <el-button size="small" type="primary" @click="filter">{{ t('Filter') }}</el-button>
+              </div>
+              <template #reference>
+                <el-button @click="visible = true" class="ml-2" :icon="Filter"></el-button>
+              </template>
+            </el-popover>
+            <el-button type="primary" @click="addNew" class="ml-2">{{ t("AddNew") }}</el-button>
+          </div>
+        </template>
+      </el-page-header>
+      <div v-else class="row mb-3 d-flex flex-row align-items-center justify-content-between">
         <h3 class="col-12 col-sm-12 col-md-12 col-lg-8 fs-3 mt-1 mb-1">{{ t("Services") }}</h3>
         <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row-reverse">
           <el-button type="primary" @click="addNew" class="ml-2">{{ t("AddNew") }}</el-button>
