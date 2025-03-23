@@ -36,6 +36,7 @@ const functionName = (functionType) => {
     case FunctionTypeEnum.ADDSERVICE: return t("ADDSERVICE");
     case FunctionTypeEnum.EDITSERVICE: return t("EDITSERVICE");
     case FunctionTypeEnum.VIEWLISTSERVICE: return t("VIEWLISTSERVICE");
+    case FunctionTypeEnum.VIEWSTATISTIC: return t("VIEWSTATISTIC");
     default: return "";
   }
 };

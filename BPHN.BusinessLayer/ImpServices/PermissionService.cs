@@ -6,6 +6,7 @@ using BPHN.ModelLayer.Responses;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
@@ -39,10 +40,14 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var permissions = await _permissionRepository.GetPermissions(accountId);
-            if (permissions.IsNullOrEmpty())
+            var currentPermissions = (await _permissionRepository.GetPermissions(accountId)).ToDictionary(x => x.FunctionType, x => x.Allow);
+            var permissions = GetDefaultPermissions(accountId, context);
+            if (!currentPermissions.IsNullOrEmpty())
             {
-                permissions = GetDefaultPermissions(accountId, context);
+                foreach (var item in permissions) 
+                {
+                    item.Allow = currentPermissions.ContainsKey(item.FunctionType) ? currentPermissions[item.FunctionType] : false;
+                }
             }
 
             return new ServiceResultModel
@@ -294,6 +299,17 @@ namespace BPHN.BusinessLayer.ImpServices
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
                     FunctionType = (int)FunctionTypeEnum.VIEWLISTSERVICE,
+                    Allow = false,
+                    CreatedBy = context.FullName,
+                    CreatedDate = DateTime.Now,
+                    ModifiedBy = context.FullName,
+                    ModifiedDate = DateTime.Now
+                },
+                new Permission
+                {
+                    Id = Guid.NewGuid(),
+                    AccountId = accountId,
+                    FunctionType = (int)FunctionTypeEnum.VIEWSTATISTIC,
                     Allow = false,
                     CreatedBy = context.FullName,
                     CreatedDate = DateTime.Now,

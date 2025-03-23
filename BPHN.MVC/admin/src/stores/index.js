@@ -11,6 +11,7 @@ import permission from "@/stores/modules/permission";
 import notification from "@/stores/modules/notification";
 import item from "@/stores/modules/item";
 import invoice from "@/stores/modules/invoice";
+import overview from "@/stores/modules/overview";
 
 export default createStore({
   modules: {
@@ -24,7 +25,8 @@ export default createStore({
     permission,
     notification,
     item,
-    invoice
+    invoice,
+    overview
   },
   plugins: [
     createPersistedState({

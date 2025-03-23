@@ -7,7 +7,7 @@ const { t } = useI18n();
 const { fakeNumber } = useCommonFn();
 const props = defineProps({
   type: String,
-  value: String
+  value: Number
 });
 
 </script>

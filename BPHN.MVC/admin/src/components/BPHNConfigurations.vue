@@ -159,19 +159,19 @@ const connect = () => {
 };
 
 const onBack = () => {
-  router.push("bm");
+  router.push("overview");
 };
 </script>
 
 <template>
   <section>
     <div class="container">
-      <el-page-header v-if="isMobile" class="mb-3" @back="onBack">
+      <el-page-header icon="" v-if="isMobile" class="mb-3" @back="onBack">
         <template #content>
           <span class="text-large font-600 mr-3">{{ t("Configurations") }}</span>
         </template>
         <template #extra>
-          <div class="flex items-center">
+          <div class="d-flex flex-row">
             <el-button type="primary" @click="save">{{ t("Save") }}</el-button>
           </div>
         </template>

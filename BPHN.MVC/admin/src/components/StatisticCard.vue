@@ -8,14 +8,12 @@ const { t } = useI18n();
 const { fakeNumber } = useCommonFn();
 const props = defineProps({
   type: String,
-  time: String,
-  value: String,
-  preValue: String
+  data: Object
 });
 
-const val = ref(props.value ?? 0);
-const preVal = ref(props.preValue ?? 0);
-const time = ref(props.time ?? "");
+const val = ref(props.data?.value ?? 0);
+const preVal = ref(props.data?.preValue ?? 0);
+const time = ref(props.data?.parameter);
 const isDown = ref(false);
 
 const diff = () => {
@@ -33,11 +31,12 @@ const diff = () => {
 
 const title = () => {
     switch (props.type) {
-        case StatisticTypeEnum.REVENUEDAY: return `${t(StatisticTypeEnum.REVENUEDAY)} ${time.value}`;
+        case StatisticTypeEnum.REVENUEDAY: return `${t(StatisticTypeEnum.REVENUEDAY)}`;
         case StatisticTypeEnum.REVENUEMONTH: return `${t(StatisticTypeEnum.REVENUEMONTH)} ${time.value}`;
         case StatisticTypeEnum.REVENUEYEAR: return `${t(StatisticTypeEnum.REVENUEYEAR)} ${time.value}`;
         case StatisticTypeEnum.REVENUEQUARTER: return `${t(StatisticTypeEnum.REVENUEQUARTER)} ${time.value}`;
         case StatisticTypeEnum.TOTALBOOKINGYEAR: return `${t(StatisticTypeEnum.TOTALBOOKINGYEAR)} ${time.value}`;
+        case StatisticTypeEnum.TOTALBOOKINGDAY: return `${t(StatisticTypeEnum.TOTALBOOKINGDAY)}`;
         default: return "";
     }
 };
@@ -45,6 +44,7 @@ const title = () => {
 const diffTo = () => {
     switch (props.type) {
         case StatisticTypeEnum.REVENUEDAY: 
+        case StatisticTypeEnum.TOTALBOOKINGDAY: 
             return `${t("DiffToPreDay")}`;
         case StatisticTypeEnum.REVENUEMONTH: 
             return `${t("DiffToPreMonth")}`;
@@ -81,7 +81,7 @@ const diffTo = () => {
 .el-card {
     border: 0;
     border-radius: 15px;
-    padding: 20px;
+    padding: 30px;
 }
 .el-card.is-always-shadow {
     box-shadow: none;
@@ -92,7 +92,7 @@ const diffTo = () => {
 }
 .statistic__footer {
     margin-top: 20px;
-    font-size: 10px;
+    font-size: 12px;
 }
 .statistic__footer--up {
     background-color: #55be24;
