@@ -1,10 +1,5 @@
 ﻿using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BPHN.DataLayer.IRepositories
 {
@@ -14,6 +9,7 @@ namespace BPHN.DataLayer.IRepositories
         Task<bool> Cancel(string id);
         Task<List<CalendarEvent>> GetByDate(string date, Guid[] relationIds);
         Task<bool> UpdateMatch(CalendarEvent eventInfo);
+        Task<IEnumerable<CalendarEvent>> GetEventsByRangeDate(DateTime startDate, DateTime endDate, Guid pitchId, string nameDetail);
         Task<List<CalendarEvent>> GetByRangeDate(string startDate, string endDate, string pitchId, string nameDetail);
         Task<List<BookingDetail>> GetByBookingId(Guid bookingId);
         Task<BookingDetail?> GetById(string id);

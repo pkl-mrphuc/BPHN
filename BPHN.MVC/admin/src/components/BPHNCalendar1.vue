@@ -1,11 +1,13 @@
 <script setup>
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useStore } from "vuex";
 import { Calendar } from "@fullcalendar/core";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import useCommonFn from "@/commonFn";
 import allLocales from "@fullcalendar/core/locales-all";
+import useToggleModal from "@/register-components/actionDialog";
+import { BookingStatusEnum } from "@/const";
 import {
   InfoFilled,
   ArrowLeft,
@@ -15,13 +17,18 @@ import {
 
 const { t } = useI18n();
 const store = useStore();
-const { time } = useCommonFn();
+const { time, dateToString, equals } = useCommonFn();
+const { hasRole, openModal } = useToggleModal();
 
+const objEvent = ref(null);
+const objMatch = ref(null);
+const currentDate = ref(new Date());
 const pitchId = ref(null);
 const lstPitch = ref([]);
 const lstFrameInfo = ref([]);
 const lstNameDetail = ref([]);
 const lstCurrentFrame = ref([]);
+const calendarManager = ref([]);
 
 const isMobile = computed(() => {
     return store.getters["config/isMobile"];
@@ -45,8 +52,10 @@ const loadData = () => {
 const handleSelect = () => {
     lstNameDetail.value = lstPitch.value.find(x => x.id == pitchId.value)?.nameDetails ?? [];
     lstCurrentFrame.value = lstFrameInfo.value.filter(x => x.pitchId == pitchId.value);
+    calendarManager.value = [];
     setTimeout(function() {
         for (let i = 0; i < lstNameDetail.value.length; i++) {
+            calendarManager.value[lstNameDetail.value[i]] = null;
             renderCalendar(i);
         }
     }, 100);
@@ -58,7 +67,8 @@ const renderCalendar = (index) => {
 
     let minTime = Math.min(...lstCurrentFrame.value.map(x => { return x.timeBegin }));
     let maxTime = Math.max(...lstCurrentFrame.value.map(x => { return x.timeEnd }));
-    let calendar = new Calendar(calendarEl, {
+
+    let options = {
         plugins: [timeGridPlugin],
         initialView: "timeGridWeek",
         slotMinTime: time(new Date(minTime)),
@@ -68,9 +78,134 @@ const renderCalendar = (index) => {
         headerToolbar: false,
         locales: allLocales,
         locale: store.getters["config/getLanguage"],
-    });
+        events: async function (data, callback) {
+            if (data) {
+                let events = await getEventByDate(lstNameDetail.value[index], dateToString(data.start, "yyyy-MM-dd"), dateToString(data.end, "yyyy-MM-dd"));
+                callback(events);
+            } else {
+                callback([]);
+            }
+        },
+        eventContent: function (arg) {
+            let eventInfo = arg.event.extendedProps;
+            return { domNodes: buildEventInfoHtml(arg.timeText, eventInfo) };
+        },
+        eventClick: function (calEvent) {
+            openForm(calEvent);
+        },
+    };
+    if (isMobile.value) {
+        options.initialView = "timeGridThreeDay";
+        options.views = {
+            timeGridThreeDay: {
+                type: 'timeGrid',
+                duration: { days: 3 }
+            }
+        }
+    }
+    let calendar = new Calendar(calendarEl, options);
+    calendarManager.value[lstNameDetail.value[index]] = calendar;
     calendar.render();
 };
+
+const getEventByDate = async (nameDetail, start, end) => {
+    let result = await store.dispatch("bookingDetail/getByRangeDate", { startDate: start, endDate: end, nameDetail: nameDetail, pitchId: pitchId.value });
+    if (result?.data?.data) {
+        let data = result.data.data;
+        let lstResult = [];
+        for (let i = 0; i < data.length; i++) {
+            let item = data[i];
+            lstResult.push({
+                start: item.start,
+                end: item.end,
+                extendedProps: {
+                    bookingDetailId: item.id,
+                    bookingId: item.bookingId,
+                    teamA: !item.teamA ? item.phoneNumber : item.teamA,
+                    teamB: item.teamB ?? "",
+                    stadium: item.stadium,
+                    note: item.note ?? "",
+                    status: item.status ?? "",
+                    deposit: item.deposit ?? 0
+                },
+            });
+        }
+        return lstResult;
+    }
+};
+
+const buildEventInfoHtml = (timeText, eventInfo) => {
+    let eventContainer = document.createElement("div");
+    if (equals(eventInfo?.status, BookingStatusEnum.PENDING)) {
+        eventContainer.className = "p-2 w-100 h-100 bg-info";
+    } else {
+        if (eventInfo?.teamB) {
+            eventContainer.className = "p-2 w-100 h-100 bg-danger";
+        } else {
+            eventContainer.className = "p-2 w-100 h-100 bg-primary";
+        }
+    }
+
+    let html = `<div class="fs-3 fw-bold">${eventInfo.teamA}</div>`;
+    if (eventInfo?.note) {
+        html += `<div class="fs-6 fst-italic">${eventInfo.note}</div>`;
+    }
+
+    eventContainer.innerHTML = html;
+    let arrayOfDomNodes = [eventContainer];
+    return arrayOfDomNodes;
+};
+
+const openForm = (calEvent) => {
+    objEvent.value = calEvent;
+    objMatch.value = calEvent.event.extendedProps;
+    openModal("MatchInfoDialog");
+};
+
+const loadEvent = (data) => {
+    if (objEvent.value && data) {
+        objEvent.value.event.setExtendedProp("teamA", data.teamA);
+        objEvent.value.event.setExtendedProp("teamB", data.teamB);
+        objEvent.value.event.setExtendedProp("note", data.note);
+        objEvent.value.event.setExtendedProp("deposit", data.deposit);
+        objEvent.value.event.setExtendedProp("status", data.status);
+    }
+};
+
+const today = () => {
+    for (let i = 0; i < lstNameDetail.value.length; i++) {
+        if (calendarManager.value[lstNameDetail.value[i]] && !equals(dateToString(new Date()), dateToString(calendarManager.value[lstNameDetail.value[i]].getDate()))) {
+            calendarManager.value[lstNameDetail.value[i]].today();
+            currentDate.value = calendarManager.value[lstNameDetail.value[i]].getDate();
+        }
+    }
+};
+
+const prev = () => {
+    for (let i = 0; i < lstNameDetail.value.length; i++) {
+        if (calendarManager.value[lstNameDetail.value[i]]) {
+            calendarManager.value[lstNameDetail.value[i]].prev();
+            currentDate.value = calendarManager.value[lstNameDetail.value[i]].getDate();
+        }
+    }
+};
+
+const next = () => {
+    for (let i = 0; i < lstNameDetail.value.length; i++) {
+        if (calendarManager.value[lstNameDetail.value[i]]) {
+            calendarManager.value[lstNameDetail.value[i]].next();
+            currentDate.value = calendarManager.value[lstNameDetail.value[i]].getDate();
+        }
+    }
+};
+
+watch(currentDate, (newValue) => {
+    for (let i = 0; i < lstNameDetail.value.length; i++) {
+        if (calendarManager.value[lstNameDetail.value[i]] && !equals(dateToString(newValue), dateToString(calendarManager.value[lstNameDetail.value[i]].getDate()))) {
+            calendarManager.value[lstNameDetail.value[i]].gotoDate(newValue);
+        }
+    }
+});
 
 onMounted(() => {
     loadData();
@@ -85,8 +220,10 @@ onMounted(() => {
                     <span class="text-large font-600 mr-3">{{ t("MyCalendar") }}</span>
                 </template>
                 <template #extra>
-                    <div class="flex items-center">
-                        
+                    <div class="d-flex flex-row">
+                        <el-select style="width: 150px;" :no-data-text="t('NoData')" :placeholder="t('Infrastructure')" v-model="pitchId" @change="handleSelect">
+                            <el-option v-for="item in lstPitch" :key="item.id" :label="item.name" :value="item.id" />
+                        </el-select>
                     </div>
                 </template>
             </el-page-header>
@@ -94,8 +231,7 @@ onMounted(() => {
                 <div class="col-12 col-sm-12 col-md-12 col-lg-8">
                     <div class="d-flex flex-row align-items-center">
                         <h3 class="fs-3 mr-3 mb-1 mt-1">{{ t("MyCalendar") }}</h3>
-                        <el-select style="width: 150px;" :no-data-text="t('NoData')" :placeholder="t('Infrastructure')"
-                            v-model="pitchId" @change="handleSelect">
+                        <el-select style="width: 150px;" :no-data-text="t('NoData')" :placeholder="t('Infrastructure')" v-model="pitchId" @change="handleSelect">
                             <el-option v-for="item in lstPitch" :key="item.id" :label="item.name" :value="item.id" />
                         </el-select>
                     </div>
@@ -172,6 +308,7 @@ onMounted(() => {
         </div>
         <el-empty :description="t('NoData')" v-if="lstPitch.length == 0" />
     </section>
+    <MatchInfoDialog v-if="hasRole('MatchInfoDialog')" :data="objMatch" @callback="loadEvent"></MatchInfoDialog>
 </template>
 
 <style scoped>

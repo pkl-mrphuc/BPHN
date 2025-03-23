@@ -25,6 +25,12 @@ class BookingDetailAPI {
         }
     }
 
+    async getByRangeDate(data) {
+        let requestUrl = `${process.env.VUE_APP_API_URL}/bookingdetails`;
+        let requestParam = data;
+        return axios.post(requestUrl, requestParam);
+    }
+
     async updateMatch(data) {
         try {
             let requestUrl = `${process.env.VUE_APP_API_URL}/bookingdetails/update-match`;

@@ -74,6 +74,23 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
+        public async Task<IEnumerable<CalendarEvent>> GetEventsByRangeDate(DateTime startDate, DateTime endDate, Guid pitchId, string nameDetail)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var lstBookingDetail = await connection.QueryAsync<CalendarEvent>(Query.BOOKING_DETAIL__GET_CALENDAR_EVENTS, new Dictionary<string, object>
+                {
+                    { "@status0", BookingStatusEnum.SUCCESS.ToString() },
+                    { "@startDate", startDate.ToString("yyyy-MM-dd 00:00:00") },
+                    { "@endDate", endDate.ToString("yyyy-MM-dd 23:59:59") },
+                    { "@pitchId", pitchId },
+                    { "@nameDetail", nameDetail },
+                });
+                return lstBookingDetail ?? Enumerable.Empty<CalendarEvent>();
+            }
+        }
+
         public async Task<List<CalendarEvent>> GetByRangeDate(string startDate, string endDate, string pitchId, string nameDetail)
         {
             using (var connection = ConnectDB(GetConnectionString()))

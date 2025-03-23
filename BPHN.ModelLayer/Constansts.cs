@@ -55,6 +55,11 @@
         public const string BOOKING_DETAIL__GET_BY_BOOKING_ID = "select * from booking_details where BookingId = @bookingId";
         public const string BOOKING_DETAIL__GET_BY_ID = "select * from booking_details where Id = @id";
         public const string BOOKING_DETAIL__UPDATE_MATCH = "update booking_details set TeamA = @teamA, TeamB = @teamB, Note = @note, Deposit = @deposit where Id = @id";
+        public const string BOOKING_DETAIL__GET_CALENDAR_EVENTS = @"select bd.*, b.PitchId, tfi.TimeBegin as Start, tfi.TimeEnd as End, b.NameDetail as Stadium, b.PhoneNumber as PhoneNumber  from booking_details bd 
+                                                                        inner join bookings b on b.Id = bd.BookingId
+                                                                        inner join time_frame_infos tfi on b.TimeFrameInfoId = tfi.Id
+                                                                        inner join pitchs p on p.Id = b.PitchId and p.Id = @pitchId
+                                                                    where bd.Status = @status0 and b.NameDetail = @nameDetail and bd.MatchDate between @startDate and @endDate";
 
         public const string CONFIG__GET_ALL = "select c.Key, c.Value from configs c where c.AccountId = @accountId";
         public const string CONFIG__GET_BY_KEY = "select c.Key, c.Value from configs c where c.AccountId = @accountId and c.Key = @key";
