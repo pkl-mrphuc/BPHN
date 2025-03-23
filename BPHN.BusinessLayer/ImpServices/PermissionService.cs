@@ -6,7 +6,6 @@ using BPHN.ModelLayer.Responses;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using System.Linq;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
