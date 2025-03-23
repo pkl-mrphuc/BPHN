@@ -49,8 +49,12 @@ html .el-dialog__title {
 }
 
 html .el-drawer {
-    height: calc(100vh - 60px) !important;
     top: unset !important;
+}
+
+html .el-menu-vertical-demo {
+    height: calc(100vh - 60px);
+    padding-top: 60px;
 }
 
 html .bphn-statistic1 {

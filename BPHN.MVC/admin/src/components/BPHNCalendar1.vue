@@ -80,7 +80,7 @@ onMounted(() => {
 <template>
     <section>
         <div class="container">
-            <el-page-header v-if="isMobile" class="mb-3" @back="onBack">
+            <el-page-header icon="" v-if="isMobile" class="mb-3" @back="onBack">
                 <template #content>
                     <span class="text-large font-600 mr-3">{{ t("MyCalendar") }}</span>
                 </template>

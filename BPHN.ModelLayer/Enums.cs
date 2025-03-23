@@ -75,7 +75,8 @@
         VIEWLISTINVOICE = 12,
         ADDSERVICE = 13,
         EDITSERVICE = 14,
-        VIEWLISTSERVICE = 15
+        VIEWLISTSERVICE = 15,
+        VIEWSTATISTIC = 16
     }
 
     public enum NotificationTypeEnum
@@ -130,5 +131,15 @@
     {
         DEPOSITED = 0,
         NOTDEPOSIT = 1
+    };
+
+    public enum StatisticTypeEnum
+    {
+        REVENUEDAY = 0,
+        REVENUEMONTH = 1,
+        REVENUEYEAR = 2,
+        REVENUEQUARTER = 3,
+        TOTALBOOKINGYEAR = 4,
+        TOTALBOOKINGDAY = 5
     };
 }

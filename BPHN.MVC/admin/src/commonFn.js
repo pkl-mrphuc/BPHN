@@ -150,6 +150,12 @@ export default function useCommonFn() {
         return `${prefix}${thousand}${separateDecimal}${decimal}${suffixes}`;
     }
 
+    const quarter = (date) => {
+        date = date ?? new Date();
+        var m = Math.floor(date.getMonth() / 3) + 2;
+        return m > 4 ? m - 4 : m;
+    }
+
     return {
         sameDate,
         newDate,
@@ -162,6 +168,7 @@ export default function useCommonFn() {
         isEmail,
         padToFive,
         fakeNumber,
-        numberToTime
+        numberToTime,
+        quarter
     }
 }

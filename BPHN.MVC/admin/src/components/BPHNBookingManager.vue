@@ -227,7 +227,7 @@ const currentChange = () => {
 };
 
 const onBack = () => {
-  router.push("bm");
+  router.push("overview");
 };
 
 onMounted(() => {
@@ -238,12 +238,12 @@ onMounted(() => {
 <template>
   <section>
     <div class="container">
-      <el-page-header v-if="isMobile" class="mb-3" @back="onBack">
+      <el-page-header icon="" v-if="isMobile" class="mb-3" @back="onBack">
         <template #content>
           <span class="text-large font-600 mr-3">{{ t("BookingManager") }}</span>
         </template>
         <template #extra>
-          <div class="flex items-center">
+          <div class="d-flex flex-row">
             <el-popover :visible="visible" placement="bottom" :width="300">
               <div class="d-flex flex-column mb-3">
                 <el-checkbox v-model="checked1" :label="t('Status')" size="large" />
