@@ -85,7 +85,8 @@ export const PaymentTypeEnum = {
 }
 
 export const InvoiceStatusEnum = {
-    DRAFT: "DRAFT"
+    DRAFT: "DRAFT",
+    PAID: "PAID"
 }
 
 export const StatisticTypeEnum = {

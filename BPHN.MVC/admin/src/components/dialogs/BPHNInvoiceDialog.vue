@@ -21,6 +21,7 @@ const props = defineProps({
 
 const running = ref(0);
 const lstItem = ref([]);
+const isEditMode = ref(props.data?.mode === "edit");
 const status = ref(props.data?.status ?? InvoiceStatusEnum.DRAFT);
 const customerType = ref(props.data?.customerType ?? CustomerTypeEnum.RETAIL);
 const paymentType = ref(props.data?.paymentType ?? PaymentTypeEnum.BANK);
@@ -81,6 +82,7 @@ const handleSelect = (item) => {
   currentRow.value.itemName = item.value;
   currentRow.value.unit = item.unit;
   currentRow.value.salePrice = item.salePrice;
+  currentRow.value.maxQuantity = item.quantity;
   currentRow.value.total = item.salePrice * currentRow.value.quantity;
   total.value += currentRow.value.total;
 };
@@ -99,13 +101,14 @@ const save = () => {
     }, 1000);
 
     const loading = ElLoading.service(loadingOptions);
-    store.dispatch(props.mode == "edit" ? "invoice/update" : "invoice/insert", 
+    store.dispatch(isEditMode.value ? "invoice/update" : "invoice/insert", 
     {
       id: props.data?.id,
       status: status.value,
       customerType: customerType.value,
       customerName: customerName.value,
       customerPhone: customerPhone.value,
+      paymentType: paymentType.value,
       total: total.value,
       bookingDetailId: bookingDetailId.value,
       items: lstRow.value
@@ -172,14 +175,6 @@ onMounted(() => {
       <div class="container mb-3">
         <div class="row">
           <div class="col-12 col-sm-12 col-md-12">
-            <div class="row mb-3">
-              <div class="col-4 fw-bold d-flex flex-row align-items-center justify-content-start">{{ t("Status") }}</div>
-              <div class="col-8">
-                <el-select v-model="status" class="w-100">
-                  <el-option :value="InvoiceStatusEnum.DRAFT" :label="t('DRAFT')" />
-                </el-select>
-              </div>
-            </div>
             <div class="row mb-3">
               <div class="col-4 fw-bold d-flex flex-row align-items-center justify-content-start">{{ t("CustomerType") }}</div>
               <div class="col-8">
@@ -268,7 +263,8 @@ onMounted(() => {
     </template>
     <template #foot>
       <div class="d-flex flex-row-reverse">
-        <el-button type="primary" @click="save" class="ml-2">{{ t("Save") }}</el-button>
+        <el-button type="primary" @click="status = InvoiceStatusEnum.PAID; save();" class="ml-2">{{ t("Save") }}</el-button>
+        <el-button v-if="!isEditMode" @click="status = InvoiceStatusEnum.DRAFT; save();" class="ml-2">{{ t("SaveDraft") }}</el-button>
         <el-button @click="toggleModel">{{ t("Close") }}</el-button>
       </div>
     </template>

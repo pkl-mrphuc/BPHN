@@ -4,6 +4,10 @@ html.dark {
     --el-text-color-secondary: #f5f5f5 !important;
 }
 
+html.dark .fc-col-header {
+    background-color: #262626;
+}
+
 html.dark body {
     margin: 0;
     padding: 0;

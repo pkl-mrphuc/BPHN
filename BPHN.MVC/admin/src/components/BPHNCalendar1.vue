@@ -7,7 +7,6 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import useCommonFn from "@/commonFn";
 import allLocales from "@fullcalendar/core/locales-all";
 import useToggleModal from "@/register-components/actionDialog";
-import { BookingStatusEnum } from "@/const";
 import {
   InfoFilled,
   ArrowLeft,
@@ -74,7 +73,7 @@ const renderCalendar = (index) => {
         slotMinTime: time(new Date(minTime)),
         slotMaxTime: time(new Date(maxTime)),
         slotDuration: "00:30:00",
-        height: "700px",
+        height: "auto",
         headerToolbar: false,
         locales: allLocales,
         locale: store.getters["config/getLanguage"],
@@ -85,10 +84,6 @@ const renderCalendar = (index) => {
             } else {
                 callback([]);
             }
-        },
-        eventContent: function (arg) {
-            let eventInfo = arg.event.extendedProps;
-            return { domNodes: buildEventInfoHtml(arg.timeText, eventInfo) };
         },
         eventClick: function (calEvent) {
             openForm(calEvent);
@@ -132,28 +127,6 @@ const getEventByDate = async (nameDetail, start, end) => {
         }
         return lstResult;
     }
-};
-
-const buildEventInfoHtml = (timeText, eventInfo) => {
-    let eventContainer = document.createElement("div");
-    if (equals(eventInfo?.status, BookingStatusEnum.PENDING)) {
-        eventContainer.className = "p-2 w-100 h-100 bg-info";
-    } else {
-        if (eventInfo?.teamB) {
-            eventContainer.className = "p-2 w-100 h-100 bg-danger";
-        } else {
-            eventContainer.className = "p-2 w-100 h-100 bg-primary";
-        }
-    }
-
-    let html = `<div class="fs-3 fw-bold">${eventInfo.teamA}</div>`;
-    if (eventInfo?.note) {
-        html += `<div class="fs-6 fst-italic">${eventInfo.note}</div>`;
-    }
-
-    eventContainer.innerHTML = html;
-    let arrayOfDomNodes = [eventContainer];
-    return arrayOfDomNodes;
 };
 
 const openForm = (calEvent) => {

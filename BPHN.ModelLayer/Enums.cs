@@ -55,7 +55,8 @@
 
     public enum  InvoiceStatusEnum
     {
-        DRAFT = 0
+        DRAFT = 0,
+        PAID = 1
     }
 
     public enum FunctionTypeEnum

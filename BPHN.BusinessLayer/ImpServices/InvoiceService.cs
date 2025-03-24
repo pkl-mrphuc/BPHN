@@ -14,18 +14,21 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IPermissionService _permissionService;
         private readonly INotificationService _notificationService;
         private readonly IHistoryLogService _historyLogService;
+        private readonly IItemService _itemService;
         public InvoiceService(
             IServiceProvider provider,
             IOptions<AppSettings> appSettings,
             IPermissionService permissionService,
             IInvoiceRepository invoiceRepository,
             INotificationService notificationService,
-            IHistoryLogService historyLogService) : base(provider, appSettings)
+            IHistoryLogService historyLogService,
+            IItemService itemService) : base(provider, appSettings)
         {
             _permissionService = permissionService;
             _invoiceRepository = invoiceRepository;
             _notificationService = notificationService;
             _historyLogService = historyLogService;
+            _itemService = itemService;
         }
 
         public async Task<ServiceResultModel> GetInstance(string id)
@@ -182,7 +185,6 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             data.Id = Guid.NewGuid();
-            data.Status = InvoiceStatusEnum.DRAFT.ToString();
             data.Detail = JsonConvert.SerializeObject(data.Items);
             data.Date = DateTime.Now;
             data.AccountId = context.ParentId ?? context.Id;
@@ -206,6 +208,10 @@ namespace BPHN.BusinessLayer.ImpServices
             var insertResult = await _invoiceRepository.Insert(data, _);
             if (insertResult)
             {
+                if (data.Items is not null && InvoiceStatusEnum.PAID.ToString().Equals(data.Status))
+                {
+                    await _itemService.UpdateQuantity(context.Id, data.Items.Where(x => x.ItemId != Guid.Empty));
+                }
                 await _notificationService.Insert(context, NotificationTypeEnum.INSERTINVOICE, new Invoice
                 {
                     CustomerType = data.CustomerType,
@@ -277,6 +283,10 @@ namespace BPHN.BusinessLayer.ImpServices
             var updateResult = await _invoiceRepository.Update(data);
             if (updateResult)
             {
+                if (data.Items is not null && InvoiceStatusEnum.PAID.ToString().Equals(data.Status))
+                {
+                    await _itemService.UpdateQuantity(context.Id, data.Items.Where(x => x.ItemId != Guid.Empty));
+                }
                 await _notificationService.Insert(context, NotificationTypeEnum.UPDATEINVOICE, new Invoice
                 {
                     CustomerType = data.CustomerType,

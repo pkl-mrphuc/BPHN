@@ -166,5 +166,21 @@ namespace BPHN.DataLayer.ImpRepositories
             }
             return true;
         }
+
+        public async Task UpdateQuantity(Guid accountId, IEnumerable<InvoiceItem> items)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                foreach (var item in items)
+                {
+                    await connection.ExecuteAsync(Query.ITEM__UPDATE_QUANTITY_BY_ID, new Dictionary<string, object>
+                    {
+                        { "@id", item.ItemId },
+                        { "@quantity", item.Quantity },
+                    });
+                }
+            }
+        }
     }
 }

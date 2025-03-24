@@ -80,6 +80,7 @@
         public const string ITEM__GET_MANY = "select * from items";
         public const string ITEM__GET_BY_ID = "select Id, Code, Name, Status, Quantity, SalePrice, PurchasePrice, Unit from items where id = @id";
         public const string ITEM__UPDATE_BY_ID = "update items set Unit = @unit, Status = @status, Code = @code, Name = @name, Quantity = @quantity, SalePrice = @salePrice, PurchasePrice = @purchasePrice, ModifiedBy = @modifiedBy, ModifiedDate = @modifiedDate where Id = @id";
+        public const string ITEM__UPDATE_QUANTITY_BY_ID = "update items set Quantity = Quantity - @quantity where Id = @id";
         public const string ITEM__INSERT = "insert into items(Id, AccountId, Unit, Status, Code, Name, Quantity, SalePrice, PurchasePrice, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy) values (@id, @accountId, @unit, @status, @code, @name, @quantity, @salePrice, @purchasePrice, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
 
         public const string INVOICE__GET_ALL = "select Id, Status, Date, CustomerPhone, CustomerName, Total, PaymentType, CustomerType from invoices where AccountId = @accountId order by Date desc";

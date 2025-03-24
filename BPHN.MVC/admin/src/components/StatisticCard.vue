@@ -17,7 +17,9 @@ const time = ref(props.data?.parameter);
 const isDown = ref(false);
 
 const diff = () => {
-    if (preVal.value == 0) return "100%";
+    if (preVal.value == 0 && val.value > 0) return "100%";
+    if (preVal.value == 0 && val.value == 0) return "0%";
+    
     let result = (((val.value - preVal.value) / preVal.value) * 100);
     if (result > 0) {
         isDown.value = false;

@@ -62,6 +62,10 @@ const fullname = computed(() => {
   return store.getters["account/getFullName"];
 });
 
+const drawer = computed(() => {
+  return store.getters["account/getDrawer"];
+});
+
 const showAccountInfo = () => {
   openModal("AccountInfoDialog");
 };
@@ -93,7 +97,8 @@ const markRead = () => {
 };
 
 const toggle = () => {
-  store.commit("account/setDrawer", true);
+  console.log(drawer.value);
+  store.commit("account/setDrawer", !drawer.value);
 };
 </script>
 
