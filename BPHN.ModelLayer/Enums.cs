@@ -140,6 +140,7 @@
         REVENUEYEAR = 2,
         REVENUEQUARTER = 3,
         TOTALBOOKINGYEAR = 4,
-        TOTALBOOKINGDAY = 5
+        TOTALBOOKINGDAY = 5,
+        TOTALDETAILBOOKINGDAY = 6,
     };
 }

@@ -420,7 +420,7 @@ namespace BPHN.DataLayer.ImpRepositories
                                 bd.BookingId as BookingId,
                                 bd.Status as BookingDetailStatus,
                                 tfi.Price as Price,
-                                WEEKDAY(bd.MatchDate) as Weekendays
+                                (WEEKDAY(bd.MatchDate) + 1) % 7 as Weekendays
                             from booking_details bd  
                                 inner join bookings b on b.Id = bd.BookingId
                                 inner join pitchs p on b.PitchId = p.Id

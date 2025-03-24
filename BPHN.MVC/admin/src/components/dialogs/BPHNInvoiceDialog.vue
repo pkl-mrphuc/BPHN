@@ -259,7 +259,7 @@ onMounted(() => {
         <div class="row">
           <div class="col-12 d-flex flex-row align-items-center justify-content-end">
             <b>
-              <i class="mr-3">{{ t("deposit") }}:</i>
+              <i class="mr-3">{{ t("Deposit") }}:</i>
               <span>{{ deposit != 0 ? fakeNumber(deposit) : 0 }}</span>
             </b>
           </div>

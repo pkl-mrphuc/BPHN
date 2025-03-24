@@ -90,5 +90,27 @@
         public const string INVOICE__UPDATE = "update invoices set CustomerType = @customerType, CustomerName = @customerName, CustomerPhone = @customerPhone, PaymentType = @paymentType, Total = @total, Detail = @detail, Date = @date, Status = @status, ModifiedDate = @modifiedDate, ModifiedBy = @modifiedBy where id = @id";
 
         public const string INVOICE_BOOKING_DETAIL__INSERT = "insert into invoice_bookingdetail(Id, BookingDetailId, InvoiceId, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy) values(@id, @bookingDetailId, @invoiceId, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
+
+        public const string STATISTIC__GET_TOTAL_BOOKING = @"select 
+	                                                                sum(case when bd.MatchDate >= @preVal1 and bd.MatchDate <= @preVal2 then 1 else 0 end) as preValue,
+                                                                    sum(case when bd.MatchDate >= @val1 and bd.MatchDate <= @val2 then 1 else 0 END) as value,
+                                                                    @parameter as parameter
+                                                                from booking_details bd 
+                                                                join bookings b on b.Id = bd.BookingId
+                                                                where bd.MatchDate >= @preVal1 and bd.MatchDate <= @val2 and b.AccountId = @accountId";
+        public const string STATISTIC__GET_TOTAL_DETAIL_BOOKING = @"select 
+	                                                                        sum(case when bd.Status = 'PENDING' THEN 1 ELSE 0 END) AS pending,
+                                                                            sum(case when bd.Status = 'SUCCESS' THEN 1 ELSE 0 END) AS success,
+                                                                            sum(case when bd.Status = 'CANCEL' THEN 1 ELSE 0 END) AS cancel,
+                                                                            @parameter as parameter
+                                                                        from booking_details bd 
+                                                                        join bookings b on b.Id = bd.BookingId
+                                                                        where bd.MatchDate >= @val1 and bd.MatchDate <= @val2 and b.AccountId = @accountId";
+        public const string STATISTIC__GET_REVENUE = @"select  
+	                                                        sum(case when Date >= @preVal1 and Date <= @preVal2 then Total else 0 end) as preValue,
+                                                            sum(case when Date >= @val1 and Date <= @val2 then Total else 0 end) as value,
+                                                            @parameter as parameter
+                                                        from invoices 
+                                                        where Date >= @preVal1 and Date <= @val2 and AccountId = @accountId";
     }
 }
