@@ -2,6 +2,7 @@
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
+using BPHN.ModelLayer.Requests;
 using BPHN.ModelLayer.Responses;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -190,6 +191,44 @@ namespace BPHN.BusinessLayer.ImpServices
                 item.End = new DateTime(item.MatchDate.Year, item.MatchDate.Month, item.MatchDate.Day, item.End.Hour, item.End.Minute, 0);
                 return item;
             }).ToList();
+            return new ServiceResultModel
+            {
+                Success = true,
+                Data = _mapper.Map<List<CalendarEventRespond>>(result)
+            };
+        }
+
+        public async Task<ServiceResultModel> GetByRangeDate(GetCalendarEventRequest request)
+        {
+            var context = _contextService.GetContext();
+            if (context is null)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
+                };
+            }
+
+            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKINGDETAIL);
+            if (!hasPermission)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
+                };
+            }
+
+            var result = await _bookingDetailRepository.GetEventsByRangeDate(request.StartDate, request.EndDate, request.PitchId, request.NameDetail);
+            result = result.Select(item =>
+            {
+                item.Start = new DateTime(item.MatchDate.Year, item.MatchDate.Month, item.MatchDate.Day, item.Start.Hour, item.Start.Minute, 0);
+                item.End = new DateTime(item.MatchDate.Year, item.MatchDate.Month, item.MatchDate.Day, item.End.Hour, item.End.Minute, 0);
+                return item;
+            });
             return new ServiceResultModel
             {
                 Success = true,

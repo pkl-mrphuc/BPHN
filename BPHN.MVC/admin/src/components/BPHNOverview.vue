@@ -10,15 +10,16 @@ import useCommonFn from "@/commonFn";
 
 const { t } = useI18n();
 const store = useStore();
-const { dateToString, quarter } = useCommonFn();
+const { dateToString } = useCommonFn();
 const visible = ref(false);
 const now = ref(new Date());
 const totalBookingDay = ref({ value: 0, preValue: 0, parameter: now.value });
-const totalBookingYear = ref({ value: 0, preValue: 0, parameter: now.value.getFullYear() });
+const totalBookingYear = ref({ value: 0, preValue: 0, parameter: now.value });
 const revenueDay = ref({ value: 0, preValue: 0, parameter: now.value });
-const revenueMonth = ref({ value: 0, preValue: 0, parameter: now.value.getMonth() + 1 });
-const revenueYear = ref({ value: 0, preValue: 0, parameter: now.value.getFullYear() });
-const revenueQuarter = ref({ value: 0, preValue: 0, parameter: quarter(now.value) });
+const revenueMonth = ref({ value: 0, preValue: 0, parameter: now.value });
+const revenueYear = ref({ value: 0, preValue: 0, parameter: now.value });
+const revenueQuarter = ref({ value: 0, preValue: 0, parameter: now.value });
+const totalDetailBookingDay = ref({ value: 0, parameter: now.value });
 const checked1 = ref(true);
 const checked2 = ref(true);
 const checked3 = ref(true);
@@ -43,10 +44,8 @@ const filter = () => {
 
 const loadData = () => {
     let types = [
-        {
-            name: StatisticTypeEnum.TOTALBOOKINGDAY,
-            parameter: totalBookingDay.value.parameter
-        }
+        { name: StatisticTypeEnum.TOTALBOOKINGDAY, parameter: totalBookingDay.value.parameter },
+        { name: StatisticTypeEnum.TOTALDETAILBOOKINGDAY, parameter: totalDetailBookingDay.value.parameter },
     ];
     if (checked1.value) types.push({ name: StatisticTypeEnum.REVENUEDAY, parameter: revenueDay.value.parameter });
     if (checked2.value) types.push({ name: StatisticTypeEnum.REVENUEMONTH, parameter: revenueMonth.value.parameter });
@@ -74,6 +73,9 @@ const loadData = () => {
             }
             if (result.TOTALBOOKINGYEAR) {
                 totalBookingYear.value = result.TOTALBOOKINGYEAR;
+            }
+            if (result.TOTALDETAILBOOKINGDAY) {
+                totalDetailBookingDay.value = result.TOTALDETAILBOOKINGDAY;
             }
         }
     });
@@ -128,7 +130,7 @@ onBeforeMount(() => {
                             <el-button size="small" type="primary" @click="filter">{{ t('Filter') }}</el-button>
                         </div>
                         <template #reference>
-                            <el-button @click="visible = true" type="primary">Tùy chỉnh</el-button>
+                            <el-button @click="visible = true" type="primary">{{ t('Customize') }}</el-button>
                         </template>
                     </el-popover>
                 </div>
@@ -143,16 +145,13 @@ onBeforeMount(() => {
                             <div
                                 class="col-12 col-sm-12 col-md-12 col-lg-5 d-flex flex-row align-items-center justify-content-around">
                                 <div>
-                                    <statistic-booking-card :type="BookingStatusEnum.PENDING"
-                                        :value="1000"></statistic-booking-card>
+                                    <statistic-booking-card :key="totalDetailBookingDay" :type="BookingStatusEnum.PENDING" :value="totalDetailBookingDay.pending"></statistic-booking-card>
                                 </div>
                                 <div>
-                                    <statistic-booking-card :type="BookingStatusEnum.SUCCESS"
-                                        :value="1000"></statistic-booking-card>
+                                    <statistic-booking-card :key="totalDetailBookingDay" :type="BookingStatusEnum.SUCCESS" :value="totalDetailBookingDay.success"></statistic-booking-card>
                                 </div>
                                 <div>
-                                    <statistic-booking-card :type="BookingStatusEnum.CANCEL"
-                                        :value="1000"></statistic-booking-card>
+                                    <statistic-booking-card :key="totalDetailBookingDay" :type="BookingStatusEnum.CANCEL" :value="totalDetailBookingDay.cancel"></statistic-booking-card>
                                 </div>
                             </div>
                             <div class="col-12 col-sm-12 col-md-12 col-lg-4">
@@ -161,8 +160,9 @@ onBeforeMount(() => {
                         </div>
                     </div>
                     <div>
-                        <div :class="isMobile ? 'mb-4 mt-4' : 'mb-4 mr-4'"
-                            style="height: 360px; background-color: #121212; border-radius: 20px;"></div>
+                        <div :class="isMobile ? 'mb-4 mt-4' : 'mb-4 mr-4'">
+                            
+                        </div>
                     </div>
                 </div>
                 <div class="col-12 col-sm-12 col-md-12 col-lg-3">

@@ -17,7 +17,9 @@ const time = ref(props.data?.parameter);
 const isDown = ref(false);
 
 const diff = () => {
-    if (preVal.value == 0) return "0%";
+    if (preVal.value == 0 && val.value > 0) return "100%";
+    if (preVal.value == 0 && val.value == 0) return "0%";
+    
     let result = (((val.value - preVal.value) / preVal.value) * 100);
     if (result > 0) {
         isDown.value = false;
@@ -61,7 +63,7 @@ const diffTo = () => {
 </script>
 <template>
     <el-card :body-style="{ padding: '0px' }" class="bphn-statistic1">
-        <el-statistic :value="fakeNumber(val)">
+        <el-statistic :value="val > 0 ? fakeNumber(val) : 0">
             <template #title>
                 <div class="d-flex flex-row align-items-center">
                     <span class="statistic__title">{{ title() }}</span>

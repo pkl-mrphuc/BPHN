@@ -3,6 +3,7 @@ using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
 using BPHN.ModelLayer.Requests;
 using Microsoft.Extensions.Options;
+using System.Globalization;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
@@ -44,12 +45,10 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var result = new Dictionary<string, object>();
-            foreach (var item in request.Types)
-            {
-                result.Add(item.Name, await GetStatistic(item));
-            }
+            var tasks = request.Types.ToDictionary(item => item.Name, item => GetStatistic(context.Id, item));
+            await Task.WhenAll(tasks.Values);
 
+            var result = tasks.ToDictionary(item => item.Key, item => item.Value.Result);
             return new ServiceResultModel
             {
                 Success = true,
@@ -57,59 +56,27 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        private async Task<object> GetStatistic(StatisticTypeRequest type)
+        private async Task<object> GetStatistic(Guid accountId, StatisticTypeRequest type)
         {
             Enum.TryParse(typeof(StatisticTypeEnum), type.Name, out var name);
             switch(name)
             {
                 case StatisticTypeEnum.TOTALBOOKINGYEAR:
-                    return new
-                    {
-                        value = 100,
-                        preValue = 20,
-                        parameter = type.Parameter
-
-                    };
+                    return await _overviewRepository.GetTotalBookingYear(accountId, DateTime.Parse((type.Parameter ?? DateTime.Now).ToString(), styles: DateTimeStyles.RoundtripKind));
                 case StatisticTypeEnum.TOTALBOOKINGDAY:
-                    return new
-                    {
-                        value = 100,
-                        preValue = 20,
-                        parameter = type.Parameter
-                    };
+                    return await _overviewRepository.GetTotalBookingDay(accountId, DateTime.Parse((type.Parameter ?? DateTime.Now).ToString(), styles: DateTimeStyles.RoundtripKind));
                 case StatisticTypeEnum.REVENUEDAY:
-                    return new
-                    {
-                        value = 100,
-                        preValue = 20,
-                        parameter = type.Parameter
-
-                    };
+                    return await _overviewRepository.GetRevenueDay(accountId, DateTime.Parse((type.Parameter ?? DateTime.Now).ToString(), styles: DateTimeStyles.RoundtripKind));
                 case StatisticTypeEnum.REVENUEMONTH:
-                    return new
-                    {
-                        value = 100,
-                        preValue = 20,
-                        parameter = type.Parameter
-
-                    };
+                    return await _overviewRepository.GetRevenueMonth(accountId, DateTime.Parse((type.Parameter ?? DateTime.Now).ToString(), styles: DateTimeStyles.RoundtripKind));
                 case StatisticTypeEnum.REVENUEYEAR:
-                    return new
-                    {
-                        value = 100,
-                        preValue = 20,
-                        parameter = type.Parameter
-
-                    };
+                    return await _overviewRepository.GetRevenueYear(accountId, DateTime.Parse((type.Parameter ?? DateTime.Now).ToString(), styles: DateTimeStyles.RoundtripKind));
                 case StatisticTypeEnum.REVENUEQUARTER:
-                    return new
-                    {
-                        value = 100,
-                        preValue = 20,
-                        parameter = type.Parameter
-                    };
+                    return await _overviewRepository.GetRevenueQuarter(accountId, DateTime.Parse((type.Parameter ?? DateTime.Now).ToString(), styles: DateTimeStyles.RoundtripKind));
+                case StatisticTypeEnum.TOTALDETAILBOOKINGDAY:
+                    return await _overviewRepository.GetTotalDetailBookingDay(accountId, DateTime.Parse((type.Parameter ?? DateTime.Now).ToString(), styles: DateTimeStyles.RoundtripKind));
                 default:
-                    return null;
+                    throw new NotImplementedException();
             }
         }
     }

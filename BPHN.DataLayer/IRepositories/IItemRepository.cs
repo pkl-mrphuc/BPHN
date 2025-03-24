@@ -9,5 +9,6 @@ namespace BPHN.DataLayer.IRepositories
         Task<Item> GetById(Guid id);
         Task<bool> Insert(Item data);
         Task<bool> Update(Item data);
+        Task UpdateQuantity(Guid accountId, IEnumerable<InvoiceItem> items);
     }
 }

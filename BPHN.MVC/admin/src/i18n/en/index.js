@@ -28,6 +28,7 @@ const en = {
     SetPasswordMesg: "Please check email to reset password",
     SaveSuccess: "Save success",
     Save: "Save",
+    SaveDraft: "Save draft",
     Connect: "Connect",
     Title: "Title",
     Language: "Language",
@@ -205,6 +206,7 @@ const en = {
     BankPayment: 'Bank payment',
     CashPayment: 'Cash payment',
     DRAFT: 'Draft invoice',
+    PAID: 'Paid invoice',
     ACTIVE: 'Active',
     INACTIVE: 'Inactive',
     Filter: 'Filter',
@@ -222,6 +224,7 @@ const en = {
     DiffToPreMonth: 'Compared to the previous month',
     DiffToPreYear: 'Compared to the previous year',
     DiffToPreQuarter: 'Compared to the previous quarter',
-    Pick: 'Choose a facility'
+    Pick: 'Choose a facility',
+    Customize: 'Customize'
 }
 export default en;

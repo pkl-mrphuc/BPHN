@@ -55,6 +55,11 @@
         public const string BOOKING_DETAIL__GET_BY_BOOKING_ID = "select * from booking_details where BookingId = @bookingId";
         public const string BOOKING_DETAIL__GET_BY_ID = "select * from booking_details where Id = @id";
         public const string BOOKING_DETAIL__UPDATE_MATCH = "update booking_details set TeamA = @teamA, TeamB = @teamB, Note = @note, Deposit = @deposit where Id = @id";
+        public const string BOOKING_DETAIL__GET_CALENDAR_EVENTS = @"select bd.*, b.PitchId, tfi.TimeBegin as Start, tfi.TimeEnd as End, b.NameDetail as Stadium, b.PhoneNumber as PhoneNumber  from booking_details bd 
+                                                                        inner join bookings b on b.Id = bd.BookingId
+                                                                        inner join time_frame_infos tfi on b.TimeFrameInfoId = tfi.Id
+                                                                        inner join pitchs p on p.Id = b.PitchId and p.Id = @pitchId
+                                                                    where bd.Status = @status0 and b.NameDetail = @nameDetail and bd.MatchDate between @startDate and @endDate";
 
         public const string CONFIG__GET_ALL = "select c.Key, c.Value from configs c where c.AccountId = @accountId";
         public const string CONFIG__GET_BY_KEY = "select c.Key, c.Value from configs c where c.AccountId = @accountId and c.Key = @key";
@@ -75,6 +80,7 @@
         public const string ITEM__GET_MANY = "select * from items";
         public const string ITEM__GET_BY_ID = "select Id, Code, Name, Status, Quantity, SalePrice, PurchasePrice, Unit from items where id = @id";
         public const string ITEM__UPDATE_BY_ID = "update items set Unit = @unit, Status = @status, Code = @code, Name = @name, Quantity = @quantity, SalePrice = @salePrice, PurchasePrice = @purchasePrice, ModifiedBy = @modifiedBy, ModifiedDate = @modifiedDate where Id = @id";
+        public const string ITEM__UPDATE_QUANTITY_BY_ID = "update items set Quantity = Quantity - @quantity where Id = @id";
         public const string ITEM__INSERT = "insert into items(Id, AccountId, Unit, Status, Code, Name, Quantity, SalePrice, PurchasePrice, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy) values (@id, @accountId, @unit, @status, @code, @name, @quantity, @salePrice, @purchasePrice, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
 
         public const string INVOICE__GET_ALL = "select Id, Status, Date, CustomerPhone, CustomerName, Total, PaymentType, CustomerType from invoices where AccountId = @accountId order by Date desc";
@@ -85,5 +91,27 @@
         public const string INVOICE__UPDATE = "update invoices set CustomerType = @customerType, CustomerName = @customerName, CustomerPhone = @customerPhone, PaymentType = @paymentType, Total = @total, Detail = @detail, Date = @date, Status = @status, ModifiedDate = @modifiedDate, ModifiedBy = @modifiedBy where id = @id";
 
         public const string INVOICE_BOOKING_DETAIL__INSERT = "insert into invoice_bookingdetail(Id, BookingDetailId, InvoiceId, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy) values(@id, @bookingDetailId, @invoiceId, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
+
+        public const string STATISTIC__GET_TOTAL_BOOKING = @"select 
+	                                                                sum(case when bd.MatchDate >= @preVal1 and bd.MatchDate <= @preVal2 then 1 else 0 end) as preValue,
+                                                                    sum(case when bd.MatchDate >= @val1 and bd.MatchDate <= @val2 then 1 else 0 END) as value,
+                                                                    @parameter as parameter
+                                                                from booking_details bd 
+                                                                join bookings b on b.Id = bd.BookingId
+                                                                where bd.MatchDate >= @preVal1 and bd.MatchDate <= @val2 and b.AccountId = @accountId";
+        public const string STATISTIC__GET_TOTAL_DETAIL_BOOKING = @"select 
+	                                                                        sum(case when bd.Status = 'PENDING' THEN 1 ELSE 0 END) AS pending,
+                                                                            sum(case when bd.Status = 'SUCCESS' THEN 1 ELSE 0 END) AS success,
+                                                                            sum(case when bd.Status = 'CANCEL' THEN 1 ELSE 0 END) AS cancel,
+                                                                            @parameter as parameter
+                                                                        from booking_details bd 
+                                                                        join bookings b on b.Id = bd.BookingId
+                                                                        where bd.MatchDate >= @val1 and bd.MatchDate <= @val2 and b.AccountId = @accountId";
+        public const string STATISTIC__GET_REVENUE = @"select  
+	                                                        sum(case when Date >= @preVal1 and Date <= @preVal2 then Total else 0 end) as preValue,
+                                                            sum(case when Date >= @val1 and Date <= @val2 then Total else 0 end) as value,
+                                                            @parameter as parameter
+                                                        from invoices 
+                                                        where Date >= @preVal1 and Date <= @val2 and AccountId = @accountId";
     }
 }

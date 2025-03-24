@@ -23,7 +23,11 @@ const actions = {
 
     updateMatch: ((commit, data) => {
         return BookingDetailAPI.updateMatch(data);
-    })
+    }),
+
+    getByRangeDate: ((commit, data) => {
+        return BookingDetailAPI.getByRangeDate(data);
+    }),
 };
 
 export default {

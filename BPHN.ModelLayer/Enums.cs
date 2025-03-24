@@ -55,7 +55,8 @@
 
     public enum  InvoiceStatusEnum
     {
-        DRAFT = 0
+        DRAFT = 0,
+        PAID = 1
     }
 
     public enum FunctionTypeEnum
@@ -140,6 +141,7 @@
         REVENUEYEAR = 2,
         REVENUEQUARTER = 3,
         TOTALBOOKINGYEAR = 4,
-        TOTALBOOKINGDAY = 5
+        TOTALBOOKINGDAY = 5,
+        TOTALDETAILBOOKINGDAY = 6,
     };
 }

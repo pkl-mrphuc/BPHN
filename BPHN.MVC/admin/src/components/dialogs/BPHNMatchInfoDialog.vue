@@ -100,7 +100,7 @@ const approval = () => {
         </el-col>
       </el-form-item>
       <el-form-item>
-        <el-col :span="7" class="fw-bold">{{ t("deposit") }}</el-col>
+        <el-col :span="7" class="fw-bold">{{ t("Deposit") }}</el-col>
         <el-col :span="17">
           <mask-number-input :numberDecimal="0" :value="deposit" @value="(value) => { deposit = value; }"></mask-number-input>
         </el-col>

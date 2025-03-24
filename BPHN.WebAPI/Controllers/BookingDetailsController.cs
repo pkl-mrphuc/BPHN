@@ -34,6 +34,15 @@ namespace BPHN.WebAPI.Controllers
             return Ok(await _bookingDetailService.GetByDate(date));
         }
 
+        [Permission(FunctionTypeEnum.VIEWLISTBOOKINGDETAIL)]
+        [ApiAuthorize]
+        [HttpPost]
+        [Route("")]
+        public async Task<IActionResult> GetByRangeDate([FromBody] GetCalendarEventRequest request)
+        {
+            return Ok(await _bookingDetailService.GetByRangeDate(request));
+        }
+
         [Permission(FunctionTypeEnum.EDITBOOKING)]
         [ApiAuthorize]
         [HttpPost]
