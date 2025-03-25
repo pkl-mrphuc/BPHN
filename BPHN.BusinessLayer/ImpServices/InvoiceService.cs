@@ -184,6 +184,17 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
+            var isValidQuantity = await _itemService.CheckQuantityInStock(data.Items ?? Enumerable.Empty<InvoiceItem>());
+            if (isValidQuantity)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_DATA,
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDDATA, context.LanguageConfig)
+                };
+            }
+
             data.Id = Guid.NewGuid();
             data.Detail = JsonConvert.SerializeObject(data.Items);
             data.Date = DateTime.Now;
@@ -210,7 +221,7 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 if (data.Items is not null && InvoiceStatusEnum.PAID.ToString().Equals(data.Status))
                 {
-                    await _itemService.UpdateQuantity(context.Id, data.Items.Where(x => x.ItemId != Guid.Empty));
+                    await _itemService.UpdateQuantity(data.Items.Where(x => x.ItemId != Guid.Empty));
                 }
                 await _notificationService.Insert(context, NotificationTypeEnum.INSERTINVOICE, new Invoice
                 {
@@ -274,6 +285,17 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
+            var isValidQuantity = await _itemService.CheckQuantityInStock(data.Items ?? Enumerable.Empty<InvoiceItem>());
+            if (!isValidQuantity)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_DATA,
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDDATA, context.LanguageConfig)
+                };
+            }
+
             data.ModifiedBy = context.FullName;
             data.ModifiedDate = DateTime.Now;
             data.Date = DateTime.Now;
@@ -285,7 +307,7 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 if (data.Items is not null && InvoiceStatusEnum.PAID.ToString().Equals(data.Status))
                 {
-                    await _itemService.UpdateQuantity(context.Id, data.Items.Where(x => x.ItemId != Guid.Empty));
+                    await _itemService.UpdateQuantity(data.Items.Where(x => x.ItemId != Guid.Empty));
                 }
                 await _notificationService.Insert(context, NotificationTypeEnum.UPDATEINVOICE, new Invoice
                 {

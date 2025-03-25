@@ -75,6 +75,8 @@ namespace BPHN.BusinessLayer.ImpServices
                     return await _overviewRepository.GetRevenueQuarter(accountId, DateTime.Parse((type.Parameter ?? DateTime.Now).ToString(), styles: DateTimeStyles.RoundtripKind));
                 case StatisticTypeEnum.TOTALDETAILBOOKINGDAY:
                     return await _overviewRepository.GetTotalDetailBookingDay(accountId, DateTime.Parse((type.Parameter ?? DateTime.Now).ToString(), styles: DateTimeStyles.RoundtripKind));
+                case StatisticTypeEnum.REVENUESERVICEYEAR:
+                    return await _overviewRepository.GetRevenueServiceYear(accountId, DateTime.Parse((type.Parameter ?? DateTime.Now).ToString(), styles: DateTimeStyles.RoundtripKind));
                 default:
                     throw new NotImplementedException();
             }

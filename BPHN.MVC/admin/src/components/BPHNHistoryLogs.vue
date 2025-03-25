@@ -94,7 +94,7 @@ onMounted(() => {
     <div class="container">
       <el-page-header icon="" v-if="isMobile" class="mb-3" @back="onBack">
         <template #content>
-          <span class="text-large font-600 mr-3">{{ t("Configurations") }}</span>
+          <span class="text-large font-600 mr-3">{{ t("HistoryLog") }}</span>
         </template>
         <template #extra>
           <div class="d-flex flex-row">

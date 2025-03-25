@@ -1,6 +1,7 @@
 <script setup>
 import StatisticCard from "@/components/StatisticCard.vue";
 import StatisticBookingCard from "@/components/StatisticBookingCard.vue";
+import PieChart from "@/components/PieChartCard.vue";
 import { BookingStatusEnum, StatisticTypeEnum } from "@/const";
 import { useI18n } from "vue-i18n";
 import { useStore } from "vuex";
@@ -20,6 +21,7 @@ const revenueMonth = ref({ value: 0, preValue: 0, parameter: now.value });
 const revenueYear = ref({ value: 0, preValue: 0, parameter: now.value });
 const revenueQuarter = ref({ value: 0, preValue: 0, parameter: now.value });
 const totalDetailBookingDay = ref({ value: 0, parameter: now.value });
+const revenueServicesYear = ref({});
 const checked1 = ref(true);
 const checked2 = ref(true);
 const checked3 = ref(true);
@@ -46,6 +48,7 @@ const loadData = () => {
     let types = [
         { name: StatisticTypeEnum.TOTALBOOKINGDAY, parameter: totalBookingDay.value.parameter },
         { name: StatisticTypeEnum.TOTALDETAILBOOKINGDAY, parameter: totalDetailBookingDay.value.parameter },
+        { name: StatisticTypeEnum.REVENUESERVICEYEAR, parameter: revenueServicesYear.value.parameter },
     ];
     if (checked1.value) types.push({ name: StatisticTypeEnum.REVENUEDAY, parameter: revenueDay.value.parameter });
     if (checked2.value) types.push({ name: StatisticTypeEnum.REVENUEMONTH, parameter: revenueMonth.value.parameter });
@@ -76,6 +79,9 @@ const loadData = () => {
             }
             if (result.TOTALDETAILBOOKINGDAY) {
                 totalDetailBookingDay.value = result.TOTALDETAILBOOKINGDAY;
+            }
+            if (result.REVENUESERVICEYEAR) {
+                revenueServicesYear.value = result.REVENUESERVICEYEAR;
             }
         }
     });
@@ -155,14 +161,12 @@ onBeforeMount(() => {
                                 </div>
                             </div>
                             <div class="col-12 col-sm-12 col-md-12 col-lg-4">
-
+                                
                             </div>
                         </div>
                     </div>
-                    <div>
-                        <div :class="isMobile ? 'mb-4 mt-4' : 'mb-4 mr-4'">
-                            
-                        </div>
+                    <div :class="isMobile ? 'mb-4 mt-4' : 'mb-4 mr-4'" id="booking">
+                        <pie-chart :key="revenueServicesYear" :type="StatisticTypeEnum.REVENUESERVICEYEAR" :data="revenueServicesYear"></pie-chart>
                     </div>
                 </div>
                 <div class="col-12 col-sm-12 col-md-12 col-lg-3">
@@ -188,12 +192,4 @@ onBeforeMount(() => {
 </template>
 
 <style scoped>
-html.dark #booking {
-    background-color: #121212; 
-    border-radius: 20px;
-}
-html #booking {
-    background-color: #f5f5f5; 
-    border-radius: 20px;
-}
 </style>

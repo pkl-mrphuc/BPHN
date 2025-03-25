@@ -9,5 +9,6 @@
         Task<object> GetRevenueMonth(Guid accountId, DateTime now);
         Task<object> GetRevenueQuarter(Guid accountId, DateTime now);
         Task<object> GetRevenueYear(Guid accountId, DateTime now);
+        Task<object> GetRevenueServiceYear(Guid accountId, DateTime now);
     }
 }
