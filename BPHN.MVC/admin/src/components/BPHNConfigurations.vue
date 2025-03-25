@@ -183,7 +183,7 @@ const onBack = () => {
         </div>
       </div>
       <div>
-        <el-table :data="lstConfig" border style="height: calc(100vh - 150px)">
+        <el-table :data="lstConfig" border style="height: calc(100vh - 156px)">
           <el-table-column :label="t('Title')" width="200">
             <template #default="scope">
               <span>{{ t(scope.row.name) }}</span>

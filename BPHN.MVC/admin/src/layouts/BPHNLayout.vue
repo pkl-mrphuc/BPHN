@@ -12,7 +12,7 @@ const handleClose = () => {
 </script>
 
 <template>
-  <div class="common-layout">
+  <div>
     <el-container>
       <el-header>
         <bphn-header></bphn-header>
@@ -21,7 +21,7 @@ const handleClose = () => {
         <el-drawer v-model="drawer" :before-close="handleClose" direction="ltr" :withHeader="false">
           <bphn-menu></bphn-menu>
         </el-drawer>
-        <el-main class="main-layout">
+        <el-main>
           <router-view />
         </el-main>
       </el-container>
@@ -76,19 +76,5 @@ export default {
 </script>
 
 <style scoped>
-.common-layout .el-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 2019;
-  width: 100%;
-}
 
-.main-layout {
-  padding-top: calc(var(--el-main-padding) + 60px);
-}
-
-.common-layout :deep(.el-drawer) {
-  width: 300px !important;
-}
 </style>

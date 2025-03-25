@@ -89,16 +89,4 @@ onMounted(() => {
 </template>
 
 <style>
-.bphn-statistic3 {
-    border: 0;
-    border-radius: 15px;
-    padding: 30px;
-}
-.bphn-statistic3__title{
-    font-size: 24px;
-    margin-bottom: 7px;
-}
-.bphn-statistic3__chart {
-    height: 470px;
-}
 </style>

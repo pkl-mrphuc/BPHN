@@ -1,105 +1,48 @@
 html.dark {
-    --fc-border-color: #363637;
-    --fc-today-bg-color: #18222c;
-    --el-text-color-secondary: #f5f5f5 !important;
-}
-
-html.dark .fc-col-header {
     background-color: #262626;
-}
-
-html.dark body {
-    margin: 0;
-    padding: 0;
-    font-size: 14px;
-    color: #f5f5f5;
-    background-color: #262626;
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-html.dark .el-menu-vertical-demo {
-    overflow-y: scroll;
-    border-right: 0 !important;
-}
-
-::-webkit-scrollbar {
-    width: 0px;
-}
-
-html.dark .bphn-statistic1 {
-    background-color: #121212;
-}
-
-html.dark .bphn-statistic2 {
-    background-color: #555555;
+    color: #f2f2f2;
 }
 
 html.dark .el-header {
     background-color: #121212;
 }
 
-html.dark .el-table__body-wrapper tr td.el-table-fixed-column--right {
-    background: #262626;
+html.dark .el-drawer {
+    background-color: #121212;
+}
+
+html.dark .el-menu {
+    background-color: #121212;
 }
 
 html.dark .el-table {
-    --el-table-header-bg-color: #262626;
+    --el-table-header-bg-color: #121212;
+}
+
+html.dark .el-table__body-wrapper tr td.el-table-fixed-column--right {
+    background-color: unset;
+}
+
+html.dark .el-table thead.is-group th.el-table__cell {
+    background: #121212;
+}
+
+html.dark .el-dialog__title {
+    color: #f2f2f2;
+}
+
+html.dark .bphn-statistic2 {
+    background-color: #555555;
+}
+
+html.dark #booking {
+  background-color: #121212;
 }
 
 html.dark .el-card {
-    --el-card-bg-color: #121212;
+    background-color: #121212;
 }
 
-html.dark .el-dialog {
-    --el-dialog-title-font-size: calc(var(--font-size-base)* 1.75);
-}
-
-html.dark .el-dialog__header {
-    padding-left: 20px;
-    padding-right: 20px;
-}
-
-html.dark .el-dialog__body {
-    padding: 15px 20px;
-}
-
-html.dark .el-dialog__footer {
-    padding: auto 20px;
-}
-
-html .el-dialog__title {
-    font-weight: 700;
-}
-
-html.dark .el-drawer {
-    top: unset !important;
-}
-
-html.dark .el-menu-vertical-demo {
-    height: calc(100vh - 60px);
-    padding-top: 60px;
-}
-
-html.dark #prev_icon {
-    background-image: url("../images/prev-dark.svg");
-    position: absolute;
-    top: 8px;
-    left: 70px;
-    display: block;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-html.dark #next_icon {
-    background-image: url("../images/next-dark.svg") !important;
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    display: block;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    cursor: pointer;
+html.dark .el-statistic__content {
+    color: #f2f2f2;
 }

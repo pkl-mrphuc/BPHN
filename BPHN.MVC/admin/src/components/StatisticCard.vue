@@ -79,45 +79,4 @@ const diffTo = () => {
 </template>
 
 <style scoped>
-.el-card {
-    border: 0;
-    border-radius: 15px;
-    padding: 30px;
-}
-.el-card.is-always-shadow {
-    box-shadow: none;
-}
-.statistic__title{
-    font-size: 24px;
-    margin-bottom: 7px;
-}
-.statistic__footer {
-    margin-top: 20px;
-    font-size: 12px;
-}
-.statistic__footer--up {
-    background-color: #55be24;
-    border-radius: 5px;
-    padding: 4px 8px;
-    margin-right: 6px;
-    font-weight: 700;
-}
-.statistic__footer--down {
-    background-color: #f51a1a;
-    border-radius: 5px;
-    padding: 4px 8px;
-    margin-right: 6px;
-    font-weight: 700;
-}
-.statistic__footer--equal {
-    background-color: #838383;
-    border-radius: 5px;
-    padding: 4px 8px;
-    margin-right: 6px;
-    font-weight: 700;
-}
-.el-statistic {
-  --el-statistic-content-font-size: 35px;
-  --el-statistic-content-font-weight: 700;
-}
 </style>
