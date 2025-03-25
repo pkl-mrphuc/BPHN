@@ -94,7 +94,7 @@ onMounted(() => {
     <div class="container">
       <el-page-header icon="" v-if="isMobile" class="mb-3" @back="onBack">
         <template #content>
-          <span class="text-large font-600 mr-3">{{ t("Configurations") }}</span>
+          <span class="text-large font-600 mr-3">{{ t("HistoryLog") }}</span>
         </template>
         <template #extra>
           <div class="d-flex flex-row">
@@ -118,7 +118,7 @@ onMounted(() => {
         </div>
       </div>
       <div>
-        <el-table :data="lstHistoryLog" border style="height: calc(100vh - 230px)" :empty-text="t('NoData')">
+        <el-table :data="lstHistoryLog" border style="height: calc(100vh - 220px)" :empty-text="t('NoData')">
           <el-table-column :label="t('CreatedDate')" width="200">
             <template #default="scope">
               {{ dateToString(scope.row.createdDate, formatDate, true) }}

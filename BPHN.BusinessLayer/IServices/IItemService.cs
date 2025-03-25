@@ -8,6 +8,7 @@ namespace BPHN.BusinessLayer.IServices
         Task<ServiceResultModel> GetInstance(string id);
         Task<ServiceResultModel> Insert(Item data);
         Task<ServiceResultModel> Update(Item data);
-        Task UpdateQuantity(Guid accountId, IEnumerable<InvoiceItem> items);
+        Task<bool> CheckQuantityInStock(IEnumerable<InvoiceItem> items);
+        Task UpdateQuantity(IEnumerable<InvoiceItem> items);
     }
 }

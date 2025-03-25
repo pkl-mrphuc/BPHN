@@ -220,6 +220,7 @@ const en = {
     REVENUEQUARTER: 'Revenue quarter',
     TOTALBOOKINGYEAR: 'Booking year',
     TOTALBOOKINGDAY: 'Booking today',
+    REVENUESERVICEYEAR: 'Service revenue',
     DiffToPreDay: 'Compared to the previous day',
     DiffToPreMonth: 'Compared to the previous month',
     DiffToPreYear: 'Compared to the previous year',

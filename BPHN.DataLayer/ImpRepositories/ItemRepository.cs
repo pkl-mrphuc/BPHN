@@ -167,7 +167,7 @@ namespace BPHN.DataLayer.ImpRepositories
             return true;
         }
 
-        public async Task UpdateQuantity(Guid accountId, IEnumerable<InvoiceItem> items)
+        public async Task UpdateQuantity(IEnumerable<InvoiceItem> items)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
@@ -181,6 +181,26 @@ namespace BPHN.DataLayer.ImpRepositories
                     });
                 }
             }
+        }
+
+        public async Task<bool> CheckQuantityInStock(IEnumerable<InvoiceItem> items)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                foreach (var item in items)
+                {
+                    var quantity = await connection.QueryFirstOrDefaultAsync<int>(Query.ITEM__GET_QUANTITY_BY_ID, new Dictionary<string, object>
+                    {
+                        { "@id", item.ItemId },
+                    });
+                    if (quantity < item.Quantity)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
     }
 }

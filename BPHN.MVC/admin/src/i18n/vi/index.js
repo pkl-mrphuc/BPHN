@@ -220,6 +220,7 @@ const vi = {
     REVENUEQUARTER: 'Doanh thu quý',
     TOTALBOOKINGYEAR: 'Booking năm',
     TOTALBOOKINGDAY: 'Booking hôm nay',
+    REVENUESERVICEYEAR: 'Doanh thu dịch vụ năm',
     DiffToPreDay: 'So với hôm trước',
     DiffToPreMonth: 'So với tháng trước',
     DiffToPreYear: 'So với năm trước',

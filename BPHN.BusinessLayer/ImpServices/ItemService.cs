@@ -258,9 +258,14 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task UpdateQuantity(Guid accountId, IEnumerable<InvoiceItem> items)
+        public async Task UpdateQuantity(IEnumerable<InvoiceItem> items)
         {
-            await _itemRepository.UpdateQuantity(accountId, items);
+            await _itemRepository.UpdateQuantity(items);
+        }
+
+        public async Task<bool> CheckQuantityInStock(IEnumerable<InvoiceItem> items)
+        {
+            return await _itemRepository.CheckQuantityInStock(items);
         }
     }
 }

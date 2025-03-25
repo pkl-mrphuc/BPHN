@@ -132,5 +132,15 @@ namespace BPHN.DataLayer.ImpRepositories
                 return result;
             }
         }
+
+        public async Task<object> GetRevenueServiceYear(Guid accountId, DateTime now)
+        {
+            return new
+            {
+                preValue = 1000,
+                value = 100,
+                parameter = now.Year,
+            };
+        }
     }
 }

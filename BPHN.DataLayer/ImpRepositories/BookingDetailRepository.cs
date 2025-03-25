@@ -81,7 +81,6 @@ namespace BPHN.DataLayer.ImpRepositories
                 connection.Open();
                 var lstBookingDetail = await connection.QueryAsync<CalendarEvent>(Query.BOOKING_DETAIL__GET_CALENDAR_EVENTS, new Dictionary<string, object>
                 {
-                    { "@status0", BookingStatusEnum.SUCCESS.ToString() },
                     { "@startDate", startDate.ToString("yyyy-MM-dd 00:00:00") },
                     { "@endDate", endDate.ToString("yyyy-MM-dd 23:59:59") },
                     { "@pitchId", pitchId },

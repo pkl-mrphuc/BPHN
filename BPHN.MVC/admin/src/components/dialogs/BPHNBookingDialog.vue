@@ -306,12 +306,12 @@ onMounted(() => {
         </div>
         <div class="mb-2 row" v-if="isRecurring">
           <div class="mb-2 col-12 col-sm-6">
-            <div class="mr-2">
+            <div :class="isMobile ? '' : 'mr-2'">
               <el-date-picker type="date" :placeholder="t('FromDate')" class="w-100" v-model="fromDate" @change="changeDate" :disabled-date="disabledDate"/>
             </div>
           </div>
           <div class="mb-2 col-12 col-sm-6">
-            <div class="ml-2">
+            <div :class="isMobile ? '' : 'ml-2'">
               <el-date-picker type="date" :placeholder="t('ToDate')" class="w-100" v-model="toDate" @change="changeDate" disabled/>
             </div>
           </div>

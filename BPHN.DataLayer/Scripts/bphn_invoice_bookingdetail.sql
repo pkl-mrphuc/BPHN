@@ -31,10 +31,10 @@ CREATE TABLE `invoice_bookingdetail` (
   `ModifiedDate` datetime DEFAULT NULL,
   `ModifiedBy` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`Id`),
-  KEY `booking_detail_idx` (`BookingDetailId`),
-  KEY `invoice_idx` (`InvoiceId`),
-  CONSTRAINT `booking_detail` FOREIGN KEY (`BookingDetailId`) REFERENCES `booking_details` (`Id`),
-  CONSTRAINT `invoice` FOREIGN KEY (`InvoiceId`) REFERENCES `invoices` (`Id`)
+  KEY `idx_1` (`BookingDetailId`),
+  KEY `idx_2` (`InvoiceId`),
+  CONSTRAINT `fk_5` FOREIGN KEY (`BookingDetailId`) REFERENCES `booking_details` (`Id`),
+  CONSTRAINT `fk_6` FOREIGN KEY (`InvoiceId`) REFERENCES `invoices` (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

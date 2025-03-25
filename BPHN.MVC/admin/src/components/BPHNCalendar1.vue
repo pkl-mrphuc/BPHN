@@ -285,9 +285,4 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.square {
-  width: 15px;
-  height: 15px;
-  border-radius: 3px;
-}
 </style>

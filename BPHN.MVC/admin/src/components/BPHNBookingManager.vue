@@ -379,7 +379,7 @@ onMounted(() => {
         </div>
       </div>
       <div class="body">
-        <el-table :data="lstBooking" :empty-text="t('NoData')" style="height: calc(100vh - 230px)">
+        <el-table :data="lstBooking" :empty-text="t('NoData')" style="height: calc(100vh - 220px)">
           <el-table-column :label="t('Status')" width="100">
             <template #default="scope">
               <el-tag type="success" size="small" v-if="equals(scope.row.bookingStatus, BookingStatusEnum.SUCCESS)">{{

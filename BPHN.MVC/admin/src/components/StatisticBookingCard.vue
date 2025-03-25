@@ -19,18 +19,4 @@ const props = defineProps({
 </template>
 
 <style scoped>
-.bphn-statistic2 {
-    width: 114px;
-    height: 114px;
-    border-radius: 18px;
-    cursor: pointer;
-}
-.bphn-statistic2__status {
-    font-size: 16px;
-    margin-bottom: 16px;
-}
-.bphn-statistic2__data {
-    font-size: 26px;
-    font-weight: 700;
-}
 </style>

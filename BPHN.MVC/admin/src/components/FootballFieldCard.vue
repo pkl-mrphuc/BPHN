@@ -77,9 +77,4 @@ const readImageFile = (file) => {
 </template>
 
 <style scoped>
-.image {
-  width: 100%;
-  display: block;
-  object-fit: cover;
-}
 </style>

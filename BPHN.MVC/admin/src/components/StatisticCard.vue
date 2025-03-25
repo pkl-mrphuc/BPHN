@@ -14,21 +14,23 @@ const props = defineProps({
 const val = ref(props.data?.value ?? 0);
 const preVal = ref(props.data?.preValue ?? 0);
 const time = ref(props.data?.parameter);
-const isDown = ref(false);
+
+const compareClass = () => {
+    let result = val.value == preVal.value ? 0 : (val.value > preVal.value ? 1 : -1);
+    switch (result) {
+        case 1: return "statistic__footer--up";
+        case -1: return "statistic__footer--down";
+        default: return "statistic__footer--equal"
+    }
+};
 
 const diff = () => {
-    if (preVal.value == 0 && val.value > 0) return "100%";
+    if (preVal.value == 0 && val.value > 0) return "+100%";
     if (preVal.value == 0 && val.value == 0) return "0%";
     
     let result = (((val.value - preVal.value) / preVal.value) * 100);
-    if (result > 0) {
-        isDown.value = false;
-        return `+${result.toFixed(0)}%`;
-    }
-    else {
-        isDown.value = true;
-        return `${result.toFixed(0)}%`;
-    }
+    if (result > 0) return `+${result.toFixed(0)}%`;
+    else return `${result.toFixed(0)}%`;
 };
 
 const title = () => {
@@ -39,7 +41,6 @@ const title = () => {
         case StatisticTypeEnum.REVENUEQUARTER: return `${t(StatisticTypeEnum.REVENUEQUARTER)} ${time.value}`;
         case StatisticTypeEnum.TOTALBOOKINGYEAR: return `${t(StatisticTypeEnum.TOTALBOOKINGYEAR)} ${time.value}`;
         case StatisticTypeEnum.TOTALBOOKINGDAY: return `${t(StatisticTypeEnum.TOTALBOOKINGDAY)}`;
-        default: return "";
     }
 };
 
@@ -55,8 +56,6 @@ const diffTo = () => {
             return `${t("DiffToPreYear")}`;
         case StatisticTypeEnum.REVENUEQUARTER: 
             return `${t("DiffToPreQuarter")}`;
-        default: 
-            return "";
     }
 };
 
@@ -72,7 +71,7 @@ const diffTo = () => {
         </el-statistic>
         <div class="statistic__footer">
             <div class="d-flex flex-row align-items-center">
-                <span :class="(isDown ? 'statistic__footer--down' : 'statistic__footer--up')">{{ diff() }}</span>
+                <span :class="compareClass()">{{ diff() }}</span>
                 <span>{{ diffTo() }}</span>
             </div>
         </div>
@@ -80,38 +79,4 @@ const diffTo = () => {
 </template>
 
 <style scoped>
-.el-card {
-    border: 0;
-    border-radius: 15px;
-    padding: 30px;
-}
-.el-card.is-always-shadow {
-    box-shadow: none;
-}
-.statistic__title{
-    font-size: 24px;
-    margin-bottom: 7px;
-}
-.statistic__footer {
-    margin-top: 20px;
-    font-size: 12px;
-}
-.statistic__footer--up {
-    background-color: #55be24;
-    border-radius: 5px;
-    padding: 4px 8px;
-    margin-right: 6px;
-    font-weight: 700;
-}
-.statistic__footer--down {
-    background-color: #f51a1a;
-    border-radius: 5px;
-    padding: 4px 8px;
-    margin-right: 6px;
-    font-weight: 700;
-}
-.el-statistic {
-  --el-statistic-content-font-size: 35px;
-  --el-statistic-content-font-weight: 700;
-}
 </style>

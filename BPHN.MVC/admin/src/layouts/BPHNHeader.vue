@@ -18,6 +18,7 @@ const { openModal, hasRole } = useToggleModal();
 const { padToFive } = useCommonFn();
 const lstNotification = ref([]);
 const hasNewNoti = ref(false);
+const isMobile = ref(store.getters["config/isMobile"]);
 
 onMounted(() => {
   store.dispatch("notification/get").then((res) => {
@@ -105,15 +106,17 @@ const toggle = () => {
 <template>
   <section class="h-100 d-flex flex-row align-items-center justify-content-between">
     <div class="pointer d-flex flex-row align-items-center justify-content-between">
-      <el-button @click="toggle" class="mr-4" circle :icon="Expand" size="large"></el-button>
-      <img id="logo" src="../assets/images/logo.png" alt="">
-      <h4 @click="goToHome" class="fs-2 m-0">BPHN</h4>
+      <el-button @click="toggle" class="mr-2" circle :icon="Expand" size="large"></el-button>
+      <div @click="goToHome" class="d-flex flex-row align-items-center">
+        <img height="50" class="mt-3" src="../assets/images/logo.png"/>
+        <h4 class="fs-2 m-0 mt-1">BPHN</h4>
+      </div>
     </div>
     <div class="d-flex flex-row align-items-center">
-      <p class="account pointer">{{ t("Hello") }}
-        <span class="mx-1 text-decoration-underline" @click="showAccountInfo">{{ fullname }}</span>
+      <p v-if="!isMobile">{{ t("Hello") }}
+        <span class="pointer fw-bold mx-1 text-decoration-underline" @click="showAccountInfo">{{ fullname }}</span>
       </p>
-      <div class="mx-1 pointer account-sm" @click="showAccountInfo">
+      <div class="mx-1 pointer" @click="showAccountInfo">
         <el-icon size="24"><Avatar /></el-icon>
       </div>
       <div class="mx-1 pointer">
@@ -127,7 +130,7 @@ const toggle = () => {
           <el-empty v-if="lstNotification.length == 0" :description="t('NoData')" />
         </el-popover>
       </div>
-      <div class="mx-1 pointer" @click="refresh">
+      <div v-if="false" class="mx-1 pointer" @click="refresh">
         <el-icon size="24"><Refresh /></el-icon>
       </div>
       <el-button class="mx-1 pointer" type="info" :icon="SwitchButton" circle @click="logout"></el-button>
@@ -135,29 +138,3 @@ const toggle = () => {
   </section>
   <AccountInfoDialog v-if="hasRole('AccountInfoDialog')"> </AccountInfoDialog>
 </template>
-
-<style scoped>
-
-#logo {
-  margin-top: 9px;
-  height: 50px;
-}
-
-.account {
-  display: none;
-}
-
-.account-sm {
-  display: block;
-}
-
-@media (min-width: 576px) {
-  .account-sm {
-    display: none;
-  }
-
-  .account {
-    display: block;
-  }
-}
-</style>

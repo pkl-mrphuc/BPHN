@@ -1,126 +1,40 @@
 html {
-    --fc-border-color: #363637;
-    --fc-today-bg-color: #18222c;
-    --el-text-color-secondary: #555555 !important;
-}
-
-html body {
-    margin: 0;
-    padding: 0;
-    font-size: 14px;
-    color: #555555;
     background-color: #ffffff;
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-html .el-menu-vertical-demo {
-    overflow-y: scroll;
-    border-right: 0 !important;
+    color: #555555;
 }
 
 html .el-header {
-    background-color: #f5f5f5f5;
-}
-
-html .el-card {
-    --el-card-bg-color: #f5f5f5;
-}
-
-html .el-dialog {
-    --el-dialog-title-font-size: calc(var(--font-size-base)* 1.75);
-}
-
-html .el-dialog__header {
-    padding-left: 20px;
-    padding-right: 20px;
-}
-
-html .el-dialog__body {
-    padding: 15px 20px;
-}
-
-html .el-dialog__footer {
-    padding-left: 20px;
-    padding-right: 20px;
-}
-
-html .el-dialog__title {
-    font-weight: 700;
+    background-color: #f2f2f2;
 }
 
 html .el-drawer {
-    top: unset !important;
+    background-color: #f2f2f2;
 }
 
-html .el-menu-vertical-demo {
-    height: calc(100vh - 60px);
-    padding-top: 60px;
+html .el-menu {
+    background-color: #f2f2f2;
 }
 
-html .bphn-statistic1 {
-    background-color: #f5f5f5f5;
+html .el-table {
+    --el-table-header-bg-color: var(--el-fill-color-light);
+}
+
+html .el-dialog__title {
+    color: #555555;
 }
 
 html .bphn-statistic2 {
     background-color: #eaeaea;
 }
 
-html #prev_icon {
-    background-image: url("../images/prev.svg");
-    position: absolute;
-    top: 8px;
-    left: 70px;
-    display: block;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    cursor: pointer;
+html #booking {
+  background-color: #f2f2f2;
 }
 
-html #next_icon {
-    background-image: url("../images/next.svg");
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    display: block;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    cursor: pointer;
+html .el-card {
+    background-color: #f2f2f2;
 }
 
-html .img-anime {
-    max-height: 100%;
-    max-width: 100%;
-    width: auto;
-    height: auto;
-}
-
-html .box_right {
-    padding: 50px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-html .box_right__form {
-    width: 100%;
-}
-
-html .back-login-btn {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-}
-
-html .img.img-anime {
-    display: none;
-}
-
-@media (min-width: 768px) {
-    html .img.img-anime {
-        display: block;
-    }
+html .el-statistic__content {
+    color: #555555;
 }
