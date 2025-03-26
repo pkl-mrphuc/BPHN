@@ -1,8 +1,3 @@
-:root {
-  --fc-border-color: #ebeef5;
-  --fc-today-bg-color: #ecf5ff;
-}
-
 .fc .fc-timegrid-slot {
   height: 2.5em;
 }

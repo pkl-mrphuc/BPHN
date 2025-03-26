@@ -38,3 +38,16 @@ html .el-card {
 html .el-statistic__content {
     color: #555555;
 }
+
+html .fc-col-header {
+    background-color: #f2f2f2;
+}
+
+html .fc-theme-standard td, .fc-theme-standard th {
+    border: unset;
+    border: 1px solid var(--el-border-color-lighter);
+}
+
+html .fc-theme-standard .fc-scrollgrid {
+    border: 1px solid var(--el-border-color-lighter);
+}
