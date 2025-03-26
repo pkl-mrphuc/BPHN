@@ -123,7 +123,7 @@ const readImageFile = (file) => {
         <div class="row">
           <div class="d-flex flex-row justify-content-center mb-3 col-12 col-sm-12 col-md-3 pointer" @click="upload">
             <img v-if="avatarUrl" ref="imgAvatar" :src="avatarUrl" height="120" width="120" class="avatar" />
-            <img v-else height="120" width="120" ref="imgAvatar" src="../../assets/images/avatar-default.png" class="image" />
+            <img v-else height="120" width="120" ref="imgAvatar" src="../../assets/images/avatar-default.png" class="avatar" />
 
             <!-- hdf = hidden field -->
             <input type="file" hidden accept="image/*" @change="changeHdfFile" name="hdfFile" ref="hdfFile" />

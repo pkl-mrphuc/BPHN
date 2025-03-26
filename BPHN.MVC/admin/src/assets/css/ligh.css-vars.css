@@ -51,3 +51,7 @@ html .fc-theme-standard td, .fc-theme-standard th {
 html .fc-theme-standard .fc-scrollgrid {
     border: 1px solid var(--el-border-color-lighter);
 }
+
+html #border_content {
+    border-left: 1px solid #555555;
+}

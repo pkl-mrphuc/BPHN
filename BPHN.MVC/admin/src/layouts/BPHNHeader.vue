@@ -98,7 +98,6 @@ const markRead = () => {
 };
 
 const toggle = () => {
-  console.log(drawer.value);
   store.commit("account/setDrawer", !drawer.value);
 };
 </script>

@@ -5,7 +5,7 @@ import { defineProps, ref } from "vue";
 import useCommonFn from "@/commonFn";
 
 const { t } = useI18n();
-const { fakeNumber } = useCommonFn();
+const { fakeNumber, quarter } = useCommonFn();
 const props = defineProps({
   type: String,
   data: Object
@@ -13,7 +13,7 @@ const props = defineProps({
 
 const val = ref(props.data?.value ?? 0);
 const preVal = ref(props.data?.preValue ?? 0);
-const time = ref(props.data?.parameter);
+const time = ref(new Date());
 
 const compareClass = () => {
     let result = val.value == preVal.value ? 0 : (val.value > preVal.value ? 1 : -1);
@@ -36,10 +36,10 @@ const diff = () => {
 const title = () => {
     switch (props.type) {
         case StatisticTypeEnum.REVENUEDAY: return `${t(StatisticTypeEnum.REVENUEDAY)}`;
-        case StatisticTypeEnum.REVENUEMONTH: return `${t(StatisticTypeEnum.REVENUEMONTH)} ${time.value}`;
-        case StatisticTypeEnum.REVENUEYEAR: return `${t(StatisticTypeEnum.REVENUEYEAR)} ${time.value}`;
-        case StatisticTypeEnum.REVENUEQUARTER: return `${t(StatisticTypeEnum.REVENUEQUARTER)} ${time.value}`;
-        case StatisticTypeEnum.TOTALBOOKINGYEAR: return `${t(StatisticTypeEnum.TOTALBOOKINGYEAR)} ${time.value}`;
+        case StatisticTypeEnum.REVENUEMONTH: return `${t(StatisticTypeEnum.REVENUEMONTH)} ${time.value.getMonth() + 1}`;
+        case StatisticTypeEnum.REVENUEYEAR: return `${t(StatisticTypeEnum.REVENUEYEAR)} ${time.value.getFullYear()}`;
+        case StatisticTypeEnum.REVENUEQUARTER: return `${t(StatisticTypeEnum.REVENUEQUARTER)} ${quarter(time.value)}`;
+        case StatisticTypeEnum.TOTALBOOKINGYEAR: return `${t(StatisticTypeEnum.TOTALBOOKINGYEAR)} ${time.value.getFullYear()}`;
         case StatisticTypeEnum.TOTALBOOKINGDAY: return `${t(StatisticTypeEnum.TOTALBOOKINGDAY)}`;
     }
 };

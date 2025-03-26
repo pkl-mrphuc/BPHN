@@ -234,8 +234,8 @@ onMounted(() => {
       if (res?.data?.data) {
         lstStadium.value = res.data.data;
         changePitchId();
-        loading.close();
       }
+      loading.close();
     });
 
   nextTick(() => {
@@ -272,14 +272,14 @@ onMounted(() => {
           </div>
           <div class="mb-2 col-12 col-sm-4">
             <div :class="isMobile ? '' : 'mx-2'">
-              <el-select class="w-100" :placeholder="t('TimeFrame')" v-model="timeFrameInfoId">
+              <el-select class="w-100" :no-data-text="t('NoData')" :placeholder="t('TimeFrame')" v-model="timeFrameInfoId">
                 <el-option v-for="item in lstTimeFrame" :key="item" :label="item.newName" :value="item.id" />
               </el-select>
             </div>
           </div>
           <div class="mb-2 col-12 col-sm-4">
             <div :class="isMobile ? '' : 'ml-2'">
-              <el-select class="w-100" :placeholder="t('NameDetail')" v-model="nameDetail">
+              <el-select class="w-100" :no-data-text="t('NoData')" :placeholder="t('NameDetail')" v-model="nameDetail">
                 <el-option v-for="item in lstDetail" :key="item" :label="item" :value="item"/>
               </el-select>
             </div>

@@ -40,7 +40,7 @@ namespace BPHN.DataLayer.ImpRepositories
                     { "@val2", firstDayOfThisMonth.AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd 23:59:59") },
                     { "@preVal1", firstDayOfThisMonth.AddMonths(-1).AddDays(1).ToString("yyyy-MM-dd 00:00:00") },
                     { "@preVal2", firstDayOfThisMonth.AddDays(-1).ToString("yyyy-MM-dd 23:59:59") },
-                    { "@parameter", now.Month },
+                    { "@parameter", now },
                 });
                 return result;
             }
@@ -59,7 +59,7 @@ namespace BPHN.DataLayer.ImpRepositories
                     { "@val2", firstDayOfThisQuarter.AddMonths(3).AddDays(-1).ToString("yyyy-MM-dd 23:59:59") },
                     { "@preVal1", firstDayOfThisQuarter.AddMonths(-3).AddDays(1).ToString("yyyy-MM-dd 00:00:00") },
                     { "@preVal2", firstDayOfThisQuarter.AddDays(-1).ToString("yyyy-MM-dd 23:59:59") },
-                    { "@parameter", quarter },
+                    { "@parameter", now },
                 });
                 return result;
             }
@@ -77,7 +77,7 @@ namespace BPHN.DataLayer.ImpRepositories
                     { "@val2", firstDayOfThisYear.AddYears(1).AddDays(-1).ToString("yyyy-MM-dd 23:59:59") },
                     { "@preVal1", firstDayOfThisYear.AddYears(-1).AddDays(1).ToString("yyyy-MM-dd 00:00:00") },
                     { "@preVal2", firstDayOfThisYear.AddDays(-1).ToString("yyyy-MM-dd 23:59:59") },
-                    { "@parameter", now.Year },
+                    { "@parameter", now },
                 });
                 return result;
             }
@@ -112,7 +112,7 @@ namespace BPHN.DataLayer.ImpRepositories
                     { "@val2", firstDayOfThisYear.AddYears(1).AddDays(-1).ToString("yyyy-MM-dd 23:59:59") },
                     { "@preVal1", firstDayOfThisYear.AddYears(-1).AddDays(1).ToString("yyyy-MM-dd 00:00:00") },
                     { "@preVal2", firstDayOfThisYear.AddDays(-1).ToString("yyyy-MM-dd 23:59:59") },
-                    { "@parameter", now.Year },
+                    { "@parameter", now },
                 });
                 return result;
             }
@@ -135,12 +135,18 @@ namespace BPHN.DataLayer.ImpRepositories
 
         public async Task<object> GetRevenueServiceYear(Guid accountId, DateTime now)
         {
-            return new
+            using (var connection = ConnectDB(GetConnectionString()))
             {
-                preValue = 1000,
-                value = 100,
-                parameter = now.Year,
-            };
+                var firstDayOfThisYear = new DateTime(now.Year, 1, 1, 0, 0, 0);
+                var result = await connection.QueryFirstOrDefaultAsync<object>(Query.STATISTIC__GET_REVENUE_SERVICE_YEAR, new Dictionary<string, object>
+                {
+                    { "@accountId", accountId },
+                    { "@val1", firstDayOfThisYear.ToString("yyyy-MM-dd 00:00:00") },
+                    { "@val2", firstDayOfThisYear.AddYears(1).AddDays(-1).ToString("yyyy-MM-dd 23:59:59") },
+                    { "@parameter", now },
+                });
+                return result;
+            }
         }
     }
 }
