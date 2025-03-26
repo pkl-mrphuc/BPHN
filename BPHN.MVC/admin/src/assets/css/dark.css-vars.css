@@ -46,3 +46,28 @@ html.dark .el-card {
 html.dark .el-statistic__content {
     color: #f2f2f2;
 }
+
+html.dark .fc-col-header {
+    background-color: #121212;
+}
+
+html.dark .fc-theme-standard td, .fc-theme-standard th {
+    border: unset;
+    border: 1px solid var(--el-border-color-lighter);
+}
+
+html.dark .fc-theme-standard .fc-scrollgrid {
+    border: 1px solid var(--el-border-color-lighter);
+}
+
+html.dark .bphn-statistic3__title{
+    color: var(--el-text-color-regular);
+}
+
+html.dark #border_content {
+    border-left: 1px solid #f2f2f2;
+}
+
+html.dark .bphn-event {
+    background-color: #121212;
+}

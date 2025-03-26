@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, computed, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useStore } from "vuex";
 import { Calendar } from "@fullcalendar/core";
@@ -28,10 +28,7 @@ const lstFrameInfo = ref([]);
 const lstNameDetail = ref([]);
 const lstCurrentFrame = ref([]);
 const calendarManager = ref([]);
-
-const isMobile = computed(() => {
-    return store.getters["config/isMobile"];
-});
+const isMobile = ref(store.getters["config/isMobile"]);
 
 const loadData = () => {
     store.dispatch("pitch/getAll", null)
@@ -88,6 +85,21 @@ const renderCalendar = (index) => {
         eventClick: function (calEvent) {
             openForm(calEvent);
         },
+        eventContent: function (arg) {
+            let info = arg.event.extendedProps;
+            
+            let bgClass = 'border-info';
+            if (info.teamA && info.teamB) bgClass = 'border-danger';
+            else if (info.teamA) bgClass = 'border-primary';
+
+            let eventHtml = `
+                <div class="bphn-event ${bgClass}">
+                    <div class="bphn-event__name" title="${info.teamA}">${info.teamA}</div>
+                </div>
+            `;
+
+            return { domNodes: [createElementFromHTML(eventHtml)] };
+        }
     };
     if (isMobile.value) {
         options.initialView = "timeGridThreeDay";
@@ -102,6 +114,12 @@ const renderCalendar = (index) => {
     calendarManager.value[lstNameDetail.value[index]] = calendar;
     calendar.render();
 };
+
+const createElementFromHTML = (htmlString) => {
+    let div = document.createElement("div");
+    div.innerHTML = htmlString.trim();
+    return div.firstChild;
+}
 
 const getEventByDate = async (nameDetail, start, end) => {
     let result = await store.dispatch("bookingDetail/getByRangeDate", { startDate: start, endDate: end, nameDetail: nameDetail, pitchId: pitchId.value });

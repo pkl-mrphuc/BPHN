@@ -1,7 +1,7 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import { Refresh, Search } from "@element-plus/icons-vue";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import useCommonFn from "@/commonFn";
 import { ElNotification } from "element-plus";
@@ -15,15 +15,9 @@ const pageSize = ref(50);
 const totalRecord = ref(0);
 const txtSearch = ref("");
 const running = ref(0);
+const formatDate = ref(store.getters["config/getFormatDate"]);
+const isMobile = ref(store.getters["config/isMobile"]);
 const { dateToString } = useCommonFn();
-
-const formatDate = computed(() => {
-  return store.getters["config/getFormatDate"];
-});
-
-const isMobile = computed(() => {
-  return store.getters["config/isMobile"];
-});
 
 const onBack = () => {
   router.push("overview");

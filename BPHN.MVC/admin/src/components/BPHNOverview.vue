@@ -5,13 +5,13 @@ import PieChart from "@/components/PieChartCard.vue";
 import { BookingStatusEnum, StatisticTypeEnum } from "@/const";
 import { useI18n } from "vue-i18n";
 import { useStore } from "vuex";
-import { computed, onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 import router from "@/routers";
 import useCommonFn from "@/commonFn";
 
 const { t } = useI18n();
 const store = useStore();
-const { dateToString } = useCommonFn();
+const { quarter } = useCommonFn();
 const visible = ref(false);
 const now = ref(new Date());
 const totalBookingDay = ref({ value: 0, preValue: 0, parameter: now.value });
@@ -27,14 +27,7 @@ const checked2 = ref(true);
 const checked3 = ref(true);
 const checked4 = ref(true);
 const checked5 = ref(true);
-
-const formatDate = computed(() => {
-  return store.getters["config/getFormatDate"];
-});
-
-const isMobile = computed(() => {
-    return store.getters["config/isMobile"];
-});
+const isMobile = ref(store.getters["config/isMobile"]);
 
 const onBack = () => {
   router.push("overview");
@@ -42,6 +35,17 @@ const onBack = () => {
 
 const filter = () => {
     loadData();
+};
+
+const title = (type) => {
+    switch (type) {
+        case StatisticTypeEnum.REVENUEDAY: return `${t(StatisticTypeEnum.REVENUEDAY)}`;
+        case StatisticTypeEnum.REVENUEMONTH: return `${t(StatisticTypeEnum.REVENUEMONTH)} ${now.value.getMonth() + 1}`;
+        case StatisticTypeEnum.REVENUEYEAR: return `${t(StatisticTypeEnum.REVENUEYEAR)} ${now.value.getFullYear()}`;
+        case StatisticTypeEnum.REVENUEQUARTER: return `${t(StatisticTypeEnum.REVENUEQUARTER)} ${quarter(now.value)}`;
+        case StatisticTypeEnum.TOTALBOOKINGYEAR: return `${t(StatisticTypeEnum.TOTALBOOKINGYEAR)} ${now.value.getFullYear()}`;
+        case StatisticTypeEnum.TOTALBOOKINGDAY: return `${t(StatisticTypeEnum.TOTALBOOKINGDAY)}`;
+    }
 };
 
 const loadData = () => {
@@ -103,11 +107,11 @@ onBeforeMount(() => {
                     <div class="d-flex flex-row">
                         <el-popover :visible="visible" placement="bottom" :width="300">
                             <div class="d-flex flex-column mb-3">
-                                <el-checkbox v-model="checked1" :label="`${t(StatisticTypeEnum.REVENUEDAY)} ${dateToString(revenueDay.parameter, formatDate)}`" size="large" />
-                                <el-checkbox v-model="checked2" :label="`${t(StatisticTypeEnum.REVENUEMONTH)} ${revenueMonth.parameter}`" size="large" />
-                                <el-checkbox v-model="checked3" :label="`${t(StatisticTypeEnum.REVENUEQUARTER)} ${revenueQuarter.parameter}`" size="large" />
-                                <el-checkbox v-model="checked4" :label="`${t(StatisticTypeEnum.REVENUEYEAR)} ${revenueYear.parameter}`" size="large" />
-                                <el-checkbox v-model="checked5" :label="`${t(StatisticTypeEnum.TOTALBOOKINGYEAR)} ${totalBookingYear.parameter}`" size="large" />
+                                <el-checkbox v-model="checked1" :label="`${title(StatisticTypeEnum.REVENUEDAY)}`" size="large" />
+                                <el-checkbox v-model="checked2" :label="`${title(StatisticTypeEnum.REVENUEMONTH)}`" size="large" />
+                                <el-checkbox v-model="checked3" :label="`${title(StatisticTypeEnum.REVENUEQUARTER)}`" size="large" />
+                                <el-checkbox v-model="checked4" :label="`${title(StatisticTypeEnum.REVENUEYEAR)}`" size="large" />
+                                <el-checkbox v-model="checked5" :label="`${title(StatisticTypeEnum.TOTALBOOKINGYEAR)}`" size="large" />
                             </div>
                             <div class="d-flex flex-row align-items-center justify-content-end">
                                 <el-button size="small" text @click="visible = false">{{ t('Cancel') }}</el-button>
@@ -125,11 +129,11 @@ onBeforeMount(() => {
                 <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row-reverse">
                     <el-popover :visible="visible" placement="bottom" :width="300">
                         <div class="d-flex flex-column mb-3">
-                            <el-checkbox v-model="checked1" :label="`${t(StatisticTypeEnum.REVENUEDAY)} ${dateToString(revenueDay.parameter, formatDate)}`" size="large" />
-                            <el-checkbox v-model="checked2" :label="`${t(StatisticTypeEnum.REVENUEMONTH)} ${revenueMonth.parameter}`" size="large" />
-                            <el-checkbox v-model="checked3" :label="`${t(StatisticTypeEnum.REVENUEQUARTER)} ${revenueQuarter.parameter}`" size="large" />
-                            <el-checkbox v-model="checked4" :label="`${t(StatisticTypeEnum.REVENUEYEAR)} ${revenueYear.parameter}`" size="large" />
-                            <el-checkbox v-model="checked5" :label="`${t(StatisticTypeEnum.TOTALBOOKINGYEAR)} ${totalBookingYear.parameter}`" size="large" />
+                            <el-checkbox v-model="checked1" :label="`${title(StatisticTypeEnum.REVENUEDAY)}`" size="large" />
+                            <el-checkbox v-model="checked2" :label="`${title(StatisticTypeEnum.REVENUEMONTH)}`" size="large" />
+                            <el-checkbox v-model="checked3" :label="`${title(StatisticTypeEnum.REVENUEQUARTER)}`" size="large" />
+                            <el-checkbox v-model="checked4" :label="`${title(StatisticTypeEnum.REVENUEYEAR)}`" size="large" />
+                            <el-checkbox v-model="checked5" :label="`${title(StatisticTypeEnum.TOTALBOOKINGYEAR)}`" size="large" />
                         </div>
                         <div class="d-flex flex-row align-items-center justify-content-end">
                             <el-button size="small" text @click="visible = false">{{ t('Cancel') }}</el-button>
@@ -143,13 +147,17 @@ onBeforeMount(() => {
             </div>
             <div class="row">
                 <div class="col-12 col-sm-12 col-md-12 col-lg-9">
-                    <div :class="isMobile ? '' : 'mb-4 mr-4'" id="booking">
+                    <div :class="isMobile ? '' : 'mb-4 mr-4'" :id="isMobile ? '' : 'booking'">
                         <div class="row">
-                            <div class="col-12 col-sm-12 col-md-12 col-lg-3">
-                                <statistic-card :key="totalBookingDay" :type="StatisticTypeEnum.TOTALBOOKINGDAY" :data="totalBookingDay"></statistic-card>
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-4 d-flex flex-row">
+                                <div class="w-100">
+                                    <statistic-card :key="totalBookingDay" :type="StatisticTypeEnum.TOTALBOOKINGDAY" :data="totalBookingDay"></statistic-card>
+                                </div>
+                                <div class="h-100" id="border" v-if="!isMobile">
+                                    <div class="h-100" id="border_content"></div>
+                                </div>
                             </div>
-                            <div
-                                class="col-12 col-sm-12 col-md-12 col-lg-5 d-flex flex-row align-items-center justify-content-around">
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-5 d-flex flex-row align-items-center justify-content-around">
                                 <div>
                                     <statistic-booking-card :key="totalDetailBookingDay" :type="BookingStatusEnum.PENDING" :value="totalDetailBookingDay.pending"></statistic-booking-card>
                                 </div>
@@ -160,8 +168,16 @@ onBeforeMount(() => {
                                     <statistic-booking-card :key="totalDetailBookingDay" :type="BookingStatusEnum.CANCEL" :value="totalDetailBookingDay.cancel"></statistic-booking-card>
                                 </div>
                             </div>
-                            <div class="col-12 col-sm-12 col-md-12 col-lg-4">
-                                
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-3 d-flex flex-row align-items-center justify-content-end">
+                                <div class="h-100 d-flex flex-column justify-content-between" style="padding: 30px;">
+                                    <div class="d-flex flex-row justify-content-end">
+                                        <span>Chi tiết</span>
+                                    </div>
+                                    <div class="d-flex flex-column">
+                                        <el-button class="mb-2" type="primary">Phê duyệt</el-button>
+                                        <el-button class="m-0" type="danger">Từ chối</el-button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { ref, onMounted, inject, computed } from "vue";
+import { ref, onMounted, inject } from "vue";
 import { useStore } from "vuex";
 import { Edit, Filter, Search } from "@element-plus/icons-vue";
 import useToggleModal from "@/register-components/actionDialog";
@@ -29,10 +29,7 @@ const status = ref(StatusEnum.ACTIVE);
 const code = ref("");
 const unit = ref("");
 const quantityStatus = ref(QuantityStatusEnum.AVAILABLE);
-
-const isMobile = computed(() => {
-  return store.getters["config/isMobile"];
-});
+const isMobile = ref(store.getters["config/isMobile"]);
 
 const loadData = () => {
   if (running.value > 0) return;

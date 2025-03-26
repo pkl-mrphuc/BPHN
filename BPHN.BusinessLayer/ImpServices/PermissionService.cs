@@ -92,7 +92,7 @@ namespace BPHN.BusinessLayer.ImpServices
             });
 
             var oldPermissions = await _permissionRepository.GetPermissions(accountId);
-            var saveResult = await _permissionRepository.Save(permissions);
+            var saveResult = await _permissionRepository.Save(accountId, permissions);
             if (saveResult)
             {
                 var account = new Account() { UserName = string.Empty };

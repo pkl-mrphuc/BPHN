@@ -20,6 +20,7 @@ const formatDate = ref(store.getters["config/getFormatDate"]);
 const multiUser = ref(store.getters["config/getMultiUser"]);
 const email = ref(store.getters["config/getSystemEmail"]);
 const role = ref(store.getters["account/getRole"]);
+const isMobile = ref(store.getters["config/isMobile"]);
 const objConnect = ref(null);
 const running = ref(0);
 const { equals } = useCommonFn();
@@ -68,10 +69,6 @@ const lstConfig = computed(() => {
       }
     ];
   }
-});
-
-const isMobile = computed(() => {
-  return store.getters["config/isMobile"];
 });
 
 const getDarkMode = computed(() => {

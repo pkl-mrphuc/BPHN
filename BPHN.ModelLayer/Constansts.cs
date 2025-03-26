@@ -69,6 +69,7 @@
         public const string HISTORY_LOG__GET_DESCRIPTION = "select ModelId, OldData, NewData from history_log_descriptions where Id = @id";
 
         public const string PERMISSION__GET_ALL = "select * from permissions where AccountId = @accountId order by FunctionType";
+        public const string PERMISSION__DELETE = "delete from permissions where AccountId = @accountId";
 
         public const string PITCH__GET_BY_ID = "select Id, Name, Address, MinutesPerMatch, Quantity, TimeSlotPerDay, Status, NameDetails from pitchs where id = @id";
         public const string PITCH__GET_ALL = "select * from pitchs where ManagerId = @accountId and Status = @status";
@@ -115,5 +116,16 @@
                                                             @parameter as parameter
                                                         from invoices 
                                                         where Date >= @preVal1 and Date <= @val2 and AccountId = @accountId";
+        public const string STATISTIC__GET_REVENUE_SERVICE_YEAR = @"select 
+                                                                        (select sum(Total) 
+                                                                            from invoices where Date >= @val1 and Date <= @val2 and AccountId = @accountId) as total,
+                                                                        (select SUM(tfi.Price) 
+                                                                            from invoice_bookingdetail ibd
+                                                                            join invoices i on i.Id = ibd.InvoiceId
+                                                                            join booking_details bd on bd.Id = ibd.BookingDetailId
+                                                                            join bookings b on b.Id = bd.BookingId
+                                                                            join time_frame_infos tfi on tfi.Id = b.TimeFrameInfoId
+                                                                            where i.Date >= @val1 and i.Date <= @val2 and b.AccountId = @accountId) as detail1,
+                                                                        @parameter as parameter";
     }
 }

@@ -45,27 +45,19 @@ const connect = () => {
     <template #body>
       <div class="container">
         <div class="row">
-          <div class="col-12 col-sm-12 col-md-9">
-            <div class="row mb-3">
-              <div class="col-6 fw-bold d-flex flex-row align-items-center justify-content-end">
-                <div class="mx-3">{{ t("Email") }}</div>
+          <div class="col-12 col-sm-12 col-md-8">
+              <div class="row">
+                  <div class="mb-2 col-12 col-sm-12 col-md-4 fw-bold">{{ t("Email") }}</div>
+                  <div class="col-12 col-sm-12 col-md-8">
+                    <el-input class="mb-2" type="text" v-model="email" disabled />
+                  </div>
               </div>
-              <div class="col-6">
-                <div class="mx-3">
-                  <el-input type="text" v-model="email" disabled />
-                </div>
+              <div class="row">
+                  <div class="mb-2 col-12 col-sm-12 col-md-4 fw-bold">{{ t("Password") }}</div>
+                  <div class="col-12 col-sm-12 col-md-8">
+                    <el-input class="mb-2" type="password" v-model="password" />
+                  </div>
               </div>
-            </div>
-            <div class="row mb-3" >
-              <div class="col-6 fw-bold d-flex flex-row align-items-center justify-content-end">
-                <div class="mx-3">{{ t("Password") }}</div>
-              </div>
-              <div class="col-6">
-                <div class="mx-3">
-                  <el-input type="password" v-model="password" />
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

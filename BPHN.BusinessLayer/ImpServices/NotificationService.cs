@@ -105,6 +105,12 @@ namespace BPHN.BusinessLayer.ImpServices
                 case NotificationTypeEnum.CHANGEPERMISSION:
                 case NotificationTypeEnum.INSERTACCOUNT:
                     return EntityEnum.ACCOUNT.ToString();
+                case NotificationTypeEnum.INSERTINVOICE:
+                case NotificationTypeEnum.UPDATEINVOICE:
+                    return EntityEnum.INVOICE.ToString();
+                case NotificationTypeEnum.INSERTSERVICE:
+                case NotificationTypeEnum.UPDATESERVICE:
+                    return EntityEnum.SERVICE.ToString();
                 default:
                     return string.Empty;
             }

@@ -12,13 +12,20 @@ const props = defineProps({
     data: Object
 });
 const chartRef = ref(null);
-const time = ref(props.data?.parameter);
+const time = ref(new Date());
 const darkMode = ref(store.getters["config/getDarkMode"]);
 
 const title = () => {
     switch (props.type) {
-        case StatisticTypeEnum.REVENUESERVICEYEAR: return `${t(StatisticTypeEnum.REVENUESERVICEYEAR)} ${time.value}`;
+        case StatisticTypeEnum.REVENUESERVICEYEAR: return `${t(StatisticTypeEnum.REVENUESERVICEYEAR)} ${time.value.getFullYear()}`;
     }
+};
+
+const getDataSource = () => {
+    return [
+        { name: t("BM"), value: props.data?.detail1 ?? 0 },
+        { name: t("Services"), value: (props?.data?.total ?? 0) - (props.data?.detail1 ?? 0) },
+    ];
 };
 
 onMounted(() => {
@@ -62,13 +69,7 @@ onMounted(() => {
                     labelLine: {
                         show: false
                     },
-                    data: [
-                        { value: 1048, name: 'Search Engine' },
-                        { value: 735, name: 'Direct' },
-                        { value: 580, name: 'Email' },
-                        { value: 484, name: 'Union Ads' },
-                        { value: 300, name: 'Video Ads' }
-                    ]
+                    data: getDataSource()
                 }
             ]
         };

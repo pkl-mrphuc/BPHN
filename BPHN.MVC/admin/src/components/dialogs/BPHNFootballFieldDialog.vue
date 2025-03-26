@@ -39,10 +39,7 @@ const lstTimeFrame = ref(props.data?.timeFrameInfos ?? []);
 const lstDetail = ref(props.data?.listNameDetails ?? []);
 const inpName = ref(null);
 const running = ref(0);
-
-const isMobile = computed(() => {
-    return store.getters["config/isMobile"];
-});
+const isMobile = ref(store.getters["config/isMobile"]);
 
 const maxTimeSlot = computed(() => {
   return 1440 / minutesPerMatch.value;

@@ -3,7 +3,7 @@ import { useI18n } from "vue-i18n";
 import FootballFieldCard from "@/components/FootballFieldCard.vue";
 import useToggleModal from "@/register-components/actionDialog";
 import { ElLoading, ElNotification } from "element-plus";
-import { onMounted, inject, ref, computed } from "vue";
+import { onMounted, inject, ref } from "vue";
 import { useStore } from "vuex";
 import { Refresh } from "@element-plus/icons-vue";
 import router from "@/routers";
@@ -16,10 +16,7 @@ const objStadium = ref(null);
 const lstStadium = ref([]);
 const mode = ref("add");
 const running = ref(0);
-
-const isMobile = computed(() => {
-  return store.getters["config/isMobile"];
-});
+const isMobile = ref(store.getters["config/isMobile"]);
 
 const onBack = () => {
   router.push("overview");
