@@ -67,3 +67,7 @@ html.dark .bphn-statistic3__title{
 html.dark #border_content {
     border-left: 1px solid #f2f2f2;
 }
+
+html.dark .bphn-event {
+    background-color: #121212;
+}

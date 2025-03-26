@@ -1,7 +1,7 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import { Refresh, Search, Edit, CircleCheck } from "@element-plus/icons-vue";
-import { ref, onMounted, inject, computed } from "vue";
+import { ref, onMounted, inject } from "vue";
 import { useStore } from "vuex";
 import useToggleModal from "@/register-components/actionDialog";
 import { ElLoading, ElNotification } from "element-plus";
@@ -24,10 +24,7 @@ const objTenant = ref(null);
 const lstPermission = ref([]);
 const mode = ref("add");
 const accountId = ref(null);
-
-const isMobile = computed(() => {
-  return store.getters["config/isMobile"];
-});
+const isMobile = ref(store.getters["config/isMobile"]);
 
 const onBack = () => {
   router.push("overview");

@@ -71,7 +71,11 @@ export const NotificationTypeEnum =
     INSERTPITCH: 6,
     UPDATEPITCH: 7,
     INSERTACCOUNT: 8,
-    UPDATEACCOUNT: 9
+    UPDATEACCOUNT: 9,
+    INSERTSERVICIE: 10,
+    UPDATESERVICE: 11,
+    INSERTINVOICE: 12,
+    UPDATEINVOICE: 13
 }
 
 export const CustomerTypeEnum = {

@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { ref, onMounted, computed, inject } from "vue";
+import { ref, onMounted, inject } from "vue";
 import { useStore } from "vuex";
 import { Filter, Edit, Search } from "@element-plus/icons-vue";
 import useToggleModal from "@/register-components/actionDialog";
@@ -29,14 +29,8 @@ const status = ref(InvoiceStatusEnum.DRAFT);
 const customerType = ref(CustomerTypeEnum.RETAIL);
 const date = ref(new Date());
 const paymentType = ref(PaymentTypeEnum.BANK);
-
-const formatDate = computed(() => {
-  return store.getters["config/getFormatDate"];
-});
-
-const isMobile = computed(() => {
-  return store.getters["config/isMobile"];
-});
+const formatDate = ref(store.getters["config/getFormatDate"]);
+const isMobile = ref(store.getters["config/isMobile"]);
 
 const onBack = () => {
   router.push("overview");

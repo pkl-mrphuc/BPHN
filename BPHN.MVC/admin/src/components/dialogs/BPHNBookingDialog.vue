@@ -6,8 +6,7 @@ import {
   onMounted,
   defineEmits,
   inject,
-  nextTick,
-  computed
+  nextTick
 } from "vue";
 import useToggleModal from "@/register-components/actionDialog";
 import useCommonFn from "@/commonFn";
@@ -39,10 +38,7 @@ const timeFrameInfoId = ref(props.data?.timeFrameInfoId ?? null);
 const phoneNumber = ref(props.data?.phoneNumber ?? null);
 const email = ref(props.data?.email ?? null);
 const inpPhoneNumber = ref(null);
-
-const isMobile = computed(() => {
-    return store.getters["config/isMobile"];
-});
+const isMobile = ref(store.getters["config/isMobile"]);
 
 const showMakeRecurring = () => {
   if (isRecurring.value) {

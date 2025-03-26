@@ -11,7 +11,7 @@ import {
 import useToggleModal from "@/register-components/actionDialog";
 import { useStore } from "vuex";
 import { ElLoading, ElNotification } from "element-plus";
-import { inject, ref, onMounted, computed } from "vue";
+import { inject, ref, onMounted } from "vue";
 import useCommonFn from "@/commonFn";
 import { BookingStatusEnum, CustomerTypeEnum, DepositStatusEnum } from "@/const";
 import router from "@/routers";
@@ -47,14 +47,8 @@ const deposit = ref(DepositStatusEnum.DEPOSITED);
 const pitchId = ref(null);
 const timeFrameId = ref(null);
 const nameDetail = ref(null);
-
-const formatDate = computed(() => {
-  return store.getters["config/getFormatDate"];
-});
-
-const isMobile = computed(() => {
-  return store.getters["config/isMobile"];
-});
+const isMobile = ref(store.getters["config/isMobile"]);
+const formatDate = ref(store.getters["config/getFormatDate"]);
 
 const addNew = () => {
   if (running.value > 0) return;

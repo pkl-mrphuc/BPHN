@@ -165,7 +165,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var insertResult = await _itemRepository.Insert(data);
             if (insertResult)
             {
-                await _notificationService.Insert(context, NotificationTypeEnum.INSERTSERVICIE, new Item
+                await _notificationService.Insert(context, NotificationTypeEnum.INSERTSERVICE, new Item
                 {
                     Name = data.Name
                 });

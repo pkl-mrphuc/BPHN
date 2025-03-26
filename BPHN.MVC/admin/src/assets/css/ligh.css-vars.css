@@ -55,3 +55,12 @@ html .fc-theme-standard .fc-scrollgrid {
 html #border_content {
     border-left: 1px solid #555555;
 }
+
+html .bphn-event {
+    background-color: #eaeaea;
+}
+
+html .bphn-event>.bphn-event__name {
+    border-bottom: 2px dotted #555555;
+    color: #4f8cff;
+}

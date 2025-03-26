@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
 import { SwitchButton, Refresh, Avatar, Bell, Expand } from "@element-plus/icons-vue";
@@ -9,16 +9,17 @@ import NotificationCard from "@/components/NotificationCard.vue";
 import connection from "@/ws";
 import { ElNotification } from "element-plus";
 import { NotificationTypeEnum } from "@/const";
-import useCommonFn from "@/commonFn";
 
 const router = useRouter();
 const store = useStore();
 const { t } = useI18n();
 const { openModal, hasRole } = useToggleModal();
-const { padToFive } = useCommonFn();
+
 const lstNotification = ref([]);
 const hasNewNoti = ref(false);
 const isMobile = ref(store.getters["config/isMobile"]);
+const fullname = ref(store.getters["account/getFullName"]);
+const drawer = ref(store.getters["account/getDrawer"]);
 
 onMounted(() => {
   store.dispatch("notification/get").then((res) => {
@@ -33,39 +34,25 @@ onMounted(() => {
 
 const getMessage = (type, model) => { 
   model = JSON.parse(model);
+  console.log(model);
   switch (type) {
-    case NotificationTypeEnum.CANCELBOOKINGDETAIL:
-      return t("CANCELBOOKINGDETAIL", { code : `M${padToFive(model?.MatchCode)}` }) ;
-    case NotificationTypeEnum.UPDATEMATCH:
-      return t("UPDATEMATCH", { code : `M${padToFive(model?.MatchCode)}` });
-    case NotificationTypeEnum.INSERTBOOKING:
-      return t("INSERTBOOKING", { info: `${model?.PhoneNumber}/${model?.PitchName}-${model?.NameDetail}/${model?.TimeFrameInfoName}` });
-    case NotificationTypeEnum.DECLINEBOOKING:
-      return t("DECLINEBOOKING", { info: `${model?.PhoneNumber}/${model?.PitchName}-${model?.NameDetail}/${model?.TimeFrameInfoName}` });
-    case NotificationTypeEnum.APPROVALBOOKING:
-      return t("APPROVALBOOKING", { info: `${model?.PhoneNumber}/${model?.PitchName}-${model?.NameDetail}/${model?.TimeFrameInfoName}` });
-    case NotificationTypeEnum.CHANGEPERMISSION:
-      return t("CHANGEPERMISSION", { name: model?.UserName });
-    case NotificationTypeEnum.INSERTPITCH:
-      return t("INSERTPITCH", { name: model?.Name });
-    case NotificationTypeEnum.UPDATEPITCH:
-      return t("UPDATEPITCH", { name: model?.Name });
-    case NotificationTypeEnum.INSERTACCOUNT:
-      return t("INSERTACCOUNT", { name: model?.UserName });
-    case NotificationTypeEnum.UPDATEACCOUNT:
-      return t("UPDATEACCOUNT", { name: model?.UserName });
-    default:
-      return "";
+    case NotificationTypeEnum.CANCELBOOKINGDETAIL: return t("CANCELBOOKINGDETAIL") ;
+    case NotificationTypeEnum.UPDATEMATCH: return t("UPDATEMATCH");
+    case NotificationTypeEnum.INSERTBOOKING: return t("INSERTBOOKING");
+    case NotificationTypeEnum.DECLINEBOOKING: return t("DECLINEBOOKING");
+    case NotificationTypeEnum.APPROVALBOOKING: return t("APPROVALBOOKING");
+    case NotificationTypeEnum.CHANGEPERMISSION: return t("CHANGEPERMISSION");
+    case NotificationTypeEnum.INSERTPITCH: return t("INSERTPITCH");
+    case NotificationTypeEnum.UPDATEPITCH: return t("UPDATEPITCH");
+    case NotificationTypeEnum.INSERTACCOUNT: return t("INSERTACCOUNT");
+    case NotificationTypeEnum.UPDATEACCOUNT: return t("UPDATEACCOUNT");
+    case NotificationTypeEnum.INSERTSERVICIE: return t("INSERTSERVICIE");
+    case NotificationTypeEnum.UPDATESERVICE: return t("UPDATESERVICE");
+    case NotificationTypeEnum.INSERTINVOICE: return t("INSERTINVOICE");
+    case NotificationTypeEnum.UPDATEINVOICE: return t("UPDATEINVOICE");
+    default: return "";
   }
 };
-
-const fullname = computed(() => {
-  return store.getters["account/getFullName"];
-});
-
-const drawer = computed(() => {
-  return store.getters["account/getDrawer"];
-});
 
 const showAccountInfo = () => {
   openModal("AccountInfoDialog");
