@@ -19,7 +19,7 @@ const running = ref(0);
 const isMobile = ref(store.getters["config/isMobile"]);
 
 const onBack = () => {
-  router.push("overview");
+  router.push("calendar");
 };
 
 onMounted(() => {

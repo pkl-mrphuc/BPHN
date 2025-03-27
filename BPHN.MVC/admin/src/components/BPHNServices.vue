@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { ref, onMounted, inject } from "vue";
+import { ref, onMounted, inject, watchEffect } from "vue";
 import { useStore } from "vuex";
 import { Edit, Filter, Search } from "@element-plus/icons-vue";
 import useToggleModal from "@/register-components/actionDialog";
@@ -11,25 +11,36 @@ import router from "@/routers";
 
 const { t } = useI18n();
 const { openModal, hasRole } = useToggleModal();
-const store = useStore();
 const { fakeNumber, equals } = useCommonFn();
-
+const store = useStore();
 const loadingOptions = inject("loadingOptions");
-const lstItem = ref([]);
-const mode = ref("add");
-const objItem = ref(null);
-const running = ref(0);
+const isMobile = ref(store.getters["config/isMobile"]);
 const visible = ref(false);
+
+const running = ref(0);
+const mode = ref("add");
+const lstItem = ref([]);
+const objItem = ref(null);
+
+const txtSearch = ref("");
+const status = ref(StatusEnum.ACTIVE);
+const quantityStatus = ref(QuantityStatusEnum.AVAILABLE);
+const code = ref("");
+const unit = ref("");
+
 const checked1 = ref(false);
 const checked2 = ref(false);
 const checked3 = ref(false);
 const checked4 = ref(false);
-const txtSearch = ref("");
-const status = ref(StatusEnum.ACTIVE);
-const code = ref("");
-const unit = ref("");
-const quantityStatus = ref(QuantityStatusEnum.AVAILABLE);
-const isMobile = ref(store.getters["config/isMobile"]);
+
+watchEffect(() => { checked1.value = store.getters["cache/getServiceVariableCache"]?.checked1 ?? false; })
+watchEffect(() => { checked2.value = store.getters["cache/getServiceVariableCache"]?.checked2 ?? false; })
+watchEffect(() => { checked3.value = store.getters["cache/getServiceVariableCache"]?.checked3 ?? false; })
+watchEffect(() => { checked4.value = store.getters["cache/getServiceVariableCache"]?.checked4 ?? false; })
+watchEffect(() => { status.value = store.getters["cache/getServiceVariableCache"]?.status ?? StatusEnum.ACTIVE; })
+watchEffect(() => { quantityStatus.value = store.getters["cache/getServiceVariableCache"]?.quantityStatus ?? QuantityStatusEnum.AVAILABLE; })
+watchEffect(() => { code.value = store.getters["cache/getServiceVariableCache"]?.code ?? ""; })
+watchEffect(() => { unit.value = store.getters["cache/getServiceVariableCache"]?.unit ?? ""; })
 
 const loadData = () => {
   if (running.value > 0) return;
@@ -85,10 +96,20 @@ const openForm = (id) => {
 const filter = () => {
   visible.value = false;
   loadData();
+  store.commit("cache/setServiceVariableCache", {
+    status: status.value,
+    quantityStatus: quantityStatus.value,
+    code: code.value,
+    unit: unit.value,
+    checked1: checked1.value,
+    checked2: checked2.value,
+    checked3: checked3.value,
+    checked4: checked4.value,
+  });
 };
 
 const onBack = () => {
-  router.push("overview");
+  router.push("calendar");
 };
 
 onMounted(() => {

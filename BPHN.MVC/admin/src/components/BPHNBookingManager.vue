@@ -11,7 +11,7 @@ import {
 import useToggleModal from "@/register-components/actionDialog";
 import { useStore } from "vuex";
 import { ElLoading, ElNotification } from "element-plus";
-import { inject, ref, onMounted } from "vue";
+import { inject, ref, onMounted, watchEffect } from "vue";
 import useCommonFn from "@/commonFn";
 import { BookingStatusEnum, CustomerTypeEnum, DepositStatusEnum } from "@/const";
 import router from "@/routers";
@@ -20,12 +20,12 @@ const { t } = useI18n();
 const { openModal, hasRole } = useToggleModal();
 const store = useStore();
 const loadingOptions = inject("loadingOptions");
+const { dateToString, getWeekdays, equals, fakeNumber } = useCommonFn();
 const objBooking = ref(null);
 const pageIndex = ref(1);
 const pageSize = ref(50);
 const totalRecord = ref(0);
 const txtSearch = ref("");
-const { dateToString, getWeekdays, equals, fakeNumber } = useCommonFn();
 const lstBooking = ref([]);
 const lstPitch = ref([]);
 const lstFrameInfo = ref([]);
@@ -33,22 +33,39 @@ const running = ref(0);
 const mode = ref(null);
 const visible = ref(false);
 const objInvoice = ref(null);
+const isMobile = ref(store.getters["config/isMobile"]);
+const formatDate = ref(store.getters["config/getFormatDate"]);
+
+const status = ref(BookingStatusEnum.SUCCESS);
+const bookingDate = ref(new Date());
+const pitchId = ref(null);
+const timeFrameId = ref(null);
+const nameDetail = ref(null);
+const matchDate = ref(new Date());
+const deposit = ref(DepositStatusEnum.DEPOSITED);
+
 const checked1 = ref(false);
 const checked2 = ref(false);
-const checked4 = ref(false);
+const checked4 = ref(true);
 const checked5 = ref(false);
 const checked6 = ref(false);
 const checked7 = ref(false);
 const checked8 = ref(false);
-const status = ref(BookingStatusEnum.SUCCESS);
-const bookingDate = ref(new Date());
-const matchDate = ref(new Date());
-const deposit = ref(DepositStatusEnum.DEPOSITED);
-const pitchId = ref(null);
-const timeFrameId = ref(null);
-const nameDetail = ref(null);
-const isMobile = ref(store.getters["config/isMobile"]);
-const formatDate = ref(store.getters["config/getFormatDate"]);
+
+watchEffect(() => { checked1.value = store.getters["cache/getBmVariableCache"]?.checked1 ?? false; })
+watchEffect(() => { checked2.value = store.getters["cache/getBmVariableCache"]?.checked2 ?? false; })
+watchEffect(() => { checked4.value = store.getters["cache/getBmVariableCache"]?.checked4 ?? true; })
+watchEffect(() => { checked5.value = store.getters["cache/getBmVariableCache"]?.checked5 ?? false; })
+watchEffect(() => { checked6.value = store.getters["cache/getBmVariableCache"]?.checked6 ?? false; })
+watchEffect(() => { checked7.value = store.getters["cache/getBmVariableCache"]?.checked7 ?? false; })
+watchEffect(() => { checked8.value = store.getters["cache/getBmVariableCache"]?.checked8 ?? false; })
+watchEffect(() => { status.value = store.getters["cache/getBmVariableCache"]?.status ?? BookingStatusEnum.SUCCESS; })
+watchEffect(() => { bookingDate.value = store.getters["cache/getBmVariableCache"]?.bookingDate ?? new Date(); })
+watchEffect(() => { pitchId.value = store.getters["cache/getBmVariableCache"]?.pitchId ?? null; })
+watchEffect(() => { timeFrameId.value = store.getters["cache/getBmVariableCache"]?.timeFrameId ?? null; })
+watchEffect(() => { nameDetail.value = store.getters["cache/getBmVariableCache"]?.nameDetail ?? null; })
+watchEffect(() => { matchDate.value = store.getters["cache/getBmVariableCache"]?.matchDate ?? new Date(); })
+watchEffect(() => { deposit.value = store.getters["cache/getBmVariableCache"]?.deposit ?? DepositStatusEnum.DEPOSITED; })
 
 const addNew = () => {
   if (running.value > 0) return;
@@ -202,6 +219,22 @@ const cancel = (id) => {
 const filter = () => {
   visible.value = false;
   loadData();
+  store.commit("cache/setBmVariableCache", {
+    checked1: checked1.value,
+    checked2: checked2.value,
+    checked4: checked4.value,
+    checked5: checked5.value,
+    checked6: checked6.value,
+    checked7: checked7.value,
+    checked8: checked8.value,
+    status: status.value,
+    bookingDate: bookingDate.value,
+    pitchId: pitchId.value,
+    timeFrameId: timeFrameId.value,
+    nameDetail: nameDetail.value,
+    matchDate: matchDate.value,
+    deposit: deposit.value,
+  });
 };
 
 const prevClick = () => {
@@ -221,7 +254,7 @@ const currentChange = () => {
 };
 
 const onBack = () => {
-  router.push("overview");
+  router.push("calendar");
 };
 
 onMounted(() => {

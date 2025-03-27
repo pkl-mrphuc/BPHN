@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useStore } from "vuex";
 import { Calendar } from "@fullcalendar/core";
@@ -15,20 +15,22 @@ import {
 } from "@element-plus/icons-vue";
 
 const { t } = useI18n();
-const store = useStore();
 const { time, dateToString, equals } = useCommonFn();
 const { hasRole, openModal } = useToggleModal();
+const store = useStore();
+const isMobile = ref(store.getters["config/isMobile"]);
 
+const currentDate = ref(new Date());
 const objEvent = ref(null);
 const objMatch = ref(null);
-const currentDate = ref(new Date());
 const pitchId = ref(null);
 const lstPitch = ref([]);
 const lstFrameInfo = ref([]);
 const lstNameDetail = ref([]);
 const lstCurrentFrame = ref([]);
 const calendarManager = ref([]);
-const isMobile = ref(store.getters["config/isMobile"]);
+
+watchEffect(() => { pitchId.value = store.getters["cache/getCalendarVariableCache"]?.pitchId ?? null; });
 
 const loadData = () => {
     store.dispatch("pitch/getAll", null)
@@ -46,6 +48,10 @@ const loadData = () => {
 };
 
 const handleSelect = () => {
+    store.commit("cache/setCalendarVariableCache", 
+    { 
+        pitchId: pitchId.value 
+    });
     lstNameDetail.value = lstPitch.value.find(x => x.id == pitchId.value)?.nameDetails ?? [];
     lstCurrentFrame.value = lstFrameInfo.value.filter(x => x.pitchId == pitchId.value);
     calendarManager.value = [];

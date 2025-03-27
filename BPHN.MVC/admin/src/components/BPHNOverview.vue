@@ -5,15 +5,16 @@ import PieChart from "@/components/PieChartCard.vue";
 import { BookingStatusEnum, StatisticTypeEnum } from "@/const";
 import { useI18n } from "vue-i18n";
 import { useStore } from "vuex";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, watchEffect } from "vue";
 import router from "@/routers";
 import useCommonFn from "@/commonFn";
 
 const { t } = useI18n();
-const store = useStore();
 const { quarter } = useCommonFn();
+const store = useStore();
 const visible = ref(false);
 const now = ref(new Date());
+const isMobile = ref(store.getters["config/isMobile"]);
 const totalBookingDay = ref({ value: 0, preValue: 0, parameter: now.value });
 const totalBookingYear = ref({ value: 0, preValue: 0, parameter: now.value });
 const revenueDay = ref({ value: 0, preValue: 0, parameter: now.value });
@@ -27,14 +28,26 @@ const checked2 = ref(true);
 const checked3 = ref(true);
 const checked4 = ref(true);
 const checked5 = ref(true);
-const isMobile = ref(store.getters["config/isMobile"]);
+
+watchEffect(() => { checked1.value = store.getters["cache/getOverviewVariableCache"]?.checked1 ?? true; });
+watchEffect(() => { checked2.value = store.getters["cache/getOverviewVariableCache"]?.checked2 ?? true; });
+watchEffect(() => { checked3.value = store.getters["cache/getOverviewVariableCache"]?.checked3 ?? true; });
+watchEffect(() => { checked4.value = store.getters["cache/getOverviewVariableCache"]?.checked4 ?? true; });
+watchEffect(() => { checked5.value = store.getters["cache/getOverviewVariableCache"]?.checked5 ?? true; });
 
 const onBack = () => {
-  router.push("overview");
+  router.push("calendar");
 };
 
 const filter = () => {
     loadData();
+    store.commit("cache/setOverviewVariableCache", {
+        checked1: checked1.value,
+        checked2: checked2.value,
+        checked3: checked3.value,
+        checked4: checked4.value,
+        checked5: checked5.value
+    });
 };
 
 const title = (type) => {
