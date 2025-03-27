@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { ref, onMounted, inject } from "vue";
+import { ref, onMounted, inject, watchEffect } from "vue";
 import { useStore } from "vuex";
 import { Filter, Edit, Search } from "@element-plus/icons-vue";
 import useToggleModal from "@/register-components/actionDialog";
@@ -12,28 +12,38 @@ import router from "@/routers";
 const { t } = useI18n();
 const { openModal, hasRole } = useToggleModal();
 const { dateToString, fakeNumber, equals } = useCommonFn();
-
 const loadingOptions = inject("loadingOptions");
 const store = useStore();
-const lstInvoice = ref([]);
-const mode = ref("add");
-const objInvoice = ref(null);
-const running = ref(0);
+const formatDate = ref(store.getters["config/getFormatDate"]);
+const isMobile = ref(store.getters["config/isMobile"]);
 const visible = ref(false);
-const checked1 = ref(false);
-const checked2 = ref(false);
-const checked3 = ref(false);
-const checked4 = ref(false);
+const running = ref(0);
+const mode = ref("add");
+
+const lstInvoice = ref([]);
+const objInvoice = ref(null);
+
 const txtSearch = ref("");
 const status = ref(InvoiceStatusEnum.DRAFT);
 const customerType = ref(CustomerTypeEnum.RETAIL);
 const date = ref(new Date());
 const paymentType = ref(PaymentTypeEnum.BANK);
-const formatDate = ref(store.getters["config/getFormatDate"]);
-const isMobile = ref(store.getters["config/isMobile"]);
+const checked1 = ref(false);
+const checked2 = ref(false);
+const checked3 = ref(false);
+const checked4 = ref(false);
+
+watchEffect(() => { checked1.value = store.getters["cache/getInvoiceVariableCache"]?.checked1 ?? false; })
+watchEffect(() => { checked2.value = store.getters["cache/getInvoiceVariableCache"]?.checked2 ?? false; })
+watchEffect(() => { checked3.value = store.getters["cache/getInvoiceVariableCache"]?.checked3 ?? false; })
+watchEffect(() => { checked4.value = store.getters["cache/getInvoiceVariableCache"]?.checked4 ?? false; })
+watchEffect(() => { status.value = store.getters["cache/getInvoiceVariableCache"]?.status ?? InvoiceStatusEnum.DRAFT; })
+watchEffect(() => { customerType.value = store.getters["cache/getInvoiceVariableCache"]?.customerType ?? CustomerTypeEnum.RETAIL; })
+watchEffect(() => { date.value = store.getters["cache/getInvoiceVariableCache"]?.date ?? new Date(); })
+watchEffect(() => { paymentType.value = store.getters["cache/getInvoiceVariableCache"]?.paymentType ?? PaymentTypeEnum.BANK; })
 
 const onBack = () => {
-  router.push("overview");
+  router.push("calendar");
 };
 
 const loadData = () => {
@@ -84,6 +94,16 @@ const openForm = (id) => {
 const filter = () => {
   visible.value = false;
   loadData();
+  store.commit("cache/setInvoiceVariableCache", {
+    checked1: checked1.value,
+    checked2: checked2.value,
+    checked3: checked3.value,
+    checked4: checked4.value,
+    status: status.value,
+    paymentType: paymentType.value,
+    customerType: customerType.value,
+    date: date.value
+  });
 };
 
 onMounted(() => {
