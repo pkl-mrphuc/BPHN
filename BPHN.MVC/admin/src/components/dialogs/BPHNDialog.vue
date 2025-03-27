@@ -5,7 +5,8 @@ const { toggleModel } = useToggleModal();
 const show = ref(true);
 
 const props = defineProps({
-  title: String
+  title: String,
+  className: String
 });
 </script>
 
@@ -16,6 +17,7 @@ const props = defineProps({
     :before-close="toggleModel"
     :close-on-click-modal="false"
     class="w-100 w-sm-75 w-md-75 w-xl-50"
+    :class="props.className"
   >
     <slot name="body"></slot>
     <template #footer>

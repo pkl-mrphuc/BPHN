@@ -41,18 +41,18 @@ const connect = () => {
 </script>
 
 <template>
-  <Dialog :title="t('ConnectForm')">
+  <Dialog :title="t('ConnectForm')" :className="'w-xl-25'">
     <template #body>
       <div class="container">
         <div class="row">
-          <div class="col-12 col-sm-12 col-md-8">
-              <div class="row">
+          <div class="col-12 col-sm-12 col-md-12">
+              <div class="row d-flex flex-row align-items-center">
                   <div class="mb-2 col-12 col-sm-12 col-md-4 fw-bold">{{ t("Email") }}</div>
                   <div class="col-12 col-sm-12 col-md-8">
                     <el-input class="mb-2" type="text" v-model="email" disabled />
                   </div>
               </div>
-              <div class="row">
+              <div class="row d-flex flex-row align-items-center">
                   <div class="mb-2 col-12 col-sm-12 col-md-4 fw-bold">{{ t("Password") }}</div>
                   <div class="col-12 col-sm-12 col-md-8">
                     <el-input class="mb-2" type="password" v-model="password" />

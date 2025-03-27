@@ -127,6 +127,7 @@ const en = {
     ContactSupplier: 'Please contact supplier to use this feature.',
     MatchInfoForm: 'Match information form',
     ConnectForm: 'Connect system email',
+    LocationForm: 'My location',
     TeamA: 'Team A',
     TeamB: 'Team B',
     Note: 'Note',
@@ -230,6 +231,10 @@ const en = {
     DiffToPreYear: 'Compared to the previous year',
     DiffToPreQuarter: 'Compared to the previous quarter',
     Pick: 'Choose a facility',
-    Customize: 'Customize'
+    Customize: 'Customize',
+    Province: 'Province',
+    District: 'District',
+    Ward: 'Ward',
+    AddLocation: 'Add location'
 }
 export default en;

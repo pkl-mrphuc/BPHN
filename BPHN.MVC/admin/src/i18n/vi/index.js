@@ -127,6 +127,7 @@ const vi = {
     ContactSupplier: 'Vui lòng liên hệ nhà cung cấp để sử dụng tính năng này.',
     MatchInfoForm: 'Trận đấu',
     ConnectForm: 'Kết nối email hệ thống',
+    LocationForm: 'Vị trí của tôi',
     TeamA: 'Đội A',
     TeamB: 'Đội B',
     Note: 'Ghi chú',
@@ -230,7 +231,11 @@ const vi = {
     DiffToPreYear: 'So với năm trước',
     DiffToPreQuarter: 'So với quý trước',
     Pick: 'Chọn sân',
-    Customize: 'Tùy chỉnh'
+    Customize: 'Tùy chỉnh',
+    Province: 'Tỉnh/Thành phố',
+    District: 'Quận/Huyện',
+    Ward: 'Xã/Phường',
+    AddLocation: 'Thêm vị trí'
 }
 
 export default vi;
