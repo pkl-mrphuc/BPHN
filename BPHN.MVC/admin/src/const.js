@@ -5,39 +5,46 @@ export const RoleEnum = {
 };
 
 export const StatusEnum = {
-    ACTIVE: 'ACTIVE',
-    INACTIVE: 'INACTIVE'
+    ACTIVE: "ACTIVE",
+    INACTIVE: "INACTIVE"
 };
 
 export const QuantityStatusEnum = {
-    AVAILABLE: 'AVAILABLE',
-    UNAVAILABLE: 'UNAVAILABLE'
+    AVAILABLE: "AVAILABLE",
+    UNAVAILABLE: "UNAVAILABLE"
 };
 
 export const DepositStatusEnum = {
-    DEPOSITED: 'DEPOSITED',
-    NOTDEPOSIT: 'NOTDEPOSIT'
+    DEPOSITED: "DEPOSITED",
+    NOTDEPOSIT: "NOTDEPOSIT"
 };
 
 export const GenderEnum = {
-    MALE: 'MALE',
-    FEMALE: 'FEMALE',
-    OTHER: 'OTHER'
+    MALE: "MALE",
+    FEMALE: "FEMALE",
+    OTHER: "OTHER"
 };
 
+export const LicenseTypeEnum = {
+    TRIAL: "TRIAL",
+    BASIC: "BASIC",
+    PREMIUM: "PREMIUM",
+    ENTERPRISE: "ENTERPRISE"
+};  
+
 export const BookingStatusEnum = {
-    SUCCESS: 'SUCCESS',
-    CANCEL: 'CANCEL',
-    PENDING: 'PENDING'
+    SUCCESS: "SUCCESS",
+    CANCEL: "CANCEL",
+    PENDING: "PENDING"
 };
 
 export const ConfigKeyEnum = {
-    DARKMODE: 'DarkMode',
-    LANGUAGE: 'Language',
-    FORMATDATE: 'FormatDate',
-    MULTIUSER: 'MultiUser',
-    SYSTEMEMAIL: 'SystemEmail',
-    SECRETEMAIL: 'SecretEmail'
+    DARKMODE: "DarkMode",
+    LANGUAGE: "Language",
+    FORMATDATE: "FormatDate",
+    MULTIUSER: "MultiUser",
+    SYSTEMEMAIL: "SystemEmail",
+    SECRETEMAIL: "SecretEmail"
 };
 
 export const FunctionTypeEnum = {

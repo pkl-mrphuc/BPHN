@@ -145,4 +145,12 @@
         TOTALDETAILBOOKINGDAY = 6,
         REVENUESERVICEYEAR = 7
     };
+
+    public enum LicenseTypeEnum
+    {
+        TRIAL = 0,
+        BASIC = 1,
+        PREMIUM = 2,
+        ENTERPRISE = 3
+    }
 }

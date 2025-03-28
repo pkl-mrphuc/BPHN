@@ -246,6 +246,11 @@ const vi = {
     Province: "Tỉnh/Thành phố",
     District: "Quận/Huyện",
     Ward: "Xã/Phường",
+    License: "License",
+    Trial: "Trial",
+    Basic: "Basic",
+    Premium: "Premium",
+    Enterprise: "Enterprise"
 }
 
 export default vi;
