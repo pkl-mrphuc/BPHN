@@ -54,6 +54,8 @@ builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IOverviewRepository, OverviewRepository>();
 builder.Services.AddScoped<IOverviewService, OverviewService>();
+builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddSingleton<IRabbitMQProducerService, RabbitMQProducerService>();
 builder.Services.AddSingleton<IResourceService, ResourceService>();

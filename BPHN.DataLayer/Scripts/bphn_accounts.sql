@@ -40,7 +40,7 @@ CREATE TABLE `accounts` (
   `ModifiedDate` datetime DEFAULT NULL,
   `ModifiedBy` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`Id`),
-  KEY `idx_1` (`UserName`,`Email`,`FullName`)
+  KEY `idx_1` (`UserName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
