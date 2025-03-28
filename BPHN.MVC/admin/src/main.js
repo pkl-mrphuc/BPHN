@@ -21,6 +21,7 @@ import PermissionDialog from "@/components/dialogs/BPHNPermissionDialog.vue";
 import ConnectSystemEmailDialog from "@/components/dialogs/BPHNConnectSystemEmailDialog.vue";
 import InvoiceDialog from "@/components/dialogs/BPHNInvoiceDialog.vue";
 import ServiceDialog from "@/components/dialogs/BPHNServiceDialog.vue";
+import LocationDialog from "@/components/dialogs/BPHNLocationDialog.vue";
 jwtInterceptor();
 
 createApp(App)
@@ -49,4 +50,5 @@ createApp(App)
     .component("ConnectSystemEmailDialog", ConnectSystemEmailDialog)
     .component("InvoiceDialog", InvoiceDialog)
     .component("ServiceDialog", ServiceDialog)
+    .component("LocationDialog", LocationDialog)
     .mount("#app");

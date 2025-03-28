@@ -25,7 +25,7 @@ const props = defineProps({
 const { newDate, ticks } = useCommonFn();
 const emit = defineEmits(["callback"]);
 const { t } = useI18n();
-const { toggleModel } = useToggleModal();
+const { toggleModel, hasRole, openModal } = useToggleModal();
 
 const loadingOptions = inject("loadingOptions");
 const store = useStore();
@@ -260,6 +260,14 @@ const defaultTimeFrame = (sortOrder) => {
     timeEndTick: ticks(timeEnd),
   };
 };
+
+const addLocation = () => {
+  openModal("LocationDialog");
+};
+
+const setLocation = (value) => {
+  address.value = value;
+};
 </script>
 
 
@@ -290,7 +298,7 @@ const defaultTimeFrame = (sortOrder) => {
           </div>
           <div class="col-1 d-flex flex-row-reverse align-items-center">
             <div class="ml-2">
-              <el-icon size="24" class="pointer"><LocationInformation /></el-icon>
+              <el-icon :title="t('AddLocation')" @click="addLocation" size="24" class="pointer"><LocationInformation /></el-icon>
             </div>
           </div>
         </div>
@@ -373,4 +381,5 @@ const defaultTimeFrame = (sortOrder) => {
       </span>
     </template>
   </Dialog>
+  <LocationDialog @callback="setLocation" v-if="hasRole('LocationDialog')"></LocationDialog>
 </template>
