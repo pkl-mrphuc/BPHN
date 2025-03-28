@@ -218,7 +218,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task<ServiceResultModel> GetPitchs()
+        public async Task<ServiceResultModel> GetPitchs(bool onlyActive = true)
         {
             var context = _contextService.GetContext();
             if (context is null)
@@ -242,7 +242,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var lstPitch = await GetAll(context.Id);
+            var lstPitch = await GetAll(context.Id, onlyActive);
             var lstFrameInfo = await _timeFrameInfoService.GetByListPitchId(lstPitch.Select(x => x.Id));
             return new ServiceResultModel
             {
@@ -531,9 +531,9 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task<List<Pitch>> GetAll(Guid accountId)
+        public async Task<List<Pitch>> GetAll(Guid accountId, bool onlyActive = true)
         {
-            return await _pitchRepository.GetAll(accountId);
+            return await _pitchRepository.GetAll(accountId, onlyActive);
         }
 
         public async Task<Pitch?> GetById(Guid id)

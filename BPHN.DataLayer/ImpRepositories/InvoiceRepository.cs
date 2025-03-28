@@ -49,13 +49,19 @@ namespace BPHN.DataLayer.ImpRepositories
                     Value = accountId.ToString(),
                 }
             };
-            if (!string.IsNullOrWhiteSpace(txtSearch))
+            if (date.HasValue)
             {
                 conditions.Add(new WhereCondition
                 {
-                    Column = "CustomerPhone",
-                    Operator = "like",
-                    Value = $"%{txtSearch}%",
+                    Column = "Date",
+                    Operator = ">=",
+                    Value = date.Value.ToString("yyyy-MM-dd 00:00:00"),
+                });
+                conditions.Add(new WhereCondition
+                {
+                    Column = "Date",
+                    Operator = "<=",
+                    Value = date.Value.ToString("yyyy-MM-dd 23:59:59")
                 });
             }
             if (!string.IsNullOrWhiteSpace(status))
@@ -76,21 +82,6 @@ namespace BPHN.DataLayer.ImpRepositories
                     Value = customerType.Value,
                 });
             }
-            if (date.HasValue)
-            {
-                conditions.Add(new WhereCondition
-                {
-                    Column = "Date",
-                    Operator = ">=",
-                    Value = date.Value.ToString("yyyy-MM-dd 00:00:00"),
-                });
-                conditions.Add(new WhereCondition
-                {
-                    Column = "Date",
-                    Operator = "<=",
-                    Value = date.Value.ToString("yyyy-MM-dd 23:59:59")
-                });
-            }
             if (paymentType.HasValue)
             {
                 conditions.Add(new WhereCondition
@@ -98,6 +89,15 @@ namespace BPHN.DataLayer.ImpRepositories
                     Column = "PaymentType",
                     Operator = "=",
                     Value = paymentType.Value,
+                });
+            }
+            if (!string.IsNullOrWhiteSpace(txtSearch))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "CustomerPhone",
+                    Operator = "like",
+                    Value = $"%{txtSearch}%",
                 });
             }
             var where = BuildWhere(Query.INVOICE__GET_MANY, conditions);

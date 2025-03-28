@@ -72,7 +72,7 @@
         public const string PERMISSION__DELETE = "delete from permissions where AccountId = @accountId";
 
         public const string PITCH__GET_BY_ID = "select Id, Name, Address, MinutesPerMatch, Quantity, TimeSlotPerDay, Status, NameDetails from pitchs where id = @id";
-        public const string PITCH__GET_ALL = "select * from pitchs where ManagerId = @accountId and Status = @status";
+        public const string PITCH__GET_ALL = "select * from pitchs";
 
         public const string TIME_FRAME__GET_BY_PITCH_ID = "select Id, SortOrder, Name, TimeBegin, TimeEnd, Price from time_frame_infos where PitchId = @pitchId order by SortOrder";
         public const string TIME_FRAME__GET_BY_LIST_PITCH_ID = "select Id, SortOrder, Name, TimeBegin, TimeEnd, Price, PitchId from time_frame_infos where PitchId in @pitchId order by SortOrder";
@@ -86,7 +86,6 @@
         public const string ITEM__UPDATE_QUANTITY_BY_ID = "update items set Quantity = Quantity - @quantity where Id = @id";
         public const string ITEM__INSERT = "insert into items(Id, AccountId, Unit, Status, Code, Name, Quantity, SalePrice, PurchasePrice, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy) values (@id, @accountId, @unit, @status, @code, @name, @quantity, @salePrice, @purchasePrice, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
 
-        public const string INVOICE__GET_ALL = "select Id, Status, Date, CustomerPhone, CustomerName, Total, PaymentType, CustomerType from invoices where AccountId = @accountId order by Date desc";
         public const string INVOICE__GET_MANY = "select Id, Status, Date, CustomerPhone, CustomerName, Total, PaymentType, CustomerType from invoices";
         public const string INVOICE__GET_BY_ID = "select * from invoices where Id = @id";
         public const string INVOICE__GET_BY_BOOKING = "select i.* from invoice_bookingdetail ibd join invoices i on ibd.InvoiceId = i.Id where ibd.BookingDetailId = @id";
