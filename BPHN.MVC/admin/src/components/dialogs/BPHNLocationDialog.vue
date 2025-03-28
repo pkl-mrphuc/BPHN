@@ -3,11 +3,13 @@ import { District_Wards, Districts, Province_Districts, Provinces, Wards } from 
 import { useI18n } from "vue-i18n";
 import { ref, defineEmits } from "vue";
 import useToggleModal from "@/register-components/actionDialog";
+import { ElNotification } from "element-plus";
 
 const { t } = useI18n();
 const emits = defineEmits(["callback"]);
 const { toggleModel } = useToggleModal();
 
+const running = ref(0);
 const provinceId = ref(null);
 const districtId = ref(null);
 const wardId = ref(null);
@@ -28,6 +30,29 @@ const handleSelectDistrict = () => {
 };
 
 const save = () => {
+    if (running.value > 0) return;
+    ++running.value;
+    setTimeout(() => {
+        running.value = 0;
+    }, 1000);
+
+    if (!provinceId.value) {
+        ElNotification({ title: t("Notification"), message: t("ProvinceEmptyMesg"), type: "warning" });
+        return;
+    }
+    if (!districtId.value) {
+        ElNotification({ title: t("Notification"), message: t("DistrictEmptyMesg"), type: "warning" });
+        return;
+    }
+    if (!wardId.value) {
+        ElNotification({ title: t("Notification"), message: t("WardEmptyMesg"), type: "warning" });
+        return;
+    }
+    if (!address.value) {
+        ElNotification({ title: t("Notification"), message: t("AddressEmptyMesg"), type: "warning" });
+        return;
+    }
+
     emits("callback", `${address.value},${Wards[wardId.value]},${Districts[districtId.value]},${Provinces[provinceId.value]}`);
     toggleModel();
 };
