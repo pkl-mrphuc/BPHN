@@ -21,7 +21,7 @@ const goTo = (link) => {
 <template>
   <section>
     <el-menu class="el-menu-vertical-demo">
-      <el-menu-item @click="goTo('')">
+      <el-menu-item @click="goTo('/')">
         <el-icon class="mr-3"><Histogram /></el-icon>
         <template #title>
           <router-link class="text-decoration-none" to="/">
@@ -39,7 +39,7 @@ const goTo = (link) => {
         </template>
       </el-menu-item>
 
-      <el-menu-item @click="goTo('about')">
+      <el-menu-item @click="goTo('about-us')">
         <el-icon class="mr-3"><Calendar /></el-icon>
         <template #title>
           <router-link class="text-decoration-none" to="/about">
