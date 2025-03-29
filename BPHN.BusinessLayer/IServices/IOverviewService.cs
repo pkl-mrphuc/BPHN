@@ -1,4 +1,5 @@
 ﻿using BPHN.ModelLayer;
+using BPHN.ModelLayer.Others;
 using BPHN.ModelLayer.Requests;
 
 namespace BPHN.BusinessLayer.IServices
@@ -7,6 +8,6 @@ namespace BPHN.BusinessLayer.IServices
     {
         Task<ServiceResultModel> GetStatistics(GetStatisticsRequest request);
 
-        Task<(int draft, int published)> GetTotalInvoices(Guid accountId);
+        Task<StatisticDataModel> GetTotalInvoices(Guid accountId);
     }
 }

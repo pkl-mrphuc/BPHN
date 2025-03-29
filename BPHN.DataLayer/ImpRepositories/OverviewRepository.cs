@@ -1,5 +1,6 @@
 ﻿using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
+using BPHN.ModelLayer.Others;
 using Dapper;
 using Microsoft.Extensions.Options;
 
@@ -149,11 +150,11 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public async Task<(int draft, int published)> GetTotalInvoice(Guid accountId)
+        public async Task<StatisticDataModel> GetTotalInvoice(Guid accountId)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
-                var result = await connection.QueryFirstOrDefaultAsync<(int draft, int published)>(Query.STATISTIC__GET_TOTAL_INVOICE, new Dictionary<string, object>
+                var result = await connection.QueryFirstOrDefaultAsync<StatisticDataModel> (Query.STATISTIC__GET_TOTAL_INVOICE, new Dictionary<string, object>
                 {
                     { "@accountId", accountId },
                     { "@status1", InvoiceStatusEnum.DRAFT.ToString() },

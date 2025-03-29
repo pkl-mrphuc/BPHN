@@ -30,12 +30,12 @@ const date = ref(new Date());
 const paymentType = ref(PaymentTypeEnum.BANK);
 const checked1 = ref(false);
 const checked2 = ref(false);
-const checked3 = ref(false);
+const checked3 = ref(true);
 const checked4 = ref(false);
 
 watchEffect(() => { checked1.value = store.getters["cache/getInvoiceVariableCache"]?.checked1 ?? false; })
 watchEffect(() => { checked2.value = store.getters["cache/getInvoiceVariableCache"]?.checked2 ?? false; })
-watchEffect(() => { checked3.value = store.getters["cache/getInvoiceVariableCache"]?.checked3 ?? false; })
+watchEffect(() => { checked3.value = store.getters["cache/getInvoiceVariableCache"]?.checked3 ?? true; })
 watchEffect(() => { checked4.value = store.getters["cache/getInvoiceVariableCache"]?.checked4 ?? false; })
 watchEffect(() => { status.value = store.getters["cache/getInvoiceVariableCache"]?.status ?? InvoiceStatusEnum.DRAFT; })
 watchEffect(() => { customerType.value = store.getters["cache/getInvoiceVariableCache"]?.customerType ?? CustomerTypeEnum.RETAIL; })
@@ -213,12 +213,12 @@ onMounted(() => {
               <el-tag v-else type="success" size="small">{{ t(scope.row.status) }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column :label="t('CustomerType')" width="200">
+          <el-table-column :label="t('CustomerType')" width="150">
             <template #default="scope">
               {{ equals(scope.row.customerType, CustomerTypeEnum.RETAIL) ? t('RetailCustomer') : t('BookingCustomer') }}
             </template>
           </el-table-column>
-          <el-table-column :label="t('Date')" width="200">
+          <el-table-column :label="t('Date')" width="100">
             <template #default="scope">{{ dateToString(scope.row.date, formatDate) }}</template>
           </el-table-column>
           <el-table-column :label="t('CustomerPhone')" width="150">

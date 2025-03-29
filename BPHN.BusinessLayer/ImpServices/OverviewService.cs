@@ -1,6 +1,7 @@
 ﻿using BPHN.BusinessLayer.IServices;
 using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
+using BPHN.ModelLayer.Others;
 using BPHN.ModelLayer.Requests;
 using Microsoft.Extensions.Options;
 using System.Globalization;
@@ -56,7 +57,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task<(int draft, int published)> GetTotalInvoices(Guid accountId)
+        public async Task<StatisticDataModel> GetTotalInvoices(Guid accountId)
         {
             return await _overviewRepository.GetTotalInvoice(accountId);
         }
@@ -82,6 +83,8 @@ namespace BPHN.BusinessLayer.ImpServices
                     return await _overviewRepository.GetTotalDetailBookingDay(accountId, DateTime.Parse((type.Parameter ?? DateTime.Now).ToString(), styles: DateTimeStyles.RoundtripKind));
                 case StatisticTypeEnum.REVENUESERVICEYEAR:
                     return await _overviewRepository.GetRevenueServiceYear(accountId, DateTime.Parse((type.Parameter ?? DateTime.Now).ToString(), styles: DateTimeStyles.RoundtripKind));
+                case StatisticTypeEnum.TOTALINVOICE:
+                    return await _overviewRepository.GetTotalInvoice(accountId);
                 default:
                     throw new NotImplementedException();
             }

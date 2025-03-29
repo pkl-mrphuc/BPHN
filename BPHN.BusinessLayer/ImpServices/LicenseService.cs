@@ -23,11 +23,10 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             var result = false;
 
-            var license = await _licenseRepository.Get(accountId);
-            if (license is not null && license.ExpireTime > DateTime.Now)
+            var data = await _overviewService.GetTotalInvoices(accountId);
+            if (data is not null)
             {
-                var totalInvoices = await _overviewService.GetTotalInvoices(accountId);
-                result = license.MaxDraftInvoices > totalInvoices.draft + 1 && license.MaxInvoices > totalInvoices.published + 1;
+                result = (data.ExpireTime ?? DateTime.MinValue) > DateTime.Now && data.MaxDraft > data.Draft + 1 && data.MaxPublished > data.Published + 1;
             }
             return result;
         }

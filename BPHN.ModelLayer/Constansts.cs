@@ -133,9 +133,16 @@
                                                                             join time_frame_infos tfi on tfi.Id = b.TimeFrameInfoId
                                                                             where i.Date >= @val1 and i.Date <= @val2 and b.AccountId = @accountId) as detail1,
                                                                         @parameter as parameter";
-        public const string STATISTIC__GET_TOTAL_INVOICE = @"select
-                                                                count(case when status = @status1 then 1 end) as draft,
-                                                                count(case when status = @status2 then 1 end) as published
-                                                             from invoices where AccountId = @accountId";
+        public const string STATISTIC__GET_TOTAL_INVOICE = @"select a.Id,
+	                                                            count(case when i.Status = @status1 then 1 end) as draft,
+	                                                            count(case when i.Status = @status2 then 1 end) as published,
+                                                                l.MaxDraftInvoices as maxDraft,
+                                                                l.MaxInvoices as maxPublished,
+                                                                l.ExpireTime
+                                                             from accounts a 
+                                                            left join licenses l on a.Id = l.AccountId
+                                                            left join invoices i on i.AccountId = a.Id
+                                                            where a.Id = @accountId
+                                                            group by a.Id, l.MaxDraftInvoices, l.MaxInvoices, l.ExpireTime";
     }
 }
