@@ -30,6 +30,7 @@ const phoneNumber = ref(props.data?.phoneNumber);
 const gender = ref(props.data?.gender ?? GenderEnum.MALE);
 const status = ref(props.data?.status ?? StatusEnum.ACTIVE);
 const license = ref(props.data?.license ?? LicenseTypeEnum.TRIAL);
+const isEditMode = ref(props.mode === "edit");
 const loadingOptions = inject("loadingOptions");
 const inpEmail = ref(null);
 const inpFullName = ref(null);
@@ -72,15 +73,8 @@ const save = () => {
     return;
   }
 
-  let actionPath = "account/register";
-  if (props.mode == "edit") {
-    actionPath = "account/update";
-    ElNotification({ title: t("Notification"), message: t("FeatureIsDeveloping"), type: "info", });
-    return;
-  }
-
   const loading = ElLoading.service(loadingOptions);
-  store.dispatch(actionPath, 
+  store.dispatch(isEditMode.value ? "account/update" : "account/register", 
   {
     id: props.data?.id,
     userName: email.value,
@@ -89,7 +83,7 @@ const save = () => {
     phoneNumber: phoneNumber.value,
     gender: gender.value,
     status: status.value,
-    license: license.value
+    licenseType: license.value
   })
   .then((res) => {
     if (res?.data?.success) {

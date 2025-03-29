@@ -10,5 +10,6 @@
         Task<object> GetRevenueQuarter(Guid accountId, DateTime now);
         Task<object> GetRevenueYear(Guid accountId, DateTime now);
         Task<object> GetRevenueServiceYear(Guid accountId, DateTime now);
+        Task<(int draft, int published)> GetTotalInvoice(Guid accountId);
     }
 }

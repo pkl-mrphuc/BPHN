@@ -56,6 +56,11 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
+        public async Task<(int draft, int published)> GetTotalInvoices(Guid accountId)
+        {
+            return await _overviewRepository.GetTotalInvoice(accountId);
+        }
+
         private async Task<object> GetStatistic(Guid accountId, StatisticTypeRequest type)
         {
             Enum.TryParse(typeof(StatisticTypeEnum), type.Name, out var name);

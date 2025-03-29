@@ -148,5 +148,19 @@ namespace BPHN.DataLayer.ImpRepositories
                 return result;
             }
         }
+
+        public async Task<(int draft, int published)> GetTotalInvoice(Guid accountId)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                var result = await connection.QueryFirstOrDefaultAsync<(int draft, int published)>(Query.STATISTIC__GET_TOTAL_INVOICE, new Dictionary<string, object>
+                {
+                    { "@accountId", accountId },
+                    { "@status1", InvoiceStatusEnum.DRAFT.ToString() },
+                    { "@status2", InvoiceStatusEnum.PAID.ToString() },
+                });
+                return result;
+            }
+        }
     }
 }

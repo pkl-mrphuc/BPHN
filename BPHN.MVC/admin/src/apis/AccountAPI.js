@@ -101,6 +101,12 @@ class AccountAPI {
         let requestUrl = `${process.env.VUE_APP_API_URL}/accounts/refresh`;
         return await axios.get(requestUrl);
     }
+
+    async update(data) {
+        let requestUrl = `${process.env.VUE_APP_API_URL}/accounts/update`;
+        let requestParam = data;
+        return await axios.post(requestUrl, requestParam);
+    }
 }
 
 export default new AccountAPI();

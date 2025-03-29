@@ -9,6 +9,7 @@ namespace BPHN.BusinessLayer.IServices
         Task<ServiceResultModel> LoginGoogle(AuthenticateResult authenticateResult);
         Task<ServiceResultModel> GetById(Guid id);
         Task<ServiceResultModel> RegisterForTenant(Account account);
+        Task<ServiceResultModel> Update(Account account);
         Task<ServiceResultModel> ResetPassword(string userName);
         Task<ServiceResultModel> GetPaging(int pageIndex, int pageSize, string txtSearch);
         Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch);

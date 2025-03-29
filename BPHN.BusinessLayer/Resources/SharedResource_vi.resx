@@ -141,4 +141,7 @@
   <data name="OUTTIME" xml:space="preserve">
     <value>Token đã hết hạn</value>
   </data>
+  <data name="INVALIDLICENSE" xml:space="preserve">
+    <value>License không khợp lệ</value>
+  </data>
 </root>

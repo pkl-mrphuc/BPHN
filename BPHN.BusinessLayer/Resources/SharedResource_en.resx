@@ -141,4 +141,7 @@
   <data name="OUTTIME" xml:space="preserve">
     <value>Token expired time</value>
   </data>
+  <data name="INVALIDLICENSE" xml:space="preserve">
+    <value>Invalid license</value>
+  </data>
 </root>

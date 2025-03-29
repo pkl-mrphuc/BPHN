@@ -21,7 +21,7 @@ const props = defineProps({
 
 const running = ref(0);
 const lstItem = ref([]);
-const isEditMode = ref(props.data?.mode === "edit");
+const isEditMode = ref(props.mode === "edit");
 const status = ref(props.data?.status ?? InvoiceStatusEnum.DRAFT);
 const customerType = ref(props.data?.customerType ?? CustomerTypeEnum.RETAIL);
 const paymentType = ref(props.data?.paymentType ?? PaymentTypeEnum.BANK);

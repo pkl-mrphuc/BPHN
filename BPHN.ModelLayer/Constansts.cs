@@ -14,7 +14,8 @@
         public const int OUT_TIME = 104;
         public const int NO_INTEGRITY = 105;
         public const int INACTIVE_DATA = 106;
-        public const int INVALID_DATA = 107;    
+        public const int INVALID_DATA = 107;
+        public const int INVALID_LICENSE = 108;
     }
 
     public static class  SharedResourceKey
@@ -27,6 +28,7 @@
         public const string INACTIVESTATUS = "INACTIVESTATUS";
         public const string EXISTED = "EXISTED";
         public const string INVALIDDATA = "INVALIDDATA";
+        public const string INVALIDLICENSE = "INVALIDLICENSE";
     }
 
     public static class Query
@@ -35,6 +37,7 @@
         public const string ACCOUNT__GET_BY_USERNAME = "select * from accounts where UserName = @userName";
         public const string ACCOUNT__GET_BY_ID = "select UserName, FullName, Gender, PhoneNumber, Email, Id, Role, Status, ParentId from accounts where Id = @id";
         public const string ACCOUNT__UPDATE_PASSWORD = "update accounts set Password = @password where Id = @id";
+        public const string ACCOUNT__UPDATE = "update accounts set FullName = @fullName, Gender = @gender, PhoneNumber = @phoneNumber, Status = @status where Id = @id";
         public const string ACCOUNT__GET_ALL = "select Id, UserName, Email from accounts";
         public const string ACCOUNT__UPDATE_TOKEN = "update accounts set Token = @token, RefreshToken = @refreshToken where Id = @id";
         public const string ACCOUNT__GET_RELATION_IDS = @"select distinct * 
@@ -94,6 +97,10 @@
 
         public const string INVOICE_BOOKING_DETAIL__INSERT = "insert into invoice_bookingdetail(Id, BookingDetailId, InvoiceId, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy) values(@id, @bookingDetailId, @invoiceId, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
 
+        public const string LICENSE__GET = "select * from licenses where AccountId = @accountId";
+        public const string LICENSE__INSERT = "insert into licenses(Id, AccountId, Type, MaxInvoices, MaxDraftInvoices, ExpireTime, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy) values(@id, @accountId, @type, @maxInvoices, @maxDraftInvoices, @expireTime, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
+        public const string LICENSE__UPDATE = "update licenses set Type = @type, MaxInvoices = @maxInvoices, ExpireTime = @expireTime, ModifiedDate = @modifiedDate, ModifiedBy = @modifiedBy where Id = @id";
+
         public const string STATISTIC__GET_TOTAL_BOOKING = @"select 
 	                                                                sum(case when bd.MatchDate >= @preVal1 and bd.MatchDate <= @preVal2 then 1 else 0 end) as preValue,
                                                                     sum(case when bd.MatchDate >= @val1 and bd.MatchDate <= @val2 then 1 else 0 END) as value,
@@ -126,5 +133,9 @@
                                                                             join time_frame_infos tfi on tfi.Id = b.TimeFrameInfoId
                                                                             where i.Date >= @val1 and i.Date <= @val2 and b.AccountId = @accountId) as detail1,
                                                                         @parameter as parameter";
+        public const string STATISTIC__GET_TOTAL_INVOICE = @"select
+                                                                count(case when status = @status1 then 1 end) as draft,
+                                                                count(case when status = @status2 then 1 end) as published
+                                                             from invoices where AccountId = @accountId";
     }
 }

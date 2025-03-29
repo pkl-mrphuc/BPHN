@@ -143,7 +143,8 @@
         TOTALBOOKINGYEAR = 4,
         TOTALBOOKINGDAY = 5,
         TOTALDETAILBOOKINGDAY = 6,
-        REVENUESERVICEYEAR = 7
+        REVENUESERVICEYEAR = 7,
+        TOTALINVOICE = 8
     };
 
     public enum LicenseTypeEnum

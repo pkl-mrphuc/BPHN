@@ -97,6 +97,15 @@ namespace BPHN.BusinessLayer.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid license.
+        /// </summary>
+        public static string INVALIDLICENSE {
+            get {
+                return ResourceManager.GetString("INVALIDLICENSE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your account does not have permission to perform this function.
         /// </summary>
         public static string INVALIDROLE {

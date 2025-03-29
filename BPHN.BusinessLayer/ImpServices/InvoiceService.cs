@@ -15,6 +15,7 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly INotificationService _notificationService;
         private readonly IHistoryLogService _historyLogService;
         private readonly IItemService _itemService;
+        private readonly ILicenseService _licenseService;
         public InvoiceService(
             IServiceProvider provider,
             IOptions<AppSettings> appSettings,
@@ -22,13 +23,15 @@ namespace BPHN.BusinessLayer.ImpServices
             IInvoiceRepository invoiceRepository,
             INotificationService notificationService,
             IHistoryLogService historyLogService,
-            IItemService itemService) : base(provider, appSettings)
+            IItemService itemService,
+            ILicenseService licenseService) : base(provider, appSettings)
         {
             _permissionService = permissionService;
             _invoiceRepository = invoiceRepository;
             _notificationService = notificationService;
             _historyLogService = historyLogService;
             _itemService = itemService;
+            _licenseService = licenseService;
         }
 
         public async Task<ServiceResultModel> GetInstance(string id)
@@ -184,8 +187,19 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
+            var isValidLicense = await _licenseService.CheckIsValid(context.Id);
+            if (!isValidLicense)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_LICENSE,
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDLICENSE, context.LanguageConfig)
+                };
+            }
+
             var isValidQuantity = await _itemService.CheckQuantityInStock(data.Items ?? Enumerable.Empty<InvoiceItem>());
-            if (isValidQuantity)
+            if (!isValidQuantity)
             {
                 return new ServiceResultModel
                 {

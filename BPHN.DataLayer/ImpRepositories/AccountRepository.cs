@@ -4,6 +4,7 @@ using BPHN.ModelLayer.Others;
 using Dapper;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -284,6 +285,23 @@ namespace BPHN.DataLayer.ImpRepositories
                 dic.Add("@refreshToken", refreshToken);
                 var account = await connection.QueryFirstOrDefaultAsync<Account>(query, dic);
                 return account;
+            }
+        }
+
+        public async Task<bool> UpdateTenant(Account account)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                var affect = await connection.ExecuteAsync(Query.ACCOUNT__UPDATE, new Dictionary<string, object>()
+                {
+                    { "@id", account.Id},
+                    { "@gender", account.Gender},
+                    { "@phoneNumber", account.PhoneNumber},
+                    { "@fullName", account.FullName},
+                    { "@status",  account.Status },
+                });
+                return affect > 0 ? true : false;
             }
         }
     }
