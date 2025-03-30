@@ -19,6 +19,7 @@ const goToHome = () => {
 const toggle = () => {
   store.commit("account/setDrawer", !drawer.value);
 };
+
 </script>
 
 <template>

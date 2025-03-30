@@ -5,12 +5,12 @@
             <div class="container">
                 <div class="footer-content">
                     <!-- Cột 1: Logo và mô tả -->
-                    <div class="footer-column" style="margin: 20px 50px 0 -50px !important;">
+                    <div class="footer-column">
                         <div class="logo">
                             <img src="../assets/images/logo.png" alt="Bóng đá Icon" />
                             <h3>BPHN</h3>
                         </div>
-                        <p>Đặt sân trực tuyến 1 chạm – Thỏa đam mê bóng đá</p>
+                        <p>Đặt sân trực tuyến 1 chạm <br>Thỏa đam mê bóng đá</p>
                     </div>
 
                     <!-- Cột 2: Giới thiệu -->
