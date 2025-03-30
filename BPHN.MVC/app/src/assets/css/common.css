@@ -167,6 +167,10 @@
     text-align: end;
 }
 
+.text-start{
+    text-align: start;
+}
+
 .p-0 {
     padding: 0 !important;
 }
@@ -395,6 +399,10 @@
 
 .bg-info {
     background-color: #909399;
+}
+
+.bg-footer{
+    background-color: #2f2f2f;
 }
 
 a {
