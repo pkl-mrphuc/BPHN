@@ -31,7 +31,7 @@ const goTo = (link) => {
 <template>
   <div class="container">
     <section :class="isMobile ? '' : 'p-4'" class="banner">
-      <div class="w-100" data-aos="fade-up" data-aos-duration="800">
+      <div class="w-100">
         <img src="../assets/images/football-field.png" alt="Football Field" class="banner-img" :height="500" />
       </div>
       <div :class="isMobile ? 'booking-box mobile' : 'booking-box'">
@@ -101,7 +101,7 @@ const goTo = (link) => {
               <p style="font-family: 'Times New Roman'; font-size: 5em; font-weight: bold; margin: -15px; padding: 0;">
                 &ldquo;
               </p>
-              <p>Từ ngày biết đến BPHN, mình không còn phải loay hoay tìm sân trống nữa. Đặt sân nhanh chóng, có thể xem
+              <p class="fs-5">Từ ngày biết đến BPHN, mình không còn phải loay hoay tìm sân trống nữa. Đặt sân nhanh chóng, có thể xem
                 lịch trống theo thời gian thực, cực kỳ tiện lợi!</p>
             </div>
             <div>
@@ -116,7 +116,7 @@ const goTo = (link) => {
               <p style="font-family: 'Times New Roman'; font-size: 5em; font-weight: bold; margin: -15px; padding: 0;">
                 &ldquo;
               </p>
-              <p>Hệ thống giúp mình quản lý sân dễ dàng hơn bao giờ hết! Không còn tình trạng chồng lịch hay bỏ lỡ
+              <p class="fs-5">Hệ thống giúp mình quản lý sân dễ dàng hơn bao giờ hết! Không còn tình trạng chồng lịch hay bỏ lỡ
                 khách.</p>
             </div>
             <div>
@@ -131,7 +131,7 @@ const goTo = (link) => {
               <p style="font-family: 'Times New Roman'; font-size: 5em; font-weight: bold; margin: -15px; padding: 0;">
                 &ldquo;
               </p>
-              <p>Mình xin chia sẻ thật lòng là hệ thống này khá chất lượng! Tìm sân nhanh, đặt sân dễ nói chung là cũng
+              <p class="fs-5">Mình xin chia sẻ thật lòng là hệ thống này khá chất lượng! Tìm sân nhanh, đặt sân dễ nói chung là cũng
                 chim ưng</p>
             </div>
             <div>

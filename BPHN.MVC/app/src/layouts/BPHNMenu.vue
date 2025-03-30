@@ -42,7 +42,7 @@ const goTo = (link) => {
       <el-menu-item @click="goTo('about-us')">
         <el-icon class="mr-3"><Calendar /></el-icon>
         <template #title>
-          <router-link class="text-decoration-none" to="/about">
+          <router-link class="text-decoration-none" to="/about-us">
             <h2>{{ t("AboutUs") }}</h2>  
           </router-link>
         </template>
