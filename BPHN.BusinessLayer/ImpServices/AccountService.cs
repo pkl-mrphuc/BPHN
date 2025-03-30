@@ -23,6 +23,7 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly INotificationService _notificationService;
         private readonly IFileService _fileService;
 		private readonly IPermissionService _permissionService;
+		private readonly ILicenseService _licenseService;
         public AccountService(
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
@@ -33,7 +34,8 @@ namespace BPHN.BusinessLayer.ImpServices
             IConfigService configService,
             INotificationService notificationService,
 			IPermissionService permissionService,
-            IFileService fileService) : base(serviceProvider, appSettings)
+            IFileService fileService,
+            ILicenseService licenseService) : base(serviceProvider, appSettings)
         {
             _accountRepository = accountRepository;
             _mailService = mailService;
@@ -42,10 +44,11 @@ namespace BPHN.BusinessLayer.ImpServices
             _configService = configService;
             _notificationService = notificationService;
             _fileService = fileService;
-			_permissionService = permissionService;
+            _permissionService = permissionService;
+            _licenseService = licenseService;
         }
 
-		public async Task<ServiceResultModel> ChangePassword(Account account)
+        public async Task<ServiceResultModel> ChangePassword(Account account)
 		{
 			var context = _contextService.GetContext();
 			if (context is null)
@@ -571,7 +574,19 @@ namespace BPHN.BusinessLayer.ImpServices
             var _ = await _permissionService.SavePermissions(account.Id, account.Permissions);
             if (resultRegister)
             {
-                await _notificationService.Insert<Account>(context, NotificationTypeEnum.INSERTACCOUNT, new Account
+				await _licenseService.Insert(new License
+				{
+					Id = Guid.NewGuid(),
+					AccountId = account.Id,
+					Type = account.LicenseType,
+					ExpireTime = DateTime.Now.AddYears(1),
+					CreatedBy = context.FullName,
+					CreatedDate = DateTime.Now,
+					ModifiedBy = context.FullName,
+					ModifiedDate = DateTime.Now
+				});
+
+                await _notificationService.Insert(context, NotificationTypeEnum.INSERTACCOUNT, new Account
                 {
                     UserName = account.UserName
                 });
@@ -606,7 +621,78 @@ namespace BPHN.BusinessLayer.ImpServices
 			};
 		}
 
-		public async Task<ServiceResultModel> ResetPassword(string userName)
+        public async Task<ServiceResultModel> Update(Account account)
+        {
+            var context = _contextService.GetContext();
+            if (context is null)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
+                };
+            }
+
+            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.EDITUSER);
+            if (!hasPermission || (context.Role != RoleEnum.ADMIN && !await _configService.AllowMultiUser(context.Id)))
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.INVALID_ROLE,
+                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
+                };
+            }
+
+            var isValid = ValidateModelByAttribute(account, "Email", "UserName", "Password");
+            if (!isValid)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.EMPTY_INPUT,
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
+                };
+            }
+
+            account.ModifiedBy = context.FullName;
+            account.ModifiedDate = DateTime.Now;
+
+            var result = await _accountRepository.UpdateTenant(account);
+            if (result)
+            {
+				await _licenseService.Update(new License
+				{
+					AccountId = account.Id,
+					Type = account.LicenseType,
+					ExpireTime = DateTime.Now.AddYears(1),
+					ModifiedBy = context.ModifiedBy,
+					ModifiedDate = DateTime.Now,
+				});
+
+                await _notificationService.Insert(context, NotificationTypeEnum.UPDATEACCOUNT, new Account
+                {
+                    UserName = account.UserName
+                });
+
+                _historyLogService.Write(Guid.NewGuid(),
+                    new HistoryLog
+                    {
+                        ActionType = ActionEnum.UPDATE,
+                        Description = account.UserName,
+                        Entity = EntityEnum.ACCOUNT.ToString()
+                    }, context);
+            }
+
+            return new ServiceResultModel
+            {
+                Success = true,
+                Data = result
+            };
+        }
+
+        public async Task<ServiceResultModel> ResetPassword(string userName)
 		{
 			if (string.IsNullOrWhiteSpace(userName))
 			{

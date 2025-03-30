@@ -109,6 +109,10 @@ const actions = {
         return AccountAPI.register(data);
     }),
 
+    update: ((commit, data) => {
+        return AccountAPI.update(data);
+    }),
+
     getInstance: ((commit, id) => {
         return AccountAPI.getInstance(id);
     }),

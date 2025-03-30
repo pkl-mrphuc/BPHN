@@ -31,5 +31,6 @@ namespace BPHN.ModelLayer
         public IEnumerable<Guid> RelationIds { get; set; }
         public string LanguageConfig { get; set; }
         public string AvatarUrl { get; set; }
+        public LicenseTypeEnum LicenseType { get; set; }
     }
 }

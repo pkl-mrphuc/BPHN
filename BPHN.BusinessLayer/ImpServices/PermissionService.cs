@@ -209,17 +209,6 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     Id = Guid.NewGuid(),
                     AccountId = accountId,
-                    FunctionType = (int)FunctionTypeEnum.VIEWLISTBOOKINGDETAIL,
-                    Allow = false,
-                    CreatedBy = context.FullName,
-                    CreatedDate = DateTime.Now,
-                    ModifiedBy = context.FullName,
-                    ModifiedDate = DateTime.Now
-                },
-                new Permission
-                {
-                    Id = Guid.NewGuid(),
-                    AccountId = accountId,
                     FunctionType = (int)FunctionTypeEnum.ADDUSER,
                     Allow = false,
                     CreatedBy = context.FullName,

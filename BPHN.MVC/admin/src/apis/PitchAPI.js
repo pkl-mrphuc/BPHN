@@ -57,8 +57,8 @@ class PitchAPI {
         }
     }
 
-    async getAll() {
-        let requestUrl = `${process.env.VUE_APP_API_URL}/pitchs`;
+    async getAll(data) {
+        let requestUrl = `${process.env.VUE_APP_API_URL}/pitchs?onlyActive=${data.onlyActive}`;
         return await axios.get(requestUrl);
     }
 }

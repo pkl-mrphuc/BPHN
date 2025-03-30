@@ -1,8 +1,9 @@
 import { createStore } from "vuex";
-import stadium from "./modules/stadium";
-import config from "./modules/config";
-import bookingDetail from "./modules/bookingDetail";
-import booking from "./modules/booking";
+import stadium from "@/stores/modules/stadium";
+import config from "@/stores/modules/config";
+import bookingDetail from "@/stores/modules/bookingDetail";
+import booking from "@/stores/modules/booking";
+import account from "@/stores/modules/account";
 import createPersistedState from "vuex-persistedstate";
 
 export default createStore({
@@ -10,7 +11,8 @@ export default createStore({
     stadium,
     config,
     bookingDetail,
-    booking
+    booking,
+    account
   },
   plugins: [
     createPersistedState(

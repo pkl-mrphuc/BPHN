@@ -1,4 +1,6 @@
-﻿namespace BPHN.DataLayer.IRepositories
+﻿using BPHN.ModelLayer.Others;
+
+namespace BPHN.DataLayer.IRepositories
 {
     public interface IOverviewRepository
     {
@@ -10,5 +12,6 @@
         Task<object> GetRevenueQuarter(Guid accountId, DateTime now);
         Task<object> GetRevenueYear(Guid accountId, DateTime now);
         Task<object> GetRevenueServiceYear(Guid accountId, DateTime now);
+        Task<StatisticDataModel> GetTotalInvoice(Guid accountId);
     }
 }

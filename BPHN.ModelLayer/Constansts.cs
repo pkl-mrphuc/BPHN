@@ -14,7 +14,8 @@
         public const int OUT_TIME = 104;
         public const int NO_INTEGRITY = 105;
         public const int INACTIVE_DATA = 106;
-        public const int INVALID_DATA = 107;    
+        public const int INVALID_DATA = 107;
+        public const int INVALID_LICENSE = 108;
     }
 
     public static class  SharedResourceKey
@@ -27,6 +28,7 @@
         public const string INACTIVESTATUS = "INACTIVESTATUS";
         public const string EXISTED = "EXISTED";
         public const string INVALIDDATA = "INVALIDDATA";
+        public const string INVALIDLICENSE = "INVALIDLICENSE";
     }
 
     public static class Query
@@ -35,6 +37,7 @@
         public const string ACCOUNT__GET_BY_USERNAME = "select * from accounts where UserName = @userName";
         public const string ACCOUNT__GET_BY_ID = "select UserName, FullName, Gender, PhoneNumber, Email, Id, Role, Status, ParentId from accounts where Id = @id";
         public const string ACCOUNT__UPDATE_PASSWORD = "update accounts set Password = @password where Id = @id";
+        public const string ACCOUNT__UPDATE = "update accounts set FullName = @fullName, Gender = @gender, PhoneNumber = @phoneNumber, Status = @status where Id = @id";
         public const string ACCOUNT__GET_ALL = "select Id, UserName, Email from accounts";
         public const string ACCOUNT__UPDATE_TOKEN = "update accounts set Token = @token, RefreshToken = @refreshToken where Id = @id";
         public const string ACCOUNT__GET_RELATION_IDS = @"select distinct * 
@@ -72,7 +75,7 @@
         public const string PERMISSION__DELETE = "delete from permissions where AccountId = @accountId";
 
         public const string PITCH__GET_BY_ID = "select Id, Name, Address, MinutesPerMatch, Quantity, TimeSlotPerDay, Status, NameDetails from pitchs where id = @id";
-        public const string PITCH__GET_ALL = "select * from pitchs where ManagerId = @accountId and Status = @status";
+        public const string PITCH__GET_ALL = "select * from pitchs";
 
         public const string TIME_FRAME__GET_BY_PITCH_ID = "select Id, SortOrder, Name, TimeBegin, TimeEnd, Price from time_frame_infos where PitchId = @pitchId order by SortOrder";
         public const string TIME_FRAME__GET_BY_LIST_PITCH_ID = "select Id, SortOrder, Name, TimeBegin, TimeEnd, Price, PitchId from time_frame_infos where PitchId in @pitchId order by SortOrder";
@@ -86,7 +89,6 @@
         public const string ITEM__UPDATE_QUANTITY_BY_ID = "update items set Quantity = Quantity - @quantity where Id = @id";
         public const string ITEM__INSERT = "insert into items(Id, AccountId, Unit, Status, Code, Name, Quantity, SalePrice, PurchasePrice, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy) values (@id, @accountId, @unit, @status, @code, @name, @quantity, @salePrice, @purchasePrice, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
 
-        public const string INVOICE__GET_ALL = "select Id, Status, Date, CustomerPhone, CustomerName, Total, PaymentType, CustomerType from invoices where AccountId = @accountId order by Date desc";
         public const string INVOICE__GET_MANY = "select Id, Status, Date, CustomerPhone, CustomerName, Total, PaymentType, CustomerType from invoices";
         public const string INVOICE__GET_BY_ID = "select * from invoices where Id = @id";
         public const string INVOICE__GET_BY_BOOKING = "select i.* from invoice_bookingdetail ibd join invoices i on ibd.InvoiceId = i.Id where ibd.BookingDetailId = @id";
@@ -94,6 +96,10 @@
         public const string INVOICE__UPDATE = "update invoices set CustomerType = @customerType, CustomerName = @customerName, CustomerPhone = @customerPhone, PaymentType = @paymentType, Total = @total, Detail = @detail, Date = @date, Status = @status, ModifiedDate = @modifiedDate, ModifiedBy = @modifiedBy where id = @id";
 
         public const string INVOICE_BOOKING_DETAIL__INSERT = "insert into invoice_bookingdetail(Id, BookingDetailId, InvoiceId, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy) values(@id, @bookingDetailId, @invoiceId, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
+
+        public const string LICENSE__GET = "select * from licenses where AccountId = @accountId";
+        public const string LICENSE__INSERT = "insert into licenses(Id, AccountId, Type, MaxInvoices, MaxDraftInvoices, ExpireTime, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy) values(@id, @accountId, @type, @maxInvoices, @maxDraftInvoices, @expireTime, @createdDate, @createdBy, @modifiedDate, @modifiedBy)";
+        public const string LICENSE__UPDATE = "update licenses set Type = @type, MaxInvoices = @maxInvoices, ExpireTime = @expireTime, ModifiedDate = @modifiedDate, ModifiedBy = @modifiedBy where Id = @id";
 
         public const string STATISTIC__GET_TOTAL_BOOKING = @"select 
 	                                                                sum(case when bd.MatchDate >= @preVal1 and bd.MatchDate <= @preVal2 then 1 else 0 end) as preValue,
@@ -127,5 +133,16 @@
                                                                             join time_frame_infos tfi on tfi.Id = b.TimeFrameInfoId
                                                                             where i.Date >= @val1 and i.Date <= @val2 and b.AccountId = @accountId) as detail1,
                                                                         @parameter as parameter";
+        public const string STATISTIC__GET_TOTAL_INVOICE = @"select a.Id,
+	                                                            count(case when i.Status = @status1 then 1 end) as draft,
+	                                                            count(case when i.Status = @status2 then 1 end) as published,
+                                                                l.MaxDraftInvoices as maxDraft,
+                                                                l.MaxInvoices as maxPublished,
+                                                                l.ExpireTime
+                                                             from accounts a 
+                                                            left join licenses l on a.Id = l.AccountId
+                                                            left join invoices i on i.AccountId = a.Id
+                                                            where a.Id = @accountId
+                                                            group by a.Id, l.MaxDraftInvoices, l.MaxInvoices, l.ExpireTime";
     }
 }

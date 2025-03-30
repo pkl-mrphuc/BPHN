@@ -33,7 +33,7 @@ const calendarManager = ref([]);
 watchEffect(() => { pitchId.value = store.getters["cache/getCalendarVariableCache"]?.pitchId ?? null; });
 
 const loadData = () => {
-    store.dispatch("pitch/getAll", null)
+    store.dispatch("pitch/getAll", { onlyActive: true })
     .then((res) => {
         if (res?.data?.data) {
             let result = res.data.data;

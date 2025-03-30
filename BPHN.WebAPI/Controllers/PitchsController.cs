@@ -45,9 +45,9 @@ namespace BPHN.WebAPI.Controllers
         [ApiAuthorize]
         [Route("")]
         [HttpGet]
-        public async Task<IActionResult> GetPitchs()
+        public async Task<IActionResult> GetPitchs(bool onlyActive = true)
         {
-            return Ok(await _pitchService.GetPitchs());
+            return Ok(await _pitchService.GetPitchs(onlyActive));
         }
 
         [Permission(FunctionTypeEnum.VIEWLISTPITCH)]

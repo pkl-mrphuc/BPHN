@@ -63,17 +63,10 @@ const loadData = () => {
   }, 1000);
 
   const loading = ElLoading.service(loadingOptions);
-  store.dispatch("pitch/getPaging", 
-  {
-    accountId: store.getters["account/getAccountId"],
-    hasDetail: false,
-    hasInactive: true,
-    pageIndex: 1,
-    pageSize: 1000
-  })
+  store.dispatch("pitch/getAll", { onlyActive: false })
   .then((res) => {
     loading.close();
-    lstStadium.value = res?.data?.data ?? [];
+    lstStadium.value = res?.data?.data?.lstPitch ?? [];
   });
 };
 </script>
@@ -111,8 +104,7 @@ const loadData = () => {
         <div class="row">
           <div v-for="item in lstStadium" :key="item.id"
             class="mb-3 mr-3 col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4 col-xxl-3">
-            <football-field-card :name="item.name" :status="item.status" :id="item.id" :avatarUrl="item.avatarUrl"
-              @edit="edit"></football-field-card>
+            <football-field-card @edit="edit" :name="item.name" :status="item.status" :id="item.id" :avatarUrl="item.avatarUrl"></football-field-card>
           </div>
         </div>
         <el-empty :description="t('NoData')" v-if="lstStadium.length == 0" />

@@ -36,7 +36,16 @@ namespace BPHN.WebAPI.Controllers
 			return Ok(await _accountService.RegisterForTenant(_mapper.Map<Account>(request)));
 		}
 
-		[ApiAuthorize]
+        [Permission(FunctionTypeEnum.EDITUSER)]
+        [ApiAuthorize]
+        [Route("update")]
+        [HttpPost]
+        public async Task<IActionResult> Update([FromBody] UpdateAccountRequest request)
+        {
+            return Ok(await _accountService.Update(_mapper.Map<Account>(request)));
+        }
+
+        [ApiAuthorize]
 		[Route("get-instance")]
 		[HttpGet]
 		public async Task<IActionResult> GetInstance(string id)

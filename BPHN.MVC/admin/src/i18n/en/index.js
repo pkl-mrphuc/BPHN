@@ -246,5 +246,10 @@ const en = {
     Province: "Province",
     District: "District",
     Ward: "Ward",
+    License: "License",
+    Trial: "Trial",
+    Basic: "Basic",
+    Premium: "Premium",
+    Enterprise: "Enterprise"
 }
 export default en;

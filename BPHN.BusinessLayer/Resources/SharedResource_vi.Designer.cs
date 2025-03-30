@@ -97,6 +97,15 @@ namespace BPHN.BusinessLayer.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to License không khợp lệ.
+        /// </summary>
+        public static string INVALIDLICENSE {
+            get {
+                return ResourceManager.GetString("INVALIDLICENSE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bạn không có quyền thực hiện chức năng này.
         /// </summary>
         public static string INVALIDROLE {

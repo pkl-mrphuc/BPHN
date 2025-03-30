@@ -1,25 +1,32 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "@/pages/BPHNHome.vue";
-import Booking from "@/pages/BPHNBooking.vue";
-import PartnerService from "@/pages/BPHNPartnerService.vue";
-import ContactMe from "@/pages/BPHNContactMe.vue";
+import Home from "@/components/BPHNHome.vue";
+import AboutUs from "@/components/BPHNAboutUs.vue";
+import Booking from "@/components/BPHNBooking.vue";
+import Stadiums from "@/components/BPHNStadiums.vue";
+import Layout from "@/layouts/BPHNLayout.vue";
 
 const routes = [
     {
         path: "/",
-        component: Home
-    },
-    {
-        path: "/booking",
-        component: Booking
-    },
-    {
-        path: "/partner-service",
-        component: PartnerService
-    },
-    {
-        path: "/contact-me",
-        component: ContactMe
+        component: Layout,
+        children: [
+            {
+                path: "/",
+                component: Home
+            },
+            {
+                path: "/booking",
+                component: Booking
+            },
+            {
+                path: "/about-us",
+                component: AboutUs
+            },
+            {
+                path: "/stadiums",
+                component: Stadiums
+            }
+        ]
     }
 ];
 

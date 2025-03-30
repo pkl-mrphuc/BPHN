@@ -1,0 +1,66 @@
+html {
+    background-color: #ffffff;
+    color: #555555;
+}
+
+html .el-header {
+    background-color: #f2f2f2;
+}
+
+html .el-drawer {
+    background-color: #f2f2f2;
+}
+
+html .el-menu {
+    background-color: #f2f2f2;
+}
+
+html .el-table {
+    --el-table-header-bg-color: var(--el-fill-color-light);
+}
+
+html .el-dialog__title {
+    color: #555555;
+}
+
+html .bphn-statistic2 {
+    background-color: #eaeaea;
+}
+
+html #booking {
+  background-color: #f2f2f2;
+}
+
+html .el-card {
+    background-color: #f2f2f2;
+}
+
+html .el-statistic__content {
+    color: #555555;
+}
+
+html .fc-col-header {
+    background-color: #f2f2f2;
+}
+
+html .fc-theme-standard td, .fc-theme-standard th {
+    border: unset;
+    border: 1px solid var(--el-border-color-lighter);
+}
+
+html .fc-theme-standard .fc-scrollgrid {
+    border: 1px solid var(--el-border-color-lighter);
+}
+
+html #border_content {
+    border-left: 1px solid #555555;
+}
+
+html .bphn-event {
+    background-color: #eaeaea;
+}
+
+html .bphn-event>.bphn-event__name {
+    border-bottom: 2px dotted #555555;
+    color: #4f8cff;
+}

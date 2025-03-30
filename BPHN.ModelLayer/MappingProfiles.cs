@@ -13,6 +13,7 @@ namespace BPHN.WebAPI.Models
             CreateMap<LoginRequest, Account>();
             CreateMap<InsertAccountRequest, Account>();
             CreateMap<ChangePasswordRequest, Account>();
+            CreateMap<UpdateAccountRequest, Account>();
 
             CreateMap<CheckFreeTimeFrameRequest, Booking>();
             CreateMap<FindBlankRequeset, Booking>();

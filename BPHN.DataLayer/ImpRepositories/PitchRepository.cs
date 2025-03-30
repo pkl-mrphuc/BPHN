@@ -10,19 +10,34 @@ namespace BPHN.DataLayer.ImpRepositories
     {
         public PitchRepository(IOptions<AppSettings> appSetting) : base(appSetting)
         {
-                
+
         }
 
-        public async Task<List<Pitch>> GetAll(Guid accountId)
+        public async Task<List<Pitch>> GetAll(Guid accountId, bool onlyActive)
         {
+            var conditions = new List<WhereCondition>
+            {
+                new WhereCondition
+                {
+                    Column = "ManagerId",
+                    Operator = "=",
+                    Value = accountId
+                }
+            };
+            if (onlyActive)
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "Status",
+                    Operator = "=",
+                    Value = ActiveStatusEnum.ACTIVE.ToString()
+                });
+            }
+            var where = BuildWhere(Query.PITCH__GET_ALL, conditions);
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var lstPitch = await connection.QueryAsync<Pitch>(Query.PITCH__GET_ALL, new Dictionary<string, object>
-                {
-                    { "@accountId", accountId },
-                    { "@status", ActiveStatusEnum.ACTIVE.ToString() },
-                });
+                var lstPitch = await connection.QueryAsync<Pitch>(where.query, where.param);
                 return lstPitch?.ToList() ?? new List<Pitch>();
             }
         }
@@ -92,8 +107,8 @@ namespace BPHN.DataLayer.ImpRepositories
             var countQuery = $@"select  count(1) 
                                         from pitchs 
                                         where {whereQuery}";
-            
-            using(var connection = ConnectDB(GetConnectionString()))
+
+            using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
                 var dic = new Dictionary<string, object>();
@@ -190,7 +205,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 dic.Add("@modifiedDate", pitch.ModifiedDate);
                 dic.Add("@modifiedBy", pitch.ModifiedBy);
                 var affect = await connection.ExecuteAsync(query, dic, transaction);
-                if(affect > 0)
+                if (affect > 0)
                 {
                     for (int i = 0; i < pitch.TimeFrameInfos.Count; i++)
                     {
@@ -209,7 +224,7 @@ namespace BPHN.DataLayer.ImpRepositories
                         dic.Add("@modifiedBy", item.ModifiedBy);
 
                         affect = await connection.ExecuteAsync(queryChild, dic, transaction);
-                        if(affect <= 0)
+                        if (affect <= 0)
                         {
                             transaction.Rollback();
                             return false;
@@ -251,7 +266,7 @@ namespace BPHN.DataLayer.ImpRepositories
                                                                                 ModifiedBy = @modifiedBy,
                                                                                 ModifiedDate = @modifiedDate
                                                                                 where Id = @id", dic, transaction);
-                if(affect > 0)
+                if (affect > 0)
                 {
                     dic = new Dictionary<string, object?>();
                     dic.Add("@pitchId", pitch.Id);

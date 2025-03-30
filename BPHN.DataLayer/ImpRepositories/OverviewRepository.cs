@@ -1,5 +1,6 @@
 ﻿using BPHN.DataLayer.IRepositories;
 using BPHN.ModelLayer;
+using BPHN.ModelLayer.Others;
 using Dapper;
 using Microsoft.Extensions.Options;
 
@@ -144,6 +145,20 @@ namespace BPHN.DataLayer.ImpRepositories
                     { "@val1", firstDayOfThisYear.ToString("yyyy-MM-dd 00:00:00") },
                     { "@val2", firstDayOfThisYear.AddYears(1).AddDays(-1).ToString("yyyy-MM-dd 23:59:59") },
                     { "@parameter", now },
+                });
+                return result;
+            }
+        }
+
+        public async Task<StatisticDataModel> GetTotalInvoice(Guid accountId)
+        {
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                var result = await connection.QueryFirstOrDefaultAsync<StatisticDataModel> (Query.STATISTIC__GET_TOTAL_INVOICE, new Dictionary<string, object>
+                {
+                    { "@accountId", accountId },
+                    { "@status1", InvoiceStatusEnum.DRAFT.ToString() },
+                    { "@status2", InvoiceStatusEnum.PAID.ToString() },
                 });
                 return result;
             }

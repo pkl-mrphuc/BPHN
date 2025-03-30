@@ -36,15 +36,6 @@ namespace BPHN.DataLayer.ImpRepositories
                     Value = accountId.ToString()
                 }
             };
-            if (!string.IsNullOrWhiteSpace(txtSearch))
-            {
-                conditions.Add(new WhereCondition
-                {
-                    Column = "Name",
-                    Operator = "=",
-                    Value = txtSearch
-                });
-            }
             if (!string.IsNullOrWhiteSpace(status))
             {
                 conditions.Add(new WhereCondition
@@ -52,24 +43,6 @@ namespace BPHN.DataLayer.ImpRepositories
                     Column = "Status",
                     Operator = "=",
                     Value = status
-                });
-            }
-            if (!string.IsNullOrWhiteSpace(code))
-            {
-                conditions.Add(new WhereCondition
-                {
-                    Column = "Code",
-                    Operator = "like",
-                    Value = $"%{code}%"
-                });
-            }
-            if (!string.IsNullOrWhiteSpace(unit))
-            {
-                conditions.Add(new WhereCondition
-                {
-                    Column = "Unit",
-                    Operator = "like",
-                    Value = $"%{unit}%"
                 });
             }
             if (QuantityStatusEnum.AVAILABLE.ToString().Equals(quantity))
@@ -88,6 +61,33 @@ namespace BPHN.DataLayer.ImpRepositories
                     Column = "Quantity",
                     Operator = "=",
                     Value = 0
+                });
+            }
+            if (!string.IsNullOrWhiteSpace(txtSearch))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "Name",
+                    Operator = "like",
+                    Value = $"%{txtSearch}%"
+                });
+            }
+            if (!string.IsNullOrWhiteSpace(code))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "Code",
+                    Operator = "like",
+                    Value = $"%{code}%"
+                });
+            }
+            if (!string.IsNullOrWhiteSpace(unit))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "Unit",
+                    Operator = "like",
+                    Value = $"%{unit}%"
                 });
             }
             var where = BuildWhere(Query.ITEM__GET_MANY, conditions);
