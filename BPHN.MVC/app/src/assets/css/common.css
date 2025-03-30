@@ -151,6 +151,10 @@
     color: #f56c6c;
 }
 
+.text-white{
+    color: #F2F2F2;
+}
+
 .text-uppercase {
     text-transform: uppercase;
 }
@@ -161,6 +165,10 @@
 
 .text-end {
     text-align: end;
+}
+
+.text-start{
+    text-align: start;
 }
 
 .p-0 {
@@ -229,6 +237,26 @@
 
 .mx-5 {
     margin: 0 calc(var(--spacer) * 3) !important;
+}
+
+.px-1 {
+    padding: 0 calc(var(--spacer) * .25) !important;
+}
+
+.px-2 {
+    padding: 0 calc(var(--spacer) * .5) !important;
+}
+
+.px-3 {
+    padding: 0 var(--spacer) !important;
+}
+
+.px-4 {
+    padding: 0 calc(var(--spacer) * 1.5) !important;
+}
+
+.px-5 {
+    padding: 0 calc(var(--spacer) * 3) !important;
 }
 
 .mr-1 {
@@ -371,6 +399,10 @@
 
 .bg-info {
     background-color: #909399;
+}
+
+.bg-footer{
+    background-color: #2f2f2f;
 }
 
 a {

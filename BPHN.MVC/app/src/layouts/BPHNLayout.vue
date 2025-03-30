@@ -26,6 +26,11 @@ const handleClose = () => {
           <router-view />
         </el-main>
       </el-container>
+      <el-footer class="bg-footer" style="width: 100vw; padding: 0 !important;">
+        <el-footer class="bg-footer" style="width: 100vw; padding: 0 !important">
+          <bphn-footer></bphn-footer>
+        </el-footer>
+      </el-footer>
     </el-container>
   </div>
 </template>
@@ -33,13 +38,11 @@ const handleClose = () => {
 <script>
 import BphnHeader from "@/layouts/BPHNHeader.vue";
 import BphnMenu from "@/layouts/BPHNMenu.vue";
-
+import BphnFooter from "./BPHNFooter.vue";
 export default {
   name: "BPHNLayout",
-  components: { BphnHeader, BphnMenu }
+  components: { BphnHeader, BphnMenu, BphnFooter }
 };
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

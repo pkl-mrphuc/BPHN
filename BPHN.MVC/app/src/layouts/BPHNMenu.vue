@@ -43,7 +43,7 @@ const goTo = (link) => {
         <el-icon class="mr-3"><Calendar /></el-icon>
         <template #title>
           <router-link class="text-decoration-none" to="/about">
-            <h2>{{ t("AboutUs") }}</h2>
+            <h2>{{ t("AboutUs") }}</h2>  
           </router-link>
         </template>
       </el-menu-item>
@@ -55,7 +55,7 @@ const goTo = (link) => {
             <h2>{{ t("Stadiums") }}</h2>
           </router-link>
         </template>
-      </el-menu-item>
+      </el-menu-item>  
     </el-menu>
   </section>
 </template>

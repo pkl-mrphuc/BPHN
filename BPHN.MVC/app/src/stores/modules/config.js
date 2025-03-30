@@ -10,6 +10,9 @@ const getters = {
 
     getDarkMode: (state) => {
         return state.darkMode
+    },
+    isMobile: () => {
+        return window.innerWidth < 768;
     }
 }
 
