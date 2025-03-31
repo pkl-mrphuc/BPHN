@@ -67,7 +67,7 @@ const vi = {
     FootballFieldForm: "Sân bóng",
     TenantForm: "Tài khoản",
 
-    Hello: "Hello,",
+    Hello: "Xin chào,",
     BM: "Đặt sân",
     Calendar: "Lịch",
     FootballField: "Sân bóng",
