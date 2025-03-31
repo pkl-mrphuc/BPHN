@@ -412,7 +412,7 @@ namespace BPHN.DataLayer.ImpRepositories
                                 b.PitchId as PitchId,
                                 b.NameDetail as NameDetail,
                                 p.Name as PitchName, 
-                                concat(date_format(TimeBegin,'%H:%i'), ' - ', date_format(TimeEnd,'%H:%i')) as TimeFrameInfoName,
+                                concat(date_format(TimeBegin,'%H:%i:%s'), ' - ', date_format(TimeEnd,'%H:%i:%s')) as TimeFrameInfoName,
                                 bd.Id as BookingDetailId,
                                 bd.MatchCode as MatchCode,
                                 bd.MatchDate as MatchDate,

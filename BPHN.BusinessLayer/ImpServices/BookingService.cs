@@ -131,7 +131,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 {
                     data.StartDate = now;
                 }
-                data.EndDate = new DateTime(now.Year, 12, 31, 23, 59, 59);
+                data.EndDate = data.IsRecurring ? new DateTime(data.StartDate.Year, 1, 1, 0, 0, 0).AddYears(1).AddSeconds(-1) : new DateTime(data.StartDate.Year, data.StartDate.Month, data.StartDate.Day, 23, 59, 59);
                 var lstBooked = await GetDictionaryBookedByDate(context.Id, data.StartDate, data.EndDate);
 
                 var lstBooking = new List<Booking>();

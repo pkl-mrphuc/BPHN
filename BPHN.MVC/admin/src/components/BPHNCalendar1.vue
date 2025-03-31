@@ -38,7 +38,7 @@ const loadData = () => {
         if (res?.data?.data) {
             let result = res.data.data;
             lstPitch.value = (result.lstPitch ?? []).map(function(x) { return { id: x.id, name: x.name, minutesPerMatch: x.minutesPerMatch, nameDetails: (x.nameDetails ?? "").split(';') } });
-            lstFrameInfo.value = (result.lstFrameInfo ?? []).map(function(x) { return { id: x.id, name: x.name, pitchId: x.pitchId, timeBegin: new Date(x.timeBegin), timeEnd: new Date(x.timeEnd) } });
+            lstFrameInfo.value = (result.lstFrameInfo ?? []).map(function(x) { return { id: x.id, name: `${time(new Date(x.timeBegin))} - ${time(new Date(x.timeEnd))}`, pitchId: x.pitchId, timeBegin: new Date(x.timeBegin), timeEnd: new Date(x.timeEnd) } });
             if (lstPitch.value.length > 0) {
                 pitchId.value = lstPitch.value[0].id;
                 handleSelect();

@@ -349,12 +349,12 @@ const setLocation = (value) => {
                   <el-button circle :icon="Plus" size="small" @click="addTimeFrame(scope.$index)" type="secondary"></el-button>
                 </template>
               </el-table-column>
-              <el-table-column :label="t('TimeBegin')" width="130">
+              <el-table-column :label="t('TimeBegin')" width="150">
                 <template #default="scope">
                   <el-time-picker v-model="scope.row.timeBegin" class="w-100" @change="changeTimeBegin(scope.row)" />
                 </template>
               </el-table-column>
-              <el-table-column :label="t('TimeEnd')" width="130">
+              <el-table-column :label="t('TimeEnd')" width="150">
                 <template #default="scope">
                   <el-time-picker v-model="scope.row.timeEnd" class="w-100" @change="changeTimeEnd(scope.row)" />
                 </template>
