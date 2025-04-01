@@ -19,7 +19,7 @@ const routes = [
     component: Layout,
     children: [
       {
-        path: "/overview",
+        path: "/",
         component: Overview,
         meta: {
           title: "OverviewTitle"

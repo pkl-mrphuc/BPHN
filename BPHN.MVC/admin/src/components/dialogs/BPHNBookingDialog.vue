@@ -27,11 +27,10 @@ const props = defineProps({
 const running = ref(0);
 const isRecurring = ref(props.data?.isRecurring ?? false);
 const weekdays = ref(props.data?.weekendays + "");
-const fromDate = ref(props.data?.startDate ?? new Date());
-const toDate = ref(props.data?.endDate ?? new Date());
+const fromDate = ref(new Date(props.data?.startDate  ?? new Date()));
+const toDate = ref(new Date(props.data?.endDate ?? new Date()));
 const lstStadium = ref([]);
 const lstTimeFrame = ref([]);
-const lstDetail = ref([]);
 const pitchId = ref(props.data?.pitchId ?? null);
 const nameDetail = ref(props.data?.nameDetail ?? null);
 const timeFrameInfoId = ref(props.data?.timeFrameInfoId ?? null);
@@ -39,6 +38,7 @@ const phoneNumber = ref(props.data?.phoneNumber ?? null);
 const email = ref(props.data?.email ?? null);
 const inpPhoneNumber = ref(null);
 const isMobile = ref(store.getters["config/isMobile"]);
+const blankData = ref(null);
 
 const showMakeRecurring = () => {
   if (isRecurring.value) {
@@ -56,34 +56,6 @@ const changeDate = () => {
     isRecurring.value = false;
   }
   weekdays.value = `${fromDate.value.getDay()}`;
-};
-
-const changePitchId = () => {
-  let pitchSelected = lstStadium.value.filter(
-    (item) => item.id == pitchId.value
-  );
-  if (pitchSelected && pitchSelected.length > 0) {
-    let pitch = pitchSelected[0];
-    lstDetail.value = pitch.nameDetails.split(";");
-
-    if (!lstDetail.value.includes(nameDetail.value)) {
-      nameDetail.value = null;
-    }
-
-    let isInclude = false;
-    for (let i = 0; i < pitch.timeFrameInfos.length; i++) {
-      const item = pitch.timeFrameInfos[i];
-      if (item.id === timeFrameInfoId.value) {
-        isInclude = true;
-      }
-      item["newName"] = `Khung ${time(item.timeBegin)} - ${time(item.timeEnd)}`;
-    }
-    lstTimeFrame.value = pitch.timeFrameInfos;
-
-    if (!isInclude) {
-      timeFrameInfoId.value = null;
-    }
-  }
 };
 
 const checkFreeTimeFrame = async () => {
@@ -166,7 +138,6 @@ const bindBlankData = (data) => {
     fromDate.value = data.startDate;
     toDate.value = data.endDate;
     weekdays.value = data.weekendays + "";
-    changePitchId();
   }
 };
 
@@ -215,24 +186,26 @@ const approval = () => {
   });
 };
 
+const handleSelect = () => {
+  timeFrameInfoId.value = null;
+  nameDetail.value = null;
+};
+
 onMounted(() => {
   const loading = ElLoading.service(loadingOptions);
-  store
-    .dispatch("pitch/getPaging", 
-    {
-      accountId: store.getters["account/getAccountId"],
-      hasDetail: true,
-      hasInactive: false,
-      pageIndex: 1,
-      pageSize: 1000,
-    })
-    .then((res) => {
-      if (res?.data?.data) {
-        lstStadium.value = res.data.data;
-        changePitchId();
-      }
-      loading.close();
-    });
+  store.dispatch("pitch/getAll", { onlyActive: true })
+  .then((res) => {
+    if (res?.data?.data) {
+      let result = res.data.data;
+      lstStadium.value = (result.lstPitch ?? []).map(function(x) { return { id: x.id, name: x.name, minutesPerMatch: x.minutesPerMatch, nameDetails: (x.nameDetails ?? "").split(';') } });
+      lstTimeFrame.value = (result.lstFrameInfo ?? []).map(function(x) { return { id: x.id, name: `${time(new Date(x.timeBegin))} - ${time(new Date(x.timeEnd))}`, pitchId: x.pitchId, timeBegin: new Date(x.timeBegin), timeEnd: new Date(x.timeEnd) } });
+      blankData.value = {
+        lstStadium: lstStadium.value,
+        lstTimeFrame: lstTimeFrame.value
+      };
+    }
+    loading.close();
+  });
 
   nextTick(() => {
     if (inpPhoneNumber.value) {
@@ -261,7 +234,7 @@ onMounted(() => {
         <div class="row">
           <div class="mb-2 col-12 col-sm-4">
             <div :class="isMobile ? '' : 'mr-2'">
-              <el-select :no-data-text="t('NoData')" class="w-100" :placeholder="t('Infrastructure')" v-model="pitchId" @change="changePitchId">
+              <el-select :no-data-text="t('NoData')" class="w-100" :placeholder="t('Infrastructure')" v-model="pitchId" @change="handleSelect">
                 <el-option v-for="item in lstStadium" :key="item" :label="item.name" :value="item.id" />
               </el-select>
             </div>
@@ -269,14 +242,14 @@ onMounted(() => {
           <div class="mb-2 col-12 col-sm-4">
             <div :class="isMobile ? '' : 'mx-2'">
               <el-select class="w-100" :no-data-text="t('NoData')" :placeholder="t('TimeFrame')" v-model="timeFrameInfoId">
-                <el-option v-for="item in lstTimeFrame" :key="item" :label="item.newName" :value="item.id" />
+                <el-option v-for="item in lstTimeFrame.filter(x => x.pitchId == pitchId)" :key="item.id" :label="item.name" :value="item.id"/>
               </el-select>
             </div>
           </div>
           <div class="mb-2 col-12 col-sm-4">
             <div :class="isMobile ? '' : 'ml-2'">
               <el-select class="w-100" :no-data-text="t('NoData')" :placeholder="t('NameDetail')" v-model="nameDetail">
-                <el-option v-for="item in lstDetail" :key="item" :label="item" :value="item"/>
+                <el-option v-for="item in (lstStadium.find(x => x.id == pitchId)?.nameDetails ?? [])" :key="item" :label="item" :value="item"/>
               </el-select>
             </div>
           </div>
@@ -330,5 +303,5 @@ onMounted(() => {
       </div>
     </template>
   </Dialog>
-  <FindBlankDialog v-if="hasRole('FindBlankDialog')" :isRecurring="isRecurring" :startDate="dateToString(fromDate, 'yyyy-MM-dd')" :endDate="dateToString(toDate, 'yyyy-MM-dd')" @callback="bindBlankData"></FindBlankDialog>
+  <FindBlankDialog v-if="hasRole('FindBlankDialog')" :data="blankData" :isRecurring="isRecurring" :startDate="dateToString(fromDate, 'yyyy-MM-dd')" :endDate="dateToString(toDate, 'yyyy-MM-dd')" @callback="bindBlankData"></FindBlankDialog>
 </template>

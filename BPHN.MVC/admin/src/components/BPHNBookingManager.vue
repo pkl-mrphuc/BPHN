@@ -20,7 +20,7 @@ const { t } = useI18n();
 const { openModal, hasRole } = useToggleModal();
 const store = useStore();
 const loadingOptions = inject("loadingOptions");
-const { dateToString, getWeekdays, equals, fakeNumber } = useCommonFn();
+const { dateToString, getWeekdays, equals, fakeNumber, time } = useCommonFn();
 const objBooking = ref(null);
 const pageIndex = ref(1);
 const pageSize = ref(50);
@@ -194,7 +194,7 @@ const loadData = () => {
       let result = res.data.data;
       totalRecord.value = result.result.totalAllRecords;
       lstPitch.value = (result.lstPitch ?? []).map(function(x) { return { id: x.id, name: x.name, nameDetails: (x.nameDetails ?? "").split(';') } });
-      lstFrameInfo.value = (result.lstFrameInfo ?? []).map(function(x) { return { id: x.id, name: x.name, pitchId: x.pitchId } });
+      lstFrameInfo.value = (result.lstFrameInfo ?? []).map(function(x) { return { id: x.id, name: `${time(new Date(x.timeBegin))} - ${time(new Date(x.timeEnd))}`, pitchId: x.pitchId } });
     }
   });
 };

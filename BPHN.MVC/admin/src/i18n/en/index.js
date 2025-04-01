@@ -134,7 +134,7 @@ const en = {
     Free: "Free",
     SearchBy: "Search By Phone Number",
     MatchDate: "Matching Date",
-    Deposit: "Deposit(thousand VND)",
+    Deposit: "Deposit",
     Cancel: "Cancel",
     Status: "Status",
     BookingDate: "Booking Date",

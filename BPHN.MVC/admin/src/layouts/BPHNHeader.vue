@@ -64,7 +64,7 @@ const logout = () => {
 };
 
 const goToHome = () => {
-  router.push("calendar");
+  router.push("/");
 };
 
 const refresh = () => {

@@ -37,17 +37,17 @@ const goTo = (link) => {
 
 <template>
   <section>
-    <el-menu class="el-menu-vertical-demo">
-      <el-menu-item @click="goTo('overview')">
+    <el-menu class="el-menu-vertical-demo" default-active="1">
+      <el-menu-item @click="goTo('')" index="1">
         <el-icon class="mr-3"><Histogram /></el-icon>
         <template #title>
-          <router-link class="text-decoration-none" to="/overview">
+          <router-link class="text-decoration-none" to="/">
             <h2>{{ t("Overview") }}</h2>
           </router-link>
         </template>
       </el-menu-item>
 
-      <el-menu-item @click="goTo('bm')">
+      <el-menu-item @click="goTo('bm')" index="2">
         <el-icon class="mr-3"><Ticket /></el-icon>
         <template #title>
           <router-link class="text-decoration-none" to="/bm">
@@ -56,7 +56,7 @@ const goTo = (link) => {
         </template>
       </el-menu-item>
 
-      <el-menu-item @click="goTo('calendar')">
+      <el-menu-item @click="goTo('calendar')" index="3">
         <el-icon class="mr-3"><Calendar /></el-icon>
         <template #title>
           <router-link class="text-decoration-none" to="/calendar">
@@ -65,7 +65,7 @@ const goTo = (link) => {
         </template>
       </el-menu-item>
 
-      <el-menu-item @click="goTo('my-football-fields')">
+      <el-menu-item @click="goTo('my-football-fields')" index="4">
         <el-icon class="mr-3"><MapLocation /></el-icon>
         <template #title>
           <router-link class="text-decoration-none" to="/my-football-fields">
@@ -74,7 +74,7 @@ const goTo = (link) => {
         </template>
       </el-menu-item>
 
-      <el-menu-item  @click="goTo('invoices')">
+      <el-menu-item  @click="goTo('invoices')" index="5">
         <el-icon class="mr-3"><Finished /></el-icon>
         <template #title>
           <router-link class="text-decoration-none" to="/invoices">
@@ -83,7 +83,7 @@ const goTo = (link) => {
         </template>
       </el-menu-item>
 
-      <el-menu-item @click="goTo('services')">
+      <el-menu-item @click="goTo('services')" index="6">
         <el-icon class="mr-3"><Notebook /></el-icon>
         <template #title>
           <router-link class="text-decoration-none" to="/services">
@@ -101,7 +101,7 @@ const goTo = (link) => {
         </template>
       </el-menu-item>
 
-      <el-menu-item @click="goTo('configuartions')">
+      <el-menu-item @click="goTo('configuartions')" index="7">
         <el-icon class="mr-3"><Tools /></el-icon>
         <template #title>
           <router-link class="text-decoration-none" to="/configuartions">
@@ -110,7 +110,7 @@ const goTo = (link) => {
         </template>
       </el-menu-item>
 
-      <el-menu-item @click="goTo('history-logs')">
+      <el-menu-item @click="goTo('history-logs')" index="8">
         <el-icon class="mr-3"><VideoCameraFilled /></el-icon>
         <template #title>
           <router-link class="text-decoration-none" to="/history-logs">

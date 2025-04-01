@@ -100,7 +100,7 @@ const loadData = () => {
           </el-button>
         </div>
       </div>
-      <div style="height: calc(100vh - 190px); overflow: scroll">
+      <div>
         <div class="row">
           <div v-for="item in lstStadium" :key="item.id"
             class="mb-3 mr-3 col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4 col-xxl-3">

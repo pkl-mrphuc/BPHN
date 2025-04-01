@@ -3,6 +3,7 @@
     public static class Constansts
     {
         public const int EXPIRE_HOUR_REDIS_CACHE = 8;
+        public const string SYSTEM = "System";
     }
 
     public static class ErrorCodes
@@ -18,7 +19,7 @@
         public const int INVALID_LICENSE = 108;
     }
 
-    public static class  SharedResourceKey
+    public static class SharedResourceKey
     {
         public const string OUTTIME = "OUTTIME";
         public const string EMPTYINPUT = "EMPTYINPUT";
