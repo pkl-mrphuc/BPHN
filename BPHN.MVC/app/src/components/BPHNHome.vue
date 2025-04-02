@@ -51,7 +51,7 @@ const showRightBanner = ref(true);
 
     <section :class="isMobile ? '' : 'p-4'" class="banner">
       <div class="w-100">
-        <img src="../assets/images/football-field.png" alt="Football Field" class="banner-img" height="500" loading="lazy"/>
+        <img src="../assets/images/football-field.png" alt="Football Field" class="banner-img" height="500"/>
       </div>
       <div :class="isMobile ? 'booking-box mobile' : 'booking-box'">
         <h1 class="fs-3 fw-bolder text-center m-0">Đặt sân nhanh chóng
