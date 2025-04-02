@@ -137,22 +137,22 @@ onMounted(() => {
             <span>{{ dateToString(scope.row.endDate, formatDate) }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="t('Weekdays')" width="80">
+        <el-table-column :label="t('Weekdays')" width="100">
           <template #default="scope">
             <span class="text-truncate">{{ t(getWeekdays(scope.row.weekendays)) }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="t('Infrastructure')" min-width="200">
+        <el-table-column :label="t('Infrastructure')">
           <template #default="scope">
             <span class="text-truncate">{{ scope.row.pitchName }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="t('TimeFrame')" min-width="200">
+        <el-table-column :label="t('TimeFrame')">
           <template #default="scope">
             <span class="text-truncate">{{ scope.row.timeFrameInfoName }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="t('NameDetail')" min-width="200">
+        <el-table-column :label="t('NameDetail')">
           <template #default="scope">
             <span class="text-truncate">{{ scope.row.nameDetail }}</span>
           </template>
