@@ -462,6 +462,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     Id = Guid.NewGuid(),
                     Email = email,
                     FullName = email,
+                    UserName = email,
                     Gender = GenderEnum.MALE.ToString(),
                     Status = ActiveStatusEnum.ACTIVE.ToString(),
                     CreatedBy = Constansts.SYSTEM,
