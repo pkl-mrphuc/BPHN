@@ -21,7 +21,7 @@
                             <li>Điều khoản và điều kiện</li>
                             <li>Ngân hàng liên kết</li>
                             <li>Sự kiện</li>
-                            <li>Vé chính tơi</li>
+                            <li>Về chúng tôi</li>
                         </ul>
                     </div>
 

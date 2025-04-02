@@ -170,7 +170,7 @@ onBeforeMount(() => {
                                     <div class="h-100" id="border_content"></div>
                                 </div>
                             </div>
-                            <div class="col-12 col-sm-12 col-md-12 col-lg-5 d-flex flex-row align-items-center justify-content-around">
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-5 d-flex flex-row align-items-center justify-content-around" :class="isMobile ? 'pt-4':''">
                                 <div>
                                     <statistic-booking-card :key="totalDetailBookingDay" :type="BookingStatusEnum.PENDING" :value="totalDetailBookingDay.pending"></statistic-booking-card>
                                 </div>
@@ -181,13 +181,10 @@ onBeforeMount(() => {
                                     <statistic-booking-card :key="totalDetailBookingDay" :type="BookingStatusEnum.CANCEL" :value="totalDetailBookingDay.cancel"></statistic-booking-card>
                                 </div>
                             </div>
-                            <div class="col-12 col-sm-12 col-md-12 col-lg-3 d-flex flex-row align-items-center justify-content-end">
-                                <div class="h-100 d-flex flex-column justify-content-between" style="padding: 30px;">
-                                    <div class="d-flex flex-row justify-content-end">
-                                        <span>Chi tiết</span>
-                                    </div>
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-3 d-flex flex-row align-items-center justify-content-end" :class="isMobile ?'pt-4':''">
+                                <div class=" d-flex flex-column justify-content-between" :class="isMobile ? 'w-100' : 'w-90 m-5'">
                                     <div class="d-flex flex-column">
-                                        <el-button class="mb-2" type="primary">Phê duyệt</el-button>
+                                        <el-button class="mb-3" type="primary">Phê duyệt</el-button>
                                         <el-button class="m-0" type="danger">Từ chối</el-button>
                                     </div>
                                 </div>
