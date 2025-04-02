@@ -67,8 +67,12 @@ const renderCalendar = (index) => {
     let calendarEl = document.getElementById(`calendarTimeGrid${index}`);
     if (!calendarEl) return;
 
-    let minTime = Math.min(...lstCurrentFrame.value.map(x => { return x.timeBegin }));
-    let maxTime = Math.max(...lstCurrentFrame.value.map(x => { return x.timeEnd }));
+    let minTime = new Date(1999, 11, 10, 0, 0, 0);
+    let maxTime = new Date(1999, 11, 10, 23, 59, 59);
+    if (lstCurrentFrame.value.length) {
+        minTime = Math.min(...lstCurrentFrame.value.map(x => { return x.timeBegin }));
+        maxTime = Math.max(...lstCurrentFrame.value.map(x => { return x.timeEnd }));
+    }
 
     let options = {
         plugins: [timeGridPlugin],

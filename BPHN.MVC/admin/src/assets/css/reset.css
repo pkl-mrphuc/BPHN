@@ -210,6 +210,7 @@ html .bphn-statistic2 {
   padding: 15px;
   min-width: 100px;
   min-height: 100px;
+  box-shadow: var(--el-box-shadow-dark);
 }
 
 html .bphn-statistic2__status {
