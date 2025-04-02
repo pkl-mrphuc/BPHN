@@ -158,6 +158,11 @@ namespace BPHN.BusinessLayer.ImpServices
             history.ActionName = history.ActionName ?? string.Empty;
             history.Description = history.Description ?? string.Empty;
 
+            Task.Run(() =>
+            {
+                _historyLogRepository.Write(history);
+            });
+
             return new ServiceResultModel
             {
                 Success = true,
@@ -167,7 +172,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 //    DataType = "bphn.log.history",
                 //    DataJson = JsonConvert.SerializeObject(history)
                 //})
-                Data = _historyLogRepository.Write(history).Result
+                Data = true
             };
         }
     }

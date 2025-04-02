@@ -114,9 +114,9 @@ namespace BPHN.WebAPI.Controllers
 		[AllowAnonymous]
 		[HttpPost]
 		[Route("refresh-token")]
-		public IActionResult RefreshToken(string refreshToken)
+		public async Task<IActionResult> RefreshToken(string refreshToken)
 		{
-			return Ok(_accountService.RefreshToken(refreshToken));
+			return Ok(await _accountService.RefreshToken(refreshToken));
 		}
 
 		[HttpGet("redirect-google-login")]

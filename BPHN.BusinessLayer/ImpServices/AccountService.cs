@@ -6,11 +6,8 @@ using BPHN.ModelLayer.Others;
 using BPHN.ModelLayer.Responses;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 
 namespace BPHN.BusinessLayer.ImpServices
 {
@@ -23,8 +20,8 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IConfigService _configService;
         private readonly INotificationService _notificationService;
         private readonly IFileService _fileService;
-		private readonly IPermissionService _permissionService;
-		private readonly ILicenseService _licenseService;
+        private readonly IPermissionService _permissionService;
+        private readonly ILicenseService _licenseService;
         public AccountService(
             IServiceProvider serviceProvider,
             IOptions<AppSettings> appSettings,
@@ -34,7 +31,7 @@ namespace BPHN.BusinessLayer.ImpServices
             IHistoryLogService historyLogService,
             IConfigService configService,
             INotificationService notificationService,
-			IPermissionService permissionService,
+            IPermissionService permissionService,
             IFileService fileService,
             ILicenseService licenseService) : base(serviceProvider, appSettings)
         {
@@ -50,17 +47,17 @@ namespace BPHN.BusinessLayer.ImpServices
         }
 
         public async Task<ServiceResultModel> ChangePassword(Account account)
-		{
-			var context = _contextService.GetContext();
-			if (context is null)
-			{
-				return new ServiceResultModel
-				{
-					Success = false,
-					ErrorCode = ErrorCodes.OUT_TIME,
-					Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-				};
-			}
+        {
+            var context = _contextService.GetContext();
+            if (context is null)
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.OUT_TIME,
+                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
+                };
+            }
 
             var isValid = ValidateModelByAttribute(account, "UserName", "PhoneNumber", "FullName", "Email");
             if (!isValid)
@@ -107,7 +104,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var account = await _accountRepository.GetAccountById(id);
             if (account is not null)
             {
-                account.RelationIds = await _accountRepository.GetRelationIds(id);
+                account.RelationIds = new Guid[] { id };
                 account.LanguageConfig = await _configService.Language(id);
             }
             return new ServiceResultModel
@@ -303,48 +300,6 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel GetTokenInfo(string token)
-        {
-            if (string.IsNullOrWhiteSpace(token))
-            {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
-                };
-            }
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ClockSkew = TimeSpan.Zero
-            }, out SecurityToken validatedToken);
-
-            var jwtToken = (JwtSecurityToken)validatedToken;
-
-            if (jwtToken.ValidTo < DateTime.Now)
-            {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
-            }
-
-            return new ServiceResultModel
-            {
-                Success = true,
-                Data = jwtToken
-            };
-        }
-
         public async Task<ServiceResultModel> Login(Account account)
         {
             var isValid = ValidateModelByAttribute(account, "Id", "PhoneNumber", "FullName", "Email");
@@ -401,10 +356,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            string token = _accountRepository.GetToken(realAccount.Id.ToString());
-            string refreshToken = _accountRepository.GetRefreshToken(realAccount.Id.ToString());
-
-            _accountRepository.SaveToken(realAccount.Id, token, refreshToken);
+            var (token, refreshToken) = _accountRepository.GetToken(realAccount.Id);
+            await _accountRepository.SaveToken(realAccount.Id, token, refreshToken);
 
             _historyLogService.Write(Guid.NewGuid(),
                 new HistoryLog
@@ -435,7 +388,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     ParentId = realAccount.ParentId,
                     Token = token,
                     RefreshToken = refreshToken,
-                    RelationIds = await _accountRepository.GetRelationIds(realAccount.Id),
+                    RelationIds = new Guid[] { realAccount.Id },
                     AvatarUrl = _fileService.GetFileUrl(realAccount.Id.ToString())
                 }
             };
@@ -494,10 +447,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            string token = _accountRepository.GetToken(user.Id.ToString());
-            string refreshToken = _accountRepository.GetRefreshToken(user.Id.ToString());
-
-            _accountRepository.SaveToken(user.Id, token, refreshToken);
+            var (token, refreshToken) = _accountRepository.GetToken(user.Id);
+            await _accountRepository.SaveToken(user.Id, token, refreshToken);
 
             return new ServiceResultModel
             {
@@ -536,22 +487,10 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public ServiceResultModel RefreshToken(string refreshToken)
+        public async Task<ServiceResultModel> RefreshToken(string refreshToken)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret1);
-            tokenHandler.ValidateToken(refreshToken, new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ClockSkew = TimeSpan.Zero
-            }, out SecurityToken validatedToken);
-
-            var jwtToken = (JwtSecurityToken)validatedToken;
-
-            if (jwtToken is null)
+            var accountId = _accountRepository.ValidateToken(refreshToken, true);
+            if (accountId == Guid.Empty)
             {
                 return new ServiceResultModel
                 {
@@ -560,16 +499,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var userId = Guid.Parse(jwtToken.Claims.First(x => "id".Equals(x.Type)).Value);
-            var expiredTimeTick = long.Parse(jwtToken.Claims.First(x => "expiredTime".Equals(x.Type)).Value);
-            var expiredTime = new DateTime(expiredTimeTick);
-            var token = _accountRepository.GetToken(userId.ToString());
-            if (expiredTime < DateTime.UtcNow)
-            {
-                refreshToken = _accountRepository.GetRefreshToken(userId.ToString());
-            }
-
-            _accountRepository.SaveToken(userId, token, refreshToken);
+            var (token, newRefreshToken) = _accountRepository.GetToken(accountId);
+            await _accountRepository.SaveToken(accountId, token, newRefreshToken);
 
             return new ServiceResultModel
             {
@@ -646,17 +577,17 @@ namespace BPHN.BusinessLayer.ImpServices
             var _ = await _permissionService.SavePermissions(account.Id, account.Permissions);
             if (resultRegister)
             {
-				await _licenseService.Insert(new License
-				{
-					Id = Guid.NewGuid(),
-					AccountId = account.Id,
-					Type = account.LicenseType,
-					ExpireTime = DateTime.Now.AddYears(1),
-					CreatedBy = context.FullName,
-					CreatedDate = DateTime.Now,
-					ModifiedBy = context.FullName,
-					ModifiedDate = DateTime.Now
-				});
+                await _licenseService.Insert(new License
+                {
+                    Id = Guid.NewGuid(),
+                    AccountId = account.Id,
+                    Type = account.LicenseType,
+                    ExpireTime = DateTime.Now.AddYears(1),
+                    CreatedBy = context.FullName,
+                    CreatedDate = DateTime.Now,
+                    ModifiedBy = context.FullName,
+                    ModifiedDate = DateTime.Now
+                });
 
                 await _notificationService.Insert(context, NotificationTypeEnum.INSERTACCOUNT, new Account
                 {
@@ -734,14 +665,14 @@ namespace BPHN.BusinessLayer.ImpServices
             var result = await _accountRepository.UpdateTenant(account);
             if (result)
             {
-				await _licenseService.Update(new License
-				{
-					AccountId = account.Id,
-					Type = account.LicenseType,
-					ExpireTime = DateTime.Now.AddYears(1),
-					ModifiedBy = context.ModifiedBy,
-					ModifiedDate = DateTime.Now,
-				});
+                await _licenseService.Update(new License
+                {
+                    AccountId = account.Id,
+                    Type = account.LicenseType,
+                    ExpireTime = DateTime.Now.AddYears(1),
+                    ModifiedBy = context.ModifiedBy,
+                    ModifiedDate = DateTime.Now,
+                });
 
                 await _notificationService.Insert(context, NotificationTypeEnum.UPDATEACCOUNT, new Account
                 {
@@ -765,16 +696,16 @@ namespace BPHN.BusinessLayer.ImpServices
         }
 
         public async Task<ServiceResultModel> ResetPassword(string userName)
-		{
-			if (string.IsNullOrWhiteSpace(userName))
-			{
-				return new ServiceResultModel
-				{
-					Success = false,
-					ErrorCode = ErrorCodes.EMPTY_INPUT,
-					Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
-				};
-			}
+        {
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                return new ServiceResultModel
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.EMPTY_INPUT,
+                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
+                };
+            }
 
             var realAccount = await _accountRepository.GetAccountByUserName(userName);
             if (realAccount is null)
@@ -932,10 +863,11 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public ServiceResultModel ValidateToken(string token)
         {
-            var result = GetTokenInfo(token);
+            var accountId = _accountRepository.ValidateToken(token, false);
             return new ServiceResultModel
             {
-                Success = result.Success
+                Success = accountId != Guid.Empty,
+                Data = accountId
             };
         }
 

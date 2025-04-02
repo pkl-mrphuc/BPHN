@@ -7,8 +7,8 @@ namespace BPHN.DataLayer.IRepositories
     {
         Task<Account?> GetAccountByUserName(string userName);
         Task<bool> CheckExistUserName(string userName);
-        string GetToken(string id);
-        string GetRefreshToken(string id);
+        (string token, string refreshToken) GetToken(Guid id);
+        Guid ValidateToken(string token, bool isRefreshToken);
         Task<Account?> GetAccountById(Guid id);
         Task<bool> RegisterForTenant(Account account);
         Task<bool> UpdateTenant(Account account);
@@ -17,7 +17,7 @@ namespace BPHN.DataLayer.IRepositories
         Task<bool> SavePassword(Guid id, string password);
         Task<IEnumerable<Guid>> GetRelationIds(Guid id);
         Task<List<Account>> GetAll();
-        void SaveToken(Guid id, string token, string refreshToken);
+        Task SaveToken(Guid id, string token, string refreshToken);
         Task<Account?> GetAccountByRefreshToken(string refreshToken); 
     }
 }

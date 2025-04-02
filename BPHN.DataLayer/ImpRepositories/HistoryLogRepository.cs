@@ -3,7 +3,6 @@ using BPHN.ModelLayer;
 using BPHN.ModelLayer.Others;
 using Dapper;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 
 namespace BPHN.DataLayer.ImpRepositories
 {
@@ -30,7 +29,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 var totalRecord = await connection.QuerySingleAsync<int>($"select count(1) from history_logs where {whereQuery}", dic);
                 var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
                 var totalRecordCurrentPage = 0;
-                if(totalRecord > 0)
+                if (totalRecord > 0)
                 {
                     if (pageIndex == totalPage)
                     {
@@ -43,7 +42,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 }
                 return new { TotalPage = totalPage, TotalRecordCurrentPage = totalRecordCurrentPage, TotalAllRecords = totalRecord };
             }
-            
+
         }
 
         public async Task<HistoryLogDescription?> GetDescription(string historyLogId)
@@ -77,7 +76,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 connection.Open();
                 var totalRecord = await connection.QuerySingleAsync<int>($"select count(1) from history_logs where {whereQuery}", dic);
                 var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
-                if(pageIndex > totalPage)
+                if (pageIndex > totalPage)
                 {
                     pageIndex = 1;
                 }
@@ -92,38 +91,47 @@ namespace BPHN.DataLayer.ImpRepositories
 
         public async Task<bool> Write(HistoryLog history)
         {
-            var query = @"insert into history_logs(Id, IPAddress, ActionName, Actor, ActorId, Entity, Description, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
-                                value (@id, @ipAddress, @actionName, @actor, @actorId, @entity, @description, @createdDate, @createdBy, @modifiedDate, @modifiedBy);";
-            
-            var dic = new Dictionary<string, object?>();
-            dic.Add("@id", history.Id);
-            dic.Add("@ipAddress", history.IPAddress);
-            dic.Add("@actionName", history.ActionName);
-            dic.Add("@actor", history.Actor);
-            dic.Add("@actorId", history.ActorId);
-            dic.Add("@entity", history.Entity);
-            dic.Add("@description", history.Description);
-            if (history.Data != null)
-            {
-                query += "insert into history_log_descriptions(Id, ModelId, OldData, NewData) value (@id, @modelId, @oldData, @newData);";
-                dic.Add("@modelId", history.Data.ModelId);
-                dic.Add("@oldData", history.Data.OldData);
-                dic.Add("@newData", history.Data.NewData);
-            }
-            dic.Add("@createdDate", history.CreatedDate);
-            dic.Add("@createdBy", history.CreatedBy);
-            dic.Add("@modifiedDate", history.ModifiedDate);
-            dic.Add("@modifiedBy", history.ModifiedBy);
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var affect = await connection.ExecuteAsync(query, dic);
-                if(affect == 0)
+                using (var tranction = connection.BeginTransaction())
                 {
-                    return false;
+                    var affect = await connection.ExecuteAsync(Query.HISTORY_LOG__INSERT, new Dictionary<string, object?>
+                    {
+                        { "@id", history.Id },
+                        { "@ipAddress", history.IPAddress },
+                        { "@actionName", history.ActionName },
+                        { "@actor", history.Actor },
+                        { "@actorId", history.ActorId },
+                        { "@entity", history.Entity },
+                        { "@description", history.Description },
+                        { "@createdDate", history.CreatedDate },
+                        { "@createdBy", history.CreatedBy },
+                        { "@modifiedDate", history.ModifiedDate },
+                        { "@modifiedBy", history.ModifiedBy },
+                    }, tranction);
+
+                    if (history.Data is not null)
+                    {
+                        affect = await connection.ExecuteAsync(Query.HISTORY_LOG__INSERT_DESCRIPTION, new Dictionary<string, object?>
+                        {
+                            { "@modelId", history.Data.ModelId },
+                            { "@oldData", history.Data.OldData },
+                            { "@newData", history.Data.NewData },
+                        }, tranction);
+                    }
+
+                    if (affect <= 0)
+                    {
+                        tranction.Rollback();
+                    }
+                    else
+                    {
+                        tranction.Commit();
+                    }
+                    return affect > 0;
                 }
             }
-            return true;
         }
     }
 }

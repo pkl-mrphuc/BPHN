@@ -80,7 +80,10 @@ namespace BPHN.BusinessLayer.ImpServices
                                             );
             }
 
-            await _notificationRepository.Insert(notification);
+            await Task.Run(() =>
+            {
+                _notificationRepository.Insert(notification);
+            });
 
             return new ServiceResultModel
             {
