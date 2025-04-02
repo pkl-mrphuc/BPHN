@@ -58,18 +58,26 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public string GetToken(string id)
+        public (string token, string refreshToken) GetToken(Guid id)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var tokenKey = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var refreshTokenKey = Encoding.ASCII.GetBytes(_appSettings.Secret1);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] { new Claim("id", id) }),
-                Expires = DateTime.UtcNow.AddHours(12),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                Subject = new ClaimsIdentity(new[] { new Claim("id", id.ToString()) }),
+                Expires = DateTime.Now.AddHours(12),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var refreshTokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[] { new Claim("id", id.ToString()) }),
+                Expires = DateTime.Now.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(refreshTokenKey), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+            var refreshToken = tokenHandler.CreateToken(refreshTokenDescriptor);
+            return (tokenHandler.WriteToken(token), tokenHandler.WriteToken(refreshToken));
         }
 
         public async Task<bool> RegisterForTenant(Account account)
@@ -244,29 +252,12 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public string GetRefreshToken(string id)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret1);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim("id", id),
-                    new Claim("expiredTime", DateTime.UtcNow.AddDays(7).Ticks.ToString())
-                }),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }
-
-        public void SaveToken(Guid id, string token, string refreshToken)
+        public async Task SaveToken(Guid id, string token, string refreshToken)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                connection.Execute(Query.ACCOUNT__UPDATE_TOKEN, new Dictionary<string, object>()
+                await connection.ExecuteAsync(Query.ACCOUNT__UPDATE_TOKEN, new Dictionary<string, object>()
                 {
                     { "@id", id},
                     { "@token", token},
@@ -303,6 +294,27 @@ namespace BPHN.DataLayer.ImpRepositories
                 });
                 return affect > 0 ? true : false;
             }
+        }
+
+        public Guid ValidateToken(string token, bool isRefreshToken)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(isRefreshToken ? _appSettings.Secret1 : _appSettings.Secret);
+            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero
+            }, out SecurityToken validatedToken);
+
+            var jwtToken = (JwtSecurityToken)validatedToken;
+            if (jwtToken is not null && Guid.TryParse(jwtToken.Claims.First(x => "id".Equals(x.Type)).Value, out var accountId) && jwtToken.ValidTo >= DateTime.Now)
+            {
+                return accountId;
+            }
+            return Guid.Empty;
         }
     }
 }

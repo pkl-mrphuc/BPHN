@@ -20,7 +20,7 @@ const isMobile = ref(store.getters["config/isMobile"]);
 const { dateToString } = useCommonFn();
 
 const onBack = () => {
-  router.push("calendar");
+  router.push("/");
 };
 
 const loadData = () => {

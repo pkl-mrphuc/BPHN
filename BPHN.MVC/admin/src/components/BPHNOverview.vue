@@ -36,7 +36,7 @@ watchEffect(() => { checked4.value = store.getters["cache/getOverviewVariableCac
 watchEffect(() => { checked5.value = store.getters["cache/getOverviewVariableCache"]?.checked5 ?? true; });
 
 const onBack = () => {
-  router.push("calendar");
+    router.push("/");
 };
 
 const filter = () => {

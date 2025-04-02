@@ -699,6 +699,7 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 frame.TimeBegin = new DateTime(now.Year, now.Month, now.Day, frame.TimeBegin.Hour, frame.TimeBegin.Minute, 0);
                 frame.TimeEnd = new DateTime(now.Year, now.Month, now.Day, frame.TimeEnd.Hour, frame.TimeEnd.Minute, 0);
+                frame.Name = $"{frame.TimeBegin.ToString("hh:mm:ss")} - {frame.TimeEnd.ToString("hh:mm:ss")}";
                 if (dicFrame.ContainsKey(frame.PitchId))
                 {
                     var currentFrame = dicFrame[frame.PitchId];

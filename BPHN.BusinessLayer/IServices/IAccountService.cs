@@ -15,11 +15,10 @@ namespace BPHN.BusinessLayer.IServices
         Task<ServiceResultModel> GetCountPaging(int pageIndex, int pageSize, string txtSearch);
         Task<ServiceResultModel> SubmitSetPassword(string code, string password, string userName);
         ServiceResultModel ValidateToken(string token);
-        ServiceResultModel GetTokenInfo(string token);
         Task<ServiceResultModel> ChangePassword(Account account);
         Task<ServiceResultModel> GetInstance(string id);
         Task<ServiceResultModel> Refresh();
-        ServiceResultModel RefreshToken(string refreshToken);
+        Task<ServiceResultModel> RefreshToken(string refreshToken);
         Task<IEnumerable<Guid>> GetRelationIds(Guid id);
     }
 }

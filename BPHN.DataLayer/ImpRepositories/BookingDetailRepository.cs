@@ -39,25 +39,20 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public async Task<List<CalendarEvent>> GetByDate(string date, Guid[] relationIds)
+        public async Task<IEnumerable<CalendarEvent>> GetByDate(string date, Guid[] relationIds)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var dic = new Dictionary<string, object>();
-                dic.Add("@status0", BookingStatusEnum.SUCCESS.ToString());
-                dic.Add("@status1", BookingStatusEnum.PENDING.ToString());
-                dic.Add("@accountId", relationIds);
-                dic.Add("@startDate", $"{date} 00:00:00");
-                dic.Add("@endDate", $"{date} 23:59:59");
-                var query = @"select bd.*, b.PitchId, b.Id as BookingId, tfi.TimeBegin as Start, tfi.TimeEnd as End, b.NameDetail as Stadium, b.PhoneNumber as PhoneNumber  from booking_details bd 
-                                                inner join bookings b on b.Id = bd.BookingId
-                                                inner join time_frame_infos tfi on b.TimeFrameInfoId = tfi.Id
-                                                where   bd.Status in (@status0, @status1) and 
-                                                        b.AccountId in @accountId and 
-                                                        bd.MatchDate between @startDate and @endDate";
-                var lstBookingDetail = (await connection.QueryAsync<CalendarEvent>(query, dic)).ToList();
-                return lstBookingDetail;
+                var lstBookingDetail = await connection.QueryAsync<CalendarEvent>(Query.BOOKING_DETAIL__GET_BY_DATE, new Dictionary<string, object>
+                {
+                    { "@status0", BookingStatusEnum.SUCCESS.ToString() },
+                    { "@status1", BookingStatusEnum.PENDING.ToString() },
+                    { "@accountId", relationIds },
+                    { "@startDate", $"{date} 00:00:00" },
+                    { "@endDate", $"{date} 23:59:59" },
+                });
+                return lstBookingDetail ?? Enumerable.Empty<CalendarEvent>();
             }
         }
 

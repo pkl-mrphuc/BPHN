@@ -7,7 +7,7 @@ namespace BPHN.DataLayer.IRepositories
     {
         Task<List<BookingDetail>> GetInRangeDate(Guid accountId, DateTime startDate, DateTime endDate);
         Task<bool> Cancel(string id);
-        Task<List<CalendarEvent>> GetByDate(string date, Guid[] relationIds);
+        Task<IEnumerable<CalendarEvent>> GetByDate(string date, Guid[] relationIds);
         Task<bool> UpdateMatch(CalendarEvent eventInfo);
         Task<IEnumerable<CalendarEvent>> GetEventsByRangeDate(DateTime startDate, DateTime endDate, Guid pitchId, string nameDetail);
         Task<List<CalendarEvent>> GetByRangeDate(string startDate, string endDate, string pitchId, string nameDetail);

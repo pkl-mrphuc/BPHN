@@ -37,7 +37,7 @@ const login = () => {
         let user = res.data.data;
         if (user) {
           store.commit("account/setContext", user);
-          router.push("calendar");
+          router.push("/");
         }
       } else {
         ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error", });

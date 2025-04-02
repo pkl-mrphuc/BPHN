@@ -156,7 +156,7 @@ const connect = () => {
 };
 
 const onBack = () => {
-  router.push("calendar");
+  router.push("/");
 };
 </script>
 

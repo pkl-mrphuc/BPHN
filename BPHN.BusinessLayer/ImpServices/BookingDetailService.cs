@@ -185,12 +185,6 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var result = await _bookingDetailRepository.GetByDate(date, context.RelationIds.ToArray());
-            result = result.Select(item =>
-            {
-                item.Start = new DateTime(item.MatchDate.Year, item.MatchDate.Month, item.MatchDate.Day, item.Start.Hour, item.Start.Minute, 0);
-                item.End = new DateTime(item.MatchDate.Year, item.MatchDate.Month, item.MatchDate.Day, item.End.Hour, item.End.Minute, 0);
-                return item;
-            }).ToList();
             return new ServiceResultModel
             {
                 Success = true,
@@ -223,12 +217,6 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var result = await _bookingDetailRepository.GetEventsByRangeDate(request.StartDate, request.EndDate, request.PitchId, request.NameDetail);
-            result = result.Select(item =>
-            {
-                item.Start = new DateTime(item.MatchDate.Year, item.MatchDate.Month, item.MatchDate.Day, item.Start.Hour, item.Start.Minute, 0);
-                item.End = new DateTime(item.MatchDate.Year, item.MatchDate.Month, item.MatchDate.Day, item.End.Hour, item.End.Minute, 0);
-                return item;
-            });
             return new ServiceResultModel
             {
                 Success = true,

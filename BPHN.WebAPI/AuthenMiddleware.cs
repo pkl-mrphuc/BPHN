@@ -1,5 +1,4 @@
 ﻿using BPHN.BusinessLayer.IServices;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace BPHN.WebAPI
 {
@@ -26,14 +25,14 @@ namespace BPHN.WebAPI
 
         private async Task GetContext(HttpContext context, IAccountService accountService, string token)
         {
-            var tokenResult = accountService.GetTokenInfo(token);
-            if(tokenResult.Success && tokenResult.Data != null)
+            var tokenResult = accountService.ValidateToken(token);
+            if (tokenResult is not null && tokenResult.Success && tokenResult.Data is Guid accountId && accountId != Guid.Empty)
             {
-                var jwtToken = (JwtSecurityToken)tokenResult.Data;
-                var userId = Guid.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
-
-                var serviceResult = await accountService.GetById(userId);
-                context.Items["User"] = serviceResult.Data;
+                if (!context.Items.ContainsKey("User") || context.Items["User"] is null)
+                {
+                    var serviceResult = await accountService.GetById(accountId);
+                    context.Items["User"] = serviceResult.Data;
+                }
             }
         }
     }

@@ -254,7 +254,7 @@ const currentChange = () => {
 };
 
 const onBack = () => {
-  router.push("calendar");
+  router.push("/");
 };
 
 onMounted(() => {
