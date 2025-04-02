@@ -109,7 +109,7 @@ const filter = () => {
 };
 
 const onBack = () => {
-  router.push("calendar");
+  router.push("/");
 };
 
 onMounted(() => {

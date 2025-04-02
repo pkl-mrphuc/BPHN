@@ -27,7 +27,7 @@ const accountId = ref(null);
 const isMobile = ref(store.getters["config/isMobile"]);
 
 const onBack = () => {
-  router.push("calendar");
+  router.push("/");
 };
 
 const loadData = () => {

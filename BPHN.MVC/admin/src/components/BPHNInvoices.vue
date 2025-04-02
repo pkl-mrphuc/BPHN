@@ -43,7 +43,7 @@ watchEffect(() => { date.value = store.getters["cache/getInvoiceVariableCache"]?
 watchEffect(() => { paymentType.value = store.getters["cache/getInvoiceVariableCache"]?.paymentType ?? PaymentTypeEnum.BANK; })
 
 const onBack = () => {
-  router.push("calendar");
+  router.push("/");
 };
 
 const loadData = () => {
