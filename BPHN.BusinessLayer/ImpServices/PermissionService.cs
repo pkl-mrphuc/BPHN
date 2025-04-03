@@ -43,7 +43,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var permissions = GetDefaultPermissions(accountId, context);
             if (!currentPermissions.IsNullOrEmpty())
             {
-                foreach (var item in permissions) 
+                foreach (var item in permissions)
                 {
                     item.Allow = currentPermissions.ContainsKey(item.FunctionType) ? currentPermissions[item.FunctionType] : false;
                 }
@@ -69,7 +69,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermission = await IsValidPermission(context.Id, FunctionTypeEnum.EDITUSER);
+            var hasPermission = await IsValidPermissions(context.Id, FunctionTypeEnum.EDITUSER);
             if (!hasPermission)
             {
                 return new ServiceResultModel
@@ -318,25 +318,22 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task<bool> IsValidPermission(Guid accountId, FunctionTypeEnum functionType)
+        public async Task<bool> IsValidPermissions(Guid accountId, params FunctionTypeEnum[] functionTypes)
         {
+            var context = _contextService.GetContext();
+            if (context is not null && context.Id == accountId && context.Role == RoleEnum.ADMIN)
+            {
+                return true;
+            }
+
             var permissions = await GetAll(accountId);
-            if (permissions is null)
+            if (permissions.IsNullOrEmpty())
             {
                 return false;
             }
 
-            var result = permissions.FirstOrDefault(item => item.FunctionType == (int)functionType && item.Allow) is not null;
-            if (!result)
-            {
-                var context = _contextService.GetContext();
-                if (context?.Id == accountId && context?.Role == RoleEnum.ADMIN && (functionType == FunctionTypeEnum.VIEWLISTUSER || functionType == FunctionTypeEnum.ADDUSER || functionType == FunctionTypeEnum.EDITUSER))
-                {
-                    return true;
-                }
-            }
-
-            return result;
+            var allowPermissions = permissions.Where(x => functionTypes.Contains((FunctionTypeEnum)x.FunctionType)).ToDictionary(x => x.FunctionType, x => x.Allow);
+            return !allowPermissions.Values.Any(x => !x);
         }
     }
 }

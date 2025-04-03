@@ -107,7 +107,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTUSER);
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.VIEWLISTUSER);
             if (!hasPermission || (context.Role != RoleEnum.ADMIN && !await _configService.AllowMultiUser(context.Id)))
             {
                 return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
@@ -204,7 +204,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTUSER);
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.VIEWLISTUSER);
             if (!hasPermission || (context.Role != RoleEnum.ADMIN && !await _configService.AllowMultiUser(context.Id)))
             {
                 return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
@@ -423,7 +423,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.ADDUSER);
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.ADDUSER);
             if (!hasPermission || (context.Role != RoleEnum.ADMIN && !await _configService.AllowMultiUser(context.Id)))
             {
                 return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
@@ -519,7 +519,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.EDITUSER);
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.EDITUSER);
             if (!hasPermission || (context.Role != RoleEnum.ADMIN && !await _configService.AllowMultiUser(context.Id)))
             {
                 return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));

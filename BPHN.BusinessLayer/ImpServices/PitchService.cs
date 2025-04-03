@@ -68,7 +68,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     };
                 }
 
-                var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
+                var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
                 if (!hasPermission)
                 {
                     return new ServiceResultModel
@@ -231,7 +231,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
             if (!hasPermission)
             {
                 return new ServiceResultModel
@@ -287,7 +287,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     };
                 }
 
-                var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
+                var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
                 if (!hasPermission)
                 {
                     return new ServiceResultModel
@@ -373,7 +373,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.ADDPITCH);
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.ADDPITCH);
             if (!hasPermission)
             {
                 return new ServiceResultModel
@@ -458,7 +458,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.EDITPITCH);
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.EDITPITCH);
             if (!hasPermission)
             {
                 return new ServiceResultModel

@@ -133,7 +133,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTINVOICE);
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.VIEWLISTINVOICE);
             if (!hasPermission)
             {
                 return new ServiceResultModel
@@ -165,8 +165,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermissionAdd = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.ADDINVOICE);
-            if (!hasPermissionAdd)
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.ADDINVOICE);
+            if (!hasPermission)
             {
                 return new ServiceResultModel
                 {
@@ -277,8 +277,8 @@ namespace BPHN.BusinessLayer.ImpServices
                 };
             }
 
-            var hasPermissionEdit = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.EDITINVOICE);
-            if (!hasPermissionEdit)
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.EDITINVOICE);
+            if (!hasPermission)
             {
                 return new ServiceResultModel
                 {
