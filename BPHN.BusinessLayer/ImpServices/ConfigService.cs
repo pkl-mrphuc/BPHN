@@ -27,15 +27,10 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            List<Config>? lstConfig = null;
+            var lstConfig = new List<Config>();
             if (string.IsNullOrWhiteSpace(key))
             {
                 lstConfig = await GetConfigs(context.Id);
@@ -45,7 +40,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 var config = await _configRepository.GetByKey(context.Id, key);
                 if (config is not null)
                 {
-                    lstConfig = new List<Config> { config };
+                    lstConfig.Add(config);
                 }
             }
 
@@ -61,21 +56,12 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
             if (configs is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = true,
-                    Data = true
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig));
             }
 
             configs = configs.Select(item =>

@@ -33,39 +33,27 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
             if (!string.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out var itemId))
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig));
             }
 
             var data = new Item();
-            data.Id = Guid.NewGuid();
-            data.Status = ActiveStatusEnum.ACTIVE.ToString();
-            if (Guid.TryParse(id, out itemId))
+            if (!string.IsNullOrWhiteSpace(id) && Guid.TryParse(id, out itemId))
             {
                 data = await _itemRepository.GetById(itemId);
                 if (data is null)
                 {
-                    return new ServiceResultModel
-                    {
-                        Success = false,
-                        ErrorCode = ErrorCodes.NOT_EXISTS,
-                        Message = _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig)
-                    };
+                    return new ServiceResultModel(ErrorCodes.NOT_EXISTS, _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig));
                 }
+            }
+            else
+            {
+                data.Id = Guid.NewGuid();
+                data.Status = ActiveStatusEnum.ACTIVE.ToString();
             }
 
             return new ServiceResultModel
@@ -80,23 +68,13 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
             var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.VIEWLISTSERVICE);
             if (!hasPermission)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
             IEnumerable<Item> lstItem;
@@ -125,34 +103,19 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
             var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.ADDSERVICE);
             if (!hasPermission)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
             var isValid = ValidateModelByAttribute(data, "Id");
             if (!isValid)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig));
             }
 
             data.Id = Guid.NewGuid();
@@ -194,34 +157,19 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
             var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.EDITSERVICE);
             if (!hasPermission)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
             var isValid = ValidateModelByAttribute(data);
             if (!isValid)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig));
             }
 
             data.ModifiedBy = context.FullName;

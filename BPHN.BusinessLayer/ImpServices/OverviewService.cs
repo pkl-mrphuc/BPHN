@@ -27,23 +27,13 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
             var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.VIEWSTATISTIC);
             if (!hasPermission)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
             var tasks = request.Types.ToDictionary(item => item.Name, item => GetStatistic(context.Id, item));

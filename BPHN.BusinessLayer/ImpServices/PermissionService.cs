@@ -31,12 +31,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
             var currentPermissions = (await _permissionRepository.GetPermissions(accountId)).ToDictionary(x => x.FunctionType, x => x.Allow);
@@ -61,23 +56,13 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
             var hasPermission = await IsValidPermissions(context.Id, FunctionTypeEnum.EDITUSER);
             if (!hasPermission)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
             permissions = permissions.Select(item =>
@@ -96,7 +81,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (saveResult)
             {
                 var account = new Account() { UserName = string.Empty };
-                await _notificationService.Insert<Account>(context, NotificationTypeEnum.CHANGEPERMISSION, account);
+                await _notificationService.Insert(context, NotificationTypeEnum.CHANGEPERMISSION, account);
 
                 _historyLogService.Write(Guid.NewGuid(),
                     new HistoryLog

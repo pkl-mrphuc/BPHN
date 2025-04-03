@@ -23,12 +23,7 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             if (string.IsNullOrWhiteSpace(id))
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT));
             }
 
             var result = true;
@@ -68,23 +63,13 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (string.IsNullOrWhiteSpace(id))
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT));
             }
 
             var fileUrl = GetFileUrl(id);
             if (string.IsNullOrWhiteSpace(fileUrl))
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.NOT_EXISTS,
-                    Message = _resourceService.Get(SharedResourceKey.NOTEXIST)
-                };
+                return new ServiceResultModel(ErrorCodes.NOT_EXISTS, _resourceService.Get(SharedResourceKey.NOTEXIST));
             }
 
             return new ServiceResultModel
@@ -98,12 +83,7 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             if (string.IsNullOrWhiteSpace(id) || file is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT));
             }
 
             var extension = Path.GetExtension(file.FileName);
@@ -111,34 +91,23 @@ namespace BPHN.BusinessLayer.ImpServices
             var validExtension = new string[3] { ".png", ".jpg", ".jpeg" };
             if (!validExtension.Contains(extension.ToLower()))
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.NOT_EXISTS,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDDATA)
-                };
+                return new ServiceResultModel(ErrorCodes.NOT_EXISTS, _resourceService.Get(SharedResourceKey.INVALIDDATA));
             }
 
-            if (DeleteFile(id).Success)
+            if (!DeleteFile(id).Success)
             {
-                var path = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, $"{id}{extension}");
-                using var fileStream = new FileStream(path, FileMode.Create);
-                await file.CopyToAsync(fileStream);
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE));
+            }
 
-                return new ServiceResultModel
-                {
-                    Success = true,
-                    Data = $"{_appSettings.FileUrl}{id}{extension}"
-                };
-            }
-            else
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, _appSettings.FileFolder, $"{id}{extension}");
+            using var fileStream = new FileStream(path, FileMode.Create);
+            await file.CopyToAsync(fileStream);
+
+            return new ServiceResultModel
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE
-                };
-            }
+                Success = true,
+                Data = $"{_appSettings.FileUrl}{id}{extension}"
+            };
         }
 
         public string GetFileUrl(string id)
