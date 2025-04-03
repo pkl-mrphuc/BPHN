@@ -107,52 +107,28 @@ namespace BPHN.BusinessLayer.ImpServices
                 return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.VIEWLISTUSER);
-            if (!hasPermission || (context.Role != RoleEnum.ADMIN && !await _configService.AllowMultiUser(context.Id)))
+            if (context.Role == RoleEnum.TENANT)
             {
-                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
+                var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.VIEWLISTUSER);
+                if (!hasPermission)
+                {
+                    return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
+                }
+
+                var allowMultiUser = await _configService.AllowMultiUser(context.Id);
+                if (!allowMultiUser)
+                {
+                    return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
+                }
             }
 
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
 
-            var where = new List<WhereCondition>();
-            switch (context.Role)
-            {
-                case RoleEnum.ADMIN:
-                    where.Add(new WhereCondition
-                    {
-                        Column = "Role",
-                        Operator = "in",
-                        Value = new[] { RoleEnum.USER.ToString(), RoleEnum.TENANT.ToString() }
-                    });
-                    break;
-                default:
-                    where.Add(new WhereCondition
-                    {
-                        Column = "Role",
-                        Operator = "in",
-                        Value = new[] { RoleEnum.USER.ToString() }
-                    });
-                    where.Add(new WhereCondition
-                    {
-                        Column = "Id",
-                        Operator = "!=",
-                        Value = context.Id
-                    });
-                    where.Add(new WhereCondition
-                    {
-                        Column = "ParentId",
-                        Operator = "in",
-                        Value = context.RelationIds.ToArray()
-                    });
-                    break;
-            }
-
             return new ServiceResultModel
             {
                 Success = true,
-                Data = await _accountRepository.GetCountPaging(pageIndex, pageSize, txtSearch, where)
+                Data = await _accountRepository.GetCountPaging(context.Id, context.Role, pageIndex, pageSize, txtSearch)
             };
         }
 
@@ -213,40 +189,7 @@ namespace BPHN.BusinessLayer.ImpServices
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
 
-            var where = new List<WhereCondition>();
-            switch (context.Role)
-            {
-                case RoleEnum.ADMIN:
-                    where.Add(new WhereCondition
-                    {
-                        Column = "Role",
-                        Operator = "in",
-                        Value = new[] { RoleEnum.USER.ToString(), RoleEnum.TENANT.ToString() }
-                    });
-                    break;
-                default:
-                    where.Add(new WhereCondition
-                    {
-                        Column = "Role",
-                        Operator = "in",
-                        Value = new[] { RoleEnum.USER.ToString() }
-                    });
-                    where.Add(new WhereCondition
-                    {
-                        Column = "Id",
-                        Operator = "!=",
-                        Value = context.Id
-                    });
-                    where.Add(new WhereCondition
-                    {
-                        Column = "ParentId",
-                        Operator = "in",
-                        Value = context.RelationIds.ToArray()
-                    });
-                    break;
-            }
-
-            var lstTenants = await _accountRepository.GetPaging(pageIndex, pageSize, txtSearch, where);
+            var lstTenants = await _accountRepository.GetPaging(context.Id, context.Role, pageIndex, pageSize, txtSearch);
 
             return new ServiceResultModel
             {

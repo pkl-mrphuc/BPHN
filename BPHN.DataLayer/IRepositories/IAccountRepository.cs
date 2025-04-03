@@ -12,8 +12,9 @@ namespace BPHN.DataLayer.IRepositories
         Task<Account?> GetAccountById(Guid id);
         Task<bool> RegisterForTenant(Account account);
         Task<bool> UpdateTenant(Account account);
-        Task<List<Account>> GetPaging(int pageIndex, int pageSize, string txtSearch, List<WhereCondition> where);
-        Task<object> GetCountPaging(int pageIndex, int pageSize, string txtSearch, List<WhereCondition> where);
+        Task<IEnumerable<Account>> GetPaging(Guid accountId, RoleEnum role, int pageIndex, int pageSize, string txtSearch);
+        Task<object> GetCountPaging(Guid accountId, RoleEnum role, int pageIndex, int pageSize, string txtSearch);
+        Task<int> GetTotalRecord(Guid accountId, RoleEnum role, string txtSearch);
         Task<bool> SavePassword(Guid id, string password);
         Task<IEnumerable<Guid>> GetRelationIds(Guid id);
         Task<List<Account>> GetAll();
