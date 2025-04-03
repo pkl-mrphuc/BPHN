@@ -85,24 +85,23 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                string query = @"insert into accounts(Id, UserName, Password, Gender, PhoneNumber, FullName, Email, Role, Status, ParentId, CreatedBy, CreatedDate, ModifiedBy, ModifiedDate)
-                                value (@id, @userName, @password, @gender, @phoneNumber, @fullName, @email, @role, @status, @parentId, @createdBy, @createdDate, @modifiedBy, @modifiedDate)";
-                var dic = new Dictionary<string, object?>();
-                dic.Add("@id", account.Id);
-                dic.Add("@fullName", account.FullName);
-                dic.Add("@userName", account.UserName);
-                dic.Add("@password", account.Password);
-                dic.Add("@gender", account.Gender);
-                dic.Add("@email", account.Email);
-                dic.Add("@phoneNumber", account.PhoneNumber);
-                dic.Add("@role", account.Role.ToString());
-                dic.Add("@status", account.Status);
-                dic.Add("@parentId", account.ParentId);
-                dic.Add("@createdDate", account.CreatedDate);
-                dic.Add("@createdBy", account.CreatedBy);
-                dic.Add("@modifiedDate", account.ModifiedDate);
-                dic.Add("@modifiedBy", account.ModifiedBy);
-                var affect = await connection.ExecuteAsync(query, dic);
+                var affect = await connection.ExecuteAsync(Query.ACCOUNT__INSERT, new Dictionary<string, object?>
+                {
+                    { "@id", account.Id },
+                    { "@fullName", account.FullName },
+                    { "@userName", account.UserName },
+                    { "@password", account.Password },
+                    { "@gender", account.Gender },
+                    { "@email", account.Email },
+                    { "@phoneNumber", account.PhoneNumber },
+                    { "@role", account.Role.ToString() },
+                    { "@status", account.Status },
+                    { "@parentId", account.ParentId },
+                    { "@createdDate", account.CreatedDate },
+                    { "@createdBy", account.CreatedBy },
+                    { "@modifiedDate", account.ModifiedDate },
+                    { "@modifiedBy", account.ModifiedBy },
+                });
                 return affect > 0 ? true : false;
             }
         }
@@ -263,19 +262,6 @@ namespace BPHN.DataLayer.ImpRepositories
                     { "@token", token},
                     { "@refreshToken", refreshToken }
                 });
-            }
-        }
-
-        public async Task<Account?> GetAccountByRefreshToken(string refreshToken)
-        {
-            using (var connection = ConnectDB(GetConnectionString()))
-            {
-                connection.Open();
-                var query = @"select * from accounts where RefreshToken = @refreshToken";
-                Dictionary<string, object> dic = new Dictionary<string, object>();
-                dic.Add("@refreshToken", refreshToken);
-                var account = await connection.QueryFirstOrDefaultAsync<Account>(query, dic);
-                return account;
             }
         }
 

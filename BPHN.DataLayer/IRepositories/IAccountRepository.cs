@@ -18,6 +18,5 @@ namespace BPHN.DataLayer.IRepositories
         Task<IEnumerable<Guid>> GetRelationIds(Guid id);
         Task<List<Account>> GetAll();
         Task SaveToken(Guid id, string token, string refreshToken);
-        Task<Account?> GetAccountByRefreshToken(string refreshToken); 
     }
 }
