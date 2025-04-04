@@ -213,7 +213,7 @@ const en = {
     UPDATEPITCH: "Update stadium",
     INSERTACCOUNT: "Add new account",
     UPDATEACCOUNT: "Update account",
-    INSERTSERVICIE: "Add new item/service",
+    INSERTSERVICE: "Add new item/service",
     UPDATESERVICE: "Update item/service",
     INSERTINVOICE: "Add new invoice",
     UPDATEINVOICE: "Update invoice",

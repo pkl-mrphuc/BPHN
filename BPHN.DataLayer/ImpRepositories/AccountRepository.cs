@@ -266,7 +266,7 @@ namespace BPHN.DataLayer.ImpRepositories
             }
             catch (Exception)
             {
-                // validate token faild
+                
             }
             
             return Guid.Empty;

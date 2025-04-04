@@ -24,13 +24,10 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             for (int i = 0; i < accountIds.Count; i++)
             {
-                if (currentId != accountIds[i])
+                var connections = _connections.GetConnections(accountIds[i]);
+                for (int j = 0; j < connections.Count(); j++)
                 {
-                    var connections = _connections.GetConnections(accountIds[i]);
-                    for (int j = 0; j < connections.Count(); j++)
-                    {
-                        Clients.Client(connections.ElementAt(j)).PushNotification(type, model);
-                    }
+                    Clients.Client(connections.ElementAt(j)).PushNotification(type, model);
                 }
             }
         }
