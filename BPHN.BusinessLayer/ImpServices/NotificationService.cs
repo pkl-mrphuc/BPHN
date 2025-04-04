@@ -47,7 +47,7 @@ namespace BPHN.BusinessLayer.ImpServices
             };
         }
 
-        public async Task<ServiceResultModel> Insert<T>(Account context, NotificationTypeEnum type, T model)
+        public async Task Insert<T>(Account context, NotificationTypeEnum type, T model)
         {
             var notification = new Notification
             {
@@ -66,25 +66,8 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 var connection = new HubConnectionBuilder().WithUrl(new Uri(_appSettings.SignalrUrl)).Build();
                 await connection.StartAsync();
-                await connection.InvokeAsync(
-                                                "PushNotification",
-                                                context.RelationIds.Select(item => item.ToString()).ToList(),
-                                                context.Id.ToString(),
-                                                (int)type,
-                                                JsonConvert.SerializeObject(model)
-                                            );
+                await connection.InvokeAsync("PushNotification", context.RelationIds, context.Id, (int)type, JsonConvert.SerializeObject(model));
             }
-
-            await Task.Run(() =>
-            {
-                _notificationRepository.Insert(notification);
-            });
-
-            return new ServiceResultModel
-            {
-                Success = true,
-                Data = _mapper.Map<NotificationRespond>(notification)
-            };
         }
 
         private string BuildSubject<T>(NotificationTypeEnum type, T model)
