@@ -292,7 +292,7 @@ onMounted(() => {
         <div class="d-flex flex-row-reverse">
           <el-button class="mb-2" v-if="!equals(props.mode, 'approval')" type="primary" @click="save" >{{ t("Save") }}</el-button>
           <el-button class="mb-2" v-if="equals(props.mode, 'approval')" type="primary" @click="approval" >{{ t("Approval") }}</el-button>
-          <el-button class="m-0 mb-2" v-if="equals(props.mode, 'approval')" type="danger" @click="decline">{{ t("Decline") }}</el-button>
+          <el-button class="m-0 mb-2 mr-2" v-if="equals(props.mode, 'approval')" type="danger" @click="decline">{{ t("Decline") }}</el-button>
           <el-button class="mb-2 mr-2" @click="toggleModel">{{ t("Close") }}</el-button>
         </div>
 

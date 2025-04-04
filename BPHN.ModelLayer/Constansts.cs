@@ -73,7 +73,7 @@
                                                                         inner join bookings b on b.Id = bd.BookingId
                                                                         inner join time_frame_infos tfi on b.TimeFrameInfoId = tfi.Id
                                                                         inner join pitchs p on p.Id = b.PitchId and p.Id = @pitchId
-                                                                    where b.NameDetail = @nameDetail and bd.MatchDate between @startDate and @endDate";
+                                                                    where b.NameDetail = @nameDetail and bd.MatchDate between @startDate and @endDate and bd.Status != @status";
         public const string BOOKING_DETAIL__GET_BY_DATE = @"select      bd.*, 
                                                                         b.PitchId, 
                                                                         b.Id as BookingId, 

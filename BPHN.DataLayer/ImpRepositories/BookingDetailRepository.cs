@@ -80,6 +80,7 @@ namespace BPHN.DataLayer.ImpRepositories
                     { "@endDate", endDate.ToString("yyyy-MM-dd 23:59:59") },
                     { "@pitchId", pitchId },
                     { "@nameDetail", nameDetail },
+                    { "@status", BookingStatusEnum.CANCEL.ToString() }
                 });
                 return lstBookingDetail ?? Enumerable.Empty<CalendarEvent>();
             }

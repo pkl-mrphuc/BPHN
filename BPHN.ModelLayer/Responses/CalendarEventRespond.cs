@@ -13,5 +13,6 @@
         public string TeamB { get; set; }
         public string Note { get; set; }
         public double Deposit { get; set; }
+        public string Status { get; set; }
     }
 }

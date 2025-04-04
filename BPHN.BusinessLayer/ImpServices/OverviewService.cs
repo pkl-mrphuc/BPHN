@@ -58,21 +58,21 @@ namespace BPHN.BusinessLayer.ImpServices
             switch(name)
             {
                 case StatisticTypeEnum.TOTALBOOKINGYEAR:
-                    return await _overviewRepository.GetTotalBookingYear(accountId, DateTime.Parse((type.Parameter ?? DateTime.Now).ToString(), styles: DateTimeStyles.RoundtripKind));
+                    return await _overviewRepository.GetTotalBookingYear(accountId, DateTime.Now);
                 case StatisticTypeEnum.TOTALBOOKINGDAY:
-                    return await _overviewRepository.GetTotalBookingDay(accountId, DateTime.Parse((type.Parameter ?? DateTime.Now).ToString(), styles: DateTimeStyles.RoundtripKind));
+                    return await _overviewRepository.GetTotalBookingDay(accountId, DateTime.Now);
                 case StatisticTypeEnum.REVENUEDAY:
-                    return await _overviewRepository.GetRevenueDay(accountId, DateTime.Parse((type.Parameter ?? DateTime.Now).ToString(), styles: DateTimeStyles.RoundtripKind));
+                    return await _overviewRepository.GetRevenueDay(accountId, DateTime.Now);
                 case StatisticTypeEnum.REVENUEMONTH:
-                    return await _overviewRepository.GetRevenueMonth(accountId, DateTime.Parse((type.Parameter ?? DateTime.Now).ToString(), styles: DateTimeStyles.RoundtripKind));
+                    return await _overviewRepository.GetRevenueMonth(accountId, DateTime.Now);
                 case StatisticTypeEnum.REVENUEYEAR:
-                    return await _overviewRepository.GetRevenueYear(accountId, DateTime.Parse((type.Parameter ?? DateTime.Now).ToString(), styles: DateTimeStyles.RoundtripKind));
+                    return await _overviewRepository.GetRevenueYear(accountId, DateTime.Now);
                 case StatisticTypeEnum.REVENUEQUARTER:
-                    return await _overviewRepository.GetRevenueQuarter(accountId, DateTime.Parse((type.Parameter ?? DateTime.Now).ToString(), styles: DateTimeStyles.RoundtripKind));
+                    return await _overviewRepository.GetRevenueQuarter(accountId, DateTime.Now);
                 case StatisticTypeEnum.TOTALDETAILBOOKINGDAY:
-                    return await _overviewRepository.GetTotalDetailBookingDay(accountId, DateTime.Parse((type.Parameter ?? DateTime.Now).ToString(), styles: DateTimeStyles.RoundtripKind));
+                    return await _overviewRepository.GetTotalDetailBookingDay(accountId, DateTime.Now);
                 case StatisticTypeEnum.REVENUESERVICEYEAR:
-                    return await _overviewRepository.GetRevenueServiceYear(accountId, DateTime.Parse((type.Parameter ?? DateTime.Now).ToString(), styles: DateTimeStyles.RoundtripKind));
+                    return await _overviewRepository.GetRevenueServiceYear(accountId, DateTime.Now);
                 case StatisticTypeEnum.TOTALINVOICE:
                     return await _overviewRepository.GetTotalInvoice(accountId);
                 default:

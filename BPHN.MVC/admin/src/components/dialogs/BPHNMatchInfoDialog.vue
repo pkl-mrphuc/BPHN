@@ -75,6 +75,7 @@ const approval = () => {
         deposit: deposit.value,
         status: BookingStatusEnum.SUCCESS,
       });
+      toggleModel();
     } else {
       ElNotification({ title: t("Notification"), message: res?.data?.message ?? t("ErrorMesg"), type: "error", });
     }

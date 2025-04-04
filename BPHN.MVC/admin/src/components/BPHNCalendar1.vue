@@ -13,6 +13,7 @@ import {
   ArrowRight,
   Calendar as DatePick
 } from "@element-plus/icons-vue";
+import { BookingStatusEnum } from "@/const";
 
 const { t } = useI18n();
 const { time, dateToString, equals } = useCommonFn();
@@ -39,10 +40,10 @@ const loadData = () => {
             let result = res.data.data;
             lstPitch.value = (result.lstPitch ?? []).map(function(x) { return { id: x.id, name: x.name, minutesPerMatch: x.minutesPerMatch, nameDetails: (x.nameDetails ?? "").split(';') } });
             lstFrameInfo.value = (result.lstFrameInfo ?? []).map(function(x) { return { id: x.id, name: `${time(new Date(x.timeBegin))} - ${time(new Date(x.timeEnd))}`, pitchId: x.pitchId, timeBegin: new Date(x.timeBegin), timeEnd: new Date(x.timeEnd) } });
-            if (lstPitch.value.length > 0) {
+            if (!pitchId.value && lstPitch.value.length > 0) {
                 pitchId.value = lstPitch.value[0].id;
-                handleSelect();
             }
+            handleSelect();
         }
     });
 };
@@ -97,16 +98,21 @@ const renderCalendar = (index) => {
         },
         eventContent: function (arg) {
             let info = arg.event.extendedProps;
+            console.log(info.status)
+            let eventHtml = ``;
+            if (info.status == BookingStatusEnum.SUCCESS) {
+                eventHtml = `
+                    <div class="bphn-event ${(info.teamA && info.teamB ? 'border-danger' : 'border-primary')}">
+                        <div class="bphn-event__name" title="${info.teamA}">${info.teamA}</div>
+                    </div>`;
+            }
+            else {
+                eventHtml = `
+                    <div class="bphn-event border-info">
+                        <div class="bphn-event__name" title="${info.teamA}">${info.teamA}</div>
+                    </div>`;
+            }
             
-            let bgClass = 'border-info';
-            if (info.teamA && info.teamB) bgClass = 'border-danger';
-            else if (info.teamA) bgClass = 'border-primary';
-
-            let eventHtml = `
-                <div class="bphn-event ${bgClass}">
-                    <div class="bphn-event__name" title="${info.teamA}">${info.teamA}</div>
-                </div>
-            `;
 
             return { domNodes: [createElementFromHTML(eventHtml)] };
         }
