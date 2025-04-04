@@ -7,10 +7,10 @@ namespace BPHN.BusinessLayer.ImpServices
     {
         private readonly static ConnectionMapping _connections = new ConnectionMapping();
 
-        public void AddConnection(string accountId)
+        public void AddConnection(Guid accountId)
         {
             var connections = _connections.GetConnections(accountId);
-            if(connections.Count() > 0)
+            if (connections.Count() > 0)
             {
                 for (int i = 0; i < connections.Count(); i++)
                 {
@@ -20,7 +20,7 @@ namespace BPHN.BusinessLayer.ImpServices
             _connections.Add(accountId, Context.ConnectionId);
         }
 
-        public void PushNotification(List<string> accountIds, string currentId, int type, string model)
+        public void PushNotification(List<Guid> accountIds, Guid currentId, int type, string model)
         {
             for (int i = 0; i < accountIds.Count; i++)
             {
@@ -30,14 +30,13 @@ namespace BPHN.BusinessLayer.ImpServices
                     Clients.Client(connections.ElementAt(j)).PushNotification(type, model);
                 }
             }
-            
         }
     }
 
     public class ConnectionMapping
     {
-        private readonly Dictionary<string, HashSet<string>> _connections =
-            new Dictionary<string, HashSet<string>>();
+        private readonly Dictionary<Guid, HashSet<string>> _connections =
+            new Dictionary<Guid, HashSet<string>>();
 
         public int Count
         {
@@ -47,7 +46,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
         }
 
-        public void Add(string key, string connectionId)
+        public void Add(Guid key, string connectionId)
         {
             lock (_connections)
             {
@@ -65,7 +64,7 @@ namespace BPHN.BusinessLayer.ImpServices
             }
         }
 
-        public IEnumerable<string> GetConnections(string key)
+        public IEnumerable<string> GetConnections(Guid key)
         {
             HashSet<string>? connections;
             if (_connections.TryGetValue(key, out connections))
@@ -76,7 +75,7 @@ namespace BPHN.BusinessLayer.ImpServices
             return Enumerable.Empty<string>();
         }
 
-        public void Remove(string key, string connectionId)
+        public void Remove(Guid key, string connectionId)
         {
             lock (_connections)
             {

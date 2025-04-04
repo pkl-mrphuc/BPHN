@@ -115,6 +115,7 @@ namespace BPHN.DataLayer.ImpRepositories
                     {
                         affect = await connection.ExecuteAsync(Query.HISTORY_LOG__INSERT_DESCRIPTION, new Dictionary<string, object?>
                         {
+                            { "@id", history.Id },
                             { "@modelId", history.Data.ModelId },
                             { "@oldData", history.Data.OldData },
                             { "@newData", history.Data.NewData },

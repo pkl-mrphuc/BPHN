@@ -7,6 +7,7 @@ const state = {
     serviceVariable: null,
     configVariable: null,
     historyLogVariable: null,
+    headerVariable: null
 };
 
 const getters = {
@@ -49,6 +50,11 @@ const getters = {
         state.historyLogVariable = JSON.parse(localStorage.getItem("historyLogVariable"));
         return state.historyLogVariable;
     },
+
+    getHeaderVariableCache: (state) => {
+        state.headerVariable = JSON.parse(localStorage.getItem("headerVariable"));
+        return state.headerVariable;
+    },
 };
 
 const mutations = {
@@ -90,6 +96,11 @@ const mutations = {
     setHistoryLogVariableCache: (state, payload) => {
         state.historyLogVariable = payload;
         localStorage.setItem("historyLogVariable", JSON.stringify(payload));
+    },
+
+    setHeaderVariableCache: (state, payload) => {
+        state.headerVariable = payload;
+        localStorage.setItem("headerVariable", JSON.stringify(payload));
     },
 };
 

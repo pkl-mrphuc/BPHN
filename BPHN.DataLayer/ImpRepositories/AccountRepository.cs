@@ -4,7 +4,6 @@ using BPHN.ModelLayer.Others;
 using Dapper;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -248,20 +247,28 @@ namespace BPHN.DataLayer.ImpRepositories
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(isRefreshToken ? _appSettings.Secret1 : _appSettings.Secret);
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            try
             {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ClockSkew = TimeSpan.Zero
-            }, out SecurityToken validatedToken);
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
 
-            var jwtToken = (JwtSecurityToken)validatedToken;
-            if (jwtToken is not null && Guid.TryParse(jwtToken.Claims.First(x => "id".Equals(x.Type)).Value, out var accountId) && jwtToken.ValidTo >= DateTime.Now)
-            {
-                return accountId;
+                var jwtToken = (JwtSecurityToken)validatedToken;
+                if (jwtToken is not null && Guid.TryParse(jwtToken.Claims.First(x => "id".Equals(x.Type)).Value, out var accountId) && jwtToken.ValidTo >= DateTime.Now)
+                {
+                    return accountId;
+                }
             }
+            catch (Exception)
+            {
+                
+            }
+            
             return Guid.Empty;
         }
 
