@@ -52,24 +52,13 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermissionAdd = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.ADDBOOKING);
-            var hasPermissionEdit = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
-            if (!hasPermissionAdd && !hasPermissionEdit)
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.ADDBOOKING, FunctionTypeEnum.EDITBOOKING);
+            if (!hasPermission)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
             if (data.IsRecurring)
@@ -88,10 +77,14 @@ namespace BPHN.BusinessLayer.ImpServices
             }
 
             var result = await _bookingRepository.CheckFreeTimeFrame(data);
+            if (!result)
+            {
+                return new ServiceResultModel(ErrorCodes.EXISTED, _resourceService.Get(SharedResourceKey.EXISTED, context.LanguageConfig));
+            }
+
             return new ServiceResultModel
             {
-                Success = result,
-                Message = !result ? _resourceService.Get(SharedResourceKey.EXISTED, context.LanguageConfig) : string.Empty
+                Success = true
             };
 
         }
@@ -101,24 +94,13 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermissionAdd = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.ADDBOOKING);
-            var hasPermissionEdit = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
-            if (!hasPermissionAdd && !hasPermissionEdit)
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.ADDBOOKING, FunctionTypeEnum.EDITBOOKING);
+            if (!hasPermission)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
             var lstResult = new List<Booking>();
@@ -218,23 +200,13 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
             if (!hasPermission)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
             if (model.PageIndex < 0) model.PageIndex = 1;
@@ -258,11 +230,22 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> GetInstance(string id)
         {
-            Booking? data = null;
-
-            if (string.IsNullOrWhiteSpace(id))
+            if (!string.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out var bookingId))
             {
-                data = new Booking();
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT));
+            }
+
+            var data = new Booking();
+            if (!string.IsNullOrWhiteSpace(id) && Guid.TryParse(id, out bookingId))
+            {
+                data = await _bookingRepository.GetById(bookingId);
+                if (data is null)
+                {
+                    return new ServiceResultModel(ErrorCodes.NOT_EXISTS, _resourceService.Get(SharedResourceKey.NOTEXIST));
+                }
+            }
+            else
+            {
                 data.Id = Guid.NewGuid();
                 data.BookingDate = DateTime.Now;
                 data.StartDate = DateTime.Now;
@@ -270,19 +253,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 data.IsRecurring = false;
                 data.Weekendays = (int)DateTime.Now.DayOfWeek;
             }
-            else
-            {
-                data = await _bookingRepository.GetById(id);
-                if (data is null)
-                {
-                    return new ServiceResultModel
-                    {
-                        Success = false,
-                        ErrorCode = ErrorCodes.NOT_EXISTS,
-                        Message = _resourceService.Get(SharedResourceKey.NOTEXIST)
-                    };
-                }
-            }
+
             return new ServiceResultModel
             {
                 Success = true,
@@ -295,23 +266,13 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.VIEWLISTBOOKING);
             if (!hasPermission)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
             if (model.PageIndex < 0) model.PageIndex = 1;
@@ -331,46 +292,26 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.ADDBOOKING);
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.ADDBOOKING);
             if (!hasPermission)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
             var isValid = ValidateModelByAttribute(data);
             if (!isValid)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig));
             }
 
             if ((data.IsRecurring && data.StartDate.Date.Equals(data.EndDate.Date)) ||
                 (data.IsRecurring && (!data.Weekendays.HasValue || (data.Weekendays.HasValue && data.Weekendays.Value < 0) || (data.Weekendays.HasValue && data.Weekendays.Value > 6))) ||
                 data.EndDate.Date < DateTime.Now.Date)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.NO_INTEGRITY,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.NO_INTEGRITY, _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig));
             }
 
             var checkFreeServiceResult = await CheckFreeTimeFrame(data);
@@ -405,7 +346,7 @@ namespace BPHN.BusinessLayer.ImpServices
             {
                 var pitch = await _pitchService.GetById(data.PitchId ?? Guid.Empty);
                 var frame = await _timeFrameInfoService.GetById(data.TimeFrameInfoId ?? Guid.Empty);
-                await _notificationService.Insert<Booking>(context, NotificationTypeEnum.INSERTBOOKING, new Booking()
+                await _notificationService.Insert(context, NotificationTypeEnum.INSERTBOOKING, new Booking()
                 {
                     PhoneNumber = data.PhoneNumber,
                     NameDetail = data.NameDetail,
@@ -557,36 +498,29 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.EDITBOOKING);
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.EDITBOOKING);
             if (!hasPermission)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
-            var oldData = await _bookingRepository.GetById(id);
-            if (oldData is null)
+            if (string.IsNullOrWhiteSpace(id) || (!string.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out var bookingId)))
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.NOT_EXISTS,
-                    Message = _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig));
             }
-            var lstBookingDetail = await _bookingDetailService.GetByBookingId(oldData.Id);
+
+            var oldData = new Booking();
+            if (!string.IsNullOrWhiteSpace(id) && Guid.TryParse(id, out bookingId))
+            {
+                oldData = await _bookingRepository.GetById(bookingId);
+                if (oldData is null)
+                {
+                    return new ServiceResultModel(ErrorCodes.NOT_EXISTS, _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig));
+                }
+            }
 
             if (status != BookingStatusEnum.CANCEL)
             {
@@ -601,6 +535,7 @@ namespace BPHN.BusinessLayer.ImpServices
             data.Status = status.ToString();
             data.ModifiedBy = context.FullName;
             data.ModifiedDate = DateTime.Now;
+            var lstBookingDetail = await _bookingDetailService.GetByBookingId(oldData.Id);
             data.BookingDetails = lstBookingDetail.Select(item =>
             {
                 item.Status = status.ToString();
@@ -631,7 +566,7 @@ namespace BPHN.BusinessLayer.ImpServices
                             Secret = configs["SecretEmail"]
                         });
 
-                    await _notificationService.Insert<Booking>(context, NotificationTypeEnum.DECLINEBOOKING, new Booking()
+                    await _notificationService.Insert(context, NotificationTypeEnum.DECLINEBOOKING, new Booking()
                     {
                         PhoneNumber = data.PhoneNumber,
                         NameDetail = data.NameDetail,
@@ -658,7 +593,7 @@ namespace BPHN.BusinessLayer.ImpServices
                             Secret = configs["SecretEmail"]
                         });
 
-                    await _notificationService.Insert<Booking>(context, NotificationTypeEnum.APPROVALBOOKING, new Booking
+                    await _notificationService.Insert(context, NotificationTypeEnum.APPROVALBOOKING, new Booking
                     {
                         PhoneNumber = data.PhoneNumber,
                         NameDetail = data.NameDetail,

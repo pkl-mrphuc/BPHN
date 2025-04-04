@@ -39,8 +39,11 @@
         public const string ACCOUNT__GET_BY_ID = "select UserName, FullName, Gender, PhoneNumber, Email, Id, Role, Status, ParentId from accounts where Id = @id";
         public const string ACCOUNT__UPDATE_PASSWORD = "update accounts set Password = @password where Id = @id";
         public const string ACCOUNT__UPDATE = "update accounts set FullName = @fullName, Gender = @gender, PhoneNumber = @phoneNumber, Status = @status where Id = @id";
-        public const string ACCOUNT__GET_ALL = "select Id, UserName, Email from accounts";
+        public const string ACCOUNT__GET_ALL = "select * from accounts";
+        public const string ACCOUNT__COUNT = "select count(1) from accounts";
         public const string ACCOUNT__UPDATE_TOKEN = "update accounts set Token = @token, RefreshToken = @refreshToken where Id = @id";
+        public const string ACCOUNT__INSERT = @"insert into accounts(Id, UserName, Password, Gender, PhoneNumber, FullName, Email, Role, Status, ParentId, CreatedBy, CreatedDate, ModifiedBy, ModifiedDate)
+                                                    value (@id, @userName, @password, @gender, @phoneNumber, @fullName, @email, @role, @status, @parentId, @createdBy, @createdDate, @modifiedBy, @modifiedDate)";
         public const string ACCOUNT__GET_RELATION_IDS = @"select distinct * 
                                                           from 
                                                           (

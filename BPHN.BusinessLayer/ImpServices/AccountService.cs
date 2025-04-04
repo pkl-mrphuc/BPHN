@@ -51,33 +51,18 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
             var isValid = ValidateModelByAttribute(account, "UserName", "PhoneNumber", "FullName", "Email");
             if (!isValid)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig));
             }
 
             if (account.Id != context.Id)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.NOT_EXISTS,
-                    Message = _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.NOT_EXISTS, _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig));
             }
 
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(account.Password);
@@ -119,65 +104,31 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTUSER);
-            if (!hasPermission || (context.Role != RoleEnum.ADMIN && !await _configService.AllowMultiUser(context.Id)))
+            if (context.Role == RoleEnum.TENANT)
             {
-                return new ServiceResultModel
+                var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.VIEWLISTUSER);
+                if (!hasPermission)
                 {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                    return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
+                }
+
+                var allowMultiUser = await _configService.AllowMultiUser(context.Id);
+                if (!allowMultiUser)
+                {
+                    return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
+                }
             }
 
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
 
-            var where = new List<WhereCondition>();
-            switch (context.Role)
-            {
-                case RoleEnum.ADMIN:
-                    where.Add(new WhereCondition
-                    {
-                        Column = "Role",
-                        Operator = "in",
-                        Value = new[] { RoleEnum.USER.ToString(), RoleEnum.TENANT.ToString() }
-                    });
-                    break;
-                default:
-                    where.Add(new WhereCondition
-                    {
-                        Column = "Role",
-                        Operator = "in",
-                        Value = new[] { RoleEnum.USER.ToString() }
-                    });
-                    where.Add(new WhereCondition
-                    {
-                        Column = "Id",
-                        Operator = "!=",
-                        Value = context.Id
-                    });
-                    where.Add(new WhereCondition
-                    {
-                        Column = "ParentId",
-                        Operator = "in",
-                        Value = context.RelationIds.ToArray()
-                    });
-                    break;
-            }
-
             return new ServiceResultModel
             {
                 Success = true,
-                Data = await _accountRepository.GetCountPaging(pageIndex, pageSize, txtSearch, where)
+                Data = await _accountRepository.GetCountPaging(context.Id, context.Role, pageIndex, pageSize, txtSearch)
             };
         }
 
@@ -186,42 +137,32 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
             if (!string.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out var accountId))
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig));
             }
 
             var data = new Account();
-            data.Id = Guid.NewGuid();
-            data.Gender = GenderEnum.MALE.ToString();
-            data.Status = ActiveStatusEnum.ACTIVE.ToString();
-            if (Guid.TryParse(id, out accountId))
+            if (!string.IsNullOrWhiteSpace(id) && Guid.TryParse(id, out accountId))
             {
                 data = await _accountRepository.GetAccountById(accountId);
                 if (data is null)
                 {
-                    return new ServiceResultModel
-                    {
-                        Success = false,
-                        ErrorCode = ErrorCodes.NOT_EXISTS,
-                        Message = _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig)
-                    };
+                    return new ServiceResultModel(ErrorCodes.NOT_EXISTS, _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig));
                 }
-
-                data.AvatarUrl = _fileService.GetFileUrl(accountId.ToString());
+                else
+                {
+                    data.AvatarUrl = _fileService.GetFileUrl(accountId.ToString());
+                }
+            }
+            else
+            {
+                data.Id = Guid.NewGuid();
+                data.Gender = GenderEnum.MALE.ToString();
+                data.Status = ActiveStatusEnum.ACTIVE.ToString();
             }
 
             return new ServiceResultModel
@@ -236,62 +177,19 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTUSER);
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.VIEWLISTUSER);
             if (!hasPermission || (context.Role != RoleEnum.ADMIN && !await _configService.AllowMultiUser(context.Id)))
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
             if (pageIndex < 1) pageIndex = 1;
             if (pageSize <= 0 || pageSize > 100) pageSize = 50;
 
-            var where = new List<WhereCondition>();
-            switch (context.Role)
-            {
-                case RoleEnum.ADMIN:
-                    where.Add(new WhereCondition
-                    {
-                        Column = "Role",
-                        Operator = "in",
-                        Value = new[] { RoleEnum.USER.ToString(), RoleEnum.TENANT.ToString() }
-                    });
-                    break;
-                default:
-                    where.Add(new WhereCondition
-                    {
-                        Column = "Role",
-                        Operator = "in",
-                        Value = new[] { RoleEnum.USER.ToString() }
-                    });
-                    where.Add(new WhereCondition
-                    {
-                        Column = "Id",
-                        Operator = "!=",
-                        Value = context.Id
-                    });
-                    where.Add(new WhereCondition
-                    {
-                        Column = "ParentId",
-                        Operator = "in",
-                        Value = context.RelationIds.ToArray()
-                    });
-                    break;
-            }
-
-            var lstTenants = await _accountRepository.GetPaging(pageIndex, pageSize, txtSearch, where);
+            var lstTenants = await _accountRepository.GetPaging(context.Id, context.Role, pageIndex, pageSize, txtSearch);
 
             return new ServiceResultModel
             {
@@ -305,55 +203,30 @@ namespace BPHN.BusinessLayer.ImpServices
             var isValid = ValidateModelByAttribute(account, "Id", "PhoneNumber", "FullName", "Email");
             if (!isValid)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT));
             }
 
             var realAccount = await _accountRepository.GetAccountByUserName(account.UserName);
             if (realAccount is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.NOT_EXISTS,
-                    Message = _resourceService.Get(SharedResourceKey.LOGINFAIL)
-                };
+                return new ServiceResultModel(ErrorCodes.NOT_EXISTS, _resourceService.Get(SharedResourceKey.LOGINFAIL));
             }
 
             if (!ActiveStatusEnum.ACTIVE.ToString().Equals(realAccount.Status))
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INACTIVE_DATA,
-                    Message = _resourceService.Get(SharedResourceKey.INACTIVESTATUS)
-                };
+                return new ServiceResultModel(ErrorCodes.INACTIVE_DATA, _resourceService.Get(SharedResourceKey.INACTIVESTATUS));
             }
 
             try
             {
                 if (!BCrypt.Net.BCrypt.Verify(account.Password, realAccount.Password))
                 {
-                    return new ServiceResultModel
-                    {
-                        Success = false,
-                        ErrorCode = ErrorCodes.NOT_EXISTS,
-                        Message = _resourceService.Get(SharedResourceKey.LOGINFAIL)
-                    };
+                    return new ServiceResultModel(ErrorCodes.NOT_EXISTS, _resourceService.Get(SharedResourceKey.LOGINFAIL));
                 }
             }
             catch (Exception)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.NOT_EXISTS,
-                    Message = _resourceService.Get(SharedResourceKey.LOGINFAIL)
-                };
+                return new ServiceResultModel(ErrorCodes.NOT_EXISTS, _resourceService.Get(SharedResourceKey.LOGINFAIL));
             }
 
             var (token, refreshToken) = _accountRepository.GetToken(realAccount.Id);
@@ -399,12 +272,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var email = authenticateResult.Principal?.FindFirst(ClaimTypes.Email)?.Value;
             if (string.IsNullOrWhiteSpace(email))
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.NOT_EXISTS,
-                    Message = _resourceService.Get(SharedResourceKey.LOGINFAIL)
-                };
+                return new ServiceResultModel(ErrorCodes.NOT_EXISTS, _resourceService.Get(SharedResourceKey.LOGINFAIL));
             }
 
             var user = await _accountRepository.GetAccountByUserName(email);
@@ -428,23 +296,13 @@ namespace BPHN.BusinessLayer.ImpServices
                 var result = await _accountRepository.RegisterForTenant(user);
                 if (!result)
                 {
-                    return new ServiceResultModel
-                    {
-                        Success = false,
-                        ErrorCode = ErrorCodes.NOT_EXISTS,
-                        Message = _resourceService.Get(SharedResourceKey.LOGINFAIL)
-                    };
+                    return new ServiceResultModel(ErrorCodes.NOT_EXISTS, _resourceService.Get(SharedResourceKey.LOGINFAIL));
                 }
             }
 
             if (!ActiveStatusEnum.ACTIVE.ToString().Equals(user.Status))
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INACTIVE_DATA,
-                    Message = _resourceService.Get(SharedResourceKey.INACTIVESTATUS)
-                };
+                return new ServiceResultModel(ErrorCodes.INACTIVE_DATA, _resourceService.Get(SharedResourceKey.INACTIVESTATUS));
             }
 
             var (token, refreshToken) = _accountRepository.GetToken(user.Id);
@@ -473,12 +331,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
             return new ServiceResultModel
@@ -492,11 +345,7 @@ namespace BPHN.BusinessLayer.ImpServices
             var accountId = _accountRepository.ValidateToken(refreshToken, true);
             if (accountId == Guid.Empty)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INACTIVE_DATA
-                };
+                return new ServiceResultModel(ErrorCodes.INACTIVE_DATA, _resourceService.Get(SharedResourceKey.INVALIDDATA));
             }
 
             var (token, newRefreshToken) = _accountRepository.GetToken(accountId);
@@ -514,45 +363,25 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.ADDUSER);
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.ADDUSER);
             if (!hasPermission || (context.Role != RoleEnum.ADMIN && !await _configService.AllowMultiUser(context.Id)))
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
             var isValid = ValidateModelByAttribute(account, "Id", "Password");
             if (!isValid)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig));
             }
 
             var existUserName = await _accountRepository.CheckExistUserName(account.UserName);
             if (existUserName)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EXISTED,
-                    Message = _resourceService.Get(SharedResourceKey.EXISTED)
-                };
+                return new ServiceResultModel(ErrorCodes.EXISTED, _resourceService.Get(SharedResourceKey.EXISTED));
             }
 
             account.Id = Guid.NewGuid();
@@ -561,7 +390,6 @@ namespace BPHN.BusinessLayer.ImpServices
             account.ModifiedBy = context.FullName;
             account.ModifiedDate = DateTime.Now;
             account.Role = RoleEnum.TENANT;
-            account.Permissions = _permissionService.GetDefaultPermissions(account.Id, context);
             if (context.Role == RoleEnum.TENANT)
             {
                 account.ParentId = context.Id;
@@ -572,9 +400,9 @@ namespace BPHN.BusinessLayer.ImpServices
                 account.ParentId = context.ParentId;
                 account.Role = RoleEnum.USER;
             }
+            account.Permissions = _permissionService.GetDefaultPermissions(account.Id, context);
 
             var resultRegister = await _accountRepository.RegisterForTenant(account);
-            var _ = await _permissionService.SavePermissions(account.Id, account.Permissions);
             if (resultRegister)
             {
                 await _licenseService.Insert(new License
@@ -588,6 +416,8 @@ namespace BPHN.BusinessLayer.ImpServices
                     ModifiedBy = context.FullName,
                     ModifiedDate = DateTime.Now
                 });
+
+                await _permissionService.SavePermissions(account.Id, account.Permissions);
 
                 await _notificationService.Insert(context, NotificationTypeEnum.INSERTACCOUNT, new Account
                 {
@@ -629,34 +459,19 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.EDITUSER);
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.EDITUSER);
             if (!hasPermission || (context.Role != RoleEnum.ADMIN && !await _configService.AllowMultiUser(context.Id)))
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
             var isValid = ValidateModelByAttribute(account, "Email", "UserName", "Password");
             if (!isValid)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig));
             }
 
             account.ModifiedBy = context.FullName;
@@ -699,33 +514,18 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             if (string.IsNullOrWhiteSpace(userName))
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT));
             }
 
             var realAccount = await _accountRepository.GetAccountByUserName(userName);
             if (realAccount is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.NOT_EXISTS,
-                    Message = _resourceService.Get(SharedResourceKey.NOTEXIST)
-                };
+                return new ServiceResultModel(ErrorCodes.NOT_EXISTS, _resourceService.Get(SharedResourceKey.NOTEXIST));
             }
 
             if (!ActiveStatusEnum.ACTIVE.ToString().Equals(realAccount.Status))
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INACTIVE_DATA,
-                    Message = _resourceService.Get(SharedResourceKey.INACTIVESTATUS)
-                };
+                return new ServiceResultModel(ErrorCodes.INACTIVE_DATA, _resourceService.Get(SharedResourceKey.INACTIVESTATUS));
             }
 
             var resultSendMail = _mailService.SendMail("bphn.email.forgot-password",
@@ -767,34 +567,19 @@ namespace BPHN.BusinessLayer.ImpServices
         {
             if (string.IsNullOrWhiteSpace(code) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(userName))
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT));
             }
 
             var parameter = _keyGenerator.Decryption(code);
             var expireResetPasswordModel = JsonConvert.DeserializeObject<ExpireSetPasswordModel>(parameter);
             if (expireResetPasswordModel is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT));
             }
 
             if (expireResetPasswordModel.ExpireTime < DateTime.Now)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
             var account = new Account
@@ -806,33 +591,18 @@ namespace BPHN.BusinessLayer.ImpServices
             var isValid = ValidateModelByAttribute(account, "UserName", "PhoneNumber", "FullName", "Email");
             if (!isValid)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT));
             }
 
             var realAccount = await _accountRepository.GetAccountById(account.Id);
             if (realAccount is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.NOT_EXISTS,
-                    Message = _resourceService.Get(SharedResourceKey.NOTEXIST)
-                };
+                return new ServiceResultModel(ErrorCodes.NOT_EXISTS, _resourceService.Get(SharedResourceKey.NOTEXIST));
             }
 
             if (realAccount.UserName != userName)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.NO_INTEGRITY,
-                    Message = _resourceService.Get(SharedResourceKey.NOTEXIST)
-                };
+                return new ServiceResultModel(ErrorCodes.NO_INTEGRITY, _resourceService.Get(SharedResourceKey.NOTEXIST));
             }
 
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(account.Password);
