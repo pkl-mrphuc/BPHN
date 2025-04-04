@@ -1,10 +1,10 @@
 <script setup>
-import { computed } from "vue";
+import { ref, watchEffect } from "vue";
 
 const store = useStore();
-const drawer = computed(() => {
-  return store.getters["account/getDrawer"];
-});
+const drawer = ref(store.getters["account/getDrawer"]);
+
+watchEffect(() => { drawer.value = store.getters["account/getDrawer"]; })
 
 const handleClose = () => {
   store.commit("account/setDrawer", false);

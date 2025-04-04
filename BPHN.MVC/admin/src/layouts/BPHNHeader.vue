@@ -21,6 +21,7 @@ const fullname = ref(store.getters["account/getFullName"]);
 const drawer = ref(store.getters["account/getDrawer"]);
 
 watchEffect(() => { lstNotification.value = store.getters["cache/getHeaderVariableCache"]?.lstNotification ?? []; })
+watchEffect(() => { drawer.value = store.getters["account/getDrawer"]; })
 
 onMounted(() => {
   connection.on("PushNotification", function (type, model) {
@@ -63,7 +64,13 @@ const markRead = () => {
 };
 
 const toggle = () => {
-  store.commit("account/setDrawer", !drawer.value);
+  console.log(drawer.value);
+  if (drawer.value) {
+    store.commit("account/setDrawer", false);
+  }
+  else {
+    store.commit("account/setDrawer", true);
+  }
 };
 </script>
 
