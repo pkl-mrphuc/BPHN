@@ -3,6 +3,7 @@ import { ConfigKeyEnum } from "@/const";
 import useToggleModal from "@/register-components/actionDialog";
 import { useI18n } from "vue-i18n";
 import { useStore } from "vuex";
+import { ElNotification } from "element-plus";
 import {
   ref,
   defineProps,
@@ -25,6 +26,16 @@ const connect = () => {
   setTimeout(() => {
     running.value = 0;
   }, 1000);
+
+  if (!email.value) {
+    ElNotification({ title: t("Notification"), message: t("EmailEmptyMesg"), type: "warning", });
+    return;
+  }
+
+  if (!password.value) {
+    ElNotification({ title: t("Notification"), message: t("PasswordEmptyMesg"), type: "warning", });
+    return;
+  }
 
   let configs = [
     {
