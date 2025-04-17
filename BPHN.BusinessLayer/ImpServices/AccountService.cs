@@ -89,7 +89,6 @@ namespace BPHN.BusinessLayer.ImpServices
             var account = await _accountRepository.GetAccountById(id);
             if (account is not null)
             {
-                account.RelationIds = new Guid[] { id };
                 account.LanguageConfig = await _configService.Language(id);
             }
             return new ServiceResultModel
@@ -229,7 +228,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 return new ServiceResultModel(ErrorCodes.NOT_EXISTS, _resourceService.Get(SharedResourceKey.LOGINFAIL));
             }
 
-            var (token, refreshToken) = _accountRepository.GetToken(realAccount.Id);
+            var (token, refreshToken) = _accountRepository.GetToken(realAccount);
             await _accountRepository.SaveToken(realAccount.Id, token, refreshToken);
 
             _historyLogService.Write(Guid.NewGuid(),
@@ -305,7 +304,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 return new ServiceResultModel(ErrorCodes.INACTIVE_DATA, _resourceService.Get(SharedResourceKey.INACTIVESTATUS));
             }
 
-            var (token, refreshToken) = _accountRepository.GetToken(user.Id);
+            var (token, refreshToken) = _accountRepository.GetToken(user);
             await _accountRepository.SaveToken(user.Id, token, refreshToken);
 
             return new ServiceResultModel
@@ -342,14 +341,14 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public async Task<ServiceResultModel> RefreshToken(string refreshToken)
         {
-            var accountId = _accountRepository.ValidateToken(refreshToken, true);
-            if (accountId == Guid.Empty)
+            var account = _accountRepository.ValidateToken(refreshToken, true);
+            if (account is null)
             {
                 return new ServiceResultModel(ErrorCodes.INACTIVE_DATA, _resourceService.Get(SharedResourceKey.INVALIDDATA));
             }
 
-            var (token, newRefreshToken) = _accountRepository.GetToken(accountId);
-            await _accountRepository.SaveToken(accountId, token, newRefreshToken);
+            var (token, newRefreshToken) = _accountRepository.GetToken(account);
+            await _accountRepository.SaveToken(account.Id, token, newRefreshToken);
 
             return new ServiceResultModel
             {
@@ -633,11 +632,11 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public ServiceResultModel ValidateToken(string token)
         {
-            var accountId = _accountRepository.ValidateToken(token, false);
+            var account = _accountRepository.ValidateToken(token, false);
             return new ServiceResultModel
             {
-                Success = accountId != Guid.Empty,
-                Data = accountId
+                Success = account is not null,
+                Data = account
             };
         }
 

@@ -7,8 +7,8 @@ namespace BPHN.DataLayer.IRepositories
     {
         Task<Account?> GetAccountByUserName(string userName);
         Task<bool> CheckExistUserName(string userName);
-        (string token, string refreshToken) GetToken(Guid id);
-        Guid ValidateToken(string token, bool isRefreshToken);
+        (string token, string refreshToken) GetToken(Account account);
+        Account? ValidateToken(string token, bool isRefreshToken);
         Task<Account?> GetAccountById(Guid id);
         Task<bool> RegisterForTenant(Account account);
         Task<bool> UpdateTenant(Account account);

@@ -4,6 +4,7 @@ using BPHN.ModelLayer.Others;
 using Dapper;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -57,20 +58,23 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public (string token, string refreshToken) GetToken(Guid id)
+        public (string token, string refreshToken) GetToken(Account account)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenKey = Encoding.ASCII.GetBytes(_appSettings.Secret);
             var refreshTokenKey = Encoding.ASCII.GetBytes(_appSettings.Secret1);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] { new Claim("id", id.ToString()) }),
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim("account", JsonConvert.SerializeObject(account)),
+                }),
                 Expires = DateTime.Now.AddHours(12),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)
             };
             var refreshTokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] { new Claim("id", id.ToString()) }),
+                Subject = new ClaimsIdentity(new[] { new Claim("id", account.Id.ToString()) }),
                 Expires = DateTime.Now.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(refreshTokenKey), SecurityAlgorithms.HmacSha256Signature)
             };
@@ -243,7 +247,7 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public Guid ValidateToken(string token, bool isRefreshToken)
+        public Account? ValidateToken(string token, bool isRefreshToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(isRefreshToken ? _appSettings.Secret1 : _appSettings.Secret);
@@ -259,17 +263,21 @@ namespace BPHN.DataLayer.ImpRepositories
                 }, out SecurityToken validatedToken);
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
-                if (jwtToken is not null && Guid.TryParse(jwtToken.Claims.First(x => "id".Equals(x.Type)).Value, out var accountId) && jwtToken.ValidTo >= DateTime.Now)
+                if (jwtToken is not null && jwtToken.ValidTo >= DateTime.Now)
                 {
-                    return accountId;
+                    var account = jwtToken.Claims.First(x => "account".Equals(x.Type)).Value;
+                    if (!string.IsNullOrWhiteSpace(account))
+                    {
+                        return JsonConvert.DeserializeObject<Account>(account);
+                    }
                 }
             }
             catch (Exception)
             {
-                
+
             }
-            
-            return Guid.Empty;
+
+            return null;
         }
 
         public async Task<int> GetTotalRecord(Guid accountId, RoleEnum role, string txtSearch)

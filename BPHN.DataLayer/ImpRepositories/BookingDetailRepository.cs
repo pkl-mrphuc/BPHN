@@ -39,7 +39,7 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public async Task<IEnumerable<CalendarEvent>> GetByDate(string date, Guid[] relationIds)
+        public async Task<IEnumerable<CalendarEvent>> GetByDate(string date, Guid accountId)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {
@@ -48,7 +48,7 @@ namespace BPHN.DataLayer.ImpRepositories
                 {
                     { "@status0", BookingStatusEnum.SUCCESS.ToString() },
                     { "@status1", BookingStatusEnum.PENDING.ToString() },
-                    { "@accountId", relationIds },
+                    { "@accountId", accountId },
                     { "@startDate", $"{date} 00:00:00" },
                     { "@endDate", $"{date} 23:59:59" },
                 });

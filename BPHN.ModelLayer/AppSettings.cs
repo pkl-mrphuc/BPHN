@@ -8,6 +8,7 @@
         public string ClientHost { get; set; }
         public RabbitMQConfiguration RabbitMQConfiguration { get; set; }
         public MailConfiguration MailConfiguration { get; set; }
+        public GoogleConfiguration GoogleConfiguration { get; set; }
         public string RedisCacheUrl { get; set; }
         public int RedisExpireHour { get; set; }
         public string ConnectionString { get; set; }
@@ -31,5 +32,12 @@
         public string Password { get; set; }
         public string Host { get; set; }
         public int Port { get; set; }
+    }
+
+    public class GoogleConfiguration
+    {
+        public string ClientID { get; set; }
+        public string ClientSecret { get; set; }
+        public string CallbackPath { get; set; }
     }
 }

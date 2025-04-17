@@ -144,7 +144,7 @@ namespace BPHN.BusinessLayer.ImpServices
                 return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
-            var result = await _bookingDetailRepository.GetByDate(date, context.RelationIds.ToArray());
+            var result = await _bookingDetailRepository.GetByDate(date, context.Id);
             return new ServiceResultModel
             {
                 Success = true,

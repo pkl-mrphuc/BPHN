@@ -462,11 +462,10 @@ namespace BPHN.BusinessLayer.ImpServices
                 var matchDate = booking.BookingDetails.Select(item => item.MatchDate.ToString("dd/MM/yyyy")).FirstOrDefault();
                 var context = new Account()
                 {
-                    RelationIds = await _accountService.GetRelationIds(data.AccountId),
                     Id = data.AccountId,
                     FullName = data.PhoneNumber
                 };
-                await _notificationService.Insert<Booking>(context, NotificationTypeEnum.INSERTBOOKING, new Booking()
+                await _notificationService.Insert(context, NotificationTypeEnum.INSERTBOOKING, new Booking()
                 {
                     PhoneNumber = data.PhoneNumber,
                     NameDetail = data.NameDetail,

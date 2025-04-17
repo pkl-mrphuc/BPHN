@@ -12,7 +12,6 @@ using BPHN.WebAPI.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.OpenApi.Models;
-using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 var appSettings = builder.Configuration.GetSection("AppSettings");
@@ -74,11 +73,6 @@ builder.Services.AddSingleton(new MapperConfiguration(mc =>
 builder.Services.AddMvc(options => options.ModelValidatorProviders.Clear());
 builder.Services.AddControllers();
 
-Log.Logger = new LoggerConfiguration()
-				.MinimumLevel.Debug()
-				.WriteTo.File("C://bphn/log-.txt", outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}", rollingInterval: RollingInterval.Day)
-				.CreateLogger();
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
@@ -112,9 +106,9 @@ builder.Services.AddAuthentication(options =>
 	.AddCookie()
 	.AddGoogle(googleOptions =>
 	{
-		googleOptions.ClientId = "1069130122771-l2vls4cofg16runiou4hlaq3n3s74b0i.apps.googleusercontent.com";
-		googleOptions.ClientSecret = "hq542hbiI9zifILsWchgT8xS";
-		googleOptions.CallbackPath = "/signin-google"; // This should match the redirect URI set in the Google Console
+		googleOptions.ClientId = appSettings.GetValue<string>("GoogleConfiguration:ClientID") ?? "";
+		googleOptions.ClientSecret = appSettings.GetValue<string>("GoogleConfiguration:ClientSecret") ?? "";
+		googleOptions.CallbackPath = appSettings.GetValue<string>("GoogleConfiguration:CallbackPath") ?? "";
 	});
 
 var app = builder.Build();

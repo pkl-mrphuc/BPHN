@@ -17,21 +17,20 @@ namespace BPHN.WebAPI
 
             if (token != null)
             {
-                await GetContext(context, accountService, token);
+                GetContext(context, accountService, token);
             }
 
             await _next(context);
         }
 
-        private async Task GetContext(HttpContext context, IAccountService accountService, string token)
+        private void GetContext(HttpContext context, IAccountService accountService, string token)
         {
             var tokenResult = accountService.ValidateToken(token);
-            if (tokenResult is not null && tokenResult.Success && tokenResult.Data is Guid accountId && accountId != Guid.Empty)
+            if (tokenResult is not null && tokenResult.Success && tokenResult.Data is not null)
             {
                 if (!context.Items.ContainsKey("User") || context.Items["User"] is null)
                 {
-                    var serviceResult = await accountService.GetById(accountId);
-                    context.Items["User"] = serviceResult.Data;
+                    context.Items["User"] = tokenResult.Data;
                 }
             }
         }

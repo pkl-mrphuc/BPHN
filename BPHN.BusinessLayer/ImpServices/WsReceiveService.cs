@@ -22,7 +22,13 @@ namespace BPHN.BusinessLayer.ImpServices
 
         public void PushNotification(List<Guid> accountIds, Guid currentId, int type, string model)
         {
-            for (int i = 0; i < accountIds.Count; i++)
+            var accounts = new List<Guid> { currentId };
+            if (accountIds.Count() > 0)
+            {
+                accounts.AddRange(accountIds);
+            }
+
+            for (int i = 0; i < accounts.Count; i++)
             {
                 var connections = _connections.GetConnections(accountIds[i]);
                 for (int j = 0; j < connections.Count(); j++)
