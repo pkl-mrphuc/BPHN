@@ -195,6 +195,26 @@
     padding: calc(var(--spacer) * 3) !important;
 }
 
+.pl-1 {
+    padding-left: calc(var(--spacer) * .25) !important;
+}
+
+.pl-2 {
+    padding-left: calc(var(--spacer) * .5) !important;
+}
+
+.pl-3 {
+    padding-left: var(--spacer) !important;
+}
+
+.pl-4 {
+    padding-left: calc(var(--spacer) * 1.5) !important;
+}
+
+.pl-5 {
+    padding-left: calc(var(--spacer) * 3) !important;
+}
+
 .m-0 {
     margin: 0 !important;
 }
@@ -399,6 +419,10 @@
 
 .bg-info {
     background-color: #909399;
+}
+
+.bg-success {
+    background-color: #67c23a;
 }
 
 .bg-footer{
