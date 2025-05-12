@@ -1,58 +1,179 @@
 <script setup>
 import { ArrowLeft, ArrowRight, Search, Filter } from '@element-plus/icons-vue';
 import BphnCollapse from '@/components/BPHNCollapse.vue';
+import { onMounted, reactive } from 'vue';
+
+const stadiums = reactive([]);
+
+const loadData = () => {
+    Object.assign(stadiums, 
+    [
+        {
+            name: 'Stadium A',
+            details: [
+                { title: 'Field 1', description: '7-a-side field' },
+                { title: 'Field 2', description: '11-a-side field' }
+            ]
+        },
+        {
+            name: 'Stadium B',
+            details: [
+                { title: 'Field 1', description: '5-a-side field' },
+                { title: 'Field 2', description: '7-a-side field' },
+                { title: 'Field 3', description: '11-a-side field' }
+            ]
+        },
+        {
+            name: 'Stadium C',
+            details: [
+                { title: 'Field 1', description: 'Indoor field' },
+                { title: 'Field 2', description: 'Outdoor field' }
+            ]
+        },
+        {
+            name: 'Stadium C',
+            details: [
+                { title: 'Field 1', description: 'Indoor field' },
+                { title: 'Field 2', description: 'Outdoor field' }
+            ]
+        },
+        {
+            name: 'Stadium C',
+            details: [
+                { title: 'Field 1', description: 'Indoor field' },
+                { title: 'Field 2', description: 'Outdoor field' }
+            ]
+        },
+        {
+            name: 'Stadium A',
+            details: [
+                { title: 'Field 1', description: '7-a-side field' },
+                { title: 'Field 2', description: '11-a-side field' }
+            ]
+        },
+        {
+            name: 'Stadium B',
+            details: [
+                { title: 'Field 1', description: '5-a-side field' },
+                { title: 'Field 2', description: '7-a-side field' },
+                { title: 'Field 3', description: '11-a-side field' }
+            ]
+        },
+        {
+            name: 'Stadium C',
+            details: [
+                { title: 'Field 1', description: 'Indoor field' },
+                { title: 'Field 2', description: 'Outdoor field' }
+            ]
+        },
+        {
+            name: 'Stadium C',
+            details: [
+                { title: 'Field 1', description: 'Indoor field' },
+                { title: 'Field 2', description: 'Outdoor field' }
+            ]
+        },
+        {
+            name: 'Stadium C',
+            details: [
+                { title: 'Field 1', description: 'Indoor field' },
+                { title: 'Field 2', description: 'Outdoor field' }
+            ]
+        },
+        {
+            name: 'Stadium A',
+            details: [
+                { title: 'Field 1', description: '7-a-side field' },
+                { title: 'Field 2', description: '11-a-side field' }
+            ]
+        },
+        {
+            name: 'Stadium B',
+            details: [
+                { title: 'Field 1', description: '5-a-side field' },
+                { title: 'Field 2', description: '7-a-side field' },
+                { title: 'Field 3', description: '11-a-side field' }
+            ]
+        },
+        {
+            name: 'Stadium C',
+            details: [
+                { title: 'Field 1', description: 'Indoor field' },
+                { title: 'Field 2', description: 'Outdoor field' }
+            ]
+        },
+        {
+            name: 'Stadium C',
+            details: [
+                { title: 'Field 1', description: 'Indoor field' },
+                { title: 'Field 2', description: 'Outdoor field' }
+            ]
+        },
+        {
+            name: 'Stadium C',
+            details: [
+                { title: 'Field 1', description: 'Indoor field' },
+                { title: 'Field 2', description: 'Outdoor field' }
+            ]
+        }
+    ]);
+};
+
+onMounted(() => {
+    loadData();
+});
 </script>
 
 <template>
-    <div class="row" style="min-height: 100vh;">
-        <div class="col-12 col-sm-12 col-md-2 col-lg-2" style="background: #093D67;">
-            <div class="d-flex flex-column text-white">
-                <div class="d-flex flex-row align-items-center justify-content-around p-4">
+    <div class="booking row">
+        <div class="booking__sidebar col-12 col-sm-12 col-md-2 col-lg-2">
+            <div class="booking__sidebar-content d-flex flex-column text-white">
+                <div class="booking__year-selector d-flex flex-row align-items-center justify-content-around p-4">
                     <el-button circle :icon="ArrowLeft"></el-button>
-                    <span class="fs-1 fw-bold">2025</span>
+                    <span class="booking__year fs-1 fw-bold">2025</span>
                     <el-button circle :icon="ArrowRight"></el-button>
                 </div>
-                <div class="d-flex flex-column">
-                    <div class="pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4 month">
+                <div class="booking__months d-flex flex-column">
+                    <div class="booking__month-item pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4">
                         January
                     </div>
-                    <div class="pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4 month">
+                    <div class="booking__month-item pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4">
                         February
                     </div>
-                    <div class="pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4 month">
+                    <div class="booking__month-item pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4">
                         March
                     </div>
-                    <div class="pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4 month">
+                    <div class="booking__month-item pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4">
                         April
                     </div>
-                    <div class="pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4 month">
+                    <div class="booking__month-item pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4">
                         May
                     </div>
-                    <div class="pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4 month">
+                    <div class="booking__month-item pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4">
                         June
                     </div>
-                    <div class="pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4 month">
+                    <div class="booking__month-item pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4">
                         July
                     </div>
-                    <div class="pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4 month">
+                    <div class="booking__month-item pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4">
                         August
                     </div>
-                    <div class="pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4 month">
+                    <div class="booking__month-item pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4">
                         September
                     </div>
-                    <div class="pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4 month">
+                    <div class="booking__month-item pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4">
                         October
                     </div>
-                    <div class="pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4 month">
+                    <div class="booking__month-item pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4">
                         November
                     </div>
-                    <div class="pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4 month">
+                    <div class="booking__month-item pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4">
                         December
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-sm-12 col-md-2 col-lg-7 bg-light">
+        <div class="booking__calendar col-12 col-sm-12 col-md-2 col-lg-7 bg-light">
             <el-calendar>
                 <template #header="{ date }">
                     <span>{{ date }}</span>
@@ -63,36 +184,30 @@ import BphnCollapse from '@/components/BPHNCollapse.vue';
                     </p>
                 </template>
             </el-calendar>
-            <div class="d-flex flex-row-reverse">
-                <div class="d-flex flex-row align-items-center">
-                    <div class="dot bg-white mr-1"></div>
+            <div class="booking__legend d-flex flex-row-reverse">
+                <div class="booking__legend-item d-flex flex-row align-items-center">
+                    <div class="booking__legend-dot bg-white mr-1"></div>
                     EMPTY
                 </div>
-                <div class="d-flex flex-row align-items-center mx-4">
-                    <div class="dot bg-success mr-1"></div>
+                <div class="booking__legend-item d-flex flex-row align-items-center mx-4">
+                    <div class="booking__legend-dot bg-success mr-1"></div>
                     MATCHED
                 </div>
-                <div class="d-flex flex-row align-items-center">
-                    <div class="dot bg-danger mr-1"></div>
+                <div class="booking__legend-item d-flex flex-row align-items-center">
+                    <div class="booking__legend-dot bg-danger mr-1"></div>
                     FIND
                 </div>
             </div>
         </div>
-        <div class="col-12 col-sm-12 col-md-2 col-lg-3 bg-white">
-            <div class="d-flex flex-column p-5">
+        <div class="booking__stadiums col-12 col-sm-12 col-md-2 col-lg-3 bg-white">
+            <div class="booking__search d-flex flex-column">
                 <div class="mb-3 d-flex flex-row align-items-center">
-                    <el-input placeholder="Search here" size="large" :suffix-icon="Search"></el-input>
-                    <el-button class="ml-1" size="large" :icon="Filter"></el-button>
+                    <el-input placeholder="Tìm sân trống theo tên, địa chỉ" size="large" :suffix-icon="Search"></el-input>
+                    <el-button class="booking__filter-btn ml-1" size="large" :icon="Filter"></el-button>
                 </div>
-                <div>
-                    <div class="mb-2">
-                        <bphn-collapse></bphn-collapse>
-                    </div>
-                    <div class="mb-2">
-                        <bphn-collapse></bphn-collapse>
-                    </div>
-                    <div class="mb-2">
-                        <bphn-collapse></bphn-collapse>
+                <div class="booking__stadiums-list">
+                    <div class="mb-2" v-for="item in stadiums" :key="item">
+                        <bphn-collapse :title="item.name" :items="item.details"></bphn-collapse>
                     </div>
                 </div>
             </div>
@@ -102,20 +217,33 @@ import BphnCollapse from '@/components/BPHNCollapse.vue';
 </template>
 
 <style scoped>
-.month {
+.booking {
+    min-height: calc(100vh - 60px);
+}
+
+.booking__sidebar {
+    background: #093D67;
+}
+
+.booking__month-item {
     background: #EAEAEA33;
     border-top-right-radius: 50px;
     border-bottom-right-radius: 50px;
 }
 
-.dot {
+.booking__legend-dot {
     width: 12px;
     height: 12px;
     border-radius: 50%;
     border: 0.5px solid #9D9D9D
 }
 
-.is-selected {
-  color: #1989fa;
+.booking__search {
+    padding: 40px;;
+}
+
+.booking__stadiums-list {
+    overflow-y: auto; 
+    height: calc(100vh - 196px);
 }
 </style>

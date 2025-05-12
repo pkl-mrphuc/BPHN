@@ -1,12 +1,19 @@
-<script setup></script>
+<script setup>
+import { defineProps } from 'vue';
+
+const props = defineProps({
+  title: String,
+  description: String
+});
+</script>
 <template>
     <div class="collapse-item pointer">
-        <div class="d-flex flex-row align-items-center justify-content-around">
-            <div class="">
-                <p class="m-0 fw-normal mb-1" style="font-size: 19px;">Sân 1</p>
-                <p class="m-0 fw-normal" style="font-size: 11px;">Price: 350.000 → 600.000 VNĐ</p>
+        <div class="collapse-item__container d-flex flex-row align-items-center justify-content-between">
+            <div class="collapse-item__content">
+                <p class="collapse-item__title m-0 fw-normal mb-1">{{ props.title }}</p>
+                <p class="collapse-item__description m-0 fw-normal">{{ props.description }}</p>
             </div>
-            <el-button type="success">Booking Now</el-button>
+            <el-button class="collapse-item__button" type="success">Booking Now</el-button>
         </div>
     </div>
 </template>
@@ -17,5 +24,13 @@
     border-radius: 12px;
     padding: 8px 16px;
     margin-bottom: 10px;
+}
+
+.collapse-item__title {
+    font-size: 16px;
+}
+
+.collapse-item__description {
+    font-size: 12px;
 }
 </style>

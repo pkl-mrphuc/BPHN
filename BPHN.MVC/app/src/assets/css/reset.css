@@ -124,7 +124,10 @@
   }
   
   html .el-main {
-    padding-top: calc(var(--el-main-padding) + 60px);
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-top: 60px;
     overflow: visible !important;
   }
   
