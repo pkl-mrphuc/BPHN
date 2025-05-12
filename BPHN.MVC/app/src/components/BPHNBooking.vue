@@ -85,9 +85,15 @@ import BphnCollapse from '@/components/BPHNCollapse.vue';
                     <el-button class="ml-1" size="large" :icon="Filter"></el-button>
                 </div>
                 <div>
-                    <bphn-collapse></bphn-collapse>
-                    <bphn-collapse></bphn-collapse>
-                    <bphn-collapse></bphn-collapse>
+                    <div class="mb-2">
+                        <bphn-collapse></bphn-collapse>
+                    </div>
+                    <div class="mb-2">
+                        <bphn-collapse></bphn-collapse>
+                    </div>
+                    <div class="mb-2">
+                        <bphn-collapse></bphn-collapse>
+                    </div>
                 </div>
             </div>
         </div>
