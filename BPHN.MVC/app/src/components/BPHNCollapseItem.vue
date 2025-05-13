@@ -13,7 +13,7 @@ const props = defineProps({
                 <p class="collapse-item__title m-0 fw-normal mb-1">{{ props.title }}</p>
                 <p class="collapse-item__description m-0 fw-normal">{{ props.description }}</p>
             </div>
-            <el-button class="collapse-item__button" type="success">Booking Now</el-button>
+            <el-button class="collapse-item__button">Booking Now</el-button>
         </div>
     </div>
 </template>
@@ -32,5 +32,11 @@ const props = defineProps({
 
 .collapse-item__description {
     font-size: 12px;
+}
+
+.collapse-item__button, 
+.collapse-item__button:hover {
+    background: #093D67;
+    color: #ffffff;
 }
 </style>

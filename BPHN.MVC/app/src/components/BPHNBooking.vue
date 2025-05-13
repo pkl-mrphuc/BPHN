@@ -5,10 +5,11 @@ import { onMounted, reactive, ref } from 'vue';
 import { MonthEnum } from '@/const';
 
 const stadiums = reactive([]);
-const today = ref(new Date());
-const year = ref(today.value.getFullYear());
-const month = ref(today.value.getMonth());
-const day = ref(today.value.getDate());
+const currentDate = ref(new Date());
+const today = ref(new Date(currentDate.value.getFullYear(), currentDate.value.getMonth(), currentDate.value.getDate(), 0, 0, 0));
+const year = ref(currentDate.value.getFullYear());
+const month = ref(currentDate.value.getMonth());
+const day = ref(currentDate.value.getDate());
 const selectedDate = ref(new Date(year.value, month.value, day.value));
 
 const loadData = () => {
@@ -159,36 +160,32 @@ onMounted(() => {
                 <div class="booking__months d-flex flex-column">
                     <div v-for="(item, index) in MonthEnum" :key="item"
                         class="booking__month-item pointer p-2 pl-5 mb-3 mr-4 fw-bold fs-4"
-                        :class="{ 'booking__month-item--active': month === index }"
-                        @click="handleMonthSelect(index)">
+                        :class="{ 'booking__month-item--active': month === index }" @click="handleMonthSelect(index)">
                         {{ item }}
                     </div>
                 </div>
             </div>
         </div>
-        <div class="booking__calendar col-12 col-sm-12 col-md-2 col-lg-7 bg-light">
+        <div class="booking__calendar col-12 col-sm-12 col-md-2 col-lg-7 bg-light p-4">
             <el-calendar v-model="selectedDate" @update:model-value="handleCalendarChange">
                 <template #header="{ date }">
-                    <span>{{ date }}</span>
+                    <span class="fs-3 fw-bold">{{ date }}</span>
                 </template>
                 <template #date-cell="{ data }">
-                    <p>
-                        {{ data.day.split('-').slice(2).join() }}
-                    </p>
+                    <div class="booking__calendar-cell">
+                        <p class="booking__calendar-cell-day" >{{ data.day.split('-').slice(2).join() }}</p>
+                        <div v-if="new Date(data.day) >= today" class="booking__calendar-cell-status booking__legend-dot booking__legend-dot--success"></div>
+                    </div>
                 </template>
             </el-calendar>
             <div class="booking__legend d-flex flex-row-reverse">
                 <div class="booking__legend-item d-flex flex-row align-items-center">
-                    <div class="booking__legend-dot bg-white mr-1"></div>
-                    EMPTY
+                    <div class="booking__legend-dot booking__legend-dot--success mr-1"></div>
+                    AVAILABILITY
                 </div>
                 <div class="booking__legend-item d-flex flex-row align-items-center mx-4">
-                    <div class="booking__legend-dot bg-success mr-1"></div>
-                    MATCHED
-                </div>
-                <div class="booking__legend-item d-flex flex-row align-items-center">
-                    <div class="booking__legend-dot bg-danger mr-1"></div>
-                    FIND
+                    <div class="booking__legend-dot booking__legend-dot--danger mr-1"></div>
+                    FULLY
                 </div>
             </div>
         </div>
@@ -238,13 +235,37 @@ onMounted(() => {
     border: 0.5px solid #9D9D9D
 }
 
+.booking__legend-dot--success {
+    background: #67c23a;
+}
+
+.booking__legend-dot--danger {
+    background: #f56c6c;
+}
+
 .booking__search {
     padding: 40px;
-    ;
 }
 
 .booking__stadiums-list {
     overflow-y: auto;
     height: calc(100vh - 196px);
+}
+
+.booking__calendar-cell {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.booking__calendar-cell-day {
+    font-size: 16px;
+}
+
+.booking__calendar-cell-status {
+    position: absolute;
+    bottom: 12px;
+    right: 0;
 }
 </style>
