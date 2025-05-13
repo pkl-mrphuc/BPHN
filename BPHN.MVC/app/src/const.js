@@ -104,6 +104,10 @@ export const StatisticTypeEnum = {
     REVENUESERVICEYEAR: "REVENUESERVICEYEAR"
 }
 
+export const MonthEnum = [
+    "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+]
+
 export const Provinces = {
     1: "Thành phố Hà Nội",
     2: "Tỉnh Hà Giang",
