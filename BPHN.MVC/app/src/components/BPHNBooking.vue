@@ -265,7 +265,7 @@ onMounted(() => {
 
 .booking__calendar-cell-status {
     position: absolute;
-    bottom: 12px;
+    bottom: 14px;
     right: 0;
 }
 </style>
