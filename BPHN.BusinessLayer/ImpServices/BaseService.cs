@@ -14,7 +14,6 @@ namespace BPHN.BusinessLayer.ImpServices
         protected readonly IContextService _contextService;
         protected readonly ICacheService _cacheService;
         protected readonly IResourceService _resourceService;
-        protected readonly IGlobalVariableService _globalVariableService;
         protected readonly IMapper _mapper;
         protected readonly AppSettings _appSettings;
 
@@ -23,7 +22,6 @@ namespace BPHN.BusinessLayer.ImpServices
             _contextService = provider.GetRequiredService<IContextService>();
             _cacheService = provider.GetRequiredService<ICacheService>();
             _resourceService = provider.GetRequiredService<IResourceService>();
-            _globalVariableService = provider.GetRequiredService<IGlobalVariableService>();
             _mapper = provider.GetRequiredService<IMapper>();
             _appSettings = appSettings.Value;
         }

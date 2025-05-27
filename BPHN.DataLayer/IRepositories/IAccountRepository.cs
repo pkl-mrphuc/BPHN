@@ -17,7 +17,6 @@ namespace BPHN.DataLayer.IRepositories
         Task<int> GetTotalRecord(Guid accountId, RoleEnum role, string txtSearch);
         Task<bool> SavePassword(Guid id, string password);
         Task<IEnumerable<Guid>> GetRelationIds(Guid id);
-        Task<List<Account>> GetAll();
         Task SaveToken(Guid id, string token, string refreshToken);
     }
 }

@@ -34,7 +34,7 @@
 
     public static class Query
     {
-        public const string ACCOUNT__CHECK_EXIST_USERNAME = "select count(*) from accounts where UserName = @userName";
+        public const string ACCOUNT__CHECK_EXIST_USERNAME = "select exists(select 1 from accounts where UserName = @userName)";
         public const string ACCOUNT__GET_BY_USERNAME = "select * from accounts where UserName = @userName";
         public const string ACCOUNT__GET_BY_ID = "select UserName, FullName, Gender, PhoneNumber, Email, Id, Role, Status, ParentId from accounts where Id = @id";
         public const string ACCOUNT__UPDATE_PASSWORD = "update accounts set Password = @password where Id = @id";

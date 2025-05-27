@@ -24,11 +24,11 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var affect = await connection.QuerySingleAsync<int>(Query.ACCOUNT__CHECK_EXIST_USERNAME, new Dictionary<string, object>
+                var result = await connection.ExecuteScalarAsync<bool>(Query.ACCOUNT__CHECK_EXIST_USERNAME, new Dictionary<string, object>
                 {
                     { "@userName", userName }
                 });
-                return affect > 0 ? true : false;
+                return result;
             }
         }
 
@@ -105,7 +105,7 @@ namespace BPHN.DataLayer.ImpRepositories
                     { "@modifiedDate", account.ModifiedDate },
                     { "@modifiedBy", account.ModifiedBy },
                 });
-                return affect > 0 ? true : false;
+                return affect > 0;
             }
         }
 
@@ -189,7 +189,7 @@ namespace BPHN.DataLayer.ImpRepositories
                     { "@id", id },
                     { "@password", password }
                 });
-                return affect > 0 ? true : false;
+                return affect > 0;
             }
         }
 
@@ -203,16 +203,6 @@ namespace BPHN.DataLayer.ImpRepositories
                     { "@id", id }
                 });
                 return result ?? Enumerable.Empty<Guid>();
-            }
-        }
-
-        public async Task<List<Account>> GetAll()
-        {
-            using (var connection = ConnectDB(GetConnectionString()))
-            {
-                connection.Open();
-                var lstAccount = await connection.QueryAsync<Account>(Query.ACCOUNT__GET_ALL);
-                return lstAccount.ToList();
             }
         }
 
@@ -243,7 +233,7 @@ namespace BPHN.DataLayer.ImpRepositories
                     { "@fullName", account.FullName},
                     { "@status",  account.Status },
                 });
-                return affect > 0 ? true : false;
+                return affect > 0;
             }
         }
 

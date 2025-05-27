@@ -59,7 +59,6 @@ builder.Services.AddScoped<ILicenseService, LicenseService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddSingleton<IRabbitMQProducerService, RabbitMQProducerService>();
 builder.Services.AddSingleton<IResourceService, ResourceService>();
-builder.Services.AddSingleton<IGlobalVariableService, GlobalVariableService>();
 builder.Services.AddSingleton<IKeyGenerator, KeyGenerator>();
 builder.Services.AddSingleton<IMailBuilderFactory, MailBuilderFactory>();
 builder.Services.AddSingleton<IMailBuilder, ForgotPasswordMailBuilder>();
