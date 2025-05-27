@@ -94,7 +94,7 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                using (var tranction = connection.BeginTransaction())
+                using (var transaction = connection.BeginTransaction())
                 {
                     var affect = await connection.ExecuteAsync(Query.HISTORY_LOG__INSERT, new Dictionary<string, object?>
                     {
@@ -109,7 +109,7 @@ namespace BPHN.DataLayer.ImpRepositories
                         { "@createdBy", history.CreatedBy },
                         { "@modifiedDate", history.ModifiedDate },
                         { "@modifiedBy", history.ModifiedBy },
-                    }, tranction);
+                    }, transaction);
 
                     if (history.Data is not null)
                     {
@@ -119,16 +119,16 @@ namespace BPHN.DataLayer.ImpRepositories
                             { "@modelId", history.Data.ModelId },
                             { "@oldData", history.Data.OldData },
                             { "@newData", history.Data.NewData },
-                        }, tranction);
+                        }, transaction);
                     }
 
                     if (affect <= 0)
                     {
-                        tranction.Rollback();
+                        transaction.Rollback();
                     }
                     else
                     {
-                        tranction.Commit();
+                        transaction.Commit();
                     }
                     return affect > 0;
                 }

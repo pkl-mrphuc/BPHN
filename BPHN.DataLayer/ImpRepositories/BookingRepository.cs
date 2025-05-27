@@ -37,7 +37,7 @@ namespace BPHN.DataLayer.ImpRepositories
 
 
                 var lstBooking = await connection.QueryFirstOrDefaultAsync<BookingDetail>(query, dic);
-                return lstBooking != null ? false : true;
+                return lstBooking is null;
             }
         }
 

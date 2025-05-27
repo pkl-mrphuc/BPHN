@@ -42,12 +42,9 @@ namespace BPHN.DataLayer.ImpRepositories
                     { "@modifiedBy", data.ModifiedBy },
                     { "@modifiedDate", data.ModifiedDate }
                 });
-                if (affect == 0)
-                {
-                    return false;
-                }
+
+                return affect > 0;
             }
-            return true;
         }
 
         public async Task<bool> Update(License data)
@@ -64,12 +61,9 @@ namespace BPHN.DataLayer.ImpRepositories
                     { "@modifiedBy", data.ModifiedBy },
                     { "@modifiedDate", data.ModifiedDate }
                 });
-                if (affect == 0)
-                {
-                    return false;
-                }
+
+                return affect > 0;
             }
-            return true;
         }
     }
 }

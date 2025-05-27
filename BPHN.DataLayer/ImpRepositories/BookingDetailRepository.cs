@@ -22,7 +22,7 @@ namespace BPHN.DataLayer.ImpRepositories
                     { "@status", BookingStatusEnum.CANCEL.ToString() },
                     { "@id", id }
                 });
-                return affect > 0 ? true : false;
+                return affect > 0;
             }
         }
 
@@ -150,7 +150,7 @@ namespace BPHN.DataLayer.ImpRepositories
                     { "@note", eventInfo.Note},
                     { "@deposit", eventInfo.Deposit},
                 });
-                return affect > 0 ? true : false;
+                return affect > 0;
             }
         }
     }

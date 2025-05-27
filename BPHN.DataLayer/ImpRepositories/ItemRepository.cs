@@ -133,12 +133,9 @@ namespace BPHN.DataLayer.ImpRepositories
                     { "@createdBy", data.CreatedBy },
                     { "@createdDate", data.CreatedDate }
                 });
-                if (affect == 0)
-                {
-                    return false;
-                }
+
+                return affect > 0;
             }
-            return true;
         }
 
         public async Task<bool> Update(Item data)
@@ -159,12 +156,9 @@ namespace BPHN.DataLayer.ImpRepositories
                     { "@modifiedBy", data.ModifiedBy },
                     { "@modifiedDate", data.ModifiedDate },
                 });
-                if (affect == 0)
-                {
-                    return false;
-                }
+
+                return affect > 0;
             }
-            return true;
         }
 
         public async Task UpdateQuantity(IEnumerable<InvoiceItem> items)

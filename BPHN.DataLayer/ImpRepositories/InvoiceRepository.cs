@@ -145,12 +145,9 @@ namespace BPHN.DataLayer.ImpRepositories
                         { "@createdDate", _.CreatedDate }
                     });
                 }
-                if (affect == 0)
-                {
-                    return false;
-                }
+
+                return affect > 0;
             }
-            return true;
         }
 
         public async Task<bool> Update(Invoice data)
@@ -158,7 +155,7 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var affect = (await connection.ExecuteAsync(Query.INVOICE__UPDATE, new Dictionary<string, object?>
+                var affect = await connection.ExecuteAsync(Query.INVOICE__UPDATE, new Dictionary<string, object?>
                 {
                     { "@id", data.Id },
                     { "@customerType", (int)data.CustomerType },
@@ -171,13 +168,10 @@ namespace BPHN.DataLayer.ImpRepositories
                     { "@detail", data.Detail },
                     { "@modifiedBy", data.ModifiedBy },
                     { "@modifiedDate", data.ModifiedDate }
-                }));
-                if (affect == 0)
-                {
-                    return false;
-                }
+                });
+
+                return affect > 0;
             }
-            return true;
         }
     }
 }

@@ -18,7 +18,7 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                using (var tranction = connection.BeginTransaction())
+                using (var transaction = connection.BeginTransaction())
                 {
                     foreach (var config in configs)
                     {
@@ -36,14 +36,14 @@ namespace BPHN.DataLayer.ImpRepositories
                                         insert into configs(Id, AccountId, `Key`, Value, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy)
                                             value(@idConfig, @accountId, @key, @value, @createdDate, @createdBy, @modifiedDate, @modifiedBy)
                                         on duplicate key update Value = @value, ModifiedDate = @modifiedDate, ModifiedBy = @modifiedBy";
-                        var affect = await connection.ExecuteAsync(query, dic, tranction, commandType: System.Data.CommandType.Text);
+                        var affect = await connection.ExecuteAsync(query, dic, transaction, commandType: System.Data.CommandType.Text);
                         if (affect == 0)
                         {
-                            tranction.Rollback();
+                            transaction.Rollback();
                             return false;
                         }
                     }
-                    tranction.Commit();
+                    transaction.Commit();
                 }
             }
             return true;

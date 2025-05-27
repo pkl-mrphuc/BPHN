@@ -28,13 +28,13 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                using (var tranction = connection.BeginTransaction())
+                using (var transaction = connection.BeginTransaction())
                 {
                     var dic = new Dictionary<string, object?>
                     {
                         { "@accountId", accountId }
                     };
-                    var affect = await connection.ExecuteAsync(Query.PERMISSION__DELETE, dic, tranction);
+                    var affect = await connection.ExecuteAsync(Query.PERMISSION__DELETE, dic, transaction);
 
                     dic = new Dictionary<string, object?>();
                     var rows = new List<string>();
@@ -53,14 +53,14 @@ namespace BPHN.DataLayer.ImpRepositories
                     }
 
                     var query = $"insert into permissions(Id, AccountId, FunctionType, Allow, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy) values {string.Join(",", rows)}";
-                    affect = await connection.ExecuteAsync(query, dic, tranction);
+                    affect = await connection.ExecuteAsync(query, dic, transaction);
                     if (affect <= 0)
                     {
-                        tranction.Rollback();
+                        transaction.Rollback();
                     }
                     else
                     {
-                        tranction.Commit();
+                        transaction.Commit();
                     }
                     return affect > 0;
                 }
