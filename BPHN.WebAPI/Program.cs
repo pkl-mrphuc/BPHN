@@ -117,6 +117,17 @@ builder.Services.AddAuthentication(options =>
 		googleOptions.ClientSecret = "hq542hbiI9zifILsWchgT8xS";
 		googleOptions.CallbackPath = "/signin-google"; // This should match the redirect URI set in the Google Console
 	});
+var port = Environment.GetEnvironmentVariable("PORT");
+
+if (!string.IsNullOrEmpty(port))
+{
+	builder.WebHost.ConfigureKestrel(options =>
+	{
+		options.ListenAnyIP(Int32.Parse(port));
+	});
+}
+
+
 
 var app = builder.Build();
 
