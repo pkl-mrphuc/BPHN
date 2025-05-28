@@ -6,7 +6,7 @@ namespace BPHN.DataLayer.IRepositories
     public interface IBookingRepository
     {
         Task<List<Booking>> GetByIds(string ids);
-        Task<Booking> GetById(string id);
+        Task<Booking> GetById(Guid id);
         Task<bool> CheckFreeTimeFrame(Booking data);
         Task<bool> Insert(Booking data);
         Task<bool> Update(Booking data);

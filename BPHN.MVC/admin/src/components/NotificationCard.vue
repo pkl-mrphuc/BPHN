@@ -14,32 +14,30 @@ const { t } = useI18n();
 const store = useStore();
 
 const formatDate = ref(store.getters["config/getFormatDate"]);
-const subject = ref(props.data?.subject);
+const subject = ref(props.data?.Subject);
 
 const content = computed(() => {
-  let model = JSON.parse(props.data?.content);
-  console.log(model);
-  switch (props.data?.notificationType) {
-    case NotificationTypeEnum.CANCELBOOKINGDETAIL: return t("CANCELBOOKINGDETAIL") ;
-    case NotificationTypeEnum.UPDATEMATCH: return t("UPDATEMATCH");
-    case NotificationTypeEnum.INSERTBOOKING: return t("INSERTBOOKING");
-    case NotificationTypeEnum.DECLINEBOOKING: return t("DECLINEBOOKING");
-    case NotificationTypeEnum.APPROVALBOOKING: return t("APPROVALBOOKING");
-    case NotificationTypeEnum.CHANGEPERMISSION: return t("CHANGEPERMISSION");
-    case NotificationTypeEnum.INSERTPITCH: return t("INSERTPITCH");
-    case NotificationTypeEnum.UPDATEPITCH: return t("UPDATEPITCH");
-    case NotificationTypeEnum.INSERTACCOUNT: return t("INSERTACCOUNT");
-    case NotificationTypeEnum.UPDATEACCOUNT: return t("UPDATEACCOUNT");
-    case NotificationTypeEnum.INSERTSERVICIE: return t("INSERTSERVICIE");
-    case NotificationTypeEnum.UPDATESERVICE: return t("UPDATESERVICE");
-    case NotificationTypeEnum.INSERTINVOICE: return t("INSERTINVOICE");
-    case NotificationTypeEnum.UPDATEINVOICE: return t("UPDATEINVOICE");
+  switch (props.data?.NotificationType) {
+    case NotificationTypeEnum.CANCELBOOKINGDETAIL: return `${t("CANCELBOOKINGDETAIL")} ${props.data?.Content}`;
+    case NotificationTypeEnum.UPDATEMATCH: return `${t("UPDATEMATCH")} ${props.data?.Content}`;
+    case NotificationTypeEnum.INSERTBOOKING: return `${t("INSERTBOOKING")} ${props.data?.Content}`;
+    case NotificationTypeEnum.DECLINEBOOKING: return `${t("DECLINEBOOKING")} ${props.data?.Content}`;
+    case NotificationTypeEnum.APPROVALBOOKING: return `${t("APPROVALBOOKING")} ${props.data?.Content}`;
+    case NotificationTypeEnum.CHANGEPERMISSION: return `${t("CHANGEPERMISSION")} ${props.data?.Content}`;
+    case NotificationTypeEnum.INSERTPITCH: return `${t("INSERTPITCH")} ${props.data?.Content}`;
+    case NotificationTypeEnum.UPDATEPITCH: return `${t("UPDATEPITCH")} ${props.data?.Content}`;
+    case NotificationTypeEnum.INSERTACCOUNT: return `${t("INSERTACCOUNT")} ${props.data?.Content}`;
+    case NotificationTypeEnum.UPDATEACCOUNT: return `${t("UPDATEACCOUNT")} ${props.data?.Content}`;
+    case NotificationTypeEnum.INSERTSERVICE: return `${t("INSERTSERVICE")} ${props.data?.Content}`;
+    case NotificationTypeEnum.UPDATESERVICE: return `${t("UPDATESERVICE")} ${props.data?.Content}`;
+    case NotificationTypeEnum.INSERTINVOICE: return `${t("INSERTINVOICE")} ${props.data?.Content}`;
+    case NotificationTypeEnum.UPDATEINVOICE: return `${t("UPDATEINVOICE")} ${props.data?.Content}`;
     default: return "";
   }
 });
 
 const author = computed(() => {
-  return `${props.data?.createdBy} ${dateToString(props.data?.createdDate, formatDate.value, true)}`;
+  return `${props.data?.CreatedBy} ${dateToString(props.data?.CreatedDate, formatDate.value, true)}`;
 });
 </script>
 

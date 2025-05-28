@@ -4,7 +4,6 @@ using BPHN.ModelLayer.Others;
 using Dapper;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -85,74 +84,64 @@ namespace BPHN.DataLayer.ImpRepositories
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                string query = @"insert into accounts(Id, UserName, Password, Gender, PhoneNumber, FullName, Email, Role, Status, ParentId, CreatedBy, CreatedDate, ModifiedBy, ModifiedDate)
-                                value (@id, @userName, @password, @gender, @phoneNumber, @fullName, @email, @role, @status, @parentId, @createdBy, @createdDate, @modifiedBy, @modifiedDate)";
-                var dic = new Dictionary<string, object?>();
-                dic.Add("@id", account.Id);
-                dic.Add("@fullName", account.FullName);
-                dic.Add("@userName", account.UserName);
-                dic.Add("@password", account.Password);
-                dic.Add("@gender", account.Gender);
-                dic.Add("@email", account.Email);
-                dic.Add("@phoneNumber", account.PhoneNumber);
-                dic.Add("@role", account.Role.ToString());
-                dic.Add("@status", account.Status);
-                dic.Add("@parentId", account.ParentId);
-                dic.Add("@createdDate", account.CreatedDate);
-                dic.Add("@createdBy", account.CreatedBy);
-                dic.Add("@modifiedDate", account.ModifiedDate);
-                dic.Add("@modifiedBy", account.ModifiedBy);
-                var affect = await connection.ExecuteAsync(query, dic);
+                var affect = await connection.ExecuteAsync(Query.ACCOUNT__INSERT, new Dictionary<string, object?>
+                {
+                    { "@id", account.Id },
+                    { "@fullName", account.FullName },
+                    { "@userName", account.UserName },
+                    { "@password", account.Password },
+                    { "@gender", account.Gender },
+                    { "@email", account.Email },
+                    { "@phoneNumber", account.PhoneNumber },
+                    { "@role", account.Role.ToString() },
+                    { "@status", account.Status },
+                    { "@parentId", account.ParentId },
+                    { "@createdDate", account.CreatedDate },
+                    { "@createdBy", account.CreatedBy },
+                    { "@modifiedDate", account.ModifiedDate },
+                    { "@modifiedBy", account.ModifiedBy },
+                });
                 return affect > 0 ? true : false;
             }
         }
 
-        public async Task<List<Account>> GetPaging(int pageIndex, int pageSize, string txtSearch, List<WhereCondition> where)
+        public async Task<IEnumerable<Account>> GetPaging(Guid accountId, RoleEnum role, int pageIndex, int pageSize, string txtSearch)
         {
+            var conditions = new List<WhereCondition>
+            {
+                new WhereCondition
+                {
+                    Column = "Id",
+                    Operator = "!=",
+                    Value = accountId
+                }
+            };
 
-            var query = string.Empty;
-            var countQuery = string.Empty;
-            var dic = new Dictionary<string, object>();
-            var whereQuery = BuildWhereQuery(where);
+            if (role == RoleEnum.TENANT)
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "ParentId",
+                    Operator = "=",
+                    Value = accountId
+                });
+            }
+
             if (!string.IsNullOrWhiteSpace(txtSearch))
             {
-                query = $@"  select distinct ac.UserName, ac.FullName, ac.Gender, ac.PhoneNumber, ac.Email, ac.Id, ac.Role, ac.Status, ac.ModifiedDate from  (
-                                                    select * from accounts where {whereQuery} and UserName like @where
-                                                    union 
-                                                    select * from accounts where {whereQuery} and Email like @where
-                                                    union 
-                                                    select * from accounts where {whereQuery} and PhoneNumber like @where
-                                                    union 
-                                                    select * from accounts where {whereQuery} and FulLName like @where) as ac
-                            order by ac.ModifiedDate desc
-                            limit @offSet, @pageSize";
-                countQuery = $@" select distinct count(*) from   (
-                                                                select * from accounts where Role = {whereQuery} and UserName like @where
-                                                                union 
-                                                                select * from accounts where Role = {whereQuery} and Email like @where
-                                                                union 
-                                                                select * from accounts where {whereQuery} and PhoneNumber like @where
-                                                                union 
-                                                                select * from accounts where Role = {whereQuery} and FulLName like @where) as ac";
-
-                dic.Add("@where", $"%{txtSearch}%");
-            }
-            else
-            {
-                query = $"select UserName, FullName, Gender, PhoneNumber, Email, Id, Role, Status, ModifiedDate from accounts where {whereQuery} order by ModifiedDate desc limit @offSet, @pageSize";
-                countQuery = $"select count(*) from accounts where {whereQuery}";
+                conditions.Add(new WhereCondition
+                {
+                    Column = "Email",
+                    Operator = "like",
+                    Value = $"%{txtSearch}%"
+                });
             }
 
-            for (int i = 0; i < where.Count; i++)
-            {
-                dic.Add($"@where{i}", where[i].Value);
-            }
-
-
+            var where = BuildWhere(Query.ACCOUNT__GET_ALL, conditions, "limit @offSet, @pageSize");
             using (var connection = ConnectDB(GetConnectionString()))
             {
                 connection.Open();
-                var totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
+                var totalRecord = await GetTotalRecord(accountId, role, txtSearch);
                 var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
                 if (pageIndex > totalPage)
                 {
@@ -160,59 +149,30 @@ namespace BPHN.DataLayer.ImpRepositories
                 }
                 var offSet = (pageIndex - 1) * pageSize;
 
-                dic.Add("@offSet", offSet);
-                dic.Add("@pageSize", pageSize);
-                var lstAccount = await connection.QueryAsync<Account>(query, dic);
-                return lstAccount.ToList();
+                where.param.Add("@offSet", offSet);
+                where.param.Add("@pageSize", pageSize);
+                var lstAccount = await connection.QueryAsync<Account>(where.query, where.param);
+                return lstAccount ?? Enumerable.Empty<Account>();
             }
         }
 
-        public async Task<object> GetCountPaging(int pageIndex, int pageSize, string txtSearch, List<WhereCondition> where)
+        public async Task<object> GetCountPaging(Guid accountId, RoleEnum role, int pageIndex, int pageSize, string txtSearch)
         {
-            var countQuery = string.Empty;
-            var dic = new Dictionary<string, object>();
-            var whereQuery = BuildWhereQuery(where);
-            if (!string.IsNullOrWhiteSpace(txtSearch))
+            var totalRecord = await GetTotalRecord(accountId, role, txtSearch);
+            var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
+            var totalRecordCurrentPage = 0;
+            if (totalRecord > 0)
             {
-                countQuery = $@" select distinct count(*) from   (
-                                                                select * from accounts where {whereQuery} and UserName like @where
-                                                                union 
-                                                                select * from accounts where {whereQuery} and Email like @where
-                                                                union 
-                                                                select * from accounts where {whereQuery} and PhoneNumber like @where
-                                                                union 
-                                                                select * from accounts where {whereQuery} and FulLName like @where) as ac";
-                dic.Add("@where", $"%{txtSearch}%");
-            }
-            else
-            {
-                countQuery = $"select count(*) from accounts where {whereQuery}";
-            }
-
-            for (int i = 0; i < where.Count; i++)
-            {
-                dic.Add($"@where{i}", where[i].Value);
-            }
-
-            using (var connection = ConnectDB(GetConnectionString()))
-            {
-                connection.Open();
-                var totalRecord = await connection.QuerySingleAsync<int>(countQuery, dic);
-                var totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : (totalRecord / pageSize) + 1;
-                var totalRecordCurrentPage = 0;
-                if (totalRecord > 0)
+                if (pageIndex == totalPage)
                 {
-                    if (pageIndex == totalPage)
-                    {
-                        totalRecordCurrentPage = totalRecord - ((pageIndex - 1) * pageSize);
-                    }
-                    else
-                    {
-                        totalRecordCurrentPage = pageSize;
-                    }
+                    totalRecordCurrentPage = totalRecord - ((pageIndex - 1) * pageSize);
                 }
-                return new { TotalPage = totalPage, TotalRecordCurrentPage = totalRecordCurrentPage, TotalAllRecords = totalRecord };
+                else
+                {
+                    totalRecordCurrentPage = pageSize;
+                }
             }
+            return new { TotalPage = totalPage, TotalRecordCurrentPage = totalRecordCurrentPage, TotalAllRecords = totalRecord };
         }
 
         public async Task<bool> SavePassword(Guid id, string password)
@@ -266,19 +226,6 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public async Task<Account?> GetAccountByRefreshToken(string refreshToken)
-        {
-            using (var connection = ConnectDB(GetConnectionString()))
-            {
-                connection.Open();
-                var query = @"select * from accounts where RefreshToken = @refreshToken";
-                Dictionary<string, object> dic = new Dictionary<string, object>();
-                dic.Add("@refreshToken", refreshToken);
-                var account = await connection.QueryFirstOrDefaultAsync<Account>(query, dic);
-                return account;
-            }
-        }
-
         public async Task<bool> UpdateTenant(Account account)
         {
             using (var connection = ConnectDB(GetConnectionString()))
@@ -300,21 +247,69 @@ namespace BPHN.DataLayer.ImpRepositories
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(isRefreshToken ? _appSettings.Secret1 : _appSettings.Secret);
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            try
             {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ClockSkew = TimeSpan.Zero
-            }, out SecurityToken validatedToken);
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
 
-            var jwtToken = (JwtSecurityToken)validatedToken;
-            if (jwtToken is not null && Guid.TryParse(jwtToken.Claims.First(x => "id".Equals(x.Type)).Value, out var accountId) && jwtToken.ValidTo >= DateTime.Now)
-            {
-                return accountId;
+                var jwtToken = (JwtSecurityToken)validatedToken;
+                if (jwtToken is not null && Guid.TryParse(jwtToken.Claims.First(x => "id".Equals(x.Type)).Value, out var accountId) && jwtToken.ValidTo >= DateTime.Now)
+                {
+                    return accountId;
+                }
             }
+            catch (Exception)
+            {
+                
+            }
+            
             return Guid.Empty;
+        }
+
+        public async Task<int> GetTotalRecord(Guid accountId, RoleEnum role, string txtSearch)
+        {
+            var conditions = new List<WhereCondition>
+            {
+                new WhereCondition
+                {
+                    Column = "Id",
+                    Operator = "!=",
+                    Value = accountId
+                }
+            };
+
+            if (role == RoleEnum.TENANT)
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "ParentId",
+                    Operator = "=",
+                    Value = accountId
+                });
+            }
+
+            if (!string.IsNullOrWhiteSpace(txtSearch))
+            {
+                conditions.Add(new WhereCondition
+                {
+                    Column = "Email",
+                    Operator = "like",
+                    Value = $"%{txtSearch}%"
+                });
+            }
+
+            var where = BuildWhere(Query.ACCOUNT__COUNT, conditions);
+            using (var connection = ConnectDB(GetConnectionString()))
+            {
+                connection.Open();
+                return await connection.QuerySingleAsync<int>(where.query, where.param);
+            }
         }
     }
 }

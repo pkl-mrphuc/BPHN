@@ -15,7 +15,7 @@ namespace BPHN.BusinessLayer.ImpServices
         private readonly IFileService _fileService;
         private readonly ITimeFrameInfoService _timeFrameInfoService;
         private readonly INotificationService _notificationService;
-        private readonly IPermissionService _permissionService; 
+        private readonly IPermissionService _permissionService;
 
         public PitchService(
             IServiceProvider serviceProvider,
@@ -50,33 +50,18 @@ namespace BPHN.BusinessLayer.ImpServices
                 var context = _contextService.GetContext();
                 if (context is null)
                 {
-                    return new ServiceResultModel
-                    {
-                        Success = false,
-                        ErrorCode = ErrorCodes.OUT_TIME,
-                        Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                    };
+                    return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
                 }
 
                 if (!context.Id.Equals(id))
                 {
-                    return new ServiceResultModel
-                    {
-                        Success = false,
-                        ErrorCode = ErrorCodes.NO_INTEGRITY,
-                        Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
-                    };
+                    return new ServiceResultModel(ErrorCodes.NO_INTEGRITY, _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig));
                 }
 
-                var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
+                var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
                 if (!hasPermission)
                 {
-                    return new ServiceResultModel
-                    {
-                        Success = false,
-                        ErrorCode = ErrorCodes.INVALID_ROLE,
-                        Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                    };
+                    return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
                 }
 
                 lstWhere.Add(new WhereCondition
@@ -120,95 +105,69 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            Pitch? data = null;
-            if (string.IsNullOrWhiteSpace(id))
+            if (!string.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out var pitchId))
             {
-                data = new Pitch();
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT));
+            }
+
+            var data = new Pitch();
+            if (!string.IsNullOrWhiteSpace(id) && Guid.TryParse(id, out pitchId))
+            {
+                data = await _pitchRepository.GetById(pitchId);
+                if (data is null)
+                {
+                    return new ServiceResultModel(ErrorCodes.NOT_EXISTS, _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig));
+                }
+
+                if (data is not null)
+                {
+                    if (data.TimeSlotPerDay != data.TimeFrameInfos.Count || data.Quantity != data.ListNameDetails.Count)
+                    {
+                        return new ServiceResultModel(ErrorCodes.NO_INTEGRITY, _resourceService.Get(SharedResourceKey.INVALIDDATA, context.LanguageConfig));
+                    }
+
+                    data.ListNameDetails = (data.NameDetails ?? string.Empty).Split(";").ToList();
+                    data.TimeFrameInfos = await _timeFrameInfoService.GetByPitchId(data.Id);
+                    for (int i = 0; i < data.TimeFrameInfos.Count; i++)
+                    {
+                        var item = data.TimeFrameInfos[i];
+                        item.TimeBegin = new DateTime(1999, 11, 10, item.TimeBegin.Hour, item.TimeBegin.Minute, 0);
+                        item.TimeEnd = new DateTime(1999, 11, 10, item.TimeEnd.Hour, item.TimeEnd.Minute, 0);
+                        item.TimeBeginTick = item.TimeBegin.Ticks;
+                        item.TimeEndTick = item.TimeEnd.Ticks;
+                    }
+                }
+            }
+            else
+            {
                 data.Id = Guid.NewGuid();
-                var timeFrameInfos = new List<TimeFrameInfo>();
+                data.TimeFrameInfos = new List<TimeFrameInfo>();
+                data.ListNameDetails = new List<string>();
+
                 for (int i = 0; i < data.TimeSlotPerDay; i++)
                 {
-                    var timeBegin = new DateTime(1999, 11, 10, 0, 0, 0);
-                    var timeEnd = DateTime.Now;
-                    var timeBeginSpan = new TimeSpan(timeBegin.Hour, timeBegin.Minute, 0);
-                    timeBegin = timeBegin.Date.Add(timeBeginSpan);
-                    timeEnd = timeBegin.AddMinutes(data.MinutesPerMatch);
-
-                    timeFrameInfos.Add(new TimeFrameInfo()
+                    data.TimeFrameInfos.Add(new TimeFrameInfo
                     {
                         Id = Guid.NewGuid(),
                         SortOrder = i + 1,
                         Name = string.Format("Khung {0}", i + 1),
                         Price = 0,
-                        TimeBegin = timeBegin,
-                        TimeEnd = timeEnd,
-                        TimeBeginTick = timeBegin.Ticks,
-                        TimeEndTick = timeEnd.Ticks
+                        TimeBegin = new DateTime(1999, 11, 10, 0, 0, 0),
+                        TimeEnd = new DateTime(1999, 11, 10, 0, 0, 0).AddMinutes(data.MinutesPerMatch),
+                        TimeBeginTick = new DateTime(1999, 11, 10, 0, 0, 0).Ticks,
+                        TimeEndTick = new DateTime(1999, 11, 10, 0, 0, 0).AddMinutes(data.MinutesPerMatch).Ticks
                     });
                 }
-                data.TimeFrameInfos = timeFrameInfos;
-                data.TimeFrameInfoIds = string.Join(";", timeFrameInfos.Select(item => item.Id).ToArray());
 
-                var lstsNameDetails = new List<string>();
                 for (int i = 0; i < data.Quantity; i++)
                 {
-                    lstsNameDetails.Add(string.Format("Sân {0}", i + 1));
+                    data.ListNameDetails.Add(string.Format("Sân {0}", i + 1));
                 }
-                data.ListNameDetails = lstsNameDetails;
-                data.NameDetails = string.Join(";", lstsNameDetails.Select(item => item).ToArray());
-            }
-            else
-            {
-                Guid.TryParse(id, out var pitchId);
-                data = await _pitchRepository.GetById(pitchId);
-                if (data is not null)
-                {
-                    data.TimeFrameInfos = await _timeFrameInfoService.GetByPitchId(data.Id);
-                }
-
-                if (data is null)
-                {
-                    return new ServiceResultModel
-                    {
-                        Success = false,
-                        ErrorCode = ErrorCodes.NOT_EXISTS,
-                        Message = _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig)
-                    };
-                }
-
-                if (!string.IsNullOrWhiteSpace(data.NameDetails))
-                {
-                    var lstNameDetails = data.NameDetails.Split(";").ToList();
-                    data.ListNameDetails = lstNameDetails;
-                }
-
-                if (data.TimeSlotPerDay != data.TimeFrameInfos.Count || data.Quantity != data.ListNameDetails.Count)
-                {
-                    return new ServiceResultModel
-                    {
-                        Success = false,
-                        ErrorCode = ErrorCodes.NO_INTEGRITY,
-                        Message = _resourceService.Get(SharedResourceKey.INVALIDDATA, context.LanguageConfig)
-                    };
-                }
-
-                var now = DateTime.Now;
-                for (int i = 0; i < data.TimeFrameInfos.Count; i++)
-                {
-                    var item = data.TimeFrameInfos[i];
-                    item.TimeBegin = new DateTime(now.Year, now.Month, now.Day, item.TimeBegin.Hour, item.TimeBegin.Minute, 0);
-                    item.TimeEnd = new DateTime(now.Year, now.Month, now.Day, item.TimeEnd.Hour, item.TimeEnd.Minute, 0);
-                    item.TimeBeginTick = item.TimeBegin.Ticks;
-                    item.TimeEndTick = item.TimeEnd.Ticks;
-                }
+                data.NameDetails = string.Join(";", data.ListNameDetails.Select(item => item));
+                data.TimeFrameInfoIds = string.Join(";", data.TimeFrameInfos.Select(item => item.Id));
             }
 
             return new ServiceResultModel
@@ -223,23 +182,13 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
             if (!hasPermission)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
             var lstPitch = await GetAll(context.Id, onlyActive);
@@ -287,7 +236,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     };
                 }
 
-                var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
+                var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.VIEWLISTPITCH);
                 if (!hasPermission)
                 {
                     return new ServiceResultModel
@@ -365,34 +314,19 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.ADDPITCH);
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.ADDPITCH);
             if (!hasPermission)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
             var isValid = ValidateModelByAttribute(pitch);
             if (!isValid || pitch.TimeFrameInfos.Count == 0 || pitch.ListNameDetails.Count == 0)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig));
             }
 
             pitch.CreatedBy = context.FullName;
@@ -420,12 +354,12 @@ namespace BPHN.BusinessLayer.ImpServices
             var insertResult = await _pitchRepository.Insert(pitch);
             if (insertResult)
             {
-                await _notificationService.Insert<Pitch>(context, NotificationTypeEnum.INSERTPITCH, new Pitch
+                await _notificationService.Insert(context, NotificationTypeEnum.INSERTPITCH, new Pitch
                 {
                     Name = pitch.Name,
                 });
 
-                _historyLogService.Write(Guid.NewGuid(), 
+                _historyLogService.Write(Guid.NewGuid(),
                     new HistoryLog
                     {
                         ActionType = ActionEnum.INSERT,
@@ -450,35 +384,20 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.EDITPITCH);
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.EDITPITCH);
             if (!hasPermission)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
             var isValid = ValidateModelByAttribute(pitch);
 
             if (!isValid || pitch.TimeFrameInfos.Count == 0 || pitch.ListNameDetails.Count == 0)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig));
             }
 
             pitch.ModifiedBy = context.FullName;
@@ -505,12 +424,12 @@ namespace BPHN.BusinessLayer.ImpServices
 
             if (updateResult)
             {
-                await _notificationService.Insert<Pitch>(context, NotificationTypeEnum.UPDATEPITCH, new Pitch
+                await _notificationService.Insert(context, NotificationTypeEnum.UPDATEPITCH, new Pitch
                 {
                     Name = pitch.Name
                 });
 
-                _historyLogService.Write(Guid.NewGuid(), 
+                _historyLogService.Write(Guid.NewGuid(),
                     new HistoryLog
                     {
                         ActionType = ActionEnum.UPDATE,

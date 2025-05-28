@@ -390,7 +390,8 @@ namespace BPHN.DataLayer.ImpRepositories
                     Value = model.TimeFrameId.Value
                 });
             }
-            if (!string.IsNullOrWhiteSpace(model.NameDetail)) {
+            if (!string.IsNullOrWhiteSpace(model.NameDetail))
+            {
                 conditions.Add(new WhereCondition
                 {
                     Column = "b.NameDetail",
@@ -439,7 +440,7 @@ namespace BPHN.DataLayer.ImpRepositories
             }
         }
 
-        public async Task<Booking> GetById(string id)
+        public async Task<Booking> GetById(Guid id)
         {
             using (var connection = ConnectDB(GetConnectionString()))
             {

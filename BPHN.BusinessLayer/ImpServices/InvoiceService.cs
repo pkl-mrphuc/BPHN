@@ -39,37 +39,21 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
             if (!string.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out var invoiceId))
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig));
             }
 
             var data = new Invoice();
-            data.Id = Guid.NewGuid();
-            if (Guid.TryParse(id, out invoiceId))
+            if (!string.IsNullOrWhiteSpace(id) && Guid.TryParse(id, out invoiceId))
             {
                 data = await _invoiceRepository.GetById(invoiceId);
                 if (data is null)
                 {
-                    return new ServiceResultModel
-                    {
-                        Success = false,
-                        ErrorCode = ErrorCodes.NOT_EXISTS,
-                        Message = _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig)
-                    };
+                    return new ServiceResultModel(ErrorCodes.NOT_EXISTS, _resourceService.Get(SharedResourceKey.NOTEXIST, context.LanguageConfig));
                 }
 
                 if (!string.IsNullOrWhiteSpace(data.Detail))
@@ -77,6 +61,11 @@ namespace BPHN.BusinessLayer.ImpServices
                     data.Items = JsonConvert.DeserializeObject<List<InvoiceItem>>(data.Detail);
                 }
             }
+            else
+            {
+                data.Id = Guid.NewGuid();
+            }
+
 
             return new ServiceResultModel
             {
@@ -90,22 +79,12 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
             if (string.IsNullOrWhiteSpace(id) || !Guid.TryParse(id, out var bookingDetailId))
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig));
             }
 
             var data = await _invoiceRepository.GetByBooking(bookingDetailId);
@@ -125,23 +104,13 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermission = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.VIEWLISTINVOICE);
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.VIEWLISTINVOICE);
             if (!hasPermission)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
             var lstInvoice = await _invoiceRepository.GetInvoices(context.Id, txtSearch, status, customerType, date, paymentType);
@@ -157,56 +126,31 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermissionAdd = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.ADDINVOICE);
-            if (!hasPermissionAdd)
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.ADDINVOICE);
+            if (!hasPermission)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
             var isValid = ValidateModelByAttribute(data, "Id") || data.Items == null || data.Items.Count() == 0;
             if (!isValid)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig));
             }
 
             var isValidLicense = await _licenseService.CheckIsValid(context.Id);
             if (!isValidLicense)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_LICENSE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDLICENSE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_LICENSE, _resourceService.Get(SharedResourceKey.INVALIDLICENSE, context.LanguageConfig));
             }
 
             var isValidQuantity = await _itemService.CheckQuantityInStock(data.Items ?? Enumerable.Empty<InvoiceItem>());
             if (!isValidQuantity)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_DATA,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDDATA, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_DATA, _resourceService.Get(SharedResourceKey.INVALIDDATA, context.LanguageConfig));
             }
 
             data.Id = Guid.NewGuid();
@@ -269,45 +213,25 @@ namespace BPHN.BusinessLayer.ImpServices
             var context = _contextService.GetContext();
             if (context is null)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.OUT_TIME,
-                    Message = _resourceService.Get(SharedResourceKey.OUTTIME)
-                };
+                return new ServiceResultModel(ErrorCodes.OUT_TIME, _resourceService.Get(SharedResourceKey.OUTTIME));
             }
 
-            var hasPermissionEdit = await _permissionService.IsValidPermission(context.Id, FunctionTypeEnum.EDITINVOICE);
-            if (!hasPermissionEdit)
+            var hasPermission = await _permissionService.IsValidPermissions(context.Id, FunctionTypeEnum.EDITINVOICE);
+            if (!hasPermission)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ROLE,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_ROLE, _resourceService.Get(SharedResourceKey.INVALIDROLE, context.LanguageConfig));
             }
 
             var isValid = ValidateModelByAttribute(data) || data.Items == null || data.Items.Count() == 0;
             if (!isValid)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.EMPTY_INPUT,
-                    Message = _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.EMPTY_INPUT, _resourceService.Get(SharedResourceKey.EMPTYINPUT, context.LanguageConfig));
             }
 
             var isValidQuantity = await _itemService.CheckQuantityInStock(data.Items ?? Enumerable.Empty<InvoiceItem>());
             if (!isValidQuantity)
             {
-                return new ServiceResultModel
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.INVALID_DATA,
-                    Message = _resourceService.Get(SharedResourceKey.INVALIDDATA, context.LanguageConfig)
-                };
+                return new ServiceResultModel(ErrorCodes.INVALID_DATA, _resourceService.Get(SharedResourceKey.INVALIDDATA, context.LanguageConfig));
             }
 
             data.ModifiedBy = context.FullName;

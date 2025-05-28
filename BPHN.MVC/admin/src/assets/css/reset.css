@@ -125,7 +125,6 @@ html .el-header {
 
 html .el-main {
   padding-top: calc(var(--el-main-padding) + 60px);
-  overflow: visible !important;
 }
 
 html .el-drawer {

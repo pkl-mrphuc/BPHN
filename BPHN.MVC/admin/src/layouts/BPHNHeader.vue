@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watchEffect } from "vue";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
 import { SwitchButton, Refresh, Avatar, Bell, Expand } from "@element-plus/icons-vue";
@@ -7,8 +7,7 @@ import useToggleModal from "@/register-components/actionDialog";
 import { useRouter } from "vue-router";
 import NotificationCard from "@/components/NotificationCard.vue";
 import connection from "@/ws";
-import { ElNotification } from "element-plus";
-import { NotificationTypeEnum } from "@/const";
+import { MaxNotification } from "@/const";
 
 const router = useRouter();
 const store = useStore();
@@ -21,38 +20,22 @@ const isMobile = ref(store.getters["config/isMobile"]);
 const fullname = ref(store.getters["account/getFullName"]);
 const drawer = ref(store.getters["account/getDrawer"]);
 
-onMounted(() => {
-  store.dispatch("notification/get").then((res) => {
-    lstNotification.value = res.data?.data ?? [];
-  });
+watchEffect(() => { lstNotification.value = store.getters["cache/getHeaderVariableCache"]?.lstNotification ?? []; })
 
+onMounted(() => {
   connection.on("PushNotification", function (type, model) {
     hasNewNoti.value = true;
-    ElNotification({ title: t("Notification"), message: getMessage(type, model), duration: 0 });
+    if (lstNotification.value.length > MaxNotification) {
+      lstNotification.value = [];
+    }
+    if (model) {
+      lstNotification.value.push(JSON.parse(model));
+      store.commit("cache/setHeaderVariableCache", {
+        lstNotification: lstNotification.value
+      });
+    }
   });
 });
-
-const getMessage = (type, model) => { 
-  model = JSON.parse(model);
-  console.log(model);
-  switch (type) {
-    case NotificationTypeEnum.CANCELBOOKINGDETAIL: return t("CANCELBOOKINGDETAIL") ;
-    case NotificationTypeEnum.UPDATEMATCH: return t("UPDATEMATCH");
-    case NotificationTypeEnum.INSERTBOOKING: return t("INSERTBOOKING");
-    case NotificationTypeEnum.DECLINEBOOKING: return t("DECLINEBOOKING");
-    case NotificationTypeEnum.APPROVALBOOKING: return t("APPROVALBOOKING");
-    case NotificationTypeEnum.CHANGEPERMISSION: return t("CHANGEPERMISSION");
-    case NotificationTypeEnum.INSERTPITCH: return t("INSERTPITCH");
-    case NotificationTypeEnum.UPDATEPITCH: return t("UPDATEPITCH");
-    case NotificationTypeEnum.INSERTACCOUNT: return t("INSERTACCOUNT");
-    case NotificationTypeEnum.UPDATEACCOUNT: return t("UPDATEACCOUNT");
-    case NotificationTypeEnum.INSERTSERVICIE: return t("INSERTSERVICIE");
-    case NotificationTypeEnum.UPDATESERVICE: return t("UPDATESERVICE");
-    case NotificationTypeEnum.INSERTINVOICE: return t("INSERTINVOICE");
-    case NotificationTypeEnum.UPDATEINVOICE: return t("UPDATEINVOICE");
-    default: return "";
-  }
-};
 
 const showAccountInfo = () => {
   openModal("AccountInfoDialog");
@@ -76,11 +59,6 @@ const refresh = () => {
 };
 
 const markRead = () => {
-  if (hasNewNoti.value) {
-    store.dispatch("notification/get").then((res) => {
-      lstNotification.value = res.data?.data ?? [];
-    });
-  }
   hasNewNoti.value = false;
 };
 

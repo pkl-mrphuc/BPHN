@@ -213,7 +213,7 @@ const vi = {
     UPDATEPITCH: "Chỉnh sửa sân",
     INSERTACCOUNT: "Thêm mới tài khoản",
     UPDATEACCOUNT: "Cập nhật tài khoản",
-    INSERTSERVICIE: "Thêm mới dịch vụ",
+    INSERTSERVICE: "Thêm mới dịch vụ",
     UPDATESERVICE: "Chỉnh sửa dịch vụ",
     INSERTINVOICE: "Thêm mới hóa đơn",
     UPDATEINVOICE: "Chỉnh sửa hóa đơn",
