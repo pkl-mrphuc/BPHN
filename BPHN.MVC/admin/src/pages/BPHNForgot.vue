@@ -36,25 +36,37 @@ const forgot = () => {
 </script>
 
 <template>
-  <div style="width: 100vw; height: 100vh" class="container p-3 d-flex flex-row align-items-center justify-content-center">
-    <div class="row w-75 w-sm-100 w-md-75 w-lg-50">
-      <div class="col-12 col-sm-12 col-md-5 col-lg-6 d-flex flex-column align-items-center justify-content-center">
-        <h1 class="text-center text-uppercase">{{ t("BookingPitchHaNoi") }}</h1>
-        <img class="img img-anime" src=".././assets/images/fb-anime.jpg" />
-      </div>
-
-      <div class="col-12 col-sm-12 col-md-7 col-lg-6 d-flex flex-column align-items-center justify-content-center">
-        <h2>{{ t("ForgotPasswordTitle") }}</h2>
-        <div class="w-100 p-3">
-          <el-form class="box_right__form">
+  <div class="forgot-page">
+    <div class="forgot-page__container">
+      <div class="forgot-page__form-wrapper">
+        <h1 class="forgot-page__title">{{ t("ForgotPasswordTitle") }}</h1>
+        <div class="forgot-page__form-box">
+          <el-form class="forgot-page__form">
             <el-form-item>
-              <el-input v-model="email" maxlength="255" placeholder="Email" ref="inpEmail" tabindex="1"/>
+              <el-input
+                v-model="email"
+                maxlength="255"
+                :placeholder="t('Email')"
+                ref="inpEmail"
+                tabindex="1"
+              />
             </el-form-item>
             <el-form-item>
-              <el-button class="w-100" type="primary" @click="forgot" tabindex="2" >{{ t("SendRequest") }}</el-button>
+              <el-button
+                class="forgot-page__submit-btn"
+                type="primary"
+                @click="forgot"
+                tabindex="2"
+              >{{ t("SendRequest") }}</el-button>
             </el-form-item>
           </el-form>
-          <a v-if="false" class="back-login-btn" @click="goToLogin" tabindex="3" href="javascript:void(0)" >{{ t("BackToLogin") }}</a>
+          <a
+            v-if="false"
+            class="forgot-page__back-btn"
+            @click="goToLogin"
+            tabindex="3"
+            href="javascript:void(0)"
+          >{{ t("BackToLogin") }}</a>
         </div>
       </div>
     </div>
@@ -62,4 +74,64 @@ const forgot = () => {
 </template>
 
 <style scoped>
+.forgot-page {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: #f0f2f5;
+}
+.forgot-page__container {
+  width: 75%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.forgot-page__form-wrapper {
+  width: 100%;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  box-shadow: 0 2px 4px #0000001a,0 8px 16px #0000001a;
+  border-radius: 8px;
+}
+.forgot-page__title {
+  text-align: center;
+  text-transform: uppercase;
+  margin: 0;
+  padding-top: 2rem;
+}
+.forgot-page__form-box {
+  width: 100%;
+  padding: 2rem 1.5rem;
+}
+.forgot-page__form {
+  width: 100%;
+}
+:deep(.el-form-item__content) {
+  justify-content: space-between;
+}
+.forgot-page__submit-btn, .forgot-page__submit-btn:hover {
+  width: 100%;
+  background: #093D67;
+  border: 0;
+  font-weight: 700;
+}
+.forgot-page__submit-btn:hover {
+  background: #0d5086;
+}
+.forgot-page__back-btn {
+  width: 100%;
+  display: inline-block;
+  text-align: center;
+  margin-top: 1rem;
+  color: #409EFF;
+  cursor: pointer;
+  text-decoration: underline;
+}
 </style>

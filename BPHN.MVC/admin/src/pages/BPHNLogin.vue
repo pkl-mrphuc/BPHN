@@ -51,29 +51,49 @@ const goToForgot = () => {
 </script>
 
 <template>
-  <div style="width: 100vw; height: 100vh"
-    class="container p-3 d-flex flex-row align-items-center justify-content-center">
-    <div class="row w-75 w-sm-100 w-md-75 w-lg-50">
-      <div class="col-12 col-sm-12 col-md-5 col-lg-6 d-flex flex-column align-items-center justify-content-center">
-        <h1 class="text-center text-uppercase">{{ t("BookingPitchHaNoi") }}</h1>
-        <img class="img img-anime" src=".././assets/images/fb-anime.jpg" />
-      </div>
-
-      <div class="col-12 col-sm-12 col-md-7 col-lg-6 d-flex flex-column align-items-center justify-content-center">
-        <h2 class="text-center">{{ t("LoginForm") }}</h2>
-        <div class="w-100 p-3">
-          <el-form class="box_right__form">
+  <div class="login-page">
+    <div class="login-page__container">
+      <div class="login-page__form-wrapper">
+        <h1 class="login-page__title">{{ t("BookingPitchHaNoi") }}</h1>
+        <div class="login-page__form-box">
+          <el-form class="login-page__form">
             <el-form-item>
-              <el-input v-model="username" maxlength="255" :placeholder="t('Username')" tabindex="1" ref="inpUsername"
-                @keyup.enter="login" />
+              <el-input
+                v-model="username"
+                maxlength="255"
+                :placeholder="t('Username')"
+                tabindex="1"
+                ref="inpUsername"
+                @keyup.enter="login"
+              />
             </el-form-item>
             <el-form-item>
-              <el-input v-model="password" maxlength="500" show-password :placeholder="t('Password')" type="password"
-                tabindex="2" @keyup.enter="login" />
+              <el-input
+                v-model="password"
+                maxlength="500"
+                show-password
+                :placeholder="t('Password')"
+                type="password"
+                tabindex="2"
+                @keyup.enter="login"
+              />
             </el-form-item>
             <el-form-item>
-              <el-button type="info" link @click="goToForgot()" tabindex="4">{{ t("ForgotPasswordTitle") }}</el-button>
-              <el-button type="primary" @click="login" tabindex="3">{{ t("Submit") }}</el-button>
+              <el-button
+                class="login-page__submit-btn"
+                type="primary"
+                @click="login"
+                tabindex="3"
+              >{{ t("Submit") }}</el-button>
+            </el-form-item>
+            <el-form-item>
+              <el-button
+                class="login-page__forgot-btn"
+                type="info"
+                link
+                @click="goToForgot()"
+                tabindex="4"
+              >{{ t("ForgotPasswordTitle") }}</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -83,7 +103,58 @@ const goToForgot = () => {
 </template>
 
 <style scoped>
+.login-page {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: #f0f2f5;
+}
+.login-page__container {
+  width: 75%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.login-page__form-wrapper {
+  width: 100%;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  box-shadow: 0 2px 4px #0000001a,0 8px 16px #0000001a;
+  border-radius: 8px;
+}
+.login-page__title {
+  text-align: center;
+  text-transform: uppercase;
+  margin: 0;
+  padding-top: 2rem;
+}
+.login-page__form-box {
+  width: 100%;
+  padding: 2rem 1.5rem;
+}
+.login-page__form {
+  width: 100%;
+}
 :deep(.el-form-item__content) {
   justify-content: space-between;
+}
+.login-page__submit-btn, .login-page__submit-btn:hover {
+  width: 100%;
+  background: #093D67;
+  border: 0;
+  font-weight: 700;
+}
+.login-page__submit-btn:hover {
+  background: #0d5086;
+}
+.login-page__forgot-btn {
+  width: 100%;
 }
 </style>

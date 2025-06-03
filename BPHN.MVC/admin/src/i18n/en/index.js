@@ -52,7 +52,7 @@ const en = {
     Choose: "Choose",
     AddLocation: "Add Location",
     SendRequest: "Send Request",
-    Submit: "Submit",
+    Submit: "Log in",
     Close: "Close",
     Customize: "Customize",
     
@@ -84,7 +84,7 @@ const en = {
     MyCalendar: "My Calendar",
     FootballFieldTitle: "My Stadiums",
     ConfigurationsTitle: "Configurations",
-    ForgotPasswordTitle: "Forgot Password",
+    ForgotPasswordTitle: "Forgot Password?",
     SetPasswordTitle: "Reset Password",
     HistoryLogsTitle: "History Logs",
     InvoicesTitle: "Invoices",

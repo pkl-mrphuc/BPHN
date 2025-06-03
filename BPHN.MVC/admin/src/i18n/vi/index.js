@@ -52,7 +52,7 @@ const vi = {
     Choose: "Chọn",
     AddLocation: "Thêm địa điểm",
     SendRequest: "Gửi yêu cầu",
-    Submit: "Gửi",
+    Submit: "Đăng nhập",
     Close: "Đóng",
     Customize: "Tùy chỉnh",
 
@@ -84,7 +84,7 @@ const vi = {
     MyCalendar: "Lịch",
     FootballFieldTitle: "Sân bóng",
     ConfigurationsTitle: "Cấu hình",
-    ForgotPasswordTitle: "Quên mật khẩu",
+    ForgotPasswordTitle: "Quên mật khẩu?",
     SetPasswordTitle: "Thiết lập mật khẩu",
     HistoryLogsTitle: "Nhập ký truy cập",
     InvoicesTitle: "Hóa đơn",

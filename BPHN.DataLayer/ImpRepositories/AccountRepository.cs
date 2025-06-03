@@ -67,7 +67,13 @@ namespace BPHN.DataLayer.ImpRepositories
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim("account", JsonConvert.SerializeObject(account)),
+                    new Claim("id", account.Id.ToString()),
+                    new Claim("fullName", account.FullName),
+                    new Claim("userName", account.UserName),
+                    new Claim("role", account.Role.ToString("D")),
+                    new Claim("ipAddress", account.IPAddress ?? ""),
+                    new Claim("languageConfig", account.LanguageConfig ?? ""),
+                    new Claim("parentId", account.ParentId?.ToString() ?? ""),
                 }),
                 Expires = DateTime.Now.AddHours(12),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)
@@ -253,13 +259,22 @@ namespace BPHN.DataLayer.ImpRepositories
                 }, out SecurityToken validatedToken);
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
-                if (jwtToken is not null && jwtToken.ValidTo >= DateTime.Now)
+                if (jwtToken is not null && jwtToken.ValidTo >= DateTime.Now && !jwtToken.Claims.IsNullOrEmpty())
                 {
-                    var account = jwtToken.Claims.First(x => "account".Equals(x.Type)).Value;
-                    if (!string.IsNullOrWhiteSpace(account))
+                    var claims = jwtToken.Claims.ToDictionary(x => x.Type, x => x.Value);
+
+                    var keys = new string[] { "id", "fullName", "languageConfig", "role", "userName", "ipAddress", "parentId" };
+                    var properties = keys.ToDictionary(x => x, x => claims.ContainsKey(x) ? claims[x] : "");
+                    return new Account
                     {
-                        return JsonConvert.DeserializeObject<Account>(account);
-                    }
+                        Id = Guid.Parse(properties["id"]),
+                        FullName = properties["fullName"],
+                        LanguageConfig = properties["languageConfig"],
+                        Role = Enum.Parse<RoleEnum>(properties["role"]),
+                        UserName = properties["userName"],
+                        IPAddress = properties["ipAddress"],
+                        ParentId = Guid.TryParse(properties["parentId"], out var parentId) ? parentId : null
+                    };
                 }
             }
             catch (Exception)

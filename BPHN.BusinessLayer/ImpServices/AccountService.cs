@@ -484,7 +484,7 @@ namespace BPHN.BusinessLayer.ImpServices
                     AccountId = account.Id,
                     Type = account.LicenseType,
                     ExpireTime = DateTime.Now.AddYears(1),
-                    ModifiedBy = context.ModifiedBy,
+                    ModifiedBy = context.FullName,
                     ModifiedDate = DateTime.Now,
                 });
 
