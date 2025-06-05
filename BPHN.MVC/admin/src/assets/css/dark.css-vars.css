@@ -1,10 +1,11 @@
 html.dark {
-    background-color: #262626;
+    background-color: #1c1c1d;
     color: #f2f2f2;
 }
 
 html.dark .el-header {
-    background-color: #121212;
+    background-color: #252728;
+    border: 1px solid #383a3b;
 }
 
 html.dark .el-drawer {

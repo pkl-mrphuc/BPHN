@@ -16,7 +16,6 @@ const { openModal, hasRole } = useToggleModal();
 
 const lstNotification = ref([]);
 const hasNewNoti = ref(false);
-const isMobile = ref(store.getters["config/isMobile"]);
 const fullname = ref(store.getters["account/getFullName"]);
 const drawer = ref(store.getters["account/getDrawer"]);
 
@@ -75,22 +74,22 @@ const toggle = () => {
 </script>
 
 <template>
-  <section class="h-100 d-flex flex-row align-items-center justify-content-between">
-    <div class="pointer d-flex flex-row align-items-center justify-content-between">
-      <el-button @click="toggle" class="mr-2" circle :icon="Expand" size="large"></el-button>
-      <div @click="goToHome" class="d-flex flex-row align-items-center">
-        <img height="50" class="mt-3" src="../assets/images/logo.png"/>
-        <h4 class="fs-2 m-0 mt-1">BPHN</h4>
+  <section class="header">
+    <div class="header__left">
+      <el-button @click="toggle" class="header__toggle-btn" circle :icon="Expand" size="large"></el-button>
+      <div @click="goToHome" class="header__logo pointer">
+        <img height="50" class="header__logo-img" src="../assets/images/logo.png"/>
+        <h4 class="header__logo-title">BPHN</h4>
       </div>
     </div>
-    <div class="d-flex flex-row align-items-center">
-      <p v-if="!isMobile">{{ t("Hello") }}
-        <span class="pointer fw-bold mx-1 text-decoration-underline" @click="showAccountInfo">{{ fullname }}</span>
+    <div class="header__right">
+      <p class="header__greeting">{{ t("Hello") }}
+        <span class="header__fullname pointer fw-bold mx-1 text-decoration-underline" @click="showAccountInfo">{{ fullname }}</span>
       </p>
-      <div class="mx-1 pointer" @click="showAccountInfo">
+      <div class="header__avatar pointer" @click="showAccountInfo">
         <el-icon size="24"><Avatar /></el-icon>
       </div>
-      <div class="mx-1 pointer">
+      <div class="header__notification pointer">
         <el-popover trigger="click" :width="350">
           <template #reference>
             <el-badge is-dot :hidden="!hasNewNoti">
@@ -101,11 +100,69 @@ const toggle = () => {
           <el-empty v-if="lstNotification.length == 0" :description="t('NoData')" />
         </el-popover>
       </div>
-      <div v-if="false" class="mx-1 pointer" @click="refresh">
+      <div v-if="false" class="header__refresh pointer" @click="refresh">
         <el-icon size="24"><Refresh /></el-icon>
       </div>
-      <el-button class="mx-1 pointer" type="info" :icon="SwitchButton" circle @click="logout"></el-button>
+      <el-button class="header__logout-btn pointer" type="info" :icon="SwitchButton" circle @click="logout"></el-button>
     </div>
   </section>
   <AccountInfoDialog v-if="hasRole('AccountInfoDialog')"> </AccountInfoDialog>
 </template>
+
+<style scoped>
+.header {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background: #252728;
+}
+.header__left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.header__toggle-btn {
+  margin-right: 0.5rem;
+}
+.header__logo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+}
+.header__logo-img {
+  height: 50px;
+  margin-top: 1rem;
+}
+.header__logo-title {
+  font-size: 2rem;
+  margin: 0;
+  margin-top: 0.25rem;
+}
+.header__right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.header__greeting {
+  margin: 0;
+}
+.header__fullname {
+  font-weight: bold;
+  margin: 0 0.25rem;
+  text-decoration: underline;
+}
+.header__avatar,
+.header__notification,
+.header__refresh {
+  margin: 0 0.25rem;
+  cursor: pointer;
+}
+.header__logout-btn {
+  margin-left: 0.25rem;
+  cursor: pointer;
+}
+</style>

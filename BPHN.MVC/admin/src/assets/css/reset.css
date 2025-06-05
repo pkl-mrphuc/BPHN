@@ -120,7 +120,6 @@ html .el-header {
   left: 0;
   z-index: 2019;
   width: 100%;
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
 }
 
 html .el-main {

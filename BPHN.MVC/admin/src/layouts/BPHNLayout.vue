@@ -2,7 +2,7 @@
 import { ref, watchEffect } from "vue";
 
 const store = useStore();
-const drawer = ref(store.getters["account/getDrawer"]);
+const drawer = ref(true);
 
 watchEffect(() => { drawer.value = store.getters["account/getDrawer"]; })
 
